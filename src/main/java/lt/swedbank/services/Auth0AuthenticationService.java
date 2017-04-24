@@ -7,21 +7,38 @@ import com.auth0.json.auth.TokenHolder;
 import com.auth0.net.AuthRequest;
 import com.auth0.net.SignUpRequest;
 import lt.swedbank.beans.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by paulius on 4/24/17.
  */
 @Service
-public class Auth0AuthenticationService implements AuthenticationService  {
+public class Auth0AuthenticationService implements AuthenticationService {
 
 
-    AuthAPI auth = new AuthAPI("https://skiller.eu.auth0.com/",
-            "O6JkkKHyKfujkLjALIEAEYONE0XFatb8",
-            "t4-jBn57is-WeG71RwW7UOa69cvxbkqbihx14zmwHor4gU4ztWMZ4K9u8yaZphYP");
+    private String clientId;
+
+    private String clientSecret;
+
+    private String clientDomain;
+
+    private AuthAPI auth;
+
+    @Autowired
+    public Auth0AuthenticationService(@Value("${auth0.clientId}") String clientId,
+                                      @Value("${auth0.clientSecret}") String clientSecret,
+                                      @Value("${auth0.clientDomain}") String clientDomain) {
+            this.clientId = clientId;
+            this.clientSecret = clientSecret;
+            this.clientDomain = clientDomain;
+
+            this.auth = new AuthAPI(clientDomain, clientId, clientSecret);
+    }
+
+
+
 
     @Override
     public User registerUser(User user) throws APIException, Auth0Exception {

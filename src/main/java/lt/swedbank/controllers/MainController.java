@@ -12,14 +12,15 @@ import lt.swedbank.services.AuthenticationService;
 import org.hibernate.loader.custom.Return;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 @Component
@@ -34,29 +35,36 @@ public class MainController {
     }
 
 
-    @RequestMapping(value = "/login")
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     public @ResponseBody
-    String login(User user) {
-        return "All good. You DO NOT need to be authenticated to call /login";
+    ResponseEntity<?> login(@RequestBody User user) {
+        try {
+            TokenHolder token = authService.loginUser(user);
+            return new ResponseEntity<Object>(token, HttpStatus.OK);
+        } catch (APIException exception) {
+            return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Auth0Exception exception) {
+            return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     //AuthRequest login(String emailOrUsername, String password)
     /* Maps to all HTTP actions by default (GET,POST,..)*/
-    @RequestMapping("/register")
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     public @ResponseBody
-    String register(@RequestBody User user) {
+    ResponseEntity<?> register(@RequestBody User user) {
 
         try {
-
-            authService.registerUser(user);
+            User registeredUser = authService.registerUser(user);
+            return new ResponseEntity<Object>(registeredUser, HttpStatus.OK);
         } catch (APIException exception) {
-
+            return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Auth0Exception exception) {
-
+            return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
 
-        return "Registration successful";
     }
 
 

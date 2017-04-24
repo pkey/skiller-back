@@ -24,15 +24,13 @@ public class Auth0AuthenticationService implements AuthenticationService  {
             "t4-jBn57is-WeG71RwW7UOa69cvxbkqbihx14zmwHor4gU4ztWMZ4K9u8yaZphYP");
 
     @Override
-    public TokenHolder registerUser(User user) throws APIException, Auth0Exception {
+    public User registerUser(User user) throws APIException, Auth0Exception {
 
         SignUpRequest request = auth.signUp(user.getEmail(), user.getUsername(), user.getPassword(), user.getConnection());
 
-        TokenHolder token = loginUser(user);
-
         request.execute();
 
-        return token;
+        return user;
 
     }
 

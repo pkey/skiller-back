@@ -35,7 +35,7 @@ public class MainController {
     }
 
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     public @ResponseBody
     ResponseEntity<?> login(@RequestBody User user) {
         try {
@@ -56,9 +56,8 @@ public class MainController {
     ResponseEntity<?> register(@RequestBody User user) {
 
         try {
-
-            TokenHolder token = authService.registerUser(user);
-            return new ResponseEntity<Object>(token, HttpStatus.OK);
+            User registeredUser = authService.registerUser(user);
+            return new ResponseEntity<Object>(registeredUser, HttpStatus.OK);
         } catch (APIException exception) {
             return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Auth0Exception exception) {

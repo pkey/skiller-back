@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface AuthenticationService  {
 
-    TokenHolder registerUser(User user) throws APIException, Auth0Exception;
+    User registerUser(User user) throws APIException, Auth0Exception;
 
     TokenHolder loginUser(User user) throws APIException, Auth0Exception ;
     }

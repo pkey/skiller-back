@@ -1,5 +1,7 @@
 package lt.swedbank.beans;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Transient;
@@ -11,6 +13,7 @@ import javax.persistence.Transient;
 public class User {
 
     @Id
+    @JsonIgnore
     private Long id;
 
     @Transient

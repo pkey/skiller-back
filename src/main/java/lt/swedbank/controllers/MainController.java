@@ -18,10 +18,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 @Component
@@ -36,12 +35,12 @@ public class MainController {
     }
 
 
-    @RequestMapping(value = "/login")
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<String> login(@RequestBody User user) {
+    ResponseEntity<?> login(@RequestBody User user) {
         try {
             TokenHolder token = authService.loginUser(user);
-            return new ResponseEntity<String>(token.getAccessToken(), HttpStatus.OK);
+            return new ResponseEntity<Object>(token, HttpStatus.OK);
         } catch (APIException exception) {
             return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Auth0Exception exception) {
@@ -52,14 +51,14 @@ public class MainController {
 
     //AuthRequest login(String emailOrUsername, String password)
     /* Maps to all HTTP actions by default (GET,POST,..)*/
-    @RequestMapping("/register")
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     public @ResponseBody
     ResponseEntity<?> register(@RequestBody User user) {
 
         try {
 
-            User registeredUser = authService.registerUser(user);
-            return new ResponseEntity<Object>(registeredUser, HttpStatus.OK);
+            TokenHolder token = authService.registerUser(user);
+            return new ResponseEntity<Object>(token, HttpStatus.OK);
         } catch (APIException exception) {
             return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Auth0Exception exception) {

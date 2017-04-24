@@ -2,6 +2,7 @@ package lt.swedbank.services;
 
 import com.auth0.exception.APIException;
 import com.auth0.exception.Auth0Exception;
+import com.auth0.json.auth.TokenHolder;
 import lt.swedbank.beans.User;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +13,8 @@ import org.springframework.stereotype.Service;
 @Service
 public interface AuthenticationService  {
 
-    void registerUser(User user) throws APIException, Auth0Exception;
+    User registerUser(User user) throws APIException, Auth0Exception;
 
-    void loginUser(User user);
+    TokenHolder loginUser(User user) throws APIException, Auth0Exception ;
     }
 

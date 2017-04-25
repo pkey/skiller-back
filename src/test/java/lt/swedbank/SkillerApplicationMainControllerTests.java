@@ -1,33 +1,25 @@
 package lt.swedbank;
 
-import com.auth0.exception.Auth0Exception;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.User;
 import lt.swedbank.controllers.MainController;
 import lt.swedbank.services.Auth0AuthenticationService;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.nio.charset.Charset;
 
 import static org.mockito.Matchers.any;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class SkillerApplicationMainControllerTests {
@@ -58,16 +50,16 @@ public class SkillerApplicationMainControllerTests {
 
         this.mapper = new ObjectMapper();
 
-
         user = new User();
-    }
-
-    @Test
-    public void loginTest() throws Exception {
         user.setUsername("TestUser");
         user.setPassword("TestUserPassword");
         user.setEmail("testuser@gmail.com");
         user.setConnection("Username-Password-Authentication");
+    }
+
+    @Test
+    public void loginTest() throws Exception {
+
 
         Mockito.when(auth0AuthenticationService.registerUser(any())).thenReturn(user);
 
@@ -82,6 +74,17 @@ public class SkillerApplicationMainControllerTests {
                 //.andExpect(content().json(expectedJson));
     }
 
+    @Test
+    public void getTest()
+    {
+
+        //mockMvc.perform(get("/get");
+
+        //Mockito.when(auth0AuthenticationService.getUser(any())).thenReturn(this.user);
+
+    }
+
 
 
 }
+    

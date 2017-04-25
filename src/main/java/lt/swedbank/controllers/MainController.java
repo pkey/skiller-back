@@ -1,25 +1,18 @@
 package lt.swedbank.controllers;
 
-import com.auth0.client.auth.AuthAPI;
 import com.auth0.exception.APIException;
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.TokenHolder;
-import com.auth0.net.AuthRequest;
-import com.auth0.net.SignUpRequest;
 import lt.swedbank.beans.User;
 import lt.swedbank.services.Auth0AuthenticationService;
 import lt.swedbank.services.AuthenticationService;
-import org.hibernate.loader.custom.Return;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 
 @Controller
@@ -49,8 +42,7 @@ public class MainController {
 
     }
 
-    //AuthRequest login(String emailOrUsername, String password)
-    /* Maps to all HTTP actions by default (GET,POST,..)*/
+
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public @ResponseBody
     ResponseEntity<?> register(@RequestBody User user) {

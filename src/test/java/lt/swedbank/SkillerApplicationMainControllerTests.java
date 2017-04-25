@@ -20,6 +20,7 @@ import java.nio.charset.Charset;
 
 import static org.mockito.Matchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class SkillerApplicationMainControllerTests {
@@ -72,6 +73,18 @@ public class SkillerApplicationMainControllerTests {
                 .content(bookmarkJson))
                 .andExpect(status().isOk());
                 //.andExpect(content().json(expectedJson));
+    }
+
+    @Test
+    public void registerTest() throws Exception {
+
+        String bookmarkJson = mapper.writeValueAsString(user);
+
+        this.mockMvc.perform(post("/register")
+                .contentType(contentType)
+                .content(bookmarkJson))
+                .andExpect(status().isOk());
+//                .andExpect(content().json(expectedJson));
     }
 
     @Test

@@ -42,8 +42,7 @@ public class MainController {
 
     }
 
-    //AuthRequest login(String emailOrUsername, String password)
-    /* Maps to all HTTP actions by default (GET,POST,..)*/
+
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public @ResponseBody
     ResponseEntity<?> register(@RequestBody User user) {

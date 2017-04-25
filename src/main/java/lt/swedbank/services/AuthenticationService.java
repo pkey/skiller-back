@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  */
 
 @Service
-public interface AuthenticationService  {
+public interface AuthenticationService {
 
     User registerUser(User user) throws APIException, Auth0Exception;
 

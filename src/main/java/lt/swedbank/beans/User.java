@@ -1,6 +1,7 @@
 package lt.swedbank.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -21,8 +22,10 @@ public class User {
     @Transient
     private String lastName;
     @Transient
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     @Transient
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String connection;
 
     private String email;

@@ -56,16 +56,18 @@ public class MainController {
         } catch (Auth0Exception exception) {
             return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-
     }
 
-
-    @RequestMapping("/get")
+    @RequestMapping(produces = "application/json", value = "/get", method = RequestMethod.GET)
     public @ResponseBody
-    String get() {
-        return "Should only be returned to auhtorized person";
+    ResponseEntity<?> getUser(@RequestHeader(value="Authorization") String token) {
+        try {
+            User user = authService.getUser(token);
+            return new ResponseEntity<Object>(user, HttpStatus.OK);
+        } catch (APIException exception) {
+            return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Auth0Exception exception) {
+            return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
-
-
 }

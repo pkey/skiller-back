@@ -33,3 +33,13 @@ dependencies {
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
 }
+
+test {
+	systemProperty "CLIENT_ID", System.getProperty("CLIENT_ID")
+	systemProperty "CLIENT_DOMAIN", System.getProperty("CLIENT_DOMAIN")
+	systemProperty "CLIENT_SECRET", System.getProperty("CLIENT_SECRET")
+	systemProperty "DB_USERNAME", System.getProperty("DB_USERNAME")
+	systemProperty "DB_PASSWORD", System.getProperty("DB_PASSWORD")
+	systemProperty "DB_URL", System.getProperty("DB_URL")
+	systemProperty "HIBERNATE_BEHAVIOR", System.getProperty("HIBERNATE_BEHAVIOR")
+}

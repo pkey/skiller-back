@@ -17,7 +17,9 @@ public class User {
     private Long id;
 
     @Transient
-    private String username;
+    private String name;
+    @Transient
+    private String lastName;
     @Transient
     private String password;
     @Transient
@@ -33,12 +35,20 @@ public class User {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getName() {
+        return name;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getPassword() {

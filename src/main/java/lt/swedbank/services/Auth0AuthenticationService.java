@@ -26,7 +26,12 @@ public class Auth0AuthenticationService implements AuthenticationService  {
     @Override
     public User registerUser(User user) throws APIException, Auth0Exception {
 
-        SignUpRequest request = auth.signUp(user.getEmail(), user.getUsername(), user.getPassword(), user.getConnection());
+        Map<String, String> fields = new HashMap<>();
+        fields.put("name", user.getName());
+        fields.put("lastName", user.getLastName());
+
+        SignUpRequest request = auth.signUp(user.getEmail(), user.getEmail(), user.getPassword(), user.getConnection())
+                .setCustomFields(fields);
 
         request.execute();
 

@@ -18,6 +18,9 @@
     },
     "HIBERNATE_BEHAVIOR": {
       "required": true
+    },
+    "MANAGEMENT_API_AUDIENCE": {
+      "required": true
     }
   },
   "formation": {

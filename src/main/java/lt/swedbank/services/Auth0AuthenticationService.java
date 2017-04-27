@@ -1,5 +1,7 @@
 package lt.swedbank.services;
 
+
+//Auth0 dependencies
 import com.auth0.client.auth.AuthAPI;
 import com.auth0.client.mgmt.ManagementAPI;
 import com.auth0.client.mgmt.filter.UserFilter;
@@ -10,16 +12,21 @@ import com.auth0.json.auth.UserInfo;
 import com.auth0.net.AuthRequest;
 import com.auth0.net.Request;
 import com.auth0.net.SignUpRequest;
+
+//Unirest to call rest services
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import lt.swedbank.beans.User;
+
+
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import lt.swedbank.beans.User;
 
 
 /**
@@ -29,28 +36,33 @@ import java.util.Map;
 public class Auth0AuthenticationService implements AuthenticationService {
 
 
-    private String clientId;
+    private String clientId; //Auth0 client ID
 
-    private String clientSecret;
+    private String clientSecret; //Auth0 client secret
 
-    private String clientDomain;
+    private String clientDomain; //Auth0 client domain
 
-    private AuthAPI auth;
+    private String managementApiAudience; //Auth0 client audience
 
-    private ManagementAPI mgmt;
+    private AuthAPI auth; //Auth0 Authentication API
+
+    private ManagementAPI mgmt; //Auth0 Management API
 
     @Autowired
     public Auth0AuthenticationService(@Value("${auth0.clientId}") String clientId,
                                       @Value("${auth0.clientSecret}") String clientSecret,
-                                      @Value("${auth0.clientDomain}") String clientDomain) {
+                                      @Value("${auth0.clientDomain}") String clientDomain,
+                                      @Value("${auth0.managementApiAudience}") String managementApiAudience) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.clientDomain = clientDomain;
+        this.managementApiAudience = managementApiAudience;
+
 
         this.auth = new AuthAPI(clientDomain, clientId, clientSecret);
 
 
-        this.mgmt = new ManagementAPI("https://skiller.eu.auth0.com/", getApiAuthenticationToken());
+        this.mgmt = new ManagementAPI(this.clientDomain, this.getApiAccessToken());
     }
 
 
@@ -93,12 +105,7 @@ public class Auth0AuthenticationService implements AuthenticationService {
         return info;
     }
 
-    private String removeTokenHead(String token) {
-        return token.substring(7);
-    }
-
-    @Override
-    public User parseUserInfoToUser(UserInfo userInfo) throws Auth0Exception {
+    private User parseUserInfoToUser(UserInfo userInfo) throws Auth0Exception {
 
         User user = new User();
 
@@ -112,6 +119,11 @@ public class Auth0AuthenticationService implements AuthenticationService {
         return user;
     }
 
+    private String removeTokenHead(String token) {
+        return token.substring(7);
+    }
+
+
     private com.auth0.json.mgmt.users.User getManagementResponse(Map<String, Object> mappedUserInfo) throws Auth0Exception {
         UserFilter filter = new UserFilter();
         Request<com.auth0.json.mgmt.users.User> request = mgmt.users().get(getUserID(mappedUserInfo), filter);
@@ -124,23 +136,33 @@ public class Auth0AuthenticationService implements AuthenticationService {
         return userID;
     }
 
-    private String getApiAuthenticationToken(){
+    private String getApiAccessToken() {
 
 
         try {
 
+            Map<String, Object> requestBodyFields = new HashMap<>();
+            requestBodyFields.put("grant_type", "client_credentials");
+            requestBodyFields.put("client_id", this.clientId);
+            requestBodyFields.put("client_secret", this.clientSecret);
+            requestBodyFields.put("audience", this.managementApiAudience);
+
+            JSONObject requestBody = new JSONObject(requestBodyFields);
+
+
             HttpResponse<String> response = Unirest.post("https://skiller.eu.auth0.com/oauth/token")
                     .header("content-type", "application/json")
-                    .body("{\"grant_type\":\"client_credentials\"," +
-                            "\"client_id\": \"O6JkkKHyKfujkLjALIEAEYONE0XFatb8\"," +
-                            "\"client_secret\": \"t4-jBn57is-WeG71RwW7UOa69cvxbkqbihx14zmwHor4gU4ztWMZ4K9u8yaZphYP\"," +
-                            "\"audience\": \"https://skiller.eu.auth0.com/api/v2/\"}")
+                    .body(requestBody)
                     .asString();
 
-            return response.getBody();
 
-        } catch(UnirestException u) {
-            return "";
+            JSONObject myObject = new JSONObject(response.getBody());
+
+            return myObject.getString("access_token");
+
+        } catch (UnirestException u) {
+            //TODO Handle Unirest exception
+            return null;
         }
     }
 

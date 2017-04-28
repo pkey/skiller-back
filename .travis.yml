@@ -1,7 +1,9 @@
 language: java
 jdk:
  - oraclejdk8
-script: ./gradlew check -DDB_URL=$DB_URL -DDB_USERNAME=$DB_USERNAME
+script: ./gradlew check -DDB_URL=$DB_URL
+ -DDB_USERNAME=$DB_USERNAME
+
 deploy:
  provider: heroku
  api-key:

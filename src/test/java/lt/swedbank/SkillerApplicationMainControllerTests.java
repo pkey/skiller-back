@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.User;
 import lt.swedbank.controllers.MainController;
 import lt.swedbank.services.Auth0AuthenticationService;
+import org.hamcrest.core.IsNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -13,15 +14,19 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import javax.validation.constraints.Null;
 import java.nio.charset.Charset;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.isNotNull;
+import static org.mockito.Matchers.isNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class SkillerApplicationMainControllerTests {
 
@@ -31,7 +36,7 @@ public class SkillerApplicationMainControllerTests {
 
     private MockMvc mockMvc;
 
-    private User user;
+    private User correctUser;
 
     @InjectMocks
     private MainController mainController;
@@ -47,56 +52,64 @@ public class SkillerApplicationMainControllerTests {
 
         MockitoAnnotations.initMocks(this);
 
-        this.mockMvc = MockMvcBuilders.standaloneSetup(mainController)./*addFilters(new CorsFilter()).*/build();
+        mockMvc = MockMvcBuilders.standaloneSetup(mainController)./*addFilters(new CorsFilter()).*/build();
 
-        this.mapper = new ObjectMapper();
+        mapper = new ObjectMapper();
 
-        user = new User();
-        user.setUsername("TestUser");
-        user.setPassword("TestUserPassword");
-        user.setEmail("testuser@gmail.com");
-        user.setConnection("Username-Password-Authentication");
+        correctUser = new User();
+        correctUser.setName("TestUserName");
+        correctUser.setLastName("TestUserLastName");
+        correctUser.setPassword("TestUserPassword");
+        correctUser.setEmail("testuser@gmail.com");
+        correctUser.setConnection("Username-Password-Authentication");
     }
 
     @Test
-    public void loginTest() throws Exception {
+    public void loginTest_goodUserJson() throws Exception {
 
+        String bookmarkJson = mapper.writeValueAsString(correctUser);
 
-        Mockito.when(auth0AuthenticationService.registerUser(any())).thenReturn(user);
-
-        String bookmarkJson = mapper.writeValueAsString(user);
-
-        //String expectedJson = mapper.writeValueAsString();
-
-        this.mockMvc.perform(post("/login")
+        mockMvc.perform(post("/login")
                 .contentType(contentType)
                 .content(bookmarkJson))
                 .andExpect(status().isOk());
-                //.andExpect(content().json(expectedJson));
+                //.andDo(MockMvcResultHandlers.print());
+                //.andExpect(jsonPath("$..access_token").value(IsNotNull()));
     }
 
     @Test
-    public void registerTest() throws Exception {
+    public void registerTest_goodUserJson() throws Exception {
 
-        String bookmarkJson = mapper.writeValueAsString(user);
+        String bookmarkJson = mapper.writeValueAsString(correctUser);
 
-        this.mockMvc.perform(post("/register")
+        mockMvc.perform(post("/register")
                 .contentType(contentType)
                 .content(bookmarkJson))
                 .andExpect(status().isOk());
-//                .andExpect(content().json(expectedJson));
+    }
+/*  "name": "name",
+  "lastName": "Lastname",
+  "email": "saulute3200@gmail.com"*/
+
+    @Test
+    public void getTest_plain() throws Exception {
+
+        mockMvc.perform(get("/get")
+                .contentType(contentType))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
-    public void getTest()
-    {
+    public void getTest_Unauthorized() throws Exception {
 
-        //mockMvc.perform(get("/get");
+        String bookmarkJson = mapper.writeValueAsString(correctUser);
 
-        //Mockito.when(auth0AuthenticationService.getUser(any())).thenReturn(this.user);
-
+        mockMvc.perform(get("/get")//http://localhost:8080
+                .contentType(contentType)
+                .content(bookmarkJson)
+                .header("Content-Type", "application/json"))
+                .andExpect(status().isBadRequest());
     }
-
 
 
 }

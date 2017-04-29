@@ -1,5 +1,7 @@
 package lt.swedbank.services;
 
+
+//Auth0 dependencies
 import com.auth0.client.auth.AuthAPI;
 import com.auth0.client.mgmt.ManagementAPI;
 import com.auth0.client.mgmt.filter.UserFilter;
@@ -10,15 +12,22 @@ import com.auth0.json.auth.UserInfo;
 import com.auth0.net.AuthRequest;
 import com.auth0.net.Request;
 import com.auth0.net.SignUpRequest;
-import lt.swedbank.beans.User;
+
+//Unirest to call rest services
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+
+
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-
-
 import java.util.HashMap;
 import java.util.Map;
+
+import lt.swedbank.beans.User;
+
 
 /**
  * Created by paulius on 4/24/17.
@@ -27,29 +36,34 @@ import java.util.Map;
 public class Auth0AuthenticationService implements AuthenticationService {
 
 
-    private String clientId;
+    private String clientId; //Auth0 client ID
 
-    private String clientSecret;
+    private String clientSecret; //Auth0 client secret
 
-    private String clientDomain;
+    private String clientDomain; //Auth0 client domain
 
-    private AuthAPI auth;
+    private String managementApiAudience; //Auth0 client audience
+
+    private AuthAPI auth; //Auth0 Authentication API
+
+    private ManagementAPI mgmt; //Auth0 Management API
 
     @Autowired
     public Auth0AuthenticationService(@Value("${auth0.clientId}") String clientId,
                                       @Value("${auth0.clientSecret}") String clientSecret,
-                                      @Value("${auth0.clientDomain}") String clientDomain) {
-            this.clientId = clientId;
-            this.clientSecret = clientSecret;
-            this.clientDomain = clientDomain;
+                                      @Value("${auth0.clientDomain}") String clientDomain,
+                                      @Value("${auth0.managementApiAudience}") String managementApiAudience) {
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
+        this.clientDomain = clientDomain;
+        this.managementApiAudience = managementApiAudience;
 
-            this.auth = new AuthAPI(clientDomain, clientId, clientSecret);
+
+        this.auth = new AuthAPI(clientDomain, clientId, clientSecret);
+
+        this.mgmt = new ManagementAPI(this.clientDomain, this.getApiAccessToken());
     }
 
-
-
-
-    ManagementAPI mgmt = new ManagementAPI("https://skiller.eu.auth0.com/", "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ik9UbEZNekl6TVRCRVF6Z3lRakpDUmpRek5UQTVOalZETmpFM05qWXlRalU1TWpGQ056WXpSZyJ9.eyJpc3MiOiJodHRwczovL3NraWxsZXIuZXUuYXV0aDAuY29tLyIsInN1YiI6Im9jOTZSQmpCNERtU2pYUnQ2MzN1MHFzbVQ3NUJrb1JHQGNsaWVudHMiLCJhdWQiOiJodHRwczovL3NraWxsZXIuZXUuYXV0aDAuY29tL2FwaS92Mi8iLCJleHAiOjE0OTMzODM4MjMsImlhdCI6MTQ5MzI5NzQyMywic2NvcGUiOiJyZWFkOmNsaWVudF9ncmFudHMgY3JlYXRlOmNsaWVudF9ncmFudHMgZGVsZXRlOmNsaWVudF9ncmFudHMgdXBkYXRlOmNsaWVudF9ncmFudHMgcmVhZDp1c2VycyB1cGRhdGU6dXNlcnMgZGVsZXRlOnVzZXJzIGNyZWF0ZTp1c2VycyByZWFkOnVzZXJzX2FwcF9tZXRhZGF0YSB1cGRhdGU6dXNlcnNfYXBwX21ldGFkYXRhIGRlbGV0ZTp1c2Vyc19hcHBfbWV0YWRhdGEgY3JlYXRlOnVzZXJzX2FwcF9tZXRhZGF0YSBjcmVhdGU6dXNlcl90aWNrZXRzIHJlYWQ6Y2xpZW50cyB1cGRhdGU6Y2xpZW50cyBkZWxldGU6Y2xpZW50cyBjcmVhdGU6Y2xpZW50cyByZWFkOmNsaWVudF9rZXlzIHVwZGF0ZTpjbGllbnRfa2V5cyBkZWxldGU6Y2xpZW50X2tleXMgY3JlYXRlOmNsaWVudF9rZXlzIHJlYWQ6Y29ubmVjdGlvbnMgdXBkYXRlOmNvbm5lY3Rpb25zIGRlbGV0ZTpjb25uZWN0aW9ucyBjcmVhdGU6Y29ubmVjdGlvbnMgcmVhZDpyZXNvdXJjZV9zZXJ2ZXJzIHVwZGF0ZTpyZXNvdXJjZV9zZXJ2ZXJzIGRlbGV0ZTpyZXNvdXJjZV9zZXJ2ZXJzIGNyZWF0ZTpyZXNvdXJjZV9zZXJ2ZXJzIHJlYWQ6ZGV2aWNlX2NyZWRlbnRpYWxzIHVwZGF0ZTpkZXZpY2VfY3JlZGVudGlhbHMgZGVsZXRlOmRldmljZV9jcmVkZW50aWFscyBjcmVhdGU6ZGV2aWNlX2NyZWRlbnRpYWxzIHJlYWQ6cnVsZXMgdXBkYXRlOnJ1bGVzIGRlbGV0ZTpydWxlcyBjcmVhdGU6cnVsZXMgcmVhZDplbWFpbF9wcm92aWRlciB1cGRhdGU6ZW1haWxfcHJvdmlkZXIgZGVsZXRlOmVtYWlsX3Byb3ZpZGVyIGNyZWF0ZTplbWFpbF9wcm92aWRlciBibGFja2xpc3Q6dG9rZW5zIHJlYWQ6c3RhdHMgcmVhZDp0ZW5hbnRfc2V0dGluZ3MgdXBkYXRlOnRlbmFudF9zZXR0aW5ncyByZWFkOmxvZ3MgcmVhZDpzaGllbGRzIGNyZWF0ZTpzaGllbGRzIGRlbGV0ZTpzaGllbGRzIHVwZGF0ZTp0cmlnZ2VycyByZWFkOnRyaWdnZXJzIHJlYWQ6Z3JhbnRzIGRlbGV0ZTpncmFudHMgcmVhZDpndWFyZGlhbl9mYWN0b3JzIHVwZGF0ZTpndWFyZGlhbl9mYWN0b3JzIHJlYWQ6Z3VhcmRpYW5fZW5yb2xsbWVudHMgZGVsZXRlOmd1YXJkaWFuX2Vucm9sbG1lbnRzIGNyZWF0ZTpndWFyZGlhbl9lbnJvbGxtZW50X3RpY2tldHMgcmVhZDp1c2VyX2lkcF90b2tlbnMifQ.smnyyqJf-g59GON2aNznkUZpS0-QNsPePwq_Ao8VyG7nCbZDp0zpjoLVnvEzbrAk4hJeCcKJwmtxyQCz7-z-cyAjG_jScQFq2baqbDgUBuiaz7DWNrli3hh9775Inh7ysXuBFfN43nB9TS99ShUF9w4WD8sM9Qbbqkx_79zoTMfryhMruiBu9m6avmid18oe8TO4weiN5YvPqKIKgY9NyOQMp3i9SqyrvOvJ-q4Qepz2p86BM_A-nCdoHZXh9lFOVP1uIhxa62JVnetvblH0rI1v43HgunBrDUewKhIYKsiSDjKfvQkHJSlyGQv22Orl-ZNsXK_x753Ck7ccU7rnbg");
 
 
     @Override
@@ -80,9 +94,9 @@ public class Auth0AuthenticationService implements AuthenticationService {
     }
 
     @Override
-    public User getUser(String token)throws APIException, Auth0Exception  {
+    public User getUser(String token) throws APIException, Auth0Exception {
         UserInfo info = getUserInfo(removeTokenHead(token));
-        return  parseUserInfoToUser(info);
+        return parseUserInfoToUser(info);
     }
 
     private UserInfo getUserInfo(String token) throws Auth0Exception {
@@ -91,24 +105,24 @@ public class Auth0AuthenticationService implements AuthenticationService {
         return info;
     }
 
-    private String removeTokenHead(String token){
-        return token.substring(7);
-    }
-
-    @Override
-    public User parseUserInfoToUser(UserInfo userInfo) throws Auth0Exception {
+    private User parseUserInfoToUser(UserInfo userInfo) throws Auth0Exception {
 
         User user = new User();
 
         Map<String, Object> mappedUserInfo = userInfo.getValues();
         com.auth0.json.mgmt.users.User MgmtUser = getManagementResponse(mappedUserInfo);
 
-        user.setEmail((String)mappedUserInfo.get("email"));
+        user.setEmail((String) mappedUserInfo.get("email"));
         user.setLastName((String) MgmtUser.getUserMetadata().get("lastName"));
-        user.setName((String)MgmtUser.getUserMetadata().get("name"));
+        user.setName((String) MgmtUser.getUserMetadata().get("name"));
 
         return user;
     }
+
+    private String removeTokenHead(String token) {
+        return token.substring(7);
+    }
+
 
     private com.auth0.json.mgmt.users.User getManagementResponse(Map<String, Object> mappedUserInfo) throws Auth0Exception {
         UserFilter filter = new UserFilter();
@@ -117,10 +131,39 @@ public class Auth0AuthenticationService implements AuthenticationService {
         return response;
     }
 
-    private String getUserID(Map<String, Object> mappedUserInfo)
-    {
-        String userID = (String)mappedUserInfo.get("sub");
+    private String getUserID(Map<String, Object> mappedUserInfo) {
+        String userID = (String) mappedUserInfo.get("sub");
         return userID;
+    }
+
+    private String getApiAccessToken() {
+
+
+        try {
+
+            Map<String, Object> requestBodyFields = new HashMap<>();
+            requestBodyFields.put("grant_type", "client_credentials");
+            requestBodyFields.put("client_id", this.clientId);
+            requestBodyFields.put("client_secret", this.clientSecret);
+            requestBodyFields.put("audience", this.managementApiAudience);
+
+            JSONObject requestBody = new JSONObject(requestBodyFields);
+
+
+            HttpResponse<String> response = Unirest.post("https://skiller.eu.auth0.com/oauth/token")
+                    .header("content-type", "application/json")
+                    .body(requestBody)
+                    .asString();
+
+
+            JSONObject myObject = new JSONObject(response.getBody());
+
+            return myObject.getString("access_token");
+
+        } catch (UnirestException u) {
+            //TODO Handle Unirest exception
+            return null;
+        }
     }
 
 }

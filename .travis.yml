@@ -1,6 +1,17 @@
 language: java
 jdk:
  - oraclejdk8
+script: ./gradlew check
+ -DDB_URL=$DB_URL
+ -DDB_USERNAME=$DB_USERNAME
+ -DDB_PASSWORD=$DB_PASSWORD
+ -DCLIENT_ID=$CLIENT_ID
+ -DCLIENT_SECRET=$CLIENT_SECRET
+ -DCLIENT_DOMAIN=$CLIENT_DOMAIN
+ -DHIBERNATE_BEHAVIOR=$HIBERNATE_BEHAVIOR
+ -DMANAGEMENT_API_AUDIENCE=$MANAGEMENT_API_AUDIENCE
+before_install:
+  - mysql -e 'CREATE DATABASE skiller'
 deploy:
  provider: heroku
  api-key:

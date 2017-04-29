@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.User;
 import lt.swedbank.controllers.MainController;
 import lt.swedbank.services.Auth0AuthenticationService;
+
 import org.hamcrest.core.IsNull;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -14,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -28,6 +31,7 @@ import static org.mockito.Matchers.isNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+
 public class SkillerApplicationMainControllerTests {
 
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
@@ -37,6 +41,7 @@ public class SkillerApplicationMainControllerTests {
     private MockMvc mockMvc;
 
     private User correctUser;
+
 
     @InjectMocks
     private MainController mainController;
@@ -110,6 +115,7 @@ public class SkillerApplicationMainControllerTests {
                 .header("Content-Type", "application/json"))
                 .andExpect(status().isBadRequest());
     }
+
 
 
 }

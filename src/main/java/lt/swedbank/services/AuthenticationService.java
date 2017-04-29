@@ -20,7 +20,6 @@ public interface AuthenticationService {
 
     User getUser(String token) throws APIException, Auth0Exception;
 
-    User parseUserInfoToUser(UserInfo user) throws Auth0Exception;
 }
 
 

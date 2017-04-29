@@ -10,8 +10,8 @@ script: ./gradlew check
  -DCLIENT_DOMAIN=$CLIENT_DOMAIN
  -DHIBERNATE_BEHAVIOR=$HIBERNATE_BEHAVIOR
  -DMANAGEMENT_API_AUDIENCE=$MANAGEMENT_API_AUDIENCE
-env:
-- DB_URL=$DB_URL
+before_install:
+  - mysql -e 'CREATE DATABASE skiller';
 deploy:
  provider: heroku
  api-key:

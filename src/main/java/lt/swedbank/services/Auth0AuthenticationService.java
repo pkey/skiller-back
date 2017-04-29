@@ -61,9 +61,9 @@ public class Auth0AuthenticationService implements AuthenticationService {
 
         this.auth = new AuthAPI(clientDomain, clientId, clientSecret);
 
-
         this.mgmt = new ManagementAPI(this.clientDomain, this.getApiAccessToken());
     }
+
 
 
     @Override

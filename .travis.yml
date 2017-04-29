@@ -11,7 +11,7 @@ script: ./gradlew check
  -DHIBERNATE_BEHAVIOR=$HIBERNATE_BEHAVIOR
  -DMANAGEMENT_API_AUDIENCE=$MANAGEMENT_API_AUDIENCE
 before_install:
-  - mysql -e 'CREATE DATABASE skiller';
+  - mysql -e 'CREATE DATABASE skiller'
 deploy:
  provider: heroku
  api-key:

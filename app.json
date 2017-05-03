@@ -6,6 +6,21 @@
   "env": {
     "CLEARDB_DATABASE_URL": {
       "required": true
+    },
+    "CLIENT_DOMAIN": {
+      "required": true
+    },
+    "CLIENT_ID": {
+      "required": true
+    },
+    "CLIENT_SECRET": {
+      "required": true
+    },
+    "HIBERNATE_BEHAVIOR": {
+      "required": true
+    },
+    "MANAGEMENT_API_AUDIENCE": {
+      "required": true
     }
   },
   "formation": {

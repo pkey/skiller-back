@@ -28,8 +28,13 @@ import java.nio.charset.Charset;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.isNotNull;
 import static org.mockito.Matchers.isNull;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+
+import static org.hamcrest.core.Is.is;
+import static org.mockito.Mockito.*;
 
 
 public class SkillerApplicationMainControllerTests {
@@ -70,7 +75,7 @@ public class SkillerApplicationMainControllerTests {
     }
 
     @Test
-    public void loginTest_goodUserJson() throws Exception {
+    public void login_good_user_json() throws Exception {
 
         String bookmarkJson = mapper.writeValueAsString(correctUser);
 
@@ -83,7 +88,7 @@ public class SkillerApplicationMainControllerTests {
     }
 
     @Test
-    public void registerTest_goodUserJson() throws Exception {
+    public void register_good_user_json() throws Exception {
 
         String bookmarkJson = mapper.writeValueAsString(correctUser);
 
@@ -96,16 +101,22 @@ public class SkillerApplicationMainControllerTests {
   "lastName": "Lastname",
   "email": "saulute3200@gmail.com"*/
 
-    @Test
-    public void getTest_plain() throws Exception {
+    /*@Test
+    public void get_user_success() throws Exception {
 
-        mockMvc.perform(get("/get")
-                .contentType(contentType))
-                .andExpect(status().isBadRequest());
-    }
+        when(auth0AuthenticationService.getUser(any())).thenReturn(correctUser);
+        mockMvc.perform(get("/get"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(jsonPath("$.name", is("TestUserName")))
+                .andExpect(jsonPath("$.lastName", is("TestUserLastName")))
+                .andExpect(jsonPath("$.email", is("testuser@gmail.com")));
+        verify(auth0AuthenticationService, times(1)).getUser(any());
+        verifyNoMoreInteractions(auth0AuthenticationService);
+    }*/
 
     @Test
-    public void getTest_Unauthorized() throws Exception {
+    public void get_user_unauthorized() throws Exception {
 
         String bookmarkJson = mapper.writeValueAsString(correctUser);
 

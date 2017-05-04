@@ -34,9 +34,13 @@ public class UserController {
     public @ResponseBody
     ResponseEntity<?> getUser(@RequestHeader(value="Authorization") String token) {
         try {
+
+
             //TODO Fix the logic
             User userFromAuth0 = authService.getUser(token);
+
             User userFromRepository = userService.getUserByEmail(userFromAuth0.getEmail());
+
             return new ResponseEntity<Object>(userFromRepository, HttpStatus.OK);
         } catch (APIException exception) {
             return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

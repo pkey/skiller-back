@@ -87,7 +87,8 @@ public class Auth0AuthenticationService implements AuthenticationService {
         request.execute();
 
         //Add user locally
-
+        //TODO Exception for internal error
+        userRepository.save(user);
 
         return user;
 

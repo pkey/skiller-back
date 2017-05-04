@@ -17,9 +17,8 @@ public class User {
     @JsonIgnore
     private Long id;
 
-    @Transient
     private String name;
-    @Transient
+
     private String lastName;
     @Transient
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

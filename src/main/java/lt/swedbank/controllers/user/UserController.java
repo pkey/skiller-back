@@ -3,8 +3,8 @@ package lt.swedbank.controllers.user;
 import com.auth0.exception.APIException;
 import com.auth0.exception.Auth0Exception;
 import lt.swedbank.beans.User;
+import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.user.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -21,18 +21,22 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private UserService userService;
+    private AuthenticationService authService;
 
-    @Autowired
-    public void setAuthenticationService(UserService userService) {
+    public UserController(UserService userService, AuthenticationService authService) {
         this.userService = userService;
+        this.authService = authService;
     }
+
 
     @RequestMapping(produces = "application/json", value = "/get", method = RequestMethod.GET)
     public @ResponseBody
     ResponseEntity<?> getUser(@RequestHeader(value="Authorization") String token) {
         try {
-            User user = userService.getUserByToken(token);
-            return new ResponseEntity<Object>(user, HttpStatus.OK);
+            //TODO Fix the logic
+            User userFromAuth0 = authService.getUser(token);
+            User userFromRepository = userService.getUserByEmail(userFromAuth0.getEmail());
+            return new ResponseEntity<Object>(userFromRepository, HttpStatus.OK);
         } catch (APIException exception) {
             return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Auth0Exception exception) {

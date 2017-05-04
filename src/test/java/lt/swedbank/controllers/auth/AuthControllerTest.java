@@ -1,8 +1,8 @@
-package lt.swedbank.controllers;
+package lt.swedbank.controllers.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.User;
-import lt.swedbank.controllers.AuthController;
+import lt.swedbank.controllers.auth.AuthController;
 import lt.swedbank.services.auth.Auth0AuthenticationService;
 
 import org.junit.Before;
@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
-public class SkillerApplicationAuthControllerTests {
+public class AuthControllerTest {
 
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
                                                 MediaType.APPLICATION_JSON.getSubtype(),
@@ -84,29 +84,6 @@ public class SkillerApplicationAuthControllerTests {
                 .contentType(contentType)
                 .content(bookmarkJson))
                 .andExpect(status().isOk());
-    }
-/*  "name": "name",
-  "lastName": "Lastname",
-  "email": "saulute3200@gmail.com"*/
-
-    @Test
-    public void getTest_plain() throws Exception {
-
-        mockMvc.perform(get("/get")
-                .contentType(contentType))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void getTest_Unauthorized() throws Exception {
-
-        String bookmarkJson = mapper.writeValueAsString(correctUser);
-
-        mockMvc.perform(get("/get")//http://localhost:8080
-                .contentType(contentType)
-                .content(bookmarkJson)
-                .header("Content-Type", "application/json"))
-                .andExpect(status().isBadRequest());
     }
 
 

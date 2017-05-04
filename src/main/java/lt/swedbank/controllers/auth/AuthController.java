@@ -1,4 +1,4 @@
-package lt.swedbank.controllers;
+package lt.swedbank.controllers.auth;
 
 import com.auth0.exception.APIException;
 import com.auth0.exception.Auth0Exception;

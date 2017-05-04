@@ -2,7 +2,6 @@ package lt.swedbank.services.user;
 
 import lt.swedbank.beans.User;
 import lt.swedbank.repositories.UserRepository;
-import lt.swedbank.services.user.IUserService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -29,5 +28,4 @@ public class UserService implements IUserService {
 
         return user;
     }
-
 }

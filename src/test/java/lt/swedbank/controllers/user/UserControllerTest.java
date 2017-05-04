@@ -68,25 +68,14 @@ public class UserControllerTest {
 
 
     @Test
-    public void getTest_plain() throws Exception {
+    public void test_if_unauthorized_when_token_not_provided() throws Exception {
 
-        //TODO How to get base path
+        //TODO Write a test for unauthorized access. Need to provide good headers.
         mockMvc.perform(get("/user/get")
                 .contentType(contentType))
                 .andExpect(status().isBadRequest());
     }
 
-    @Test
-    public void getTest_Unauthorized() throws Exception {
-
-        String bookmarkJson = mapper.writeValueAsString(correctUser);
-
-        mockMvc.perform(get("/user/get")
-                .contentType(contentType)
-                .content(bookmarkJson)
-                .header("Content-Type", "application/json"))
-                .andExpect(status().isBadRequest());
-    }
 
 
 }

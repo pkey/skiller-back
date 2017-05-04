@@ -4,6 +4,7 @@ import com.auth0.exception.APIException;
 import com.auth0.exception.Auth0Exception;
 import lt.swedbank.beans.User;
 import lt.swedbank.services.auth.AuthenticationService;
+import lt.swedbank.services.user.IUserService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/user")
 public class UserController {
 
-    private UserService userService;
+    private IUserService userService;
     private AuthenticationService authService;
 
     public UserController(UserService userService, AuthenticationService authService) {

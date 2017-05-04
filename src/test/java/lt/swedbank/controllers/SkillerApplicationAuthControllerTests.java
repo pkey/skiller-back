@@ -1,28 +1,21 @@
-package lt.swedbank;
+package lt.swedbank.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.User;
-import lt.swedbank.controllers.MainController;
-import lt.swedbank.services.Auth0AuthenticationService;
-
-import org.hamcrest.core.IsNull;
+import lt.swedbank.controllers.AuthController;
+import lt.swedbank.services.auth.Auth0AuthenticationService;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.ResultMatcher;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import javax.validation.constraints.Null;
 import java.nio.charset.Charset;
 
 import static org.mockito.Matchers.any;
@@ -32,7 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
-public class SkillerApplicationMainControllerTests {
+public class SkillerApplicationAuthControllerTests {
 
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
                                                 MediaType.APPLICATION_JSON.getSubtype(),
@@ -44,7 +37,7 @@ public class SkillerApplicationMainControllerTests {
 
 
     @InjectMocks
-    private MainController mainController;
+    private AuthController authController;
 
     @Mock
     private Auth0AuthenticationService auth0AuthenticationService;
@@ -57,7 +50,7 @@ public class SkillerApplicationMainControllerTests {
 
         MockitoAnnotations.initMocks(this);
 
-        mockMvc = MockMvcBuilders.standaloneSetup(mainController)./*addFilters(new CorsFilter()).*/build();
+        mockMvc = MockMvcBuilders.standaloneSetup(authController)./*addFilters(new CorsFilter()).*/build();
 
         mapper = new ObjectMapper();
 

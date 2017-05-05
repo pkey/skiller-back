@@ -1,6 +1,7 @@
 package lt.swedbank;
 
 import com.auth0.exception.Auth0Exception;
+import com.auth0.json.auth.TokenHolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.User;
 import lt.swedbank.controllers.MainController;
@@ -84,8 +85,8 @@ public class SkillerApplicationMainControllerTests {
                 .contentType(contentType)
                 .content(bookmarkJson))
                 .andExpect(status().isOk());
-                //.andDo(MockMvcResultHandlers.print());
-                //.andExpect(jsonPath("$..access_token").value(IsNotNull()));
+        verify(auth0AuthenticationService, times(1)).loginUser(any());
+        verifyNoMoreInteractions(auth0AuthenticationService);
     }
 
     @Test
@@ -93,17 +94,18 @@ public class SkillerApplicationMainControllerTests {
 
         String bookmarkJson = mapper.writeValueAsString(correctUser);
 
+        when(auth0AuthenticationService.registerUser(any())).thenReturn(correctUser);
         mockMvc.perform(post("/register")
                 .contentType(contentType)
                 .content(bookmarkJson))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(jsonPath("$.name", is("TestUserName")))
+                .andExpect(jsonPath("$.lastName", is("TestUserLastName")))
+                .andExpect(jsonPath("$.email", is("testuser@gmail.com")));
+        verify(auth0AuthenticationService, times(1)).registerUser(any());
+        verifyNoMoreInteractions(auth0AuthenticationService);
     }
-
-    /* user example:
-    "name": "name",
-    "lastName": "Lastname",
-    "email": "saulute3200@gmail.com"*/
-
 
     /**
      * TODO

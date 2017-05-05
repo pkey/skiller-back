@@ -23,7 +23,6 @@ import java.util.List;
 @Component
 @CrossOrigin(origins = "*")
 public class MainController {
-//
 
     private AuthenticationService authService;
 
@@ -47,11 +46,9 @@ public class MainController {
 
     }
 
-
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public @ResponseBody
     ResponseEntity<?> register(@RequestBody User user) {
-
         try {
             User registeredUser = authService.registerUser(user);
             return new ResponseEntity<Object>(registeredUser, HttpStatus.OK);
@@ -62,13 +59,16 @@ public class MainController {
         }
     }
 
-    @RequestMapping(produces = "application/json", value = "/get", method = RequestMethod.GET)
+    @RequestMapping(value = "/get", method = RequestMethod.GET)
     public @ResponseBody
     ResponseEntity<?> getUser(@RequestHeader(value="Authorization") String token) {
         try {
             User user = authService.getUser(token);
 
             //hardcoded skills section
+            if(user == null)
+                user = new User();
+
             JSONObject userJson = new JSONObject(user);
 
             JSONArray skills = new JSONArray();

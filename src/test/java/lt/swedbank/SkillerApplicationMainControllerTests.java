@@ -1,5 +1,6 @@
 package lt.swedbank;
 
+import com.auth0.exception.Auth0Exception;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.User;
 import lt.swedbank.controllers.MainController;
@@ -88,7 +89,7 @@ public class SkillerApplicationMainControllerTests {
     }
 
     @Test
-    public void register_good_user_json() throws Exception {
+    public void register_user_good_json() throws Exception {
 
         String bookmarkJson = mapper.writeValueAsString(correctUser);
 
@@ -97,37 +98,42 @@ public class SkillerApplicationMainControllerTests {
                 .content(bookmarkJson))
                 .andExpect(status().isOk());
     }
-/*  "name": "name",
-  "lastName": "Lastname",
-  "email": "saulute3200@gmail.com"*/
 
-    /*@Test
+    /* user example:
+    "name": "name",
+    "lastName": "Lastname",
+    "email": "saulute3200@gmail.com"*/
+
+
+    /**
+     * TODO
+     * uncomment contentType expectation when the controller will be changed
+    */
+
+    @Test
     public void get_user_success() throws Exception {
 
         when(auth0AuthenticationService.getUser(any())).thenReturn(correctUser);
-        mockMvc.perform(get("/get"))
+        mockMvc.perform(get("/get").header("Authorization", "Bearer"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                //.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))//Irrelevant while skills array is hardcoded
                 .andExpect(jsonPath("$.name", is("TestUserName")))
                 .andExpect(jsonPath("$.lastName", is("TestUserLastName")))
                 .andExpect(jsonPath("$.email", is("testuser@gmail.com")));
         verify(auth0AuthenticationService, times(1)).getUser(any());
         verifyNoMoreInteractions(auth0AuthenticationService);
-    }*/
-
-    @Test
-    public void get_user_unauthorized() throws Exception {
-
-        String bookmarkJson = mapper.writeValueAsString(correctUser);
-
-        mockMvc.perform(get("/get")//http://localhost:8080
-                .contentType(contentType)
-                .content(bookmarkJson)
-                .header("Content-Type", "application/json"))
-                .andExpect(status().isBadRequest());
     }
 
+    @Test
+    public void get_user_auth0_exception() throws Exception {
 
+        when(auth0AuthenticationService.getUser(any())).thenThrow(new Auth0Exception("mocked Auth0 exception"));
+        mockMvc.perform(get("/get").header("Authorization", ""))
+                .andExpect(status().isInternalServerError());
+                //.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));//Irrelevant while skills array is hardcoded
+        verify(auth0AuthenticationService, times(1)).getUser(any());
+        verifyNoMoreInteractions(auth0AuthenticationService);
+    }
 
 }
     

@@ -32,16 +32,12 @@ public class UserController {
 
     @RequestMapping(produces = "application/json", value = "/get", method = RequestMethod.GET)
     public @ResponseBody
-    ResponseEntity<?> getUser(@RequestHeader(value="Authorization") String token) {
+    ResponseEntity<?> getUser(@RequestAttribute(value = "email") String email) {
         try {
-            //TODO Fix the logic
-            User userFromAuth0 = authService.getUser(token);
-            User userFromRepository = userService.getUserByEmail(userFromAuth0.getEmail());
+            User userFromRepository = userService.getUserByEmail(email);
             return new ResponseEntity<Object>(userFromRepository, HttpStatus.OK);
-        } catch (APIException exception) {
-            return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Auth0Exception exception) {
-            return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

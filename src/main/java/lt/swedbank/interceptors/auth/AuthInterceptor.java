@@ -2,24 +2,24 @@ package lt.swedbank.interceptors.auth;
 
 import lt.swedbank.services.auth.Auth0AuthenticationService;
 import lt.swedbank.services.auth.AuthenticationService;
-import org.bouncycastle.jcajce.provider.asymmetric.ec.KeyFactorySpi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
-/**
- * Created by paulius on 5/5/17.
- */
 @Component
 public class AuthInterceptor extends HandlerInterceptorAdapter {
 
+
+    private AuthenticationService authService;
+
     @Autowired
-    private AuthenticationService authenticationService;
+    public void setAuthenticationService(Auth0AuthenticationService authService) {
+        this.authService = authService;
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -29,18 +29,9 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
         return true;
     }
 
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        super.postHandle(request, response, handler, modelAndView);
-    }
-
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        super.afterCompletion(request, response, handler, ex);
-    }
 
     private String getRequestingUsersEmail(String token) throws Exception {
 
-        return authenticationService.getUser(token).getEmail();
+        return authService.getUser(token).getEmail();
     }
 }

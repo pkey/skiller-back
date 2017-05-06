@@ -1,42 +1,56 @@
 package lt.swedbank.interceptors.auth;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.FluentIterable;
-import lt.swedbank.SkillerApplication;
-import org.hamcrest.Matchers;
+import com.auth0.exception.Auth0Exception;
+import lt.swedbank.beans.User;
+import lt.swedbank.services.auth.AuthenticationService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Configuration;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.servlet.HandlerExecutionChain;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import java.util.Arrays;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 public class AuthInterceptorTest {
 
-    @Autowired
-    private RequestMappingHandlerAdapter handlerAdapter;
 
-    @Autowired
-    private RequestMappingHandlerMapping handlerMapping;
+    @InjectMocks
+    private AuthInterceptor authInterceptor;
+
+    @Mock
+    private AuthenticationService authenticationService;
+
+    private User testUser;
+
+    private Object handler;
 
     @Before
     public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+
+        this.testUser = new User();
+        testUser.setId(new Long(0));
+        testUser.setName("Testas");
+        testUser.setLastName("Testauskas");
+        testUser.setEmail("test@test.com");
+
+
+        HandlerExecutionChain handlerExecutionChain = new HandlerExecutionChain(authInterceptor);
+
+        this.handler = handlerExecutionChain.getHandler();
+
+
 
     }
 
@@ -44,47 +58,48 @@ public class AuthInterceptorTest {
     public void tearDown() throws Exception {
     }
 
-//    @Test
-//    public void cacheResourcesConfiguration() throws Exception {
-//        AuthInterceptor interceptor = new AuthInterceptor();
-//
-//        interceptor.preHandle(request, response, null);
-//
-//        Iterable<String> cacheControlHeaders = response.getHeaders("Cache-Control");
-//        assertThat(cacheControlHeaders, Matchers.hasItem("max-age=10"));
-//    }
+
+
     @Test
-    public void preHandle() throws Exception {
+    public void test_if_pre_handle_adds_email_to_a_request() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("/test");
+        request.setRequestURI("/user/get");
         request.setMethod("GET");
+
 
 
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        HandlerExecutionChain handlerExecutionChain = handlerMapping.getHandler(request);
+        Mockito.when(authenticationService.getUser(any())).thenReturn(this.testUser);
 
-        HandlerInterceptor[] interceptors = handlerExecutionChain.getInterceptors();
+        authInterceptor.preHandle(request, response, this.handler);
 
-        for(HandlerInterceptor interceptor : interceptors){
-            interceptor.preHandle(request, response, handlerExecutionChain.getHandler());
-        }
+        Mockito.verify(this.authenticationService, Mockito.times(1)).getUser(any());
 
-        ModelAndView mav = handlerAdapter. handle(request, response, handlerExecutionChain.getHandler());
-
-        for(HandlerInterceptor interceptor : interceptors){
-            interceptor.postHandle(request, response, handlerExecutionChain.getHandler(), mav);
-        }
-
-        assertEquals(200, response.getStatus());
+        assertEquals(testUser.getEmail(), request.getAttribute("email"));
     }
 
-    @Test
-    public void postHandle() throws Exception {
+    @Test(expected=Auth0Exception.class)
+    public void test_if_error_is_thrown_when_service_fails() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/user/get");
+        request.setMethod("GET");
+
+
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        Mockito.when(authenticationService.getUser(any())).thenThrow(new Auth0Exception("..."));
+
+        Mockito.verify(this.authenticationService, Mockito.times(0)).getUser(any());
+
+
+
+        authInterceptor.preHandle(request, response, this.handler);
+
+
     }
 
-    @Test
-    public void afterCompletion() throws Exception {
-    }
+
 
 }

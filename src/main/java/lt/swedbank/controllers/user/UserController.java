@@ -1,9 +1,6 @@
 package lt.swedbank.controllers.user;
 
-import com.auth0.exception.APIException;
-import com.auth0.exception.Auth0Exception;
 import lt.swedbank.beans.User;
-import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.user.IUserService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.http.HttpStatus;
@@ -22,11 +19,9 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private IUserService userService;
-    private AuthenticationService authService;
 
-    public UserController(UserService userService, AuthenticationService authService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.authService = authService;
     }
 
 
@@ -37,7 +32,7 @@ public class UserController {
             User userFromRepository = userService.getUserByEmail(email);
             return new ResponseEntity<Object>(userFromRepository, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

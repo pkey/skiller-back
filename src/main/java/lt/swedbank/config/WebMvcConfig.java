@@ -1,14 +1,9 @@
 package lt.swedbank.config;
 
-import lt.swedbank.interceptors.AuthenticationInterceptor;
 import lt.swedbank.interceptors.auth.AuthInterceptor;
-import lt.swedbank.services.auth.AuthenticationService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.*;
-import org.springframework.web.servlet.config.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 @Configuration
 @EnableWebMvc
@@ -18,9 +13,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     public AuthInterceptor authInterceptor() {
         return new AuthInterceptor();
     }
-
-
-
 
 
     @Override

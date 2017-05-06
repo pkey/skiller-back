@@ -10,15 +10,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 
-/**
- * Created by paulius on 5/4/17.
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 public class UserServiceTest {
 
@@ -46,6 +42,7 @@ public class UserServiceTest {
 
     @After
     public void tearDown() throws Exception {
+        userRepository.delete(testUser.getId());
     }
 
     @Test

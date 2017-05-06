@@ -6,10 +6,6 @@ import com.auth0.json.auth.TokenHolder;
 import lt.swedbank.beans.User;
 import org.springframework.stereotype.Service;
 
-/**
- * Created by paulius on 4/24/17.
- */
-
 @Service
 public interface AuthenticationService {
 

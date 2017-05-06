@@ -5,15 +5,10 @@ import lt.swedbank.services.user.IUserService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * Created by paulius on 5/4/17.
- */
 @Controller
-@Component
 @CrossOrigin(origins = "*")
 @RequestMapping(value = "/user")
 public class UserController {

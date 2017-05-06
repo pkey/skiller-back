@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 
-/**
- * Created by paulius on 4/24/17.
- */
+
 @Entity
 public class User {
 

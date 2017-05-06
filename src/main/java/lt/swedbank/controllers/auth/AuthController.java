@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @Component
 @CrossOrigin(origins = "*")
 public class AuthController {
-//
 
     private AuthenticationService authService;
 

@@ -4,9 +4,6 @@ import lt.swedbank.beans.User;
 import lt.swedbank.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
-/**
- * Created by paulius on 5/4/17.
- */
 @Service
 public class UserService implements IUserService {
 

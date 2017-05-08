@@ -70,9 +70,6 @@ public class AuthController {
             User user = authService.getUser(token);
 
             //hardcoded skills section
-            if(user == null)
-                user = new User();
-
             JSONObject userJson = new JSONObject(user);
 
             JSONArray skills = new JSONArray();

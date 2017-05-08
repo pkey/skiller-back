@@ -3,23 +3,19 @@ package lt.swedbank.beans;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
-/**
- * Created by paulius on 4/24/17.
- */
+
 @Entity
 public class User {
 
     @Id
     @JsonIgnore
+    @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
 
-    @Transient
     private String name;
-    @Transient
+
     private String lastName;
     @Transient
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

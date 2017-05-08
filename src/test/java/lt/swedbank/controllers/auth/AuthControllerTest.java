@@ -1,45 +1,37 @@
-package lt.swedbank;
+package lt.swedbank.controllers.auth;
 
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.TokenHolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.User;
-import lt.swedbank.controllers.MainController;
-import lt.swedbank.services.Auth0AuthenticationService;
-
-import org.hamcrest.core.IsNull;
+import lt.swedbank.controllers.auth.AuthController;
+import lt.swedbank.services.auth.Auth0AuthenticationService;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.ResultMatcher;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import javax.validation.constraints.Null;
+
 import java.nio.charset.Charset;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.isNotNull;
-import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.*;
 
+public class AuthControllerTest {
 
-public class SkillerApplicationMainControllerTests {
+
 
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
                                                 MediaType.APPLICATION_JSON.getSubtype(),
@@ -51,7 +43,7 @@ public class SkillerApplicationMainControllerTests {
 
 
     @InjectMocks
-    private MainController mainController;
+    private AuthController authController;
 
     @Mock
     private Auth0AuthenticationService auth0AuthenticationService;
@@ -64,7 +56,7 @@ public class SkillerApplicationMainControllerTests {
 
         MockitoAnnotations.initMocks(this);
 
-        mockMvc = MockMvcBuilders.standaloneSetup(mainController)./*addFilters(new CorsFilter()).*/build();
+        mockMvc = MockMvcBuilders.standaloneSetup(authController).build();
 
         mapper = new ObjectMapper();
 

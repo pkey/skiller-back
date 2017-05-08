@@ -1,4 +1,4 @@
-package lt.swedbank.services;
+package lt.swedbank.services.auth;
 
 
 //Auth0 dependencies
@@ -19,9 +19,11 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 
+import lt.swedbank.repositories.UserRepository;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,9 +31,7 @@ import java.util.Map;
 import lt.swedbank.beans.User;
 
 
-/**
- * Created by paulius on 4/24/17.
- */
+
 @Service
 public class Auth0AuthenticationService implements AuthenticationService {
 
@@ -48,11 +48,14 @@ public class Auth0AuthenticationService implements AuthenticationService {
 
     private ManagementAPI mgmt; //Auth0 Management API
 
+    private UserRepository userRepository;
+
     @Autowired
     public Auth0AuthenticationService(@Value("${auth0.clientId}") String clientId,
                                       @Value("${auth0.clientSecret}") String clientSecret,
                                       @Value("${auth0.clientDomain}") String clientDomain,
-                                      @Value("${auth0.managementApiAudience}") String managementApiAudience) {
+                                      @Value("${auth0.managementApiAudience}") String managementApiAudience,
+                                      UserRepository userRepository) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.clientDomain = clientDomain;
@@ -60,8 +63,9 @@ public class Auth0AuthenticationService implements AuthenticationService {
 
 
         this.auth = new AuthAPI(clientDomain, clientId, clientSecret);
-
         this.mgmt = new ManagementAPI(this.clientDomain, this.getApiAccessToken());
+
+        this.userRepository = userRepository;
     }
 
 
@@ -69,6 +73,7 @@ public class Auth0AuthenticationService implements AuthenticationService {
     @Override
     public User registerUser(User user) throws APIException, Auth0Exception {
 
+        //Register user on Auth0
         Map<String, String> fields = new HashMap<>();
         fields.put("name", user.getName());
         fields.put("lastName", user.getLastName());
@@ -77,6 +82,10 @@ public class Auth0AuthenticationService implements AuthenticationService {
                 .setCustomFields(fields);
 
         request.execute();
+
+        //Add user locally
+        //TODO Exception for internal error
+        userRepository.save(user);
 
         return user;
 

@@ -1,11 +1,11 @@
-package lt.swedbank.controllers;
+package lt.swedbank.controllers.auth;
 
 import com.auth0.exception.APIException;
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.TokenHolder;
 import lt.swedbank.beans.User;
-import lt.swedbank.services.Auth0AuthenticationService;
-import lt.swedbank.services.AuthenticationService;
+import lt.swedbank.services.auth.Auth0AuthenticationService;
+import lt.swedbank.services.auth.AuthenticationService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +15,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 @Controller
 @Component
 @CrossOrigin(origins = "*")
-public class MainController {
+public class AuthController {
 
     private AuthenticationService authService;
 
@@ -46,9 +43,11 @@ public class MainController {
 
     }
 
+
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public @ResponseBody
     ResponseEntity<?> register(@RequestBody User user) {
+
         try {
             User registeredUser = authService.registerUser(user);
             return new ResponseEntity<Object>(registeredUser, HttpStatus.OK);
@@ -73,7 +72,7 @@ public class MainController {
 
             JSONArray skills = new JSONArray();
             skills.put(new JSONObject().put("name", "java"));
-            skills.put(new JSONObject().put("name", "shit posting"));
+            skills.put(new JSONObject().put("name", "something"));
             skills.put(new JSONObject().put("name", "Angular"));
             skills.put(new JSONObject().put("name", "Spring"));
 
@@ -87,4 +86,5 @@ public class MainController {
             return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 }

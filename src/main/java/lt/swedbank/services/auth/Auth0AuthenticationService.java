@@ -32,9 +32,6 @@ import lt.swedbank.beans.User;
 
 
 
-/**
- * Created by paulius on 4/24/17.
- */
 @Service
 public class Auth0AuthenticationService implements AuthenticationService {
 

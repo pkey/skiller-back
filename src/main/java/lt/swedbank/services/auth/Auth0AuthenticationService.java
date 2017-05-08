@@ -70,29 +70,6 @@ public class Auth0AuthenticationService implements AuthenticationService {
         this.userRepository = userRepository;
     }
 
-
-
-    /*@Override
-    public User registerUser(User user) throws APIException, Auth0Exception {
-
-        //Register user on Auth0
-        Map<String, String> fields = new HashMap<>();
-        fields.put("name", user.getName());
-        fields.put("lastName", user.getLastName());
-
-        SignUpRequest request = auth.signUp(user.getEmail(), user.getEmail(), user.getPassword(), user.getConnection())
-                .setCustomFields(fields);
-
-        request.execute();
-
-        //Add user locally
-        //TODO Exception for internal error
-        userRepository.save(user);
-
-        return user;
-
-    }*/
-
     @Override
     public User registerUser(RegisterUserRequest registerUserRequest) throws APIException, Auth0Exception {
 
@@ -115,17 +92,6 @@ public class Auth0AuthenticationService implements AuthenticationService {
         return user;
 
     }
-
-    /*@Override
-    public TokenHolder loginUser(User user) throws APIException, Auth0Exception {
-        AuthRequest request = auth.login(user.getEmail(), user.getPassword(), user.getConnection())
-                .setAudience("https://skiller/api")
-                .setScope("openid");
-
-        TokenHolder holder = request.execute();
-
-        return holder;
-    }*/
 
     @Override
     public TokenHolder loginUser(LoginUserRequest user) throws APIException, Auth0Exception {

@@ -2,6 +2,8 @@ package lt.swedbank.beans.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
@@ -14,13 +16,16 @@ public class LoginUserRequest {
 
     @NotNull(message = "Password is required!")
     @Size(min = 8, max = 45, message = "Password is too short or too long")
+    @ApiModelProperty(required = true, example = "123@Abc:)")
     private String password;
 
     @NotNull(message = "Connection specification is required!")
+    @ApiModelProperty(required = true, example = "Username-Password-Authentication")
     private String connection;
 
     @NotNull(message = "Email is required!")
     @Email(message = "Not an email")
+    @ApiModelProperty(required = true, example = "email@email.com")
     private String email;
 
     public String getPassword() {

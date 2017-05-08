@@ -3,6 +3,7 @@ package lt.swedbank.controllers.auth;
 import com.auth0.exception.APIException;
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.TokenHolder;
+import io.swagger.annotations.Api;
 import lt.swedbank.beans.User;
 import lt.swedbank.beans.request.LoginUserRequest;
 import lt.swedbank.beans.request.RegisterUserRequest;
@@ -61,7 +62,7 @@ public class AuthController {
             return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    
     @RequestMapping(produces = "application/json", value = "/get", method = RequestMethod.GET)
     public @ResponseBody
     ResponseEntity<?> getUser(@RequestHeader(value="Authorization") String token) {

@@ -6,6 +6,7 @@ import com.auth0.json.auth.TokenHolder;
 import lt.swedbank.beans.User;
 import lt.swedbank.beans.request.LoginUserRequest;
 import lt.swedbank.beans.request.RegisterUserRequest;
+import lt.swedbank.beans.response.RegisterUserResponse;
 import lt.swedbank.services.auth.Auth0AuthenticationService;
 import lt.swedbank.services.auth.AuthenticationService;
 import org.json.JSONArray;
@@ -53,7 +54,7 @@ public class AuthController {
 
         try {
             User registeredUser = authService.registerUser(user);
-            return new ResponseEntity<Object>(registeredUser, HttpStatus.OK);
+            return new ResponseEntity<RegisterUserResponse>(new RegisterUserResponse(registeredUser), HttpStatus.OK);
         } catch (APIException exception) {
             return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Auth0Exception exception) {

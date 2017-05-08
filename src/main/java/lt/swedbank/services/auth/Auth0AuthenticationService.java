@@ -94,17 +94,19 @@ public class Auth0AuthenticationService implements AuthenticationService {
     }*/
 
     @Override
-    public User registerUser(RegisterUserRequest user) throws APIException, Auth0Exception {
+    public User registerUser(RegisterUserRequest registerUserRequest) throws APIException, Auth0Exception {
 
         //Register user on Auth0
         Map<String, String> fields = new HashMap<>();
-        fields.put("name", user.getName());
-        fields.put("lastName", user.getLastName());
+        fields.put("name", registerUserRequest.getName());
+        fields.put("lastName", registerUserRequest.getLastName());
 
-        SignUpRequest request = auth.signUp(user.getEmail(), user.getEmail(), user.getPassword(), user.getConnection())
+        SignUpRequest request = auth.signUp(registerUserRequest.getEmail(), registerUserRequest.getEmail(), registerUserRequest.getPassword(), registerUserRequest.getConnection())
                 .setCustomFields(fields);
 
         request.execute();
+
+        User user = new User(registerUserRequest);
 
         //Add user locally
         //TODO Exception for internal error

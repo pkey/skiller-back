@@ -4,6 +4,7 @@ import lt.swedbank.beans.User;
 import lt.swedbank.beans.response.GetUserResponse;
 import lt.swedbank.services.user.IUserService;
 import lt.swedbank.services.user.UserService;
+import org.hibernate.validator.constraints.Email;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -23,7 +24,7 @@ public class UserController {
 
     @RequestMapping(produces = "application/json", value = "/get", method = RequestMethod.GET)
     public @ResponseBody
-    ResponseEntity<?> getUser(@RequestAttribute(value = "email") String email) {
+    ResponseEntity<?> getUser(@RequestAttribute(value = "email") @Email(message = "Not an email") String email) {
         try {
             User userFromRepository = userService.getUserByEmail(email);
             return new ResponseEntity<GetUserResponse>(new GetUserResponse(userFromRepository), HttpStatus.OK);

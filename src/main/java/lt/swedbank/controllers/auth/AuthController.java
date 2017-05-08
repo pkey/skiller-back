@@ -50,7 +50,7 @@ public class AuthController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<?> register(@RequestBody RegisterUserRequest user) {
+    ResponseEntity<?> register(@Valid @RequestBody RegisterUserRequest user) {
 
         try {
             User registeredUser = authService.registerUser(user);

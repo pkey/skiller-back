@@ -2,10 +2,7 @@ package lt.swedbank.beans.response;
 
 import lt.swedbank.beans.User;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-public class RegisterUserResponse extends Response {
+public class GetUserResponse extends Response{
 
     private String name;
 
@@ -13,7 +10,7 @@ public class RegisterUserResponse extends Response {
 
     private String email;
 
-    public RegisterUserResponse(User user) {
+    public GetUserResponse(User user) {
 
         name = user.getName();
         lastName = user.getLastName();

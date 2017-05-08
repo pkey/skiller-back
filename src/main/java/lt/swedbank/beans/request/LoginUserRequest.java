@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lt.swedbank.beans.User;
 import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
@@ -27,6 +28,15 @@ public class LoginUserRequest {
     @Email(message = "Not an email")
     @ApiModelProperty(required = true, example = "email@email.com")
     private String email;
+
+    public LoginUserRequest() {}
+
+    public LoginUserRequest(User user) {
+
+        setPassword(user.getPassword());
+        setConnection(user.getConnection());
+        setEmail(user.getEmail());
+    }
 
     public String getPassword() {
             return password;

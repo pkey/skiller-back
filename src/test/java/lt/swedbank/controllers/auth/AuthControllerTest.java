@@ -4,6 +4,8 @@ import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.TokenHolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.User;
+import lt.swedbank.beans.request.LoginUserRequest;
+import lt.swedbank.beans.request.RegisterUserRequest;
 import lt.swedbank.controllers.auth.AuthController;
 import lt.swedbank.services.auth.Auth0AuthenticationService;
 
@@ -41,7 +43,6 @@ public class AuthControllerTest {
 
     private User correctUser;
 
-
     @InjectMocks
     private AuthController authController;
 
@@ -71,7 +72,7 @@ public class AuthControllerTest {
     @Test
     public void login_good_user_json() throws Exception {
 
-        String bookmarkJson = mapper.writeValueAsString(correctUser);
+        String bookmarkJson = mapper.writeValueAsString(new LoginUserRequest(correctUser));
 
         mockMvc.perform(post("/login")
                 .contentType(contentType)
@@ -84,7 +85,7 @@ public class AuthControllerTest {
     @Test
     public void register_user_good_json() throws Exception {
 
-        String bookmarkJson = mapper.writeValueAsString(correctUser);
+        String bookmarkJson = mapper.writeValueAsString(new RegisterUserRequest(correctUser));
 
         when(auth0AuthenticationService.registerUser(any())).thenReturn(correctUser);
         mockMvc.perform(post("/register")

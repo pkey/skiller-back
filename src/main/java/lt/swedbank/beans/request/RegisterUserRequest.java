@@ -2,6 +2,7 @@ package lt.swedbank.beans.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lt.swedbank.beans.User;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.Email;
 
@@ -30,6 +31,17 @@ public class RegisterUserRequest {
     @NotNull(message = "Email is required!")
     @Email(message = "Not an email")
     private String email;
+
+    public RegisterUserRequest() {}
+
+    public RegisterUserRequest(User user) {
+
+        setName(user.getName());
+        setLastName(user.getLastName());
+        setPassword(user.getPassword());
+        setConnection(user.getConnection());
+        setEmail(user.getEmail());
+    }
 
     public String getName() {
         return name;

@@ -36,33 +36,20 @@ public class AuthController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<?> login(@Valid @RequestBody LoginUserRequest user) {
-        try {
-            TokenHolder token = authService.loginUser(user);
-            return new ResponseEntity<Object>(token, HttpStatus.OK);
-        } catch (APIException exception) {
-            return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Auth0Exception exception) {
-            return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
+    ResponseEntity<?> login(@Valid @RequestBody LoginUserRequest user) throws APIException, Auth0Exception {
+        TokenHolder token = authService.loginUser(user);
+        return new ResponseEntity<Object>(token, HttpStatus.OK);
     }
 
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<?> register(@Valid @RequestBody RegisterUserRequest user) {
-
-        try {
-            User registeredUser = authService.registerUser(user);
-            return new ResponseEntity<RegisterUserResponse>(new RegisterUserResponse(registeredUser), HttpStatus.OK);
-        } catch (APIException exception) {
-            return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Auth0Exception exception) {
-            return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    ResponseEntity<?> register(@Valid @RequestBody RegisterUserRequest user) throws APIException, Auth0Exception {
+        User registeredUser = authService.registerUser(user);
+        return new ResponseEntity<Object>(registeredUser, HttpStatus.OK);
     }
-    
+
+
     @RequestMapping(produces = "application/json", value = "/get", method = RequestMethod.GET)
     public @ResponseBody
     ResponseEntity<?> getUser(@RequestHeader(value="Authorization") String token) {

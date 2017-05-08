@@ -1,25 +1,26 @@
 package lt.swedbank.controllers.auth;
 
 import com.auth0.exception.Auth0Exception;
-import com.auth0.json.auth.TokenHolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.User;
 import lt.swedbank.beans.request.LoginUserRequest;
 import lt.swedbank.beans.request.RegisterUserRequest;
-import lt.swedbank.controllers.auth.AuthController;
+
+import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.services.auth.Auth0AuthenticationService;
+
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
 
 import java.nio.charset.Charset;
 
@@ -33,8 +34,6 @@ import static org.mockito.Mockito.*;
 
 public class AuthControllerTest {
 
-
-
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
                                                 MediaType.APPLICATION_JSON.getSubtype(),
                                                 Charset.forName("utf8"));
@@ -42,6 +41,7 @@ public class AuthControllerTest {
     private MockMvc mockMvc;
 
     private User correctUser;
+
 
     @InjectMocks
     private AuthController authController;
@@ -57,7 +57,9 @@ public class AuthControllerTest {
 
         MockitoAnnotations.initMocks(this);
 
-        mockMvc = MockMvcBuilders.standaloneSetup(authController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(authController)
+                .setControllerAdvice(new RestResponseEntityExceptionHandler())
+                .build();
 
         mapper = new ObjectMapper();
 
@@ -78,6 +80,7 @@ public class AuthControllerTest {
                 .contentType(contentType)
                 .content(bookmarkJson))
                 .andExpect(status().isOk());
+
         verify(auth0AuthenticationService, times(1)).loginUser(any());
         verifyNoMoreInteractions(auth0AuthenticationService);
     }
@@ -100,10 +103,20 @@ public class AuthControllerTest {
         verifyNoMoreInteractions(auth0AuthenticationService);
     }
 
-    /**
-     * TODO
-     * uncomment contentType expectation when the controller will be changed
-    */
+    @Test
+    public void returns_bad_request_with_message_if_email_or_password_is_wrong() throws Exception {
+        Mockito.when(auth0AuthenticationService.loginUser(any())).thenThrow(new Auth0Exception("Message"));
+
+        String bookmarkJson = mapper.writeValueAsString(correctUser);
+
+        Mockito.verify(this.auth0AuthenticationService, Mockito.times(0)).loginUser(any());
+
+        mockMvc.perform(post("/login")
+                .contentType(contentType)
+                .content(bookmarkJson))
+                .andExpect(status().isBadRequest());
+    }
+
 
     @Test
     public void get_user_success() throws Exception {

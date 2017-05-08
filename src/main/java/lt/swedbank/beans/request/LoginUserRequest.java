@@ -2,6 +2,7 @@ package lt.swedbank.beans.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -19,6 +20,7 @@ public class LoginUserRequest {
     private String connection;
 
     @NotNull(message = "Email is required!")
+    @Email(message = "Not an email")
     private String email;
 
     public String getPassword() {

@@ -4,6 +4,8 @@ import com.auth0.exception.APIException;
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.TokenHolder;
 import lt.swedbank.beans.User;
+import lt.swedbank.beans.request.LoginUserRequest;
+import lt.swedbank.beans.request.RegisterUserRequest;
 import lt.swedbank.services.auth.Auth0AuthenticationService;
 import lt.swedbank.services.auth.AuthenticationService;
 import org.json.JSONArray;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 
 @Controller
 @Component
@@ -31,7 +34,7 @@ public class AuthController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<?> login(@RequestBody User user) {
+    ResponseEntity<?> login(@Valid @RequestBody LoginUserRequest user) {
         try {
             TokenHolder token = authService.loginUser(user);
             return new ResponseEntity<Object>(token, HttpStatus.OK);
@@ -46,7 +49,7 @@ public class AuthController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<?> register(@RequestBody User user) {
+    ResponseEntity<?> register(@RequestBody RegisterUserRequest user) {
 
         try {
             User registeredUser = authService.registerUser(user);

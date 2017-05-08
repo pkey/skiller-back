@@ -19,6 +19,8 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 
+import lt.swedbank.beans.request.LoginUserRequest;
+import lt.swedbank.beans.request.RegisterUserRequest;
 import lt.swedbank.repositories.UserRepository;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,8 +72,29 @@ public class Auth0AuthenticationService implements AuthenticationService {
 
 
 
-    @Override
+    /*@Override
     public User registerUser(User user) throws APIException, Auth0Exception {
+
+        //Register user on Auth0
+        Map<String, String> fields = new HashMap<>();
+        fields.put("name", user.getName());
+        fields.put("lastName", user.getLastName());
+
+        SignUpRequest request = auth.signUp(user.getEmail(), user.getEmail(), user.getPassword(), user.getConnection())
+                .setCustomFields(fields);
+
+        request.execute();
+
+        //Add user locally
+        //TODO Exception for internal error
+        userRepository.save(user);
+
+        return user;
+
+    }*/
+
+    @Override
+    public User registerUser(RegisterUserRequest user) throws APIException, Auth0Exception {
 
         //Register user on Auth0
         Map<String, String> fields = new HashMap<>();
@@ -91,8 +114,19 @@ public class Auth0AuthenticationService implements AuthenticationService {
 
     }
 
-    @Override
+    /*@Override
     public TokenHolder loginUser(User user) throws APIException, Auth0Exception {
+        AuthRequest request = auth.login(user.getEmail(), user.getPassword(), user.getConnection())
+                .setAudience("https://skiller/api")
+                .setScope("openid");
+
+        TokenHolder holder = request.execute();
+
+        return holder;
+    }*/
+
+    @Override
+    public TokenHolder loginUser(LoginUserRequest user) throws APIException, Auth0Exception {
         AuthRequest request = auth.login(user.getEmail(), user.getPassword(), user.getConnection())
                 .setAudience("https://skiller/api")
                 .setScope("openid");

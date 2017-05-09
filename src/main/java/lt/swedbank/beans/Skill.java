@@ -1,6 +1,7 @@
 package lt.swedbank.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 
@@ -12,7 +13,8 @@ public class Skill {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
-
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Long userID;
 
     public Skill() {}

@@ -1,15 +1,11 @@
 package lt.swedbank.controllers.auth;
 
 import com.auth0.exception.APIException;
-import com.auth0.exception.Auth0Exception;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.User;
 import lt.swedbank.beans.request.LoginUserRequest;
 import lt.swedbank.beans.request.RegisterUserRequest;
-
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
-
-
 import lt.swedbank.services.auth.Auth0AuthenticationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,20 +16,17 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class AuthControllerTest {
 
@@ -52,6 +45,9 @@ public class AuthControllerTest {
     @Mock
     private Auth0AuthenticationService auth0AuthenticationService;
 
+    @Mock
+    private org.springframework.validation.Validator mockValidator;
+
     @Autowired
     private ObjectMapper mapper;
 
@@ -62,6 +58,7 @@ public class AuthControllerTest {
 
         mockMvc = MockMvcBuilders.standaloneSetup(authController)
                 .setControllerAdvice(new RestResponseEntityExceptionHandler())
+                .setValidator(mockValidator)
                 .build();
 
         mapper = new ObjectMapper();
@@ -161,29 +158,7 @@ public class AuthControllerTest {
         return errorMap;
     }
 
-    @Test
-    public void get_user_success() throws Exception {
 
-        when(auth0AuthenticationService.getUser(any())).thenReturn(correctUser);
-        mockMvc.perform(get("/get").header("Authorization", "Bearer"))
-                .andExpect(status().isOk())
-                //.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))//Irrelevant while skills array is hardcoded
-                .andExpect(jsonPath("$.name", is("TestUserName")))
-                .andExpect(jsonPath("$.lastName", is("TestUserLastName")))
-                .andExpect(jsonPath("$.email", is("testuser@gmail.com")));
-        verify(auth0AuthenticationService, times(1)).getUser(any());
-        verifyNoMoreInteractions(auth0AuthenticationService);
-    }
-
-    @Test
-    public void get_user_auth0_exception() throws Exception {
-
-        when(auth0AuthenticationService.getUser(any())).thenThrow(new Auth0Exception("mocked Auth0 exception"));
-        mockMvc.perform(get("/get").header("Authorization", ""))
-                .andExpect(status().isInternalServerError());
-        verify(auth0AuthenticationService, times(1)).getUser(any());
-        verifyNoMoreInteractions(auth0AuthenticationService);
-    }
 
 }
     

@@ -19,9 +19,6 @@ import java.nio.charset.Charset;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * Created by paulius on 5/4/17.
- */
 public class UserControllerTest {
 
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
@@ -43,11 +40,14 @@ public class UserControllerTest {
     @Mock
     private UserService userService;
 
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        mockMvc = MockMvcBuilders.standaloneSetup(userController)./*addFilters(new CorsFilter()).*/build();
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(userController)
+                .build();
 
         mapper = new ObjectMapper();
 
@@ -70,12 +70,10 @@ public class UserControllerTest {
     @Test
     public void test_if_unauthorized_when_token_not_provided() throws Exception {
 
-        //TODO Write a test for unauthorized access. Need to provide good headers.
         mockMvc.perform(get("/user/get")
+                .header("Authorization", "Bearer bad_token")
                 .contentType(contentType))
                 .andExpect(status().isBadRequest());
     }
-
-
 
 }

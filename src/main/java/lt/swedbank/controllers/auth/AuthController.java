@@ -3,7 +3,10 @@ package lt.swedbank.controllers.auth;
 import com.auth0.exception.APIException;
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.TokenHolder;
+import lt.swedbank.beans.Skill;
 import lt.swedbank.beans.User;
+import lt.swedbank.repositories.SkillRepository;
+import lt.swedbank.repositories.UserRepository;
 import lt.swedbank.services.auth.Auth0AuthenticationService;
 import lt.swedbank.services.auth.AuthenticationService;
 import org.json.JSONArray;
@@ -15,6 +18,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedList;
+import java.util.List;
 
 
 @Controller
@@ -29,10 +34,10 @@ public class AuthController {
         this.authService = authService;
     }
 
-
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public @ResponseBody
     ResponseEntity<?> login(@RequestBody User user) {
+
         try {
             TokenHolder token = authService.loginUser(user);
             return new ResponseEntity<Object>(token, HttpStatus.OK);
@@ -77,7 +82,7 @@ public class AuthController {
             userJson.put("skills", skills);
             //
 
-            return new ResponseEntity<Object>(/*user*/userJson.toString(), HttpStatus.OK);
+            return new ResponseEntity<Object>(userJson, HttpStatus.OK);
         } catch (APIException exception) {
             return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Auth0Exception exception) {

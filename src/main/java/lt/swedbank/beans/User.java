@@ -2,11 +2,13 @@ package lt.swedbank.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.persistence.*;
 
+import java.util.LinkedList;
+import java.util.List;
 
 @Entity
+@Table(name = "USER")
 public class User {
 
     @Id
@@ -24,7 +26,19 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String connection;
 
+    @OneToMany
+    @JoinColumn(name = "userid")
+    private List<Skill> skills = new LinkedList<Skill>();
+
     private String email;
+
+    public List<Skill> getSkills() {
+        return skills;
+    }
+
+    public void setSkills(List<Skill> skills) {
+        this.skills = skills;
+    }
 
     public Long getId() {
         return id;
@@ -72,5 +86,10 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void addSkill(Skill skill)
+    {
+        skills.add(skill);
     }
 }

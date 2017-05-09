@@ -1,5 +1,6 @@
 package lt.swedbank.controllers.auth;
 
+import com.auth0.exception.APIException;
 import com.auth0.exception.Auth0Exception;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.User;
@@ -23,6 +24,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -81,6 +84,7 @@ public class AuthControllerTest {
                 .content(bookmarkJson))
                 .andExpect(status().isOk());
 
+
         verify(auth0AuthenticationService, times(1)).loginUser(any());
         verifyNoMoreInteractions(auth0AuthenticationService);
     }
@@ -105,7 +109,12 @@ public class AuthControllerTest {
 
     @Test
     public void returns_bad_request_with_message_if_email_or_password_is_wrong() throws Exception {
-        Mockito.when(auth0AuthenticationService.loginUser(any())).thenThrow(new Auth0Exception("Message"));
+        int statusCode = 401;
+        String errorMessage = "Wrong email or password";
+
+
+        Mockito.when(auth0AuthenticationService.loginUser(any()))
+                .thenThrow(new APIException(getErrorMap(errorMessage), statusCode));
 
         String bookmarkJson = mapper.writeValueAsString(correctUser);
 
@@ -114,9 +123,23 @@ public class AuthControllerTest {
         mockMvc.perform(post("/login")
                 .contentType(contentType)
                 .content(bookmarkJson))
-                .andExpect(status().isBadRequest());
+                .andExpect(content().string(getErrorAnnotation(statusCode) + errorMessage))
+                .andExpect(status().isUnauthorized());
     }
 
+
+    private String getErrorAnnotation(int statusCode){
+
+       return "Request failed with status code " + statusCode + ": ";
+    }
+
+    private Map<String, Object> getErrorMap(String errorMessage){
+
+        Map<String, Object> errorMap = new HashMap<String, Object>();
+        errorMap.put("error", errorMessage);
+
+        return errorMap;
+    }
 
     @Test
     public void get_user_success() throws Exception {

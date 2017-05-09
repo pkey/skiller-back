@@ -2,6 +2,7 @@ package lt.swedbank.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lt.swedbank.beans.request.RegisterUserRequest;
 
 import javax.persistence.*;
 
@@ -25,6 +26,17 @@ public class User {
     private String connection;
 
     private String email;
+
+    public User() {}
+
+    public User(RegisterUserRequest registerUserRequest) {
+
+        setName(registerUserRequest.getName());
+        setLastName(registerUserRequest.getLastName());
+        setConnection(registerUserRequest.getConnection());
+        setEmail(registerUserRequest.getEmail());
+        setPassword(registerUserRequest.getPassword());
+    }
 
     public Long getId() {
         return id;

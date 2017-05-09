@@ -3,7 +3,11 @@ package lt.swedbank.controllers.auth;
 import com.auth0.exception.APIException;
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.TokenHolder;
+import io.swagger.annotations.Api;
 import lt.swedbank.beans.User;
+import lt.swedbank.beans.request.LoginUserRequest;
+import lt.swedbank.beans.request.RegisterUserRequest;
+import lt.swedbank.beans.response.RegisterUserResponse;
 import lt.swedbank.services.auth.Auth0AuthenticationService;
 import lt.swedbank.services.auth.AuthenticationService;
 import org.json.JSONArray;
@@ -15,7 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-
+import javax.validation.Valid;
 
 @Controller
 @Component
@@ -32,7 +36,7 @@ public class AuthController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<?> login(@RequestBody User user) {
+    ResponseEntity<?> login(@Valid @RequestBody LoginUserRequest user) {
         try {
             TokenHolder token = authService.loginUser(user);
             return new ResponseEntity<Object>(token, HttpStatus.OK);
@@ -47,18 +51,18 @@ public class AuthController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<?> register(@RequestBody User user) {
+    ResponseEntity<?> register(@Valid @RequestBody RegisterUserRequest user) {
 
         try {
             User registeredUser = authService.registerUser(user);
-            return new ResponseEntity<Object>(registeredUser, HttpStatus.OK);
+            return new ResponseEntity<RegisterUserResponse>(new RegisterUserResponse(registeredUser), HttpStatus.OK);
         } catch (APIException exception) {
             return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Auth0Exception exception) {
             return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    
     @RequestMapping(produces = "application/json", value = "/get", method = RequestMethod.GET)
     public @ResponseBody
     ResponseEntity<?> getUser(@RequestHeader(value="Authorization") String token) {

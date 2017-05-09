@@ -19,6 +19,8 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 
+import lt.swedbank.beans.request.LoginUserRequest;
+import lt.swedbank.beans.request.RegisterUserRequest;
 import lt.swedbank.repositories.UserRepository;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,20 +70,20 @@ public class Auth0AuthenticationService implements AuthenticationService {
         this.userRepository = userRepository;
     }
 
-
-
     @Override
-    public User registerUser(User user) throws APIException, Auth0Exception {
+    public User registerUser(RegisterUserRequest registerUserRequest) throws APIException, Auth0Exception {
 
         //Register user on Auth0
         Map<String, String> fields = new HashMap<>();
-        fields.put("name", user.getName());
-        fields.put("lastName", user.getLastName());
+        fields.put("name", registerUserRequest.getName());
+        fields.put("lastName", registerUserRequest.getLastName());
 
-        SignUpRequest request = auth.signUp(user.getEmail(), user.getEmail(), user.getPassword(), user.getConnection())
+        SignUpRequest request = auth.signUp(registerUserRequest.getEmail(), registerUserRequest.getEmail(), registerUserRequest.getPassword(), registerUserRequest.getConnection())
                 .setCustomFields(fields);
 
         request.execute();
+
+        User user = new User(registerUserRequest);
 
         //Add user locally
         //TODO Exception for internal error
@@ -92,7 +94,7 @@ public class Auth0AuthenticationService implements AuthenticationService {
     }
 
     @Override
-    public TokenHolder loginUser(User user) throws APIException, Auth0Exception {
+    public TokenHolder loginUser(LoginUserRequest user) throws APIException, Auth0Exception {
         AuthRequest request = auth.login(user.getEmail(), user.getPassword(), user.getConnection())
                 .setAudience("https://skiller/api")
                 .setScope("openid");

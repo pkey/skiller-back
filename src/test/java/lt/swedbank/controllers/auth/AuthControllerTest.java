@@ -1,6 +1,7 @@
 package lt.swedbank.controllers.auth;
 
 import com.auth0.exception.APIException;
+import com.auth0.exception.Auth0Exception;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.User;
 import lt.swedbank.beans.request.LoginUserRequest;
@@ -180,7 +181,6 @@ public class AuthControllerTest {
         when(auth0AuthenticationService.getUser(any())).thenThrow(new Auth0Exception("mocked Auth0 exception"));
         mockMvc.perform(get("/get").header("Authorization", ""))
                 .andExpect(status().isInternalServerError());
-                //.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));//Irrelevant while skills array is hardcoded
         verify(auth0AuthenticationService, times(1)).getUser(any());
         verifyNoMoreInteractions(auth0AuthenticationService);
     }

@@ -49,10 +49,4 @@ public class AuthController {
         return new ResponseEntity<Object>(registeredUser, HttpStatus.OK);
     }
 
-    ResponseEntity<?> register(@RequestBody User user) throws APIException, Auth0Exception {
-
-        User registeredUser = authService.registerUser(user);
-        return new ResponseEntity<Object>(registeredUser, HttpStatus.OK);
-
-    }
 }

@@ -82,7 +82,7 @@ public class AuthController {
             userJson.put("skills", skills);
             //
 
-            return new ResponseEntity<Object>(user, HttpStatus.OK);
+            return new ResponseEntity<Object>(userJson, HttpStatus.OK);
         } catch (APIException exception) {
             return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Auth0Exception exception) {

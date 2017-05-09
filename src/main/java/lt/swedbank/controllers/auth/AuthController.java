@@ -10,8 +10,6 @@ import lt.swedbank.beans.request.RegisterUserRequest;
 import lt.swedbank.beans.response.RegisterUserResponse;
 import lt.swedbank.services.auth.Auth0AuthenticationService;
 import lt.swedbank.services.auth.AuthenticationService;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,8 +35,10 @@ public class AuthController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public @ResponseBody
     ResponseEntity<?> login(@Valid @RequestBody LoginUserRequest user) throws APIException, Auth0Exception {
+
         TokenHolder token = authService.loginUser(user);
         return new ResponseEntity<Object>(token, HttpStatus.OK);
+
     }
 
 
@@ -49,31 +49,10 @@ public class AuthController {
         return new ResponseEntity<Object>(registeredUser, HttpStatus.OK);
     }
 
+    ResponseEntity<?> register(@RequestBody User user) throws APIException, Auth0Exception {
 
-    @RequestMapping(produces = "application/json", value = "/get", method = RequestMethod.GET)
-    public @ResponseBody
-    ResponseEntity<?> getUser(@RequestHeader(value="Authorization") String token) {
-        try {
-            User user = authService.getUser(token);
+        User registeredUser = authService.registerUser(user);
+        return new ResponseEntity<Object>(registeredUser, HttpStatus.OK);
 
-            //hardcoded skills section
-            JSONObject userJson = new JSONObject(user);
-
-            JSONArray skills = new JSONArray();
-            skills.put(new JSONObject().put("name", "java"));
-            skills.put(new JSONObject().put("name", "something"));
-            skills.put(new JSONObject().put("name", "Angular"));
-            skills.put(new JSONObject().put("name", "Spring"));
-
-            userJson.put("skills", skills);
-            //
-
-            return new ResponseEntity<Object>(/*user*/userJson.toString(), HttpStatus.OK);
-        } catch (APIException exception) {
-            return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Auth0Exception exception) {
-            return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
-
 }

@@ -1,16 +1,15 @@
 package lt.swedbank.controllers.auth;
 
 import com.auth0.exception.APIException;
-import com.auth0.exception.Auth0Exception;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.User;
 import lt.swedbank.beans.request.LoginUserRequest;
 import lt.swedbank.beans.request.RegisterUserRequest;
 
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
+
+
 import lt.swedbank.services.auth.Auth0AuthenticationService;
-
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -108,7 +107,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    public void returns_bad_request_with_message_if_email_or_password_is_wrong() throws Exception {
+    public void returns_unauthorized_with_message_if_email_or_password_is_wrong() throws Exception {
         int statusCode = 401;
         String errorMessage = "Wrong email or password";
 
@@ -125,6 +124,26 @@ public class AuthControllerTest {
                 .content(bookmarkJson))
                 .andExpect(content().string(getErrorAnnotation(statusCode) + errorMessage))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void returns_bad_request_if_user_already_exists_upon_registration() throws Exception {
+        int statusCode = 400;
+        String errorMessage = "The user already exists.";
+
+
+        Mockito.when(auth0AuthenticationService.registerUser(any()))
+                .thenThrow(new APIException(getErrorMap(errorMessage), statusCode));
+
+        String bookmarkJson = mapper.writeValueAsString(correctUser);
+
+        Mockito.verify(this.auth0AuthenticationService, Mockito.times(0)).loginUser(any());
+
+        mockMvc.perform(post("/register")
+                .contentType(contentType)
+                .content(bookmarkJson))
+                .andExpect(content().string(getErrorAnnotation(statusCode) + errorMessage))
+                .andExpect(status().isBadRequest());
     }
 
 

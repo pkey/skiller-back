@@ -1,6 +1,9 @@
 package lt.swedbank.beans.response;
 
+import lt.swedbank.beans.Skill;
 import lt.swedbank.beans.User;
+
+import java.util.List;
 
 public class GetUserResponse extends Response{
 
@@ -10,11 +13,15 @@ public class GetUserResponse extends Response{
 
     private String email;
 
+    private List<Skill> skills;
+
     public GetUserResponse(User user) {
 
         name = user.getName();
         lastName = user.getLastName();
         email = user.getEmail();
+        skills = user.getSkills();
+
     }
 
     public String getName() {
@@ -39,5 +46,13 @@ public class GetUserResponse extends Response{
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<Skill> getSkills() {
+        return skills;
+    }
+
+    public void setSkills(List<Skill> skills) {
+        this.skills = skills;
     }
 }

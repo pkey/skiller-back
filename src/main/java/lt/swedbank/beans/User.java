@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lt.swedbank.beans.request.RegisterUserRequest;
 
 import javax.persistence.*;
+import java.util.LinkedList;
+import java.util.List;
 
 
 @Entity
@@ -26,6 +28,18 @@ public class User {
     private String connection;
 
     private String email;
+
+    @OneToMany
+    @JoinColumn(name = "userid")
+
+    private List<Skill> skills = new LinkedList<Skill>();
+    public List<Skill> getSkills() {
+        return skills;
+    }
+
+    public void setSkills(List<Skill> skills) {
+        this.skills = skills;
+    }
 
     public User() {}
 

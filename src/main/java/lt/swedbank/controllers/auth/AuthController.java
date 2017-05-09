@@ -34,12 +34,6 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private SkillRepository skillRepository;
-
-
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public @ResponseBody
     ResponseEntity<?> login(@RequestBody User user) {

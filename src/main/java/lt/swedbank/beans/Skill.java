@@ -2,6 +2,7 @@ package lt.swedbank.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lt.swedbank.beans.request.AddSkillRequest;
 
 import javax.persistence.*;
 
@@ -18,8 +19,8 @@ public class Skill {
     private Long userID;
 
     public Skill() {}
-    public Skill(String title, Long userID)
-    {
+
+    public Skill(String title, Long userID) {
         this.userID = userID;
         this.title = title;
     }

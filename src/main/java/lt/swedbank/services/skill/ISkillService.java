@@ -1,7 +1,9 @@
 package lt.swedbank.services.skill;
 
-/**
- * Created by studentas on 17.5.10.
- */
+import lt.swedbank.beans.Skill;
+import lt.swedbank.beans.request.AddSkillRequest;
+
 public interface ISkillService {
+
+    Skill addSkill(Long userID, AddSkillRequest skill);
 }

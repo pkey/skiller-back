@@ -1,17 +1,28 @@
 package lt.swedbank.services.user;
 
+import lt.swedbank.beans.Skill;
 import lt.swedbank.beans.User;
+import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.repositories.UserRepository;
+import lt.swedbank.services.skill.SkillService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class UserService implements IUserService {
 
     private UserRepository userRepository;
+    @Autowired
+    private SkillService skillService;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
+
+    //@Autowired
+   // public
 
     /**
      *
@@ -21,8 +32,18 @@ public class UserService implements IUserService {
      * @return
      */
     public User getUserByEmail(String email){
-        User user = this.userRepository.findByEmail(email);
+        //if (!Optional.ofNullable(userRepository.findByEmail(email)).isPresent()) {
+            // throwinam error'a;
+        //}
 
-        return user;
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public Skill addUserSkill(String email, AddSkillRequest addSkillRequest) {
+
+        Long userID = getUserByEmail(email).getId();
+
+        return skillService.addSkill(userID, addSkillRequest);
     }
 }

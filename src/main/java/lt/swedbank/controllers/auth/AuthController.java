@@ -5,6 +5,8 @@ import com.auth0.json.auth.TokenHolder;
 import lt.swedbank.beans.User;
 import lt.swedbank.beans.request.LoginUserRequest;
 import lt.swedbank.beans.request.RegisterUserRequest;
+import lt.swedbank.beans.response.LoginTokenResponse;
+import lt.swedbank.beans.response.RegisterUserResponse;
 import lt.swedbank.services.auth.Auth0AuthenticationService;
 import lt.swedbank.services.auth.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,17 +33,17 @@ public class AuthController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<?> login(@Valid @RequestBody LoginUserRequest user) throws Auth0Exception {
+    LoginTokenResponse login(@Valid @RequestBody LoginUserRequest user) throws Auth0Exception {
         TokenHolder token = authService.loginUser(user);
-        return new ResponseEntity<Object>(token, HttpStatus.OK);
+        return new LoginTokenResponse(token);
     }
 
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<?> register(@Valid @RequestBody RegisterUserRequest user) throws Auth0Exception {
+    RegisterUserResponse register(@Valid @RequestBody RegisterUserRequest user) throws Auth0Exception {
         User registeredUser = authService.registerUser(user);
-        return new ResponseEntity<Object>(registeredUser, HttpStatus.OK);
+        return new RegisterUserResponse(registeredUser);
     }
 
 }

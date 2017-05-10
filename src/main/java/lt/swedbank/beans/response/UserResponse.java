@@ -5,7 +5,7 @@ import lt.swedbank.beans.User;
 
 import java.util.List;
 
-public class GetUserResponse extends Response{
+public class UserResponse extends Response{
 
     private String name;
 
@@ -15,7 +15,7 @@ public class GetUserResponse extends Response{
 
     private List<Skill> skills;
 
-    public GetUserResponse(User user) {
+    public UserResponse(User user) {
 
         name = user.getName();
         lastName = user.getLastName();

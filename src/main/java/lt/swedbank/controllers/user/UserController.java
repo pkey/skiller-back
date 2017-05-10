@@ -1,10 +1,9 @@
 package lt.swedbank.controllers.user;
 
 import lt.swedbank.beans.User;
+import lt.swedbank.beans.response.UserResponse;
 import lt.swedbank.services.user.IUserService;
 import lt.swedbank.services.user.UserService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,10 +21,7 @@ public class UserController {
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public @ResponseBody
-    ResponseEntity<?> getUser(@RequestAttribute(value = "email") String email) {
-
-        User userFromRepository = userService.getUserByEmail(email);
-        return new ResponseEntity<Object>(userFromRepository, HttpStatus.OK);
-
+    UserResponse getUser(@RequestAttribute(value = "email") String email) {
+        return new UserResponse(userService.getUserByEmail(email));
     }
 }

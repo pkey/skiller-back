@@ -2,16 +2,18 @@ package lt.swedbank.services.user;
 
 import lt.swedbank.beans.User;
 import lt.swedbank.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class UserService implements IUserService {
 
+    @Autowired
     private UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+
 
     /**
      *
@@ -21,8 +23,10 @@ public class UserService implements IUserService {
      * @return
      */
     public User getUserByEmail(String email){
-        User user = this.userRepository.findByEmail(email);
+        if (!Optional.ofNullable(userRepository.findByEmail(email)).isPresent()) {
+            //TODO throwinam, kad nera
+        }
 
-        return user;
+        return userRepository.findByEmail(email);
     }
 }

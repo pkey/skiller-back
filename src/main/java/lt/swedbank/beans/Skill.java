@@ -15,14 +15,16 @@ public class Skill {
     private Long id;
     private String title;
     @Transient
+    @JsonIgnore
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    //@Column(name="userid")
     private Long userID;
 
     public Skill() {}
 
     public Skill(String title, Long userID) {
-        this.userID = userID;
-        this.title = title;
+        setTitle(title);
+        setUserID(userID);
     }
 
     public Long getUserID() {
@@ -32,8 +34,6 @@ public class Skill {
     public void setUserID(Long userID) {
         this.userID = userID;
     }
-
-
 
     public Long getId() {
         return id;

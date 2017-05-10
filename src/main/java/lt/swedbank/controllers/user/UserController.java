@@ -3,6 +3,8 @@ package lt.swedbank.controllers.user;
 import lt.swedbank.beans.User;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.response.GetUserResponse;
+import lt.swedbank.services.skill.ISkillService;
+import lt.swedbank.services.skill.SkillService;
 import lt.swedbank.services.user.IUserService;
 import lt.swedbank.services.user.UserService;
 import org.hibernate.validator.constraints.Email;
@@ -36,7 +38,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(produces = "application/json", value = "/addSkill", method = RequestMethod.GET)
+    @RequestMapping(produces = "application/json", value = "/addSkill", method = RequestMethod.POST)
     public @ResponseBody
     ResponseEntity<?> addUserSkill(@RequestAttribute(value = "email") @Email(message = "Not an email") String email,
                                     @Valid @RequestBody AddSkillRequest addSkillRequest) {

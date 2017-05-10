@@ -14,15 +14,17 @@ import java.util.Optional;
 public class UserService implements IUserService {
 
     private UserRepository userRepository;
-    @Autowired
+    //@Autowired
     private SkillService skillService;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    //@Autowired
-   // public
+    @Autowired
+    public void setSkillService(SkillService skillService) {
+        this.skillService = skillService;
+    }
 
     /**
      *

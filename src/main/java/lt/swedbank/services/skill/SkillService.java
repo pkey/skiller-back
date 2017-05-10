@@ -6,7 +6,9 @@ import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.repositories.SkillRepository;
 import lt.swedbank.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class SkillService implements ISkillService {
 
     @Autowired
@@ -21,6 +23,7 @@ public class SkillService implements ISkillService {
 
         Skill skill = new Skill(addSkillRequest.getTitle(), userID);
 
+        System.out.println("----------" + skill.getId());
         skillRepository.save(skill);
 
         return skill;

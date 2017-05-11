@@ -21,8 +21,7 @@ public class SkillService implements ISkillService {
     public Skill addSkill(Long userID, AddSkillRequest addSkillRequest) {
 
         Skill skill = new Skill(addSkillRequest.getTitle(), userID);
-
-        System.out.println("----------" + skill.getId());
+        
         skillRepository.save(skill);
 
         return skill;

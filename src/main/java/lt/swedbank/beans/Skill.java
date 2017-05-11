@@ -14,17 +14,13 @@ public class Skill {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
-    @Transient
-    @JsonIgnore
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    //@Column(name="userid")
     private Long userID;
 
     public Skill() {}
 
     public Skill(String title, Long userID) {
-        setTitle(title);
-        setUserID(userID);
+        this.title = title;
+        this.userID = userID;
     }
 
     public Long getUserID() {

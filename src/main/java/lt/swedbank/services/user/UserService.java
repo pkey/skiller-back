@@ -1,6 +1,8 @@
 package lt.swedbank.services.user;
 
+import javassist.NotFoundException;
 import lt.swedbank.beans.User;
+import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,11 +10,10 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class UserService implements IUserService {
+public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-
 
 
     /**
@@ -22,9 +23,11 @@ public class UserService implements IUserService {
      * @param email
      * @return
      */
-    public User getUserByEmail(String email){
-        if (!Optional.ofNullable(userRepository.findByEmail(email)).isPresent()) {
-            //TODO throwinam, kad nera
+    public User getUserByEmail(String email) throws UserNotFoundException {
+        User user = userRepository.findByEmail(email);
+
+        if (user == null) {
+            throw new UserNotFoundException();
         }
 
         return userRepository.findByEmail(email);

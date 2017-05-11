@@ -1,9 +1,9 @@
 package lt.swedbank.controllers.user;
 
-import lt.swedbank.beans.User;
-import lt.swedbank.beans.response.UserResponse;
-import lt.swedbank.services.user.IUserService;
+
+import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.services.user.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,16 +12,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/user")
 public class UserController {
 
-    private IUserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
+    @Autowired
+    private UserService userService;
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public @ResponseBody
-    UserResponse getUser(@RequestAttribute(value = "email") String email) {
-        return new UserResponse(userService.getUserByEmail(email));
+    UserEntityResponse getUser(@RequestAttribute(value = "email") String email) {
+        return new UserEntityResponse(userService.getUserByEmail(email));
     }
 }

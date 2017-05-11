@@ -1,6 +1,7 @@
 package lt.swedbank.services.user;
 
 import lt.swedbank.beans.User;
+import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.repositories.UserRepository;
 import org.junit.After;
 import org.junit.Before;
@@ -12,6 +13,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static com.sun.xml.internal.ws.policy.sourcemodel.wspolicy.XmlToken.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 
@@ -47,14 +49,16 @@ public class UserServiceTest {
 
     @Test
     public void getUserByEmail() throws Exception {
-
-        Mockito.when(userRepository.findByEmail(any())).thenReturn(this.testUser);
-
+        Mockito.when(userRepository.findByEmail(any())).thenReturn(testUser);
         User resultUser = userService.getUserByEmail("something");
         assertEquals(testUser.getEmail(), resultUser.getEmail());
     }
 
-
-
+    @Test(expected = UserNotFoundException.class)
+    public void throws_use_does_not_exist_error() throws Exception{
+        Mockito.when(userRepository.findByEmail(any())).thenReturn(null);
+        User resultUser = userService.getUserByEmail("something");
+        assertEquals(testUser.getEmail(), resultUser.getEmail());
+    }
 
 }

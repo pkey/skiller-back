@@ -4,6 +4,7 @@ import com.auth0.exception.APIException;
 import com.auth0.exception.Auth0Exception;
 import lt.swedbank.beans.response.AuthenticationError;
 import lt.swedbank.beans.response.AuthenticationErrorsWrapper;
+import lt.swedbank.exceptions.user.UserNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,4 +40,9 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
         return new ResponseEntity<Object>(fieldErrorList, HttpStatus.BAD_REQUEST);
         }
+
+    @ExceptionHandler({ UserNotFoundException.class })
+    protected ResponseEntity<Object> handleUserNotFoundExeption(UserNotFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        return new ResponseEntity<Object>(ex, HttpStatus.NOT_FOUND);
+    }
 }

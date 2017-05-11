@@ -1,6 +1,6 @@
 package lt.swedbank.services.user;
 
-import lt.swedbank.beans.User;
+import lt.swedbank.beans.entity.User;
 import lt.swedbank.repositories.UserRepository;
 import org.junit.After;
 import org.junit.Before;

@@ -1,9 +1,6 @@
 package lt.swedbank.beans.response;
 
-import lt.swedbank.beans.User;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import lt.swedbank.beans.entity.User;
 
 public class RegisterUserResponse extends Response {
 

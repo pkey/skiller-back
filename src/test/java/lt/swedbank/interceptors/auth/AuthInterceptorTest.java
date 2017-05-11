@@ -1,7 +1,7 @@
 package lt.swedbank.interceptors.auth;
 
 import com.auth0.exception.Auth0Exception;
-import lt.swedbank.beans.User;
+import lt.swedbank.beans.entity.User;
 import lt.swedbank.services.auth.AuthenticationService;
 import org.junit.After;
 import org.junit.Before;

@@ -1,12 +1,10 @@
 package lt.swedbank.controllers.auth;
 
 import com.auth0.exception.Auth0Exception;
-import com.auth0.json.auth.TokenHolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lt.swedbank.beans.User;
+import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.LoginUserRequest;
 import lt.swedbank.beans.request.RegisterUserRequest;
-import lt.swedbank.controllers.auth.AuthController;
 import lt.swedbank.services.auth.Auth0AuthenticationService;
 
 import org.junit.Before;

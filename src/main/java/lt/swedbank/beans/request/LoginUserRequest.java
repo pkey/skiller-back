@@ -1,15 +1,9 @@
 package lt.swedbank.beans.request;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lt.swedbank.beans.User;
+import lt.swedbank.beans.entity.User;
 import org.hibernate.validator.constraints.Email;
 
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 

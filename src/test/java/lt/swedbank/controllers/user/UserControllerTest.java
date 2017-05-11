@@ -3,7 +3,9 @@ package lt.swedbank.controllers.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.User;
-import lt.swedbank.services.user.IUserService;
+import lt.swedbank.beans.request.AddSkillRequest;
+import lt.swedbank.beans.request.RegisterUserRequest;
+import lt.swedbank.services.skill.SkillService;
 import lt.swedbank.services.user.UserService;
 import org.junit.After;
 import org.junit.Before;
@@ -25,6 +27,7 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,12 +47,15 @@ public class UserControllerTest {
 
     private User correctUser;
     private List<Skill> correctSkills;
+    private Skill correctSkillToAddLater;
 
     @InjectMocks
     private UserController userController;
 
     @Mock
     private UserService userService;
+    @Mock
+    private SkillService skillService;
 
     @Before
     public void setUp() throws Exception {
@@ -74,6 +80,8 @@ public class UserControllerTest {
         correctSkills.add(new Skill("SkillName3", userId));
 
         correctUser.setSkills(correctSkills);
+
+        correctSkillToAddLater = new Skill("SkillToAddLater", userId);
     }
 
     @After
@@ -84,25 +92,8 @@ public class UserControllerTest {
     public void get_user_success() throws Exception {
 
         when(userService.getUserByEmail(any())).thenReturn(correctUser);
-        mockMvc.perform(get("/user/get").header("Authorization", "Bearer").requestAttr("email", "a@a.a"))
-                .andExpect(status().isOk())
-                //.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))//Irrelevant while skills array is hardcoded
-                .andExpect(jsonPath("$.name", is("TestUserName")))
-                .andExpect(jsonPath("$.lastName", is("TestUserLastName")))
-                .andExpect(jsonPath("$.email", is("testuser@gmail.com")))
-                .andExpect(jsonPath("$.skills", hasSize(3)))
-                .andExpect(jsonPath("$.skills[0].title", is("SkillName1")))
-                .andExpect(jsonPath("$.skills[1].title", is("SkillName2")))
-                .andExpect(jsonPath("$.skills[2].title", is("SkillName3")));
-        verify(userService, times(1)).getUserByEmail(any());
-        verifyNoMoreInteractions(userService);
-    }
-
-    @Test
-    public void add_skill_to_user_success() throws Exception {
-
-        when(userService.getUserByEmail(any())).thenReturn(correctUser);
-        mockMvc.perform(get("/user/add/").header("Authorization", "Bearer").requestAttr("email", "a@a.a"))
+        mockMvc.perform(get("/user/get").header("Authorization", "Bearer")
+                                                .requestAttr("email", "a@a.a"))
                 .andExpect(status().isOk())
                 //.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))//Irrelevant while skills array is hardcoded
                 .andExpect(jsonPath("$.name", is("TestUserName")))

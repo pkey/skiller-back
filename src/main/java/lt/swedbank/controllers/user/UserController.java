@@ -1,7 +1,7 @@
 package lt.swedbank.controllers.user;
 
 import lt.swedbank.beans.entity.User;
-import lt.swedbank.beans.request.AddSkillRequest;
+import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.GetUserResponse;
 import lt.swedbank.services.user.IUserService;
 import lt.swedbank.services.user.UserService;
@@ -36,12 +36,12 @@ public class UserController {
         }
     }
 
-    @RequestMapping(produces = "application/json", value = "/skill/add", method = RequestMethod.POST)
+    @RequestMapping(produces = "application/json", value = "/skill/remove", method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<?> addUserSkill(@RequestAttribute(value = "email") @Email(message = "Not an email") String email,
-                                    @Valid @RequestBody AddSkillRequest addSkillRequest) {
+    ResponseEntity<?> remveUserSkill(@RequestAttribute(value = "email") @Email(message = "Not an email") String email,
+                                   @Valid @RequestBody RemoveSkillRequest removeSkillRequest) {
         try {
-            userService.addUserSkill(email, addSkillRequest);
+            userService.removeUserSkill(email, removeSkillRequest);
 
             User userFromRepository = userService.getUserByEmail(email);
             return new ResponseEntity<GetUserResponse>(new GetUserResponse(userFromRepository), HttpStatus.OK);
@@ -49,4 +49,5 @@ public class UserController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 }

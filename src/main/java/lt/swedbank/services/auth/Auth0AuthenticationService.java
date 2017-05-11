@@ -2,6 +2,7 @@ package lt.swedbank.services.auth;
 
 
 //Auth0 dependencies
+
 import com.auth0.client.auth.AuthAPI;
 import com.auth0.client.mgmt.ManagementAPI;
 import com.auth0.client.mgmt.filter.UserFilter;
@@ -12,13 +13,10 @@ import com.auth0.json.auth.UserInfo;
 import com.auth0.net.AuthRequest;
 import com.auth0.net.Request;
 import com.auth0.net.SignUpRequest;
-
-//Unirest to call rest services
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-
-
+import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.LoginUserRequest;
 import lt.swedbank.beans.request.RegisterUserRequest;
 import lt.swedbank.repositories.UserRepository;
@@ -26,10 +24,11 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import lt.swedbank.beans.entity.User;
+//Unirest to call rest services
 
 
 

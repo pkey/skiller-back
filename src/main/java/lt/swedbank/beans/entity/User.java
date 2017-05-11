@@ -3,13 +3,13 @@ package lt.swedbank.beans.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lt.swedbank.beans.request.RegisterUserRequest;
-
+import org.springframework.data.annotation.Transient;
 import javax.persistence.*;
 import java.util.LinkedList;
 import java.util.List;
 
-
 @Entity
+@Table(name="user")
 public class User {
 
     @Id
@@ -29,10 +29,10 @@ public class User {
 
     private String email;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "userid")
-
     private List<Skill> skills = new LinkedList<Skill>();
+
     public List<Skill> getSkills() {
         return skills;
     }

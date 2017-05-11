@@ -2,7 +2,7 @@ package lt.swedbank.services.user;
 
 import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.User;
-import lt.swedbank.beans.request.AddSkillRequest;
+import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.repositories.UserRepository;
 import lt.swedbank.services.skill.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,19 +42,14 @@ public class UserService implements IUserService {
         return userRepository.findByEmail(email);
     }
 
-    /**
-     *
-     * Function adds a skill to a user that is found by email
-     *
-     * @param email - email of a user the skill should be added ti
-     * @param addSkillRequest - data of the skill that should be added
-     * @return the added skill
-     */
+
     @Override
-    public Skill addUserSkill(String email, AddSkillRequest addSkillRequest) {
+    public Skill removeUserSkill(String email, RemoveSkillRequest removeSkillRequest) {
 
         Long userID = getUserByEmail(email).getId();
 
-        return skillService.addSkill(userID, addSkillRequest);
+        return skillService.removeSkill(userID, removeSkillRequest);
     }
+
+
 }

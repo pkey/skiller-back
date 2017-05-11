@@ -3,6 +3,7 @@ package lt.swedbank.services.user;
 import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.AddSkillRequest;
+import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.repositories.UserRepository;
 import lt.swedbank.services.skill.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,5 +57,13 @@ public class UserService implements IUserService {
         Long userID = getUserByEmail(email).getId();
 
         return skillService.addSkill(userID, addSkillRequest);
+    }
+
+    @Override
+    public Skill removeUserSkill(String email, RemoveSkillRequest removeSkillRequest) {
+
+        Long userID = getUserByEmail(email).getId();
+
+        return skillService.removeSkill(userID, removeSkillRequest);
     }
 }

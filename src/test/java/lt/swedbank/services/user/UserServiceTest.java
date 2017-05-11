@@ -1,6 +1,6 @@
 package lt.swedbank.services.user;
 
-import lt.swedbank.beans.User;
+import lt.swedbank.beans.entity.User;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.repositories.UserRepository;
 import org.junit.After;
@@ -13,7 +13,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static com.sun.xml.internal.ws.policy.sourcemodel.wspolicy.XmlToken.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 

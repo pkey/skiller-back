@@ -1,8 +1,10 @@
 package lt.swedbank.controllers.auth;
 
+import com.auth0.exception.Auth0Exception;
 import com.auth0.exception.APIException;
+import com.auth0.json.auth.TokenHolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lt.swedbank.beans.User;
+import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.LoginUserRequest;
 import lt.swedbank.beans.request.RegisterUserRequest;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
@@ -37,7 +39,6 @@ public class AuthControllerTest {
     private MockMvc mockMvc;
 
     private User correctUser;
-
 
     @InjectMocks
     private AuthController authController;
@@ -76,11 +77,12 @@ public class AuthControllerTest {
 
         String bookmarkJson = mapper.writeValueAsString(new LoginUserRequest(correctUser));
 
+        Mockito.when(auth0AuthenticationService.loginUser(any())).thenReturn(new TokenHolder());
+
         mockMvc.perform(post("/login")
                 .contentType(contentType)
                 .content(bookmarkJson))
                 .andExpect(status().isOk());
-
 
         verify(auth0AuthenticationService, times(1)).loginUser(any());
         verifyNoMoreInteractions(auth0AuthenticationService);
@@ -105,10 +107,9 @@ public class AuthControllerTest {
     }
 
     @Test
-    public void returns_unauthorized_with_message_if_email_or_password_is_wrong() throws Exception {
+    public void returns_unauthorized_with_message_if_email_or_password_is_wrong()  throws Exception {
         int statusCode = 401;
         String errorMessage = "Wrong email or password";
-
 
         Mockito.when(auth0AuthenticationService.loginUser(any()))
                 .thenThrow(new APIException(getErrorMap(errorMessage), statusCode));

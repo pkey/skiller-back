@@ -20,11 +20,8 @@ public class SkillService implements ISkillService {
     @Override
     public Skill removeSkill(Long userID, RemoveSkillRequest removeSkillRequest)
     {
-        Skill skill = new Skill(removeSkillRequest.getTitle(), userID);
+        Skill skill = skillRepository.findByTitleAndUserID(removeSkillRequest.getTitle(), userID);
         skillRepository.delete(skill);
         return skill;
-
     }
-
-
 }

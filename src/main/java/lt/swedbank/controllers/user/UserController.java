@@ -38,7 +38,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(produces = "application/json", value = "/addSkill", method = RequestMethod.POST)
+    @RequestMapping(produces = "application/json", value = "/skill/add", method = RequestMethod.POST)
     public @ResponseBody
     ResponseEntity<?> addUserSkill(@RequestAttribute(value = "email") @Email(message = "Not an email") String email,
                                     @Valid @RequestBody AddSkillRequest addSkillRequest) {

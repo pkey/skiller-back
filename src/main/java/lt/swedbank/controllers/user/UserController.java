@@ -36,7 +36,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(produces = "application/json", value = "/removeskill", method = RequestMethod.POST)
+    @RequestMapping(produces = "application/json", value = "/skill/remove", method = RequestMethod.POST)
     public @ResponseBody
     ResponseEntity<?> remveUserSkill(@RequestAttribute(value = "email") @Email(message = "Not an email") String email,
                                    @Valid @RequestBody RemoveSkillRequest removeSkillRequest) {

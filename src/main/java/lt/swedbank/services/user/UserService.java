@@ -28,19 +28,31 @@ public class UserService implements IUserService {
 
     /**
      *
-     * Function returns a sure by an email
+     * Function returns a user by an email
      *
-     * @param email
-     * @return
+     * @param email - email of a user that should be found
+     * @return found user
      */
     public User getUserByEmail(String email){
-        //if (!Optional.ofNullable(userRepository.findByEmail(email)).isPresent()) {
-            // throwinam error'a;
-        //}
+
+        /*
+          TODO
+          add custom exception throwing if user couldn't be found
+        if (!Optional.ofNullable(userRepository.findByEmail(email)).isPresent()) {
+            throwinam error'a;
+        }*/
 
         return userRepository.findByEmail(email);
     }
 
+    /**
+     *
+     * Function adds a skill to a user that is found by email
+     *
+     * @param email - email of a user the skill should be added ti
+     * @param addSkillRequest - data of the skill that should be added
+     * @return the added skill
+     */
     @Override
     public Skill addUserSkill(String email, AddSkillRequest addSkillRequest) {
 

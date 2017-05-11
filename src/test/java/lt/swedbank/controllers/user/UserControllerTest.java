@@ -1,7 +1,7 @@
 package lt.swedbank.controllers.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lt.swedbank.beans.User;
+import lt.swedbank.beans.entity.User;
 import lt.swedbank.services.user.UserService;
 import org.junit.After;
 import org.junit.Before;

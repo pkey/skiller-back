@@ -1,7 +1,7 @@
 package lt.swedbank.services.user;
 
-import lt.swedbank.beans.Skill;
-import lt.swedbank.beans.User;
+import lt.swedbank.beans.entity.Skill;
+import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.AddSkillRequest;
 
 public interface IUserService {

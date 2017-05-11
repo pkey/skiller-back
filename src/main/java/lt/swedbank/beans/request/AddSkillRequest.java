@@ -1,11 +1,8 @@
 package lt.swedbank.beans.request;
 
-import lt.swedbank.beans.Skill;
-import lt.swedbank.beans.User;
-import org.hibernate.validator.constraints.Email;
+import lt.swedbank.beans.entity.Skill;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 public class AddSkillRequest {
 

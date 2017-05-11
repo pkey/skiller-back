@@ -25,12 +25,11 @@ import lt.swedbank.repositories.UserRepository;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 
-import lt.swedbank.beans.User;
+import lt.swedbank.beans.entity.User;
 
 
 

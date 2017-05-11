@@ -1,4 +1,4 @@
-package lt.swedbank.beans;
+package lt.swedbank.beans.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

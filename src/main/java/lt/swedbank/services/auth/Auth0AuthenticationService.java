@@ -22,6 +22,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import lt.swedbank.beans.request.LoginUserRequest;
 import lt.swedbank.beans.request.RegisterUserRequest;
 import lt.swedbank.repositories.UserRepository;
+import okhttp3.Response;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -80,16 +81,13 @@ public class Auth0AuthenticationService implements AuthenticationService {
         SignUpRequest request = auth.signUp(registerUserRequest.getEmail(), registerUserRequest.getEmail(), registerUserRequest.getPassword(), registerUserRequest.getConnection())
                 .setCustomFields(fields);
 
+
         request.execute();
-
-        User user = new User(registerUserRequest);
-
         //Add user locally
-        //TODO Exception for internal error
+        User user = new User(registerUserRequest);
         userRepository.save(user);
 
         return user;
-
     }
 
     @Override
@@ -175,6 +173,5 @@ public class Auth0AuthenticationService implements AuthenticationService {
             return null;
         }
     }
-
 }
 

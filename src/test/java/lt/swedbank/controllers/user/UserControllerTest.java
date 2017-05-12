@@ -129,7 +129,6 @@ public class UserControllerTest {
                 .contentType(contentType)
                 .content(skillJson))
                 .andExpect(status().isOk())
-                //.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))//Irrelevant while skills array is hardcoded
                 .andExpect(jsonPath("$.name", is("TestUserName")))
                 .andExpect(jsonPath("$.lastName", is("TestUserLastName")))
                 .andExpect(jsonPath("$.email", is("testuser@gmail.com")))

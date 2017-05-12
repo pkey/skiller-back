@@ -26,13 +26,11 @@ public class User {
     @Transient
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String connection;
-
     private String email;
-
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "userid")
-
     private List<Skill> skills = new LinkedList<Skill>();
+
     public List<Skill> getSkills() {
         return skills;
     }

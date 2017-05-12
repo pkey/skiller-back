@@ -10,6 +10,8 @@ import lt.swedbank.repositories.SkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class SkillService {
 
@@ -24,7 +26,7 @@ public class SkillService {
 
         Skill skill;
 
-        if(isSkillAlreadyExists(userID, addSkillRequest.getTitle())) {
+        if(!isSkillAlreadyExists(userID, addSkillRequest.getTitle())) {
 
             skill = new Skill(addSkillRequest.getTitle(), userID);
 
@@ -44,6 +46,6 @@ public class SkillService {
     }
 
     public boolean isSkillAlreadyExists(Long userID, String skillTitle) {
-        return skillRepository.findByTitleAndUserID(skillTitle, userID) != null;
+        return Optional.ofNullable(skillRepository.findByTitleAndUserID(skillTitle, userID)).isPresent();
     }
 }

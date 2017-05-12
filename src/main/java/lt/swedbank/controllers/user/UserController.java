@@ -46,7 +46,6 @@ public class UserController {
                                      @Valid @RequestBody RemoveSkillRequest removeSkillRequest) {
         try {
             userService.removeUserSkill(email, removeSkillRequest);
-
             User userFromRepository = userService.getUserByEmail(email);
             return new ResponseEntity<UserEntityResponse>(new UserEntityResponse(userFromRepository), HttpStatus.OK);
         } catch (Exception e) {

@@ -1,6 +1,7 @@
 package lt.swedbank.controllers.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.User;
@@ -28,6 +29,7 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

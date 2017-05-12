@@ -114,6 +114,38 @@ public class UserControllerTest {
     }
 
     @Test
+    public void add_skill_to_user_success() throws Exception {
+
+        String skillJson = mapper.writeValueAsString(new AddSkillRequest(correctSkillToAddLater));
+
+        List<Skill> tmpSkills = new ArrayList<>(correctSkills);
+        tmpSkills.add(correctSkillToAddLater);
+        correctUser.setSkills(tmpSkills);
+
+        when(userService.getUserByEmail(any())).thenReturn(correctUser);
+        when(userService.addUserSkill(any(), any())).thenReturn(correctSkillToAddLater);
+        mockMvc.perform(post("/user/skill/add").header("Authorization", "Bearer")
+                .requestAttr("email", "a@a.a")
+                .contentType(contentType)
+                .content(skillJson))
+                .andExpect(status().isOk())
+                //.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))//Irrelevant while skills array is hardcoded
+                .andExpect(jsonPath("$.name", is("TestUserName")))
+                .andExpect(jsonPath("$.lastName", is("TestUserLastName")))
+                .andExpect(jsonPath("$.email", is("testuser@gmail.com")))
+                .andExpect(jsonPath("$.skills", hasSize(4)))
+                .andExpect(jsonPath("$.skills[0].title", is("SkillName1")))
+                .andExpect(jsonPath("$.skills[1].title", is("SkillName2")))
+                .andExpect(jsonPath("$.skills[2].title", is("SkillName3")))
+                .andExpect(jsonPath("$.skills[3].title", is("SkillToAddLater")));
+        verify(userService, times(1)).getUserByEmail(any());
+        verify(userService, times(1)).addUserSkill(any(), any());
+        verifyNoMoreInteractions(userService);
+
+        correctUser.setSkills(correctSkills);
+    }
+
+    @Test
     public void test_if_unauthorized_when_token_not_provided() throws Exception {
 
         mockMvc.perform(get("/user/get")

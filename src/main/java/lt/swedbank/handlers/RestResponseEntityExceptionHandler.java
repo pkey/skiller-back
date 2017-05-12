@@ -5,6 +5,7 @@ import com.auth0.exception.Auth0Exception;
 import lt.swedbank.beans.response.AuthenticationError;
 import lt.swedbank.beans.response.AuthenticationErrorsWrapper;
 import lt.swedbank.beans.response.ErrorResponse;
+import lt.swedbank.exceptions.skill.SkillAlreadyAddedToUserException;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -43,7 +44,12 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         }
 
     @ExceptionHandler({ UserNotFoundException.class })
-    public ResponseEntity<ErrorResponse> handleUserNotFoundExeption(UserNotFoundException ex, WebRequest request) {
+    public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException ex, WebRequest request) {
         return new ResponseEntity<ErrorResponse>(new ErrorResponse(ex), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler({ SkillAlreadyAddedToUserException.class })
+    public ResponseEntity<ErrorResponse> handleSkillAlreadyAddedToUserException(SkillAlreadyAddedToUserException ex, WebRequest request) {
+        return new ResponseEntity<ErrorResponse>(new ErrorResponse(ex), HttpStatus.FOUND);
     }
 }

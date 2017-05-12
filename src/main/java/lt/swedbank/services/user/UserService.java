@@ -37,7 +37,24 @@ public class UserService {
             throw new UserNotFoundException();
         }
 
-        return userRepository.findByEmail(email);
+        return user;
+    }
+
+    /**
+     * Function returns use by authentication token
+     *
+     * @param authToken
+     * @return
+     * @throws UserNotFoundException
+     */
+    public User getUserByAuthenitcationToken(String authToken) throws UserNotFoundException {
+        User user = userRepository.findByAuthId(authToken);
+
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+
+        return user;
     }
 
     /**
@@ -48,9 +65,9 @@ public class UserService {
      * @param addSkillRequest - data of the skill that should be added
      * @return the added skill
      */
-    public Skill addUserSkill(String email, AddSkillRequest addSkillRequest) {
+    public Skill addUserSkill(Long userId, AddSkillRequest addSkillRequest) {
 
-        Long userID = getUserByEmail(email).getId();
+        Long userID = getUserByEmail(userId).getId();
 
         return skillService.addSkill(userID, addSkillRequest);
     }

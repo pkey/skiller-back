@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 
 @Controller
@@ -30,21 +29,21 @@ public class UserController {
 
     @RequestMapping(produces = "application/json", value = "/skill/add", method = RequestMethod.POST)
     public @ResponseBody
-    UserEntityResponse addUserSkill(@RequestAttribute(value = "email") @Email(message = "Not an email") String email,
-                                    @Valid @RequestBody AddSkillRequest addSkillRequest) {
-        userService.addUserSkill(email, addSkillRequest);
-
-        User userFromRepository = userService.getUserByEmail(email);
-        return new UserEntityResponse(userFromRepository);
+    ResponseEntity<?> addUserSkill(@Valid @RequestBody AddSkillRequest addSkillRequest) {
+        try {
+            userService.addUserSkill(addSkillRequest);
+            User userFromRepository = userService.getUserByEmail(email);
+            return new ResponseEntity<UserEntityResponse>(new UserEntityResponse(userFromRepository), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @RequestMapping(produces = "application/json", value = "/skill/remove", method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<?> removeUserSkill(@RequestAttribute(value = "email") @Email(message = "Not an email") String email,
-                                     @Valid @RequestBody RemoveSkillRequest removeSkillRequest) {
+    ResponseEntity<?> removeUserSkill(@Valid @RequestBody RemoveSkillRequest removeSkillRequest) {
         try {
             userService.removeUserSkill(email, removeSkillRequest);
-
             User userFromRepository = userService.getUserByEmail(email);
             return new ResponseEntity<UserEntityResponse>(new UserEntityResponse(userFromRepository), HttpStatus.OK);
         } catch (Exception e) {

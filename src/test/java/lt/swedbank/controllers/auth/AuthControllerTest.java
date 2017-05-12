@@ -1,37 +1,36 @@
 package lt.swedbank.controllers.auth;
 
 import com.auth0.exception.Auth0Exception;
+import com.auth0.exception.APIException;
+import com.auth0.json.auth.TokenHolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.LoginUserRequest;
 import lt.swedbank.beans.request.RegisterUserRequest;
+import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.services.auth.Auth0AuthenticationService;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-
 import java.nio.charset.Charset;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class AuthControllerTest {
-
-
 
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
                                                 MediaType.APPLICATION_JSON.getSubtype(),
@@ -47,6 +46,9 @@ public class AuthControllerTest {
     @Mock
     private Auth0AuthenticationService auth0AuthenticationService;
 
+    @Mock
+    private org.springframework.validation.Validator mockValidator;
+
     @Autowired
     private ObjectMapper mapper;
 
@@ -55,7 +57,10 @@ public class AuthControllerTest {
 
         MockitoAnnotations.initMocks(this);
 
-        mockMvc = MockMvcBuilders.standaloneSetup(authController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(authController)
+                .setControllerAdvice(new RestResponseEntityExceptionHandler())
+                .setValidator(mockValidator)
+                .build();
 
         mapper = new ObjectMapper();
 
@@ -72,10 +77,13 @@ public class AuthControllerTest {
 
         String bookmarkJson = mapper.writeValueAsString(new LoginUserRequest(correctUser));
 
+        Mockito.when(auth0AuthenticationService.loginUser(any())).thenReturn(new TokenHolder());
+
         mockMvc.perform(post("/login")
                 .contentType(contentType)
                 .content(bookmarkJson))
                 .andExpect(status().isOk());
+
         verify(auth0AuthenticationService, times(1)).loginUser(any());
         verifyNoMoreInteractions(auth0AuthenticationService);
     }
@@ -98,35 +106,60 @@ public class AuthControllerTest {
         verifyNoMoreInteractions(auth0AuthenticationService);
     }
 
-    /**
-     * TODO
-     * uncomment contentType expectation when the controller will be changed
-    */
-
     @Test
-    public void get_user_success() throws Exception {
+    public void returns_unauthorized_with_message_if_email_or_password_is_wrong()  throws Exception {
+        int statusCode = 401;
+        String errorMessage = "Wrong email or password";
 
-        when(auth0AuthenticationService.getUser(any())).thenReturn(correctUser);
-        mockMvc.perform(get("/get").header("Authorization", "Bearer"))
-                .andExpect(status().isOk())
-                //.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))//Irrelevant while skills array is hardcoded
-                .andExpect(jsonPath("$.name", is("TestUserName")))
-                .andExpect(jsonPath("$.lastName", is("TestUserLastName")))
-                .andExpect(jsonPath("$.email", is("testuser@gmail.com")));
-        verify(auth0AuthenticationService, times(1)).getUser(any());
-        verifyNoMoreInteractions(auth0AuthenticationService);
+        Mockito.when(auth0AuthenticationService.loginUser(any()))
+                .thenThrow(new APIException(getErrorMap(errorMessage), statusCode));
+
+        String bookmarkJson = mapper.writeValueAsString(correctUser);
+
+        Mockito.verify(this.auth0AuthenticationService, Mockito.times(0)).loginUser(any());
+
+        mockMvc.perform(post("/login")
+                .contentType(contentType)
+                .content(bookmarkJson))
+                .andExpect(content().string(getErrorAnnotation(statusCode) + errorMessage))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    public void get_user_auth0_exception() throws Exception {
+    public void returns_bad_request_if_user_already_exists_upon_registration() throws Exception {
+        int statusCode = 400;
+        String errorMessage = "The user already exists.";
 
-        when(auth0AuthenticationService.getUser(any())).thenThrow(new Auth0Exception("mocked Auth0 exception"));
-        mockMvc.perform(get("/get").header("Authorization", ""))
-                .andExpect(status().isInternalServerError());
-                //.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));//Irrelevant while skills array is hardcoded
-        verify(auth0AuthenticationService, times(1)).getUser(any());
-        verifyNoMoreInteractions(auth0AuthenticationService);
+
+        Mockito.when(auth0AuthenticationService.registerUser(any()))
+                .thenThrow(new APIException(getErrorMap(errorMessage), statusCode));
+
+        String bookmarkJson = mapper.writeValueAsString(correctUser);
+
+        Mockito.verify(this.auth0AuthenticationService, Mockito.times(0)).loginUser(any());
+
+        mockMvc.perform(post("/register")
+                .contentType(contentType)
+                .content(bookmarkJson))
+                .andExpect(content().string(getErrorAnnotation(statusCode) + errorMessage))
+                .andExpect(status().isBadRequest());
     }
+
+
+    private String getErrorAnnotation(int statusCode){
+
+       return "Request failed with status code " + statusCode + ": ";
+    }
+
+    private Map<String, Object> getErrorMap(String errorMessage){
+
+        Map<String, Object> errorMap = new HashMap<String, Object>();
+        errorMap.put("error", errorMessage);
+
+        return errorMap;
+    }
+
+
 
 }
     

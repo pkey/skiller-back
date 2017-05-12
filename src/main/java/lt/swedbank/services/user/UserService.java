@@ -3,26 +3,21 @@ package lt.swedbank.services.user;
 import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.AddSkillRequest;
+import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.repositories.UserRepository;
 import lt.swedbank.services.skill.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 @Service
-public class UserService implements IUserService {
-
-    private UserRepository userRepository;
-    private SkillService skillService;
-
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+public class UserService {
 
     @Autowired
-    public void setSkillService(SkillService skillService) {
-        this.skillService = skillService;
-    }
+    private UserRepository userRepository;
+    @Autowired
+    private SkillService skillService;
 
     /**
      *
@@ -31,14 +26,12 @@ public class UserService implements IUserService {
      * @param email - email of a user that should be found
      * @return found user
      */
-    public User getUserByEmail(String email){
+    public User getUserByEmail(String email) throws UserNotFoundException {
+        User user = userRepository.findByEmail(email);
 
-        /*
-          TODO
-          add custom exception throwing if user couldn't be found
-        if (!Optional.ofNullable(userRepository.findByEmail(email)).isPresent()) {
-            throwinam error'a;
-        }*/
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
 
         return userRepository.findByEmail(email);
     }
@@ -51,7 +44,6 @@ public class UserService implements IUserService {
      * @param addSkillRequest - data of the skill that should be added
      * @return the added skill
      */
-    @Override
     public Skill addUserSkill(String email, AddSkillRequest addSkillRequest) {
 
         Long userID = getUserByEmail(email).getId();
@@ -59,7 +51,6 @@ public class UserService implements IUserService {
         return skillService.addSkill(userID, addSkillRequest);
     }
 
-    @Override
     public Skill removeUserSkill(String email, RemoveSkillRequest removeSkillRequest) {
 
         Long userID = getUserByEmail(email).getId();

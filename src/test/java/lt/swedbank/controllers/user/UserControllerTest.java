@@ -1,6 +1,7 @@
 package lt.swedbank.controllers.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.User;
@@ -28,6 +29,7 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -109,6 +111,37 @@ public class UserControllerTest {
         verifyNoMoreInteractions(userService);
 
         //TODO both test getting bad request, need to fix that
+    }
+
+    @Test
+    public void add_skill_to_user_success() throws Exception {
+
+        String skillJson = mapper.writeValueAsString(new AddSkillRequest(correctSkillToAddLater));
+
+        List<Skill> tmpSkills = new ArrayList<>(correctSkills);
+        tmpSkills.add(correctSkillToAddLater);
+        correctUser.setSkills(tmpSkills);
+
+        when(userService.getUserByEmail(any())).thenReturn(correctUser);
+        when(userService.addUserSkill(any(), any())).thenReturn(correctSkillToAddLater);
+        mockMvc.perform(post("/user/skill/add").header("Authorization", "Bearer")
+                .requestAttr("email", "a@a.a")
+                .contentType(contentType)
+                .content(skillJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is("TestUserName")))
+                .andExpect(jsonPath("$.lastName", is("TestUserLastName")))
+                .andExpect(jsonPath("$.email", is("testuser@gmail.com")))
+                .andExpect(jsonPath("$.skills", hasSize(4)))
+                .andExpect(jsonPath("$.skills[0].title", is("SkillName1")))
+                .andExpect(jsonPath("$.skills[1].title", is("SkillName2")))
+                .andExpect(jsonPath("$.skills[2].title", is("SkillName3")))
+                .andExpect(jsonPath("$.skills[3].title", is("SkillToAddLater")));
+        verify(userService, times(1)).getUserByEmail(any());
+        verify(userService, times(1)).addUserSkill(any(), any());
+        verifyNoMoreInteractions(userService);
+
+        correctUser.setSkills(correctSkills);
     }
 
     @Test

@@ -11,11 +11,10 @@ import org.springframework.stereotype.Service;
 @Service
 public interface AuthenticationService {
 
-    User registerUser(RegisterUserRequest user) throws APIException, Auth0Exception;
+    User registerUser(RegisterUserRequest user) throws Auth0Exception;
 
-    TokenHolder loginUser(LoginUserRequest user) throws APIException, Auth0Exception;
+    TokenHolder loginUser(LoginUserRequest user) throws Auth0Exception;
 
-    User getUser(String token) throws APIException, Auth0Exception;
 
 }
 

@@ -32,6 +32,8 @@ import java.util.Map;
 import lt.swedbank.beans.entity.User;
 
 
+
+@Service
 public class Auth0AuthenticationService implements AuthenticationService {
 
 

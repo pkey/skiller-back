@@ -40,6 +40,16 @@ public class UserService {
         return user;
     }
 
+    public User getUserById(Long id) throws UserNotFoundException {
+        User user = userRepository.findOne(id);
+
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+
+        return user;
+    }
+
     /**
      * Function returns use by authentication token
      *
@@ -47,7 +57,7 @@ public class UserService {
      * @return
      * @throws UserNotFoundException
      */
-    public User getUserByAuthenitcationToken(String authToken) throws UserNotFoundException {
+    public User getUserByAuthenticationToken(String authToken) throws UserNotFoundException {
         User user = userRepository.findByAuthId(authToken);
 
         if (user == null) {
@@ -59,22 +69,25 @@ public class UserService {
 
     /**
      *
-     * Function adds a skill to a user that is found by email
+     * Function adds a user skill
      *
-     * @param email - email of a user the skill should be added ti
+     * @param userId - An Id of a user
      * @param addSkillRequest - data of the skill that should be added
      * @return the added skill
      */
     public Skill addUserSkill(Long userId, AddSkillRequest addSkillRequest) {
-
-        Long userID = getUserByEmail(userId).getId();
-
-        return skillService.addSkill(userID, addSkillRequest);
+        return skillService.addSkill(userId, addSkillRequest);
     }
 
-    public Skill removeUserSkill(String email, RemoveSkillRequest removeSkillRequest) throws SkillNotFaoundException {
-
-        Long userID = getUserByEmail(email).getId();
-        return skillService.removeSkill(userID, removeSkillRequest);
+    /**
+     *
+     * Function removes a skill
+     *
+     * @param userId
+     * @param removeSkillRequest
+     * @return
+     */
+    public Skill removeUserSkill(Long userId, RemoveSkillRequest removeSkillRequest) throws SkillNotFaoundException {
+        return skillService.removeSkill(userId, removeSkillRequest);
     }
 }

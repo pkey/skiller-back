@@ -4,6 +4,7 @@ import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.UserEntityResponse;
+import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,11 +21,14 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private AuthenticationService authService;
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public @ResponseBody
     UserEntityResponse getUser(@RequestHeader(value = "Authorization") String authToken) {
-        return new UserEntityResponse(userService.getUserByAuthenticationToken(authToken));
+        String authId = authService.extractAuthenticationIdFromAccessToken(authToken);
+        return new UserEntityResponse(userService.getUserByAuthId(authId));
     }
 
     @RequestMapping(produces = "application/json", value = "/skill/add", method = RequestMethod.POST)
@@ -32,9 +36,10 @@ public class UserController {
     ResponseEntity<?> addUserSkill(@Valid @RequestBody AddSkillRequest addSkillRequest,
                                    @RequestHeader(value = "Authorization") String authToken) {
         try {
-            Long id = userService.getUserByAuthenticationToken(authToken).getId();
-            userService.addUserSkill(id, addSkillRequest);
-            User userFromRepository = userService.getUserById(id);
+            String authId = authService.extractAuthenticationIdFromAccessToken(authToken);
+            Long userId = userService.getUserByAuthId(authId).getId();
+            userService.addUserSkill(userId, addSkillRequest);
+            User userFromRepository = userService.getUserById(userId);
             return new ResponseEntity<UserEntityResponse>(new UserEntityResponse(userFromRepository), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -46,9 +51,10 @@ public class UserController {
     ResponseEntity<?> removeUserSkill(@Valid @RequestBody RemoveSkillRequest removeSkillRequest,
                                       @RequestHeader(value = "Authorization") String authToken) {
         try {
-            Long id = userService.getUserByAuthenticationToken(authToken).getId();
-            userService.removeUserSkill(id, removeSkillRequest);
-            User userFromRepository = userService.getUserById(id);
+            String authId = authService.extractAuthenticationIdFromAccessToken(authToken);
+            Long userId = userService.getUserByAuthId(authId).getId();
+            userService.removeUserSkill(userId, removeSkillRequest);
+            User userFromRepository = userService.getUserById(userId);
             return new ResponseEntity<UserEntityResponse>(new UserEntityResponse(userFromRepository), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

@@ -6,7 +6,7 @@ import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
-import lt.swedbank.services.skill.SkillService;
+import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.user.UserService;
 import org.junit.After;
 import org.junit.Before;
@@ -56,7 +56,7 @@ public class UserControllerTest {
     @Mock
     private UserService userService;
     @Mock
-    private SkillService skillService;
+    private AuthenticationService authService;
 
 
     @Before
@@ -96,7 +96,8 @@ public class UserControllerTest {
     @Test
     public void get_user_success() throws Exception {
 
-        when(userService.getUserByAuthenticationToken(any())).thenReturn(correctUser);
+
+        when(userService.getUserByAuthId(any())).thenReturn(correctUser);
 
         mockMvc.perform(get("/user/get")
                 .header("Authorization", "Bearer")
@@ -110,7 +111,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.skills[1].title", is("SkillName2")))
                 .andExpect(jsonPath("$.skills[2].title", is("SkillName3")));
 
-        verify(userService, times(1)).getUserByAuthenticationToken(any());
+        verify(userService, times(1)).getUserByAuthId(any());
         verifyNoMoreInteractions(userService);
 
     }
@@ -124,7 +125,7 @@ public class UserControllerTest {
         tmpSkills.add(correctSkillToAddLater);
         correctUser.setSkills(tmpSkills);
 
-        when(userService.getUserByAuthenticationToken(any())).thenReturn(correctUser);
+        when(userService.getUserByAuthId(any())).thenReturn(correctUser);
         when(userService.addUserSkill(any(), any())).thenReturn(correctSkillToAddLater);
         when(userService.getUserById(any())).thenReturn(correctUser);
 
@@ -141,7 +142,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.skills[2].title", is("SkillName3")))
                 .andExpect(jsonPath("$.skills[3].title", is("SkillToAddLater")));
 
-        verify(userService, times(1)).getUserByAuthenticationToken(any());
+        verify(userService, times(1)).getUserByAuthId(any());
         verify(userService, times(1)).addUserSkill(any(), any());
 
         correctUser.setSkills(correctSkills);
@@ -151,7 +152,7 @@ public class UserControllerTest {
     @Test
     public void test_if_user_not_found_is_thrown_when_it_is_not() throws Exception {
 
-        Mockito.when(userService.getUserByAuthenticationToken(any())).thenThrow(new UserNotFoundException());
+        Mockito.when(userService.getUserByAuthId(any())).thenThrow(new UserNotFoundException());
 
         mockMvc.perform(get("/user/get")
                 .header("Authorization", "Bearer fake_token")

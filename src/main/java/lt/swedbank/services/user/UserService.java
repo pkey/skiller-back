@@ -50,15 +50,34 @@ public class UserService {
         return user;
     }
 
+//    /**
+//     * Function returns use by authentication token
+//     *
+//     * @param authToken
+//     * @return
+//     * @throws UserNotFoundException
+//     */
+//    public User getUserByAuthenticationToken(String authToken) throws UserNotFoundException {
+//
+//
+//        User user = getUserByAuthId(authId);
+//
+//        if (user == null) {
+//            throw new UserNotFoundException();
+//        }
+//
+//        return user;
+//    }
+
     /**
-     * Function returns use by authentication token
+     * Function returns use by authentication id
      *
-     * @param authToken
+     * @param authId
      * @return
      * @throws UserNotFoundException
      */
-    public User getUserByAuthenticationToken(String authToken) throws UserNotFoundException {
-        User user = userRepository.findByAuthId(authToken);
+    public User getUserByAuthId(String authId) throws UserNotFoundException {
+        User user = userRepository.findByAuthId(authId);
 
         if (user == null) {
             throw new UserNotFoundException();

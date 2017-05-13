@@ -1,17 +1,18 @@
 package lt.swedbank.services.auth;
 
 
-
-
 import com.auth0.client.auth.AuthAPI;
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.TokenHolder;
+import com.auth0.jwt.JWT;
 import com.auth0.net.AuthRequest;
-
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-
+import lt.swedbank.beans.entity.User;
+import lt.swedbank.beans.request.LoginUserRequest;
+import lt.swedbank.beans.request.RegisterUserRequest;
+import lt.swedbank.repositories.UserRepository;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,11 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import lt.swedbank.beans.entity.User;
-import lt.swedbank.beans.request.LoginUserRequest;
-import lt.swedbank.beans.request.RegisterUserRequest;
-import lt.swedbank.repositories.UserRepository;
 
 @Service
 public class Auth0AuthenticationService implements AuthenticationService {
@@ -38,6 +34,9 @@ public class Auth0AuthenticationService implements AuthenticationService {
     private static final String KEY_NAME = "name";
     private static final String KEY_LAST_NAME = "lastName";
     private static final String KEY_USER_METADATA = "user_metadata";
+
+    private static final String SUBJECT_PREFIX = "auth0\\|";
+    public static final String TOKEN_PREFIX = "Bearer ";
 
     private String clientId; //Auth0 client ID
 
@@ -81,7 +80,7 @@ public class Auth0AuthenticationService implements AuthenticationService {
 
         JSONObject responseBody = new JSONObject(response.getBody());
 
-        if (response.getStatus() > 400) {
+        if (response.getStatus() >= 400) {
             throw new Auth0Exception(responseBody.getString("description"));
         }
 
@@ -121,5 +120,16 @@ public class Auth0AuthenticationService implements AuthenticationService {
 
         return holder;
     }
+
+    @Override
+    public String extractAuthenticationIdFromAccessToken(String token) {
+        return JWT.decode(removeTokenHead(token)).getSubject().replaceFirst(SUBJECT_PREFIX, "");
+    }
+
+    private String removeTokenHead(String token) {
+        return token.replaceFirst(TOKEN_PREFIX, "");
+    }
+
+
 }
 

@@ -3,12 +3,15 @@ package lt.swedbank.services.user;
 import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.AddSkillRequest;
+import lt.swedbank.exceptions.skill.SkillNotFaoundException;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.repositories.UserRepository;
 import lt.swedbank.services.skill.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 
 @Service
@@ -51,10 +54,9 @@ public class UserService {
         return skillService.addSkill(userID, addSkillRequest);
     }
 
-    public Skill removeUserSkill(String email, RemoveSkillRequest removeSkillRequest) {
+    public Skill removeUserSkill(String email, RemoveSkillRequest removeSkillRequest) throws SkillNotFaoundException {
 
         Long userID = getUserByEmail(email).getId();
-
         return skillService.removeSkill(userID, removeSkillRequest);
     }
 }

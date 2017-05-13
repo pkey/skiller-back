@@ -3,9 +3,9 @@ package lt.swedbank.services.user;
 import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.AddSkillRequest;
-import lt.swedbank.exceptions.skill.SkillNotFaoundException;
-import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.beans.request.RemoveSkillRequest;
+import lt.swedbank.exceptions.skill.SkillNotFoundException;
+import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.repositories.UserRepository;
 import lt.swedbank.services.skill.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,7 +106,8 @@ public class UserService {
      * @param removeSkillRequest
      * @return
      */
-    public Skill removeUserSkill(Long userId, RemoveSkillRequest removeSkillRequest) throws SkillNotFaoundException {
+    public Skill removeUserSkill(Long userId, RemoveSkillRequest removeSkillRequest) throws SkillNotFoundException {
         return skillService.removeSkill(userId, removeSkillRequest);
+
     }
 }

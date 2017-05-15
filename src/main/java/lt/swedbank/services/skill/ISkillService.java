@@ -7,7 +7,7 @@ import lt.swedbank.exceptions.skill.*;
 
 public interface ISkillService {
 
-    Skill addSkill(Long userID, AddSkillRequest skill) throws SkillAlreadyAddedToUserException;
+    Skill addSkill(Long userID, AddSkillRequest skill) throws SkillAlreadyExistsException;
 
     Skill removeSkill(Long userID, RemoveSkillRequest removeSkillRequest) throws SkillNotFaoundException;
   

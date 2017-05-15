@@ -2,10 +2,10 @@ package lt.swedbank.controllers.user;
 
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.AddSkillRequest;
-import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.beans.request.RemoveSkillRequest;
+import lt.swedbank.beans.response.UserEntityResponse;
+import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.user.UserService;
-import org.hibernate.validator.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,31 +21,40 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private AuthenticationService authService;
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public @ResponseBody
-    UserEntityResponse getUser(@RequestAttribute(value = "email") String email) {
-        return new UserEntityResponse(userService.getUserByEmail(email));
+    UserEntityResponse getUser(@RequestHeader(value = "Authorization") String authToken) {
+        String authId = authService.extractAuthIdFromToken(authToken);
+        return new UserEntityResponse(userService.getUserByAuthId(authId));
     }
 
     @RequestMapping(produces = "application/json", value = "/skill/add", method = RequestMethod.POST)
     public @ResponseBody
-    UserEntityResponse addUserSkill(@RequestAttribute(value = "email") @Email(message = "Not an email") String email,
-                                    @Valid @RequestBody AddSkillRequest addSkillRequest) {
-        userService.addUserSkill(email, addSkillRequest);
-
-        User userFromRepository = userService.getUserByEmail(email);
-        return new UserEntityResponse(userFromRepository);
+    ResponseEntity<?> addUserSkill(@Valid @RequestBody AddSkillRequest addSkillRequest,
+                                   @RequestHeader(value = "Authorization") String authToken) {
+        try {
+            String authId = authService.extractAuthIdFromToken(authToken);
+            Long userId = userService.getUserByAuthId(authId).getId();
+            userService.addUserSkill(userId, addSkillRequest);
+            User userFromRepository = userService.getUserById(userId);
+            return new ResponseEntity<UserEntityResponse>(new UserEntityResponse(userFromRepository), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @RequestMapping(produces = "application/json", value = "/skill/remove", method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<?> removeUserSkill(@RequestAttribute(value = "email") @Email(message = "Not an email") String email,
-                                     @Valid @RequestBody RemoveSkillRequest removeSkillRequest) {
+    ResponseEntity<?> removeUserSkill(@Valid @RequestBody RemoveSkillRequest removeSkillRequest,
+                                      @RequestHeader(value = "Authorization") String token) {
         try {
-            userService.removeUserSkill(email, removeSkillRequest);
-
-            User userFromRepository = userService.getUserByEmail(email);
+            String authId = authService.extractAuthIdFromToken(token);
+            Long userId = userService.getUserByAuthId(authId).getId();
+            userService.removeUserSkill(userId, removeSkillRequest);
+            User userFromRepository = userService.getUserById(userId);
             return new ResponseEntity<UserEntityResponse>(new UserEntityResponse(userFromRepository), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

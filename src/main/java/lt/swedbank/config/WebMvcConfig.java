@@ -1,6 +1,5 @@
 package lt.swedbank.config;
 
-import lt.swedbank.interceptors.auth.AuthInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.*;
@@ -8,12 +7,6 @@ import org.springframework.web.servlet.config.annotation.*;
 @Configuration
 @EnableWebMvc
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
-
-    @Bean
-    public AuthInterceptor authInterceptor() {
-        return new AuthInterceptor();
-    }
-
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
@@ -29,8 +22,4 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/**").addResourceLocations("classpath:/META-INF/resources/");
     }
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor( authInterceptor() ).addPathPatterns("/user/get", "/user/skill/add", "/user/skill/remove");
-    }
 }

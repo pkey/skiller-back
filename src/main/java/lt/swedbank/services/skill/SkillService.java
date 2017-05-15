@@ -24,7 +24,7 @@ public class SkillService implements ISkillService {
     }
 
     @Override
-    public Skill addSkill(Long userID, AddSkillRequest addSkillRequest) throws SkillAlreadyAddedToUserException {
+    public Skill addSkill(Long userID, AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
 
         Skill skill;
 
@@ -34,7 +34,7 @@ public class SkillService implements ISkillService {
 
             skillRepository.save(skill);
         } else {
-            throw new SkillAlreadyAddedToUserException();
+            throw new SkillAlreadyExistsException();
         }
 
         return skill;

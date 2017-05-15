@@ -27,7 +27,7 @@ public class UserController {
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public @ResponseBody
     UserEntityResponse getUser(@RequestHeader(value = "Authorization") String authToken) {
-        String authId = authService.extractAuthenticationIdFromAccessToken(authToken);
+        String authId = authService.extractAuthIdFromToken(authToken);
         return new UserEntityResponse(userService.getUserByAuthId(authId));
     }
 
@@ -36,7 +36,7 @@ public class UserController {
     ResponseEntity<?> addUserSkill(@Valid @RequestBody AddSkillRequest addSkillRequest,
                                    @RequestHeader(value = "Authorization") String authToken) {
         try {
-            String authId = authService.extractAuthenticationIdFromAccessToken(authToken);
+            String authId = authService.extractAuthIdFromToken(authToken);
             Long userId = userService.getUserByAuthId(authId).getId();
             userService.addUserSkill(userId, addSkillRequest);
             User userFromRepository = userService.getUserById(userId);
@@ -49,9 +49,9 @@ public class UserController {
     @RequestMapping(produces = "application/json", value = "/skill/remove", method = RequestMethod.POST)
     public @ResponseBody
     ResponseEntity<?> removeUserSkill(@Valid @RequestBody RemoveSkillRequest removeSkillRequest,
-                                      @RequestHeader(value = "Authorization") String authToken) {
+                                      @RequestHeader(value = "Authorization") String token) {
         try {
-            String authId = authService.extractAuthenticationIdFromAccessToken(authToken);
+            String authId = authService.extractAuthIdFromToken(token);
             Long userId = userService.getUserByAuthId(authId).getId();
             userService.removeUserSkill(userId, removeSkillRequest);
             User userFromRepository = userService.getUserById(userId);

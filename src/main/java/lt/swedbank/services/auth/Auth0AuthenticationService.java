@@ -36,15 +36,13 @@ public class Auth0AuthenticationService implements AuthenticationService {
     private static final String KEY_USER_METADATA = "user_metadata";
 
     private static final String SUBJECT_PREFIX = "auth0\\|";
-    public static final String TOKEN_PREFIX = "Bearer ";
+    private static final String TOKEN_PREFIX = "Bearer ";
 
     private String clientId; //Auth0 client ID
 
     private String clientSecret; //Auth0 client secret
 
     private String clientDomain; //Auth0 client domain
-
-    private String managementApiAudience; //Auth0 client audience
 
     private AuthAPI auth; //Auth0 Authentication API
 
@@ -122,7 +120,7 @@ public class Auth0AuthenticationService implements AuthenticationService {
     }
 
     @Override
-    public String extractAuthenticationIdFromAccessToken(String token) {
+    public String extractAuthIdFromToken(String token) {
         return JWT.decode(removeTokenHead(token)).getSubject().replaceFirst(SUBJECT_PREFIX, "");
     }
 

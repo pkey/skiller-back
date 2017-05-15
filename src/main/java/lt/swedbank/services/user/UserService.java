@@ -11,8 +11,6 @@ import lt.swedbank.services.skill.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 
 @Service
 public class UserService {
@@ -49,25 +47,6 @@ public class UserService {
 
         return user;
     }
-
-//    /**
-//     * Function returns use by authentication token
-//     *
-//     * @param authToken
-//     * @return
-//     * @throws UserNotFoundException
-//     */
-//    public User getUserByAuthenticationToken(String authToken) throws UserNotFoundException {
-//
-//
-//        User user = getUserByAuthId(authId);
-//
-//        if (user == null) {
-//            throw new UserNotFoundException();
-//        }
-//
-//        return user;
-//    }
 
     /**
      * Function returns use by authentication id

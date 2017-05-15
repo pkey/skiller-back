@@ -12,7 +12,7 @@ public interface AuthenticationService {
 
     TokenHolder loginUser(LoginUserRequest user) throws Auth0Exception;
 
-    String extractAuthenticationIdFromAccessToken(String token);
+    String extractAuthIdFromToken(String token);
 }
 
 

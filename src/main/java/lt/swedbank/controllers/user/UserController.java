@@ -42,7 +42,7 @@ public class UserController {
     }
     @RequestMapping(produces = "application/json", value = "/skill/remove", method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<?> remveUserSkill(@RequestAttribute(value = "email") @Email(message = "Not an email") String email,
+    ResponseEntity<?> removeUserSkill(@RequestAttribute(value = "email") @Email(message = "Not an email") String email,
                                      @Valid @RequestBody RemoveSkillRequest removeSkillRequest) {
         try {
             userService.removeUserSkill(email, removeSkillRequest);

@@ -85,7 +85,7 @@ public class UserService {
      * @param removeSkillRequest
      * @return
      */
-    public Skill removeUserSkill(Long userId, RemoveSkillRequest removeSkillRequest) throws SkillNotFoundException {
+    public Skill removeUserSkill(Long userId, RemoveSkillRequest removeSkillRequest) {
         return skillService.removeSkill(userId, removeSkillRequest);
 
     }

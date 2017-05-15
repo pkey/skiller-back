@@ -33,32 +33,26 @@ public class UserController {
 
     @RequestMapping(produces = "application/json", value = "/skill/add", method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<?> addUserSkill(@Valid @RequestBody AddSkillRequest addSkillRequest,
-                                   @RequestHeader(value = "Authorization") String authToken) {
-        try {
-            String authId = authService.extractAuthIdFromToken(authToken);
-            Long userId = userService.getUserByAuthId(authId).getId();
-            userService.addUserSkill(userId, addSkillRequest);
-            User userFromRepository = userService.getUserById(userId);
-            return new ResponseEntity<UserEntityResponse>(new UserEntityResponse(userFromRepository), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    UserEntityResponse addUserSkill(@Valid @RequestBody AddSkillRequest addSkillRequest,
+                                    @RequestHeader(value = "Authorization") String authToken) {
+        String authId = authService.extractAuthIdFromToken(authToken);
+        Long userId = userService.getUserByAuthId(authId).getId();
+        userService.addUserSkill(userId, addSkillRequest);
+        User userFromRepository = userService.getUserById(userId);
+
+        return new UserEntityResponse(userFromRepository);
     }
 
     @RequestMapping(produces = "application/json", value = "/skill/remove", method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<?> removeUserSkill(@Valid @RequestBody RemoveSkillRequest removeSkillRequest,
-                                      @RequestHeader(value = "Authorization") String token) {
-        try {
-            String authId = authService.extractAuthIdFromToken(token);
-            Long userId = userService.getUserByAuthId(authId).getId();
-            userService.removeUserSkill(userId, removeSkillRequest);
-            User userFromRepository = userService.getUserById(userId);
-            return new ResponseEntity<UserEntityResponse>(new UserEntityResponse(userFromRepository), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    UserEntityResponse removeUserSkill(@Valid @RequestBody RemoveSkillRequest removeSkillRequest,
+                                       @RequestHeader(value = "Authorization") String token) {
+        String authId = authService.extractAuthIdFromToken(token);
+        Long userId = userService.getUserByAuthId(authId).getId();
+        userService.removeUserSkill(userId, removeSkillRequest);
+        User userFromRepository = userService.getUserById(userId);
+
+        return new UserEntityResponse(userFromRepository);
     }
 
 }

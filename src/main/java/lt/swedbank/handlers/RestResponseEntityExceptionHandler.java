@@ -6,6 +6,7 @@ import lt.swedbank.beans.response.AuthenticationError;
 import lt.swedbank.beans.response.AuthenticationErrorsWrapper;
 import lt.swedbank.beans.response.ErrorResponse;
 import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
+import lt.swedbank.exceptions.skill.SkillNotFoundException;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -49,7 +50,12 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     }
 
     @ExceptionHandler({ SkillAlreadyExistsException.class })
-    public ResponseEntity<ErrorResponse> handleSkillAlreadyAddedToUserException(SkillAlreadyExistsException ex, WebRequest request) {
-        return new ResponseEntity<ErrorResponse>(new ErrorResponse(ex), HttpStatus.FOUND);
+    public ResponseEntity<ErrorResponse> handleSkillAlreadyExistsException(SkillAlreadyExistsException ex, WebRequest request) {
+        return new ResponseEntity<ErrorResponse>(new ErrorResponse(ex), HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @ExceptionHandler({SkillNotFoundException.class })
+    public ResponseEntity<ErrorResponse> handleSkillNotFoundException(SkillNotFoundException ex, WebRequest request) {
+        return new ResponseEntity<ErrorResponse>(new ErrorResponse(ex), HttpStatus.NOT_FOUND);
     }
 }

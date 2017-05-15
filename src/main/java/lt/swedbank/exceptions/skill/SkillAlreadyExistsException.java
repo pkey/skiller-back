@@ -5,7 +5,7 @@ public class SkillAlreadyExistsException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        return "Skill already exists on the user";
+        return "User already has this skill!";
     }
 
 }

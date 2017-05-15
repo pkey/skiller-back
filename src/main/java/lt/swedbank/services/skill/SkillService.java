@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class SkillService {
+public class SkillService implements ISkillService{
 
     @Autowired
     private SkillRepository skillRepository;
@@ -22,6 +22,7 @@ public class SkillService {
         this.skillRepository = skillRepository;
     }
 
+    @Override
     public Skill addSkill(Long userID, AddSkillRequest addSkillRequest) throws SkillAlreadyAddedToUserException {
 
         Skill skill;
@@ -38,6 +39,7 @@ public class SkillService {
         return skill;
     }
 
+    @Override
     public Skill removeSkill(Long userID, RemoveSkillRequest removeSkillRequest)
     {
         Skill skill = skillRepository.findByTitleAndUserID(removeSkillRequest.getTitle(), userID);

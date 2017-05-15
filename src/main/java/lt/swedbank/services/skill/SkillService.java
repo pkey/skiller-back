@@ -40,13 +40,19 @@ public class SkillService implements ISkillService{
     }
 
     @Override
-    public Skill removeSkill(Long userID, RemoveSkillRequest removeSkillRequest) throws SkillNotFoundException
-    {
-        if (!Optional.ofNullable(skillRepository.findByTitleAndUserID(removeSkillRequest.getTitle(), userID)).isPresent()) {
+    public Skill removeSkill(Long userID, RemoveSkillRequest removeSkillRequest) throws SkillNotFoundException {
+
+        Skill skill;
+
+        if(isSkillAlreadyExists(userID, removeSkillRequest.getTitle())) {
+
+            skill = skillRepository.findByTitleAndUserID(removeSkillRequest.getTitle(), userID);
+
+            skillRepository.delete(skill);
+        } else {
             throw new SkillNotFoundException();
         }
-        Skill skill = skillRepository.findByTitleAndUserID(removeSkillRequest.getTitle(), userID);
-        skillRepository.delete(skill);
+
         return skill;
     }
 

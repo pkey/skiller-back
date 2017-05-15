@@ -4,7 +4,9 @@ package lt.swedbank.services.skill;
 import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
-import lt.swedbank.exceptions.skill.SkillNotFaoundException;
+import lt.swedbank.exceptions.skill.*;
+import lt.swedbank.exceptions.user.UserNotFoundException;
+
 import lt.swedbank.repositories.SkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,11 +24,18 @@ public class SkillService implements ISkillService {
     }
 
     @Override
-    public Skill addSkill(Long userID, AddSkillRequest addSkillRequest) {
+    public Skill addSkill(Long userID, AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
 
-        Skill skill = new Skill(addSkillRequest.getTitle(), userID);
+        Skill skill;
 
-        skillRepository.save(skill);
+        if(!isSkillAlreadyExists(userID, addSkillRequest.getTitle())) {
+
+            skill = new Skill(addSkillRequest.getTitle(), userID);
+
+            skillRepository.save(skill);
+        } else {
+            throw new SkillAlreadyExistsException();
+        }
 
         return skill;
     }
@@ -40,5 +49,9 @@ public class SkillService implements ISkillService {
         Skill skill = skillRepository.findByTitleAndUserID(removeSkillRequest.getTitle(), userID);
         skillRepository.delete(skill);
         return skill;
+    }
+
+    public boolean isSkillAlreadyExists(Long userID, String skillTitle) {
+        return Optional.ofNullable(skillRepository.findByTitleAndUserID(skillTitle, userID)).isPresent();
     }
 }

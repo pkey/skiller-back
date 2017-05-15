@@ -1,6 +1,6 @@
 package lt.swedbank.exceptions.skill;
 
-public class SkillNotFaoundException extends Exception {
+public class SkillNotFoundException extends Exception {
     @Override
     public String getMessage()
     {

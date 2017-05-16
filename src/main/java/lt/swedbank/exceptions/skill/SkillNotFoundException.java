@@ -4,6 +4,6 @@ public class SkillNotFoundException extends RuntimeException {
     @Override
     public String getMessage()
     {
-        return "UserSkill not found!";
+        return "Skill not found!";
     }
 }

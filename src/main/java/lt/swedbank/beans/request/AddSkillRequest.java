@@ -13,7 +13,7 @@ public class AddSkillRequest {
     public AddSkillRequest() {}
 
     public AddSkillRequest(UserSkill userSkill) {
-        //setTitle(userSkill.getTitle());
+        setTitle(userSkill.getTitle());
     }
 
     public String getTitle() {

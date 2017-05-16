@@ -50,11 +50,16 @@ public class UserService {
      */
     public UserSkill addUserSkill(Long userid, AddSkillRequest addSkillRequest) {
 
+        if (getUserById(userid) == null) {
+            throw new UserNotFoundException();
+            }
         return userSkillService.addSkill(userid, addSkillRequest);
     }
 
     public UserSkill removeUserSkill(Long userid, RemoveSkillRequest removeSkillRequest)  {
-
+        if (getUserById(userid) == null) {
+            throw new UserNotFoundException();
+        }
         Skill skill = skillRepository.findByTitle(removeSkillRequest.getTitle());
         return userSkillService.removeSkill(userid, skill);
     }

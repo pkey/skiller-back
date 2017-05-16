@@ -13,7 +13,7 @@ public class RemoveSkillRequest {
     public RemoveSkillRequest() {}
 
     public RemoveSkillRequest(UserSkill userSkill) {
-        //setTitle(userSkill.getTitle());
+        setTitle(userSkill.getTitle());
     }
 
     public String getTitle() {

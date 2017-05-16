@@ -1,42 +1,32 @@
 package lt.swedbank.beans.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lt.swedbank.beans.request.AddSkillRequest;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
-
-@Entity(name = "SKILL")
+@Entity
 public class Skill {
+
     @Id
     @JsonIgnore
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
     private String title;
-    @JsonIgnore
-    private Long userID;
 
-    public Skill() {}
-
-    public Skill(String title, Long userID) {
+    public Skill(String title)
+    {
         this.title = title;
-        this.userID = userID;
     }
-
-    public Long getUserID() {
-        return userID;
-    }
-
-    public void setUserID(Long userID) {
-        this.userID = userID;
-    }
+    public Skill(){}
 
     public Long getId() {
         return id;
     }
 
-    private void setId(Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -47,5 +37,4 @@ public class Skill {
     public void setTitle(String title) {
         this.title = title;
     }
-
 }

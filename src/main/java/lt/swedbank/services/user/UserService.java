@@ -2,9 +2,9 @@ package lt.swedbank.services.user;
 
 import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.User;
+import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
-import lt.swedbank.exceptions.skill.SkillNotFoundException;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.repositories.UserRepository;
 import lt.swedbank.services.skill.SkillService;
@@ -73,7 +73,8 @@ public class UserService {
      * @param addSkillRequest - data of the skill that should be added
      * @return the added skill
      */
-    public Skill addUserSkill(Long userId, AddSkillRequest addSkillRequest) {
+    public UserSkill addUserSkill(Long userId, AddSkillRequest addSkillRequest) {
+
         return skillService.addSkill(userId, addSkillRequest);
     }
 

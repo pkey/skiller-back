@@ -1,7 +1,7 @@
 package lt.swedbank.beans.response;
 
-import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.User;
+import lt.swedbank.beans.entity.UserSkill;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public class UserEntityResponse extends Response {
 
     private String email;
 
-    private List<Skill> skills;
+    private List<UserSkill> skills;
 
     public UserEntityResponse(User user) {
 
@@ -48,11 +48,11 @@ public class UserEntityResponse extends Response {
         this.email = email;
     }
 
-    public List<Skill> getSkills() {
+    public List<UserSkill> getSkills() {
         return skills;
     }
 
-    public void setSkills(List<Skill> skills) {
+    public void setSkills(List<UserSkill> skills) {
         this.skills = skills;
     }
 }

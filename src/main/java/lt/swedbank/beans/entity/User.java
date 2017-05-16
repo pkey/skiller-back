@@ -29,7 +29,7 @@ public class User {
     private String email;
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "userid")
-    private List<Skill> skills = new LinkedList<Skill>();
+    private List<UserSkill> skills = new LinkedList<UserSkill>();
 
     private String authId;
 
@@ -92,11 +92,11 @@ public class User {
         this.email = email;
     }
 
-    public List<Skill> getSkills() {
+    public List<UserSkill> getSkills() {
         return skills;
     }
 
-    public void setSkills(List<Skill> skills) {
+    public void setSkills(List<UserSkill> skills) {
         this.skills = skills;
     }
 

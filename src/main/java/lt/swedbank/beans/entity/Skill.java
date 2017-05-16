@@ -1,26 +1,26 @@
 package lt.swedbank.beans.entity;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
-@Entity
+@Entity(name = "SKILL")
 public class Skill {
+
 
     @Id
     @JsonIgnore
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(unique = true)
     private String title;
 
     public Skill(String title)
     {
-        this.title = title;
+        this.setTitle(title);
     }
-    public Skill(){}
 
     public Long getId() {
         return id;

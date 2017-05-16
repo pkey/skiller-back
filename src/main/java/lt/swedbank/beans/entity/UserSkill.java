@@ -16,18 +16,20 @@ public class UserSkill {
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @JsonIgnore
     private Long userID;
 
     @ManyToOne
     private Skill skill;
 
+    public UserSkill(Long userID)
+    {
+        this.userID = userID;
+    }
+
     public UserSkill(Long userID, Skill skill) {
         this.skill = skill;
         this.userID = userID;
     }
-
-    public UserSkill(){}
 
     public Long getUserID() {
         return userID;

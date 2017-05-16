@@ -16,17 +16,12 @@ import lt.swedbank.repositories.UserRepository;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.PropertySources;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
-@PropertySources({
-        @PropertySource("classpath:auth0.properties")
-})
 public class Auth0AuthenticationService implements AuthenticationService {
 
     private static final String SCOPE = "openid";
@@ -44,9 +39,11 @@ public class Auth0AuthenticationService implements AuthenticationService {
 
     private String clientId; //Auth0 client ID
 
-    private String clientAudience; //Auth0 client secret
+    private String clientSecret; //Auth0 client secret
 
     private String clientDomain; //Auth0 client domain
+
+    private String audience;
 
     private AuthAPI auth; //Auth0 Authentication API
 
@@ -54,13 +51,14 @@ public class Auth0AuthenticationService implements AuthenticationService {
 
     @Autowired
     public Auth0AuthenticationService(@Value("${auth0.clientId}") String clientId,
-                                      @Value("${auth0.clientDomain}") String clientDomain,
                                       @Value("${auth0.clientSecret}") String clientSecret,
-                                      @Value("${auth0.clientAudience") String clientAudience,
+                                      @Value("${auth0.clientDomain}") String clientDomain,
+                                      @Value("${auth0.audience}") String audience,
                                       UserRepository userRepository) {
         this.clientId = clientId;
+        this.clientSecret = clientSecret;
         this.clientDomain = clientDomain;
-        this.clientAudience =  clientAudience;
+        this.audience = audience;
 
         this.auth = new AuthAPI(clientDomain, clientId, clientSecret);
 
@@ -116,7 +114,7 @@ public class Auth0AuthenticationService implements AuthenticationService {
     @Override
     public TokenHolder loginUser(LoginUserRequest user) throws Auth0Exception {
         AuthRequest request = auth.login(user.getEmail(), user.getPassword(), user.getConnection())
-                .setAudience(this.clientAudience)
+                .setAudience(this.audience)
                 .setScope(SCOPE);
 
         TokenHolder holder = request.execute();

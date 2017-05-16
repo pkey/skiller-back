@@ -37,13 +37,10 @@ public class UserServiceTest {
         testUser.setName("Testas");
         testUser.setLastName("Testauskas");
         testUser.setEmail("test@test.com");
-
-        userRepository.save(testUser);
     }
 
     @After
     public void tearDown() throws Exception {
-        userRepository.delete(testUser.getId());
     }
 
     @Test

@@ -25,9 +25,9 @@ public class SkillService implements ISkillService{
     @Override
     public Skill addSkill(Long userID, AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
 
-        Skill skill;
+        Skill skill = skillRepository.findByTitleAndUserID(addSkillRequest.getTitle(), userID);
 
-        if(!isSkillAlreadyExists(userID, addSkillRequest.getTitle())) {
+        if(skill == null) {
 
             skill = new Skill(addSkillRequest.getTitle(), userID);
 
@@ -42,21 +42,12 @@ public class SkillService implements ISkillService{
     @Override
     public Skill removeSkill(Long userID, RemoveSkillRequest removeSkillRequest) throws SkillNotFoundException {
 
-        Skill skill;
+        Skill skill = skillRepository.findByTitleAndUserID(removeSkillRequest.getTitle(), userID);
 
-        if(isSkillAlreadyExists(userID, removeSkillRequest.getTitle())) {
-
-            skill = skillRepository.findByTitleAndUserID(removeSkillRequest.getTitle(), userID);
-
-            skillRepository.delete(skill);
-        } else {
+        if(skill == null){
             throw new SkillNotFoundException();
         }
 
         return skill;
-    }
-
-    public boolean isSkillAlreadyExists(Long userID, String skillTitle) {
-        return Optional.ofNullable(skillRepository.findByTitleAndUserID(skillTitle, userID)).isPresent();
     }
 }

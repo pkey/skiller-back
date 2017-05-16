@@ -29,17 +29,16 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String connection;
     private String email;
+    @JsonIgnore
+    private String authId;
 
     @OneToMany
     @JoinColumn(name = "userid")
     private List<UserSkill> userSkills = new LinkedList<UserSkill>();
-
+    
     public List<UserSkill> getUserSkills() {
         return userSkills;
     }
-
-    @JsonIgnore
-    private String authId;
 
     public void setUserSkills(List<UserSkill> userSkills) {
         this.userSkills = userSkills;
@@ -107,4 +106,5 @@ public class User {
     public void setAuthId(String authId) {
         this.authId = authId;
     }
+
 }

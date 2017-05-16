@@ -4,6 +4,7 @@ package lt.swedbank.services.skill;
 import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
+import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
 import lt.swedbank.exceptions.skill.SkillNotFoundException;
 import lt.swedbank.repositories.SkillRepository;
 import lt.swedbank.repositories.UserSkillRepository;
@@ -26,7 +27,7 @@ public class SkillService implements ISkillService {
     }
 
     @Override
-    public UserSkill addSkill(Long userID, AddSkillRequest addSkillRequest) {
+    public UserSkill addSkill(Long userID, AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
 
         Skill skill = new Skill(addSkillRequest.getTitle());
         skillRepository.save(skill);

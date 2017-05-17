@@ -35,7 +35,7 @@ public class User {
     @OneToMany
     @JoinColumn(name = "userid")
     private List<UserSkill> userSkills = new LinkedList<UserSkill>();
-    
+
     public List<UserSkill> getUserSkills() {
         return userSkills;
     }

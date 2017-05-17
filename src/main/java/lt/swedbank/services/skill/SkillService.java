@@ -29,8 +29,18 @@ public class SkillService implements ISkillService {
     @Override
     public UserSkill addSkill(Long userID, AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
 
-        Skill skill = new Skill(addSkillRequest.getTitle());
-        skillRepository.save(skill);
+        Skill skill;
+
+        if(isSkillNotExists(addSkillRequest.getTitle())) {
+            skill = new Skill(addSkillRequest.getTitle());
+            skillRepository.save(skill);
+        } else {
+            skill = skillRepository.findByTitle(addSkillRequest.getTitle());
+        }
+
+        if(isUserSkillAlreadyExists(userID, skill)) {
+            throw new SkillAlreadyExistsException();
+        }
 
         UserSkill userSkill = new UserSkill(userID, skill);
         userSkillRepository.save(userSkill);
@@ -41,11 +51,26 @@ public class SkillService implements ISkillService {
     @Override
     public UserSkill removeSkill(Long userID, Skill skill) throws SkillNotFoundException
     {
-        if (!Optional.ofNullable(userSkillRepository.findByUserIDAndSkill(userID, skill)).isPresent()) {
+        if (!isUserSkillAlreadyExists(userID, skill)) {
             throw new SkillNotFoundException();
         }
         UserSkill userSkill = userSkillRepository.findByUserIDAndSkill(userID, skill);
         userSkillRepository.delete(userSkill);
         return userSkill;
     }
+
+    private boolean isUserSkillAlreadyExists(Long userID, Skill skill) {
+        return Optional.ofNullable(userSkillRepository.findByUserIDAndSkill(userID, skill)).isPresent();
+    }
+    private boolean isSkillAlreadyExists(String title)
+    {
+        return Optional.ofNullable(skillRepository.findByTitle(title)).isPresent();
+    }
+    private boolean isSkillNotExists(String title)
+    {
+        return !Optional.ofNullable(skillRepository.findByTitle(title)).isPresent();
+    }
+
+
+
 }

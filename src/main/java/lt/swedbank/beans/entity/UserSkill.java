@@ -31,6 +31,8 @@ public class UserSkill {
         this.userID = userID;
     }
 
+    public UserSkill() {}
+
     public Long getUserID() {
         return userID;
     }

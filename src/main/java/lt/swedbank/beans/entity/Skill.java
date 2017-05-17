@@ -22,6 +22,8 @@ public class Skill {
         this.setTitle(title);
     }
 
+    public Skill() {}
+
     public Long getId() {
         return id;
     }

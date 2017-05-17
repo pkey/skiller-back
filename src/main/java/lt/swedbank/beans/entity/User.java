@@ -103,6 +103,10 @@ public class User {
         this.email = email;
     }
 
+    public String getAuthId() {
+        return authId;
+    }
+
     public void setAuthId(String authId) {
         this.authId = authId;
     }

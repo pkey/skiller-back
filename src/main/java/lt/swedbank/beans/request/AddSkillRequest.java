@@ -6,9 +6,8 @@ import javax.validation.constraints.NotNull;
 
 public class AddSkillRequest {
 
-    @NotNull(message = "UserSkill title is required!")
+    @NotNull(message = "Skill title is required!")
     private String title;
-
 
     public AddSkillRequest() {}
 

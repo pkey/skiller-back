@@ -16,10 +16,10 @@
     "CLIENT_SECRET": {
       "required": true
     },
-    "HIBERNATE_BEHAVIOR": {
+    "CLIENT_AUDIENCE": {
       "required": true
     },
-    "MANAGEMENT_API_AUDIENCE": {
+    "HIBERNATE_BEHAVIOR": {
       "required": true
     }
   },

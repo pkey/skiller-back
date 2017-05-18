@@ -5,12 +5,16 @@ import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
+import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.repositories.SkillRepository;
 import lt.swedbank.repositories.UserRepository;
 import lt.swedbank.services.skill.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
@@ -80,5 +84,10 @@ public class UserService {
             throw new UserNotFoundException();
         }
         return user;
+    }
+
+    public List<User> getAllUsers() {
+        ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
+        return users;
     }
 }

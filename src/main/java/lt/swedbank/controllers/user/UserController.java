@@ -13,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -53,6 +55,12 @@ public class UserController {
         User userFromRepository = userService.getUserById(userId);
 
         return new UserEntityResponse(userFromRepository);
+    }
+
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    public @ResponseBody
+    List<UserEntityResponse> getAllUsers(@RequestHeader(value = "Authorization") String authToken) {
+        return userService.getUserEntityResponseList();
     }
 
 }

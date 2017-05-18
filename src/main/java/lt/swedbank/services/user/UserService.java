@@ -90,4 +90,14 @@ public class UserService {
         ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
         return users;
     }
+
+    public List<UserEntityResponse> getUserEntityResponseList() {
+
+        List<UserEntityResponse> userList = new ArrayList<>();
+        for (User user: getAllUsers()
+                ) {
+            userList.add(new UserEntityResponse(user));
+        }
+        return userList;
+    }
 }

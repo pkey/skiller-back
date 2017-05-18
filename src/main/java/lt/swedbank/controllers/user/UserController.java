@@ -60,14 +60,7 @@ public class UserController {
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public @ResponseBody
     List<UserEntityResponse> getAllUsers(@RequestHeader(value = "Authorization") String authToken) {
-        //String authId = authService.extractAuthIdFromToken(authToken);
-        List<UserEntityResponse> userArray = new ArrayList<UserEntityResponse>();
-        List<User> users = userService.getAllUsers();
-        for (User user: users
-             ) {
-            userArray.add(new UserEntityResponse(user));
-        }
-        return userArray;
+        return userService.getUserEntityResponseList();
     }
 
 }

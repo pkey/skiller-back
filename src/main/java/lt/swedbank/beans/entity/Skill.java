@@ -10,7 +10,6 @@ public class Skill {
 
 
     @Id
-    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

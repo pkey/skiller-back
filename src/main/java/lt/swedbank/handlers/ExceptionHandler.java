@@ -21,7 +21,7 @@ public class ExceptionHandler {
 
 
     private String getMessage(String message) {
-        return messageSource.getMessage(message, new Object[0], Locale.getDefault());
+        return messageSource.getMessage(message, null, Locale.getDefault());
     }
 
     private Locale getLocale(HttpServletRequest request) {

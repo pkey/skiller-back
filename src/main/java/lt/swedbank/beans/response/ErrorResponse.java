@@ -1,12 +1,14 @@
 package lt.swedbank.beans.response;
 
 
+import lt.swedbank.exceptions.ApplicationException;
+
 public class ErrorResponse extends Response {
 
     public String message;
 
-    public ErrorResponse(Exception ex) {
-        this.message = ex.getMessage();
+    public ErrorResponse(ApplicationException ex) {
+        this.message = ex.getErrorCause();
     }
 
     public String getMessage() {

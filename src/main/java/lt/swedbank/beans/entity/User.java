@@ -3,6 +3,8 @@ package lt.swedbank.beans.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lt.swedbank.beans.request.RegisterUserRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 
 import javax.persistence.*;
 import java.util.LinkedList;
@@ -27,11 +29,20 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String connection;
     private String email;
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "userid")
-    private List<Skill> skills = new LinkedList<Skill>();
-
+    @JsonIgnore
     private String authId;
+
+    @OneToMany
+    @JoinColumn(name = "userid")
+    private List<UserSkill> userSkills = new LinkedList<UserSkill>();
+
+    public List<UserSkill> getUserSkills() {
+        return userSkills;
+    }
+
+    public void setUserSkills(List<UserSkill> userSkills) {
+        this.userSkills = userSkills;
+    }
 
     public User() {}
 
@@ -92,14 +103,6 @@ public class User {
         this.email = email;
     }
 
-    public List<Skill> getSkills() {
-        return skills;
-    }
-
-    public void setSkills(List<Skill> skills) {
-        this.skills = skills;
-    }
-
     public String getAuthId() {
         return authId;
     }
@@ -107,4 +110,5 @@ public class User {
     public void setAuthId(String authId) {
         this.authId = authId;
     }
+
 }

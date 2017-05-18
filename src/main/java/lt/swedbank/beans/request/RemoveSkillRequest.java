@@ -1,6 +1,6 @@
 package lt.swedbank.beans.request;
 
-import lt.swedbank.beans.entity.Skill;
+import lt.swedbank.beans.entity.UserSkill;
 
 import javax.validation.constraints.NotNull;
 
@@ -12,8 +12,8 @@ public class RemoveSkillRequest {
 
     public RemoveSkillRequest() {}
 
-    public RemoveSkillRequest(Skill skill) {
-        setTitle(skill.getTitle());
+    public RemoveSkillRequest(UserSkill userSkill) {
+        setTitle(userSkill.getTitle());
     }
 
     public String getTitle() {

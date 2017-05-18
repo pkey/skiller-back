@@ -2,52 +2,68 @@ package lt.swedbank.services.skill;
 
 
 import lt.swedbank.beans.entity.Skill;
+import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
-import lt.swedbank.beans.request.RemoveSkillRequest;
+import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
 import lt.swedbank.exceptions.skill.SkillNotFoundException;
-import lt.swedbank.exceptions.skill.*;
 import lt.swedbank.repositories.SkillRepository;
+import lt.swedbank.repositories.UserSkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-public class SkillService implements ISkillService{
+public class SkillService implements ISkillService {
 
     @Autowired
     private SkillRepository skillRepository;
+    @Autowired
+    private UserSkillRepository userSkillRepository;
 
-    public SkillService(SkillRepository skillRepository) {
+    public SkillService(SkillRepository skillRepository, UserSkillRepository userSkillRepository) {
         this.skillRepository = skillRepository;
+        this.userSkillRepository = userSkillRepository;
     }
 
     @Override
-    public Skill addSkill(Long userID, AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
+    public UserSkill addSkill(Long userID, AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
 
-        Skill skill = skillRepository.findByTitleAndUserID(addSkillRequest.getTitle(), userID);
+        Skill skill = skillRepository.findByTitle(addSkillRequest.getTitle());
 
         if(skill == null) {
-
-            skill = new Skill(addSkillRequest.getTitle(), userID);
-
+            skill = new Skill(addSkillRequest.getTitle());
             skillRepository.save(skill);
         } else {
+            skill = skillRepository.findByTitle(addSkillRequest.getTitle());
+        }
+
+        if(isUserSkillAlreadyExists(userID, skill)) {
             throw new SkillAlreadyExistsException();
         }
 
-        return skill;
+        UserSkill userSkill = new UserSkill(userID, skill);
+        userSkillRepository.save(userSkill);
+
+        return userSkill;
     }
 
     @Override
-    public Skill removeSkill(Long userID, RemoveSkillRequest removeSkillRequest) throws SkillNotFoundException {
+    public UserSkill removeSkill(Long userID, Skill skill) throws SkillNotFoundException {
 
-        Skill skill = skillRepository.findByTitleAndUserID(removeSkillRequest.getTitle(), userID);
+        UserSkill userSkill = userSkillRepository.findByUserIDAndSkill(userID, skill);
 
-        if(skill == null){
+        if(userSkill == null){
             throw new SkillNotFoundException();
         }
 
-        return skill;
+        userSkillRepository.delete(userSkill);
+
+        return userSkill;
     }
+
+    private boolean isUserSkillAlreadyExists(Long userID, Skill skill) {
+        return Optional.ofNullable(userSkillRepository.findByUserIDAndSkill(userID, skill)).isPresent();
+    }
+
 }

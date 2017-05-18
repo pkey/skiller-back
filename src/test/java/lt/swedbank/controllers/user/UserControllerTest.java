@@ -2,9 +2,10 @@ package lt.swedbank.controllers.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.entity.Skill;
-import lt.swedbank.beans.entity.User;
+import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.exceptions.user.UserNotFoundException;
+import lt.swedbank.beans.entity.User;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.user.UserService;
@@ -24,9 +25,9 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.Matchers.any;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -47,8 +48,9 @@ public class UserControllerTest {
 
 
     private User correctUser;
+    private List<UserSkill> correctUserSkills;
+    private UserSkill skill;
     private List<Skill> correctSkills;
-    private Skill correctSkillToAddLater;
 
     @InjectMocks
     private UserController userController;
@@ -79,19 +81,25 @@ public class UserControllerTest {
         correctUser.setPassword("TestUserPassword");
         correctUser.setEmail("testuser@gmail.com");
 
-        correctSkills = new ArrayList<>();
-        correctSkills.add(new Skill("SkillName1", userId));
-        correctSkills.add(new Skill("SkillName2", userId));
-        correctSkills.add(new Skill("SkillName3", userId));
+        correctSkills = new ArrayList<Skill>();
+        correctSkills.add(new Skill("SkillName1"));
+        correctSkills.add(new Skill("SkillName2"));
+        correctSkills.add(new Skill("SkillName3"));
 
-        correctUser.setSkills(correctSkills);
+        correctUserSkills = new ArrayList<>();
+        correctUserSkills.add(new UserSkill(userId, correctSkills.get(0)));
+        correctUserSkills.add(new UserSkill(userId, correctSkills.get(1)));
+        correctUserSkills.add(new UserSkill(userId, correctSkills.get(2)));
 
-        correctSkillToAddLater = new Skill("SkillToAddLater", userId);
+        correctUser.setUserSkills(correctUserSkills);
+
+        skill = new UserSkill(userId, new Skill("SkillToAddLater"));
     }
 
     @After
     public void tearDown() throws Exception {
     }
+
 
     @Test
     public void get_user_success() throws Exception {
@@ -106,10 +114,10 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name", is("TestUserName")))
                 .andExpect(jsonPath("$.lastName", is("TestUserLastName")))
                 .andExpect(jsonPath("$.email", is("testuser@gmail.com")))
-                .andExpect(jsonPath("$.skills", hasSize(3)))
-                .andExpect(jsonPath("$.skills[0].title", is("SkillName1")))
-                .andExpect(jsonPath("$.skills[1].title", is("SkillName2")))
-                .andExpect(jsonPath("$.skills[2].title", is("SkillName3")));
+                .andExpect(jsonPath("$.userSkills", hasSize(3)))
+                .andExpect(jsonPath("$.userSkills[0].title", is("SkillName1")))
+                .andExpect(jsonPath("$.userSkills[1].title", is("SkillName2")))
+                .andExpect(jsonPath("$.userSkills[2].title", is("SkillName3")));
 
         verify(userService, times(1)).getUserByAuthId(any());
         verifyNoMoreInteractions(userService);
@@ -119,14 +127,14 @@ public class UserControllerTest {
     @Test
     public void add_skill_to_user_success() throws Exception {
 
-        String skillJson = mapper.writeValueAsString(new AddSkillRequest(correctSkillToAddLater));
+        String skillJson = mapper.writeValueAsString(new AddSkillRequest(skill));
 
-        List<Skill> tmpSkills = new ArrayList<>(correctSkills);
-        tmpSkills.add(correctSkillToAddLater);
-        correctUser.setSkills(tmpSkills);
+        List<UserSkill> tmpSkills = new ArrayList<UserSkill>(correctUserSkills);
+        tmpSkills.add(skill);
+        correctUser.setUserSkills(tmpSkills);
 
         when(userService.getUserByAuthId(any())).thenReturn(correctUser);
-        when(userService.addUserSkill(any(), any())).thenReturn(correctSkillToAddLater);
+        when(userService.addUserSkill(any(), any())).thenReturn(skill);
         when(userService.getUserById(any())).thenReturn(correctUser);
 
         mockMvc.perform(post("/user/skill/add").header("Authorization", "Bearer")
@@ -136,18 +144,49 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name", is("TestUserName")))
                 .andExpect(jsonPath("$.lastName", is("TestUserLastName")))
                 .andExpect(jsonPath("$.email", is("testuser@gmail.com")))
-                .andExpect(jsonPath("$.skills", hasSize(4)))
-                .andExpect(jsonPath("$.skills[0].title", is("SkillName1")))
-                .andExpect(jsonPath("$.skills[1].title", is("SkillName2")))
-                .andExpect(jsonPath("$.skills[2].title", is("SkillName3")))
-                .andExpect(jsonPath("$.skills[3].title", is("SkillToAddLater")));
+                .andExpect(jsonPath("$.userSkills", hasSize(4)))
+                .andExpect(jsonPath("$.userSkills[0].title", is("SkillName1")))
+                .andExpect(jsonPath("$.userSkills[1].title", is("SkillName2")))
+                .andExpect(jsonPath("$.userSkills[2].title", is("SkillName3")))
+                .andExpect(jsonPath("$.userSkills[3].title", is("SkillToAddLater")));
 
         verify(userService, times(1)).getUserByAuthId(any());
         verify(userService, times(1)).addUserSkill(any(), any());
+        verify(userService, times(1)).getUserById(any());
 
-        correctUser.setSkills(correctSkills);
+        correctUser.setUserSkills(correctUserSkills);
     }
 
+    @Test
+    public void remove_skill_from_user_success() throws Exception {
+
+        String skillJson = mapper.writeValueAsString(new AddSkillRequest(correctUserSkills.get(2)));
+
+        List<UserSkill> tmpSkills = new ArrayList<>(correctUserSkills);
+        tmpSkills.remove(2);
+        correctUser.setUserSkills(tmpSkills);
+
+        when(userService.getUserByAuthId(any())).thenReturn(correctUser);
+        when(userService.removeUserSkill(any(), any())).thenReturn(correctUserSkills.get(2));
+        when(userService.getUserById(any())).thenReturn(correctUser);
+
+        mockMvc.perform(post("/user/skill/remove").header("Authorization", "Bearer")
+                .contentType(contentType)
+                .content(skillJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is("TestUserName")))
+                .andExpect(jsonPath("$.lastName", is("TestUserLastName")))
+                .andExpect(jsonPath("$.email", is("testuser@gmail.com")))
+                .andExpect(jsonPath("$.userSkills", hasSize(2)))
+                .andExpect(jsonPath("$.userSkills[0].title", is("SkillName1")))
+                .andExpect(jsonPath("$.userSkills[1].title", is("SkillName2")));
+
+        verify(userService, times(1)).getUserByAuthId(any());
+        verify(userService, times(1)).removeUserSkill(any(), any());
+        verify(userService, times(1)).getUserById(any());
+
+        correctUser.setUserSkills(correctUserSkills);
+    }
 
     @Test
     public void test_if_user_not_found_is_thrown_when_it_is_not() throws Exception {

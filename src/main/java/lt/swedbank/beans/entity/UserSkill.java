@@ -13,9 +13,9 @@ import javax.persistence.*;
 public class UserSkill {
 
     @Id
-    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @JsonIgnore
     private Long userID;
 
     @ManyToOne

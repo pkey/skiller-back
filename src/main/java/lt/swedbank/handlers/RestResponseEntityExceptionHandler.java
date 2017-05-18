@@ -51,7 +51,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler({ SkillAlreadyExistsException.class })
     public ResponseEntity<ErrorResponse> handleSkillAlreadyExistsException(SkillAlreadyExistsException ex, WebRequest request) {
-        return new ResponseEntity<ErrorResponse>(new ErrorResponse(ex), HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity<ErrorResponse>(new ErrorResponse(ex), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler({SkillNotFoundException.class })

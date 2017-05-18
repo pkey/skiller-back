@@ -1,11 +1,12 @@
 package lt.swedbank.exceptions.skill;
 
 
-public class SkillAlreadyExistsException extends RuntimeException {
+import lt.swedbank.exceptions.ApplicationException;
 
-    @Override
-    public String getMessage() {
-        return "User already has this skill!";
+public class SkillAlreadyExistsException extends ApplicationException {
+
+    public SkillAlreadyExistsException(String errorCause) {
+        super(errorCause);
     }
 
 }

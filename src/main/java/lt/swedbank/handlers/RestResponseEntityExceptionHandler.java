@@ -5,6 +5,7 @@ import com.auth0.exception.Auth0Exception;
 import lt.swedbank.beans.response.AuthenticationError;
 import lt.swedbank.beans.response.AuthenticationErrorsWrapper;
 import lt.swedbank.beans.response.ErrorResponse;
+import lt.swedbank.exceptions.ApplicationException;
 import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
 import lt.swedbank.exceptions.skill.SkillNotFoundException;
 import lt.swedbank.exceptions.user.UserNotFoundException;
@@ -56,6 +57,11 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler({SkillNotFoundException.class })
     public ResponseEntity<ErrorResponse> handleSkillNotFoundException(SkillNotFoundException ex, WebRequest request) {
+        return new ResponseEntity<ErrorResponse>(new ErrorResponse(ex), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler({ApplicationException.class })
+    public ResponseEntity<ErrorResponse> handleApplicationException(SkillNotFoundException ex, WebRequest request) {
         return new ResponseEntity<ErrorResponse>(new ErrorResponse(ex), HttpStatus.NOT_FOUND);
     }
 }

@@ -25,7 +25,6 @@ import java.util.Map;
 public class Auth0AuthenticationService implements AuthenticationService {
 
     private static final String SCOPE = "openid";
-    private static final String AUDIENCE = "https://skiller/api";
 
     private static final String KEY_CLIENT_ID = "client_id";
     private static final String KEY_PASSWORD = "password";
@@ -44,6 +43,8 @@ public class Auth0AuthenticationService implements AuthenticationService {
 
     private String clientDomain; //Auth0 client domain
 
+    private String audience;
+
     private AuthAPI auth; //Auth0 Authentication API
 
     private UserRepository userRepository;
@@ -52,10 +53,12 @@ public class Auth0AuthenticationService implements AuthenticationService {
     public Auth0AuthenticationService(@Value("${auth0.clientId}") String clientId,
                                       @Value("${auth0.clientSecret}") String clientSecret,
                                       @Value("${auth0.clientDomain}") String clientDomain,
+                                      @Value("${auth0.audience}") String audience,
                                       UserRepository userRepository) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.clientDomain = clientDomain;
+        this.audience = audience;
 
         this.auth = new AuthAPI(clientDomain, clientId, clientSecret);
 
@@ -111,7 +114,7 @@ public class Auth0AuthenticationService implements AuthenticationService {
     @Override
     public TokenHolder loginUser(LoginUserRequest user) throws Auth0Exception {
         AuthRequest request = auth.login(user.getEmail(), user.getPassword(), user.getConnection())
-                .setAudience(AUDIENCE)
+                .setAudience(this.audience)
                 .setScope(SCOPE);
 
         TokenHolder holder = request.execute();

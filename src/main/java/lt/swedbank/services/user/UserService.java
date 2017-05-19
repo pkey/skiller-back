@@ -86,12 +86,12 @@ public class UserService {
         return user;
     }
 
-    public List<User> getAllUsers() {
-        ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
+    public Iterable<User> getAllUsers() {
+        Iterable<User> users = (Iterable<User>) userRepository.findAll();
         return users;
     }
 
-    public List<UserEntityResponse> getUserEntityResponseList() {
+    public Iterable<UserEntityResponse> getUserEntityResponseList() {
 
         List<UserEntityResponse> userList = new ArrayList<>();
         for (User user: getAllUsers()

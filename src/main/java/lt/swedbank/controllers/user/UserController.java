@@ -59,7 +59,7 @@ public class UserController {
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public @ResponseBody
-    List<UserEntityResponse> getAllUsers(@RequestHeader(value = "Authorization") String authToken) {
+    Iterable<UserEntityResponse> getAllUsers(@RequestHeader(value = "Authorization") String authToken) {
         return userService.getUserEntityResponseList();
     }
 

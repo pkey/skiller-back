@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@Controller
+@RestController
 @CrossOrigin(origins = "*")
 @RequestMapping(value = "/user")
 public class UserController {

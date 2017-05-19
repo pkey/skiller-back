@@ -7,6 +7,8 @@ import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.exceptions.user.UserNotFoundException;
+import lt.swedbank.exceptions.ApplicationException;
+import lt.swedbank.handlers.ExceptionHandler;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.user.UserService;
@@ -253,7 +255,7 @@ public class UserControllerTest {
     @Test
     public void test_if_user_not_found_is_thrown_when_it_is_not() throws Exception {
 
-        Mockito.when(userService.getUserByAuthId(any())).thenThrow(new UserNotFoundException());
+        Mockito.when(userService.getUserByAuthId(any())).thenThrow(new UserNotFoundException("Some error"));
 
         mockMvc.perform(get("/user/get")
                 .header("Authorization", "Bearer fake_token")

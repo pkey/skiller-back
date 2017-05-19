@@ -1,10 +1,12 @@
 package lt.swedbank.exceptions.user;
 
 
-public class UserNotFoundException extends RuntimeException{
+import lt.swedbank.exceptions.ApplicationException;
 
-    @Override
-    public String getMessage() {
-        return "User was not found";
+public class UserNotFoundException extends ApplicationException {
+    public UserNotFoundException(String errorCause) {
+        super(errorCause);
     }
 }
+
+

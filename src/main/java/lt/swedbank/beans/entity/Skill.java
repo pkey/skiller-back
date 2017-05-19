@@ -3,7 +3,7 @@ package lt.swedbank.beans.entity;
 
 import javax.persistence.*;
 
-@Entity(name = "SKILL")
+@Entity
 public class Skill {
 
 

@@ -24,19 +24,31 @@ import java.util.Map;
 @Service
 public class Auth0AuthenticationService implements AuthenticationService {
 
-    private static final String SCOPE = "openid";
-    private static final String AUDIENCE = "https://skiller/api";
+    @Value("${auth0.scope}")
+    private String scope;
 
-    private static final String KEY_CLIENT_ID = "client_id";
-    private static final String KEY_PASSWORD = "password";
-    private static final String KEY_EMAIL = "email";
-    private static final String KEY_CONNECTION = "connection";
-    private static final String KEY_NAME = "name";
-    private static final String KEY_LAST_NAME = "lastName";
-    private static final String KEY_USER_METADATA = "user_metadata";
+    @Value("${auth0.audience}")
+    private String audience;
 
-    private static final String SUBJECT_PREFIX = "auth0\\|";
-    private static final String TOKEN_PREFIX = "Bearer ";
+    @Value("${auth0.key.client.id}")
+    private String keyClientId;
+    @Value("${auth0.key.password}")
+    private String keyPassword;
+    @Value("${auth0.key.email}")
+    private String keyEmail;
+    @Value("${auth0.key.connection}")
+    private String keyConnection;
+    @Value("${auth0.key.name}")
+    private String keyName;
+    @Value("${auth0.key.name.last}")
+    private String keyLastName;
+    @Value("${auth0.key.userMetaData}")
+    private String keyUserMetadata;
+
+    @Value("${auth0.prefix.subject}")
+    private String subjectPrefix;
+    @Value("${auth0.prefix.token}")
+    private String tokenPrefix;
 
     private String clientId; //Auth0 client ID
 
@@ -93,17 +105,17 @@ public class Auth0AuthenticationService implements AuthenticationService {
 
     private JSONObject produceRegisterRequestBody(final RegisterUserRequest registerUserRequest) {
         Map<String, Object> requestBodyFields = new HashMap<>();
-        requestBodyFields.put(KEY_CLIENT_ID, this.clientId);
-        requestBodyFields.put(KEY_EMAIL, registerUserRequest.getEmail());
-        requestBodyFields.put(KEY_PASSWORD, registerUserRequest.getPassword());
-        requestBodyFields.put(KEY_CONNECTION, registerUserRequest.getConnection());
+        requestBodyFields.put(keyClientId, this.clientId);
+        requestBodyFields.put(keyEmail, registerUserRequest.getEmail());
+        requestBodyFields.put(keyPassword, registerUserRequest.getPassword());
+        requestBodyFields.put(keyConnection, registerUserRequest.getConnection());
 
 
         Map<String, String> fields = new HashMap<>();
-        fields.put(KEY_NAME, registerUserRequest.getName());
-        fields.put(KEY_LAST_NAME, registerUserRequest.getLastName());
+        fields.put(keyName, registerUserRequest.getName());
+        fields.put(keyLastName, registerUserRequest.getLastName());
 
-        requestBodyFields.put(KEY_USER_METADATA, fields);
+        requestBodyFields.put(keyUserMetadata, fields);
 
         return new JSONObject(requestBodyFields);
     }
@@ -111,8 +123,8 @@ public class Auth0AuthenticationService implements AuthenticationService {
     @Override
     public TokenHolder loginUser(LoginUserRequest user) throws Auth0Exception {
         AuthRequest request = auth.login(user.getEmail(), user.getPassword(), user.getConnection())
-                .setAudience(AUDIENCE)
-                .setScope(SCOPE);
+                .setAudience(audience)
+                .setScope(scope);
 
         TokenHolder holder = request.execute();
 
@@ -121,11 +133,11 @@ public class Auth0AuthenticationService implements AuthenticationService {
 
     @Override
     public String extractAuthIdFromToken(String token) {
-        return JWT.decode(removeTokenHead(token)).getSubject().replaceFirst(SUBJECT_PREFIX, "");
+        return JWT.decode(removeTokenHead(token)).getSubject().replaceFirst(subjectPrefix, "");
     }
 
     private String removeTokenHead(String token) {
-        return token.replaceFirst(TOKEN_PREFIX, "");
+        return token.replaceFirst(tokenPrefix, "");
     }
 
 

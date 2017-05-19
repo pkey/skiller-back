@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 
-@Entity(name = "USER_SKILL")
+@Entity
 public class UserSkill {
 
     @Id

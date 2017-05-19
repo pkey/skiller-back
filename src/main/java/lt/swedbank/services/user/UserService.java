@@ -13,7 +13,10 @@ import lt.swedbank.services.skill.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.OrderBy;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -87,17 +90,25 @@ public class UserService {
     }
 
     public Iterable<User> getAllUsers() {
-        Iterable<User> users = (Iterable<User>) userRepository.findAll();
-        return users;
+        return  userRepository.findAll();
+    }
+
+    public Iterable<UserEntityResponse> sortUserList(List<UserEntityResponse> users)
+    {
+         Collections.sort(users);
+         return users;
     }
 
     public Iterable<UserEntityResponse> getUserEntityResponseList() {
 
+        List<User> allUsers = (List) getAllUsers();
         List<UserEntityResponse> userList = new ArrayList<>();
-        for (User user: getAllUsers()
+        for (User user: allUsers
                 ) {
             userList.add(new UserEntityResponse(user));
         }
-        return userList;
+        return sortUserList(userList);
     }
+
+
 }

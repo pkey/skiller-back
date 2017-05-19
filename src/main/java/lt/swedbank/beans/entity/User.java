@@ -108,7 +108,7 @@ public class User implements Comparable<User> {
         this.authId = authId;
     }
 
-    public String getFullName()
+    private String getFullName()
     {
         return this.name + " " + this.name;
     }

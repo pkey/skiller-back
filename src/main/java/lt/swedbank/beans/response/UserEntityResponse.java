@@ -5,7 +5,7 @@ import lt.swedbank.beans.entity.User;
 
 import java.util.List;
 
-public class UserEntityResponse extends Response {
+public class UserEntityResponse extends Response implements Comparable<UserEntityResponse> {
 
     private String name;
 
@@ -54,5 +54,15 @@ public class UserEntityResponse extends Response {
 
     public void setUserSkills(List<UserSkill> userSkills) {
         this.userSkills = userSkills;
+    }
+
+    public String getFullName()
+    {
+        return this.name + " " + this.lastName;
+    }
+
+    @Override
+    public int compareTo(UserEntityResponse userEntityResponse) {
+        return this.getFullName().compareTo(userEntityResponse.getFullName());
     }
 }

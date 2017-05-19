@@ -90,8 +90,7 @@ public class UserService {
     }
 
     public Iterable<User> getAllUsers() {
-        Iterable<User> users = userRepository.findAll();
-        return users;
+        return  userRepository.findAll();
     }
 
     public Iterable<UserEntityResponse> sortUserList(List<UserEntityResponse> users)

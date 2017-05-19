@@ -7,10 +7,10 @@ import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -55,8 +55,8 @@ public class UserController {
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public @ResponseBody
-    Iterable<UserEntityResponse> getAllUsers(@RequestHeader(value = "Authorization") String authToken) {
-        return userService.getUserEntityResponseList();
+    List<UserEntityResponse> getAllUsers(@RequestHeader(value = "Authorization") String authToken) {
+        return (List<UserEntityResponse>) userService.getUserEntityResponseList();
     }
 
 }

@@ -3,6 +3,7 @@ package lt.swedbank.beans.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lt.swedbank.beans.request.RegisterUserRequest;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.persistence.*;
 import java.util.LinkedList;

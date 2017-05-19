@@ -2,11 +2,12 @@ package lt.swedbank.controllers.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.entity.Skill;
+import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
-import lt.swedbank.exceptions.ApplicationException;
+import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.exceptions.user.UserNotFoundException;
-import lt.swedbank.beans.entity.User;
+import lt.swedbank.exceptions.ApplicationException;
 import lt.swedbank.handlers.ExceptionHandler;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.services.auth.AuthenticationService;
@@ -27,9 +28,9 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Matchers.any;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -50,9 +51,14 @@ public class UserControllerTest {
 
 
     private User correctUser;
+    private User correctUser2;
     private List<UserSkill> correctUserSkills;
+    private List<UserSkill> correctUserSkills2;
     private UserSkill skill;
     private List<Skill> correctSkills;
+    private List<UserEntityResponse> correctUsers;
+    private UserEntityResponse userEntityResponse;
+    private UserEntityResponse userEntityResponse2;
 
     @InjectMocks
     private UserController userController;
@@ -75,6 +81,7 @@ public class UserControllerTest {
         mapper = new ObjectMapper();
 
         Long userId = Integer.toUnsignedLong(0);
+        Long user2Id = Integer.toUnsignedLong(1);
 
         correctUser = new User();
         correctUser.setId(userId);
@@ -82,6 +89,13 @@ public class UserControllerTest {
         correctUser.setLastName("TestUserLastName");
         correctUser.setPassword("TestUserPassword");
         correctUser.setEmail("testuser@gmail.com");
+
+        correctUser2 = new User();
+        correctUser2.setId(user2Id);
+        correctUser2.setName("TestUserName2");
+        correctUser2.setLastName("TestUserLastName2");
+        correctUser2.setPassword("TestUserPassword2");
+        correctUser2.setEmail("testuser2@gmail.com");
 
         correctSkills = new ArrayList<Skill>();
         correctSkills.add(new Skill("SkillName1"));
@@ -93,15 +107,64 @@ public class UserControllerTest {
         correctUserSkills.add(new UserSkill(userId, correctSkills.get(1)));
         correctUserSkills.add(new UserSkill(userId, correctSkills.get(2)));
 
+        correctUserSkills2 = new ArrayList<>();
+        correctUserSkills2.add(new UserSkill(user2Id, correctSkills.get(0)));
+        correctUserSkills2.add(new UserSkill(user2Id, correctSkills.get(1)));
+        correctUserSkills2.add(new UserSkill(user2Id, correctSkills.get(2)));
+
         correctUser.setUserSkills(correctUserSkills);
+        correctUser2.setUserSkills(correctUserSkills2);
+
+        correctUsers = new ArrayList<>();
+        UserEntityResponse UserEntityResponse;
+
+        userEntityResponse = new UserEntityResponse(correctUser);
+        userEntityResponse2 = new UserEntityResponse(correctUser2);
+
+        correctUsers.add(userEntityResponse);
+        correctUsers.add(userEntityResponse2);
 
         skill = new UserSkill(userId, new Skill("SkillToAddLater"));
+
     }
 
     @After
     public void tearDown() throws Exception {
     }
 
+    // TODO: 17.5.18  fix /user/all test
+
+    @Test
+    public void get_users_success() throws Exception {
+
+
+        when(userService.getUserEntityResponseList()).thenReturn(correctUsers);
+
+        mockMvc.perform(get("/user/all")
+                .header("Authorization", "Bearer")
+                .contentType(contentType))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+
+                .andExpect(jsonPath("$[0].name", is("TestUserName")))
+                .andExpect(jsonPath("$[0].lastName", is("TestUserLastName")))
+                .andExpect(jsonPath("$[0].email", is("testuser@gmail.com")))
+                .andExpect(jsonPath("$[0].userSkills", hasSize(3)))
+                .andExpect(jsonPath("$[0].userSkills[0].title", is("SkillName1")))
+                .andExpect(jsonPath("$[0].userSkills[1].title", is("SkillName2")))
+                .andExpect(jsonPath("$[0].userSkills[2].title", is("SkillName3")))
+
+                .andExpect(jsonPath("$[1].name", is("TestUserName2")))
+                .andExpect(jsonPath("$[1].lastName", is("TestUserLastName2")))
+                .andExpect(jsonPath("$[1].email", is("testuser2@gmail.com")))
+                .andExpect(jsonPath("$[1].userSkills", hasSize(3)))
+                .andExpect(jsonPath("$[1].userSkills[0].title", is("SkillName1")))
+                .andExpect(jsonPath("$[1].userSkills[1].title", is("SkillName2")))
+                .andExpect(jsonPath("$[1].userSkills[2].title", is("SkillName3")));
+
+        verify(userService, times(1)).getUserEntityResponseList();
+        verifyNoMoreInteractions(userService);
+    }
 
     @Test
     public void get_user_success() throws Exception {
@@ -123,7 +186,6 @@ public class UserControllerTest {
 
         verify(userService, times(1)).getUserByAuthId(any());
         verifyNoMoreInteractions(userService);
-
     }
 
     @Test

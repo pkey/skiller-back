@@ -3,8 +3,7 @@ package lt.swedbank.beans.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lt.swedbank.beans.request.RegisterUserRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.persistence.*;
 import java.util.LinkedList;
@@ -12,7 +11,7 @@ import java.util.List;
 
 
 @Entity
-public class User {
+public class User implements Comparable<User> {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -110,4 +109,13 @@ public class User {
         this.authId = authId;
     }
 
+    private String getFullName()
+    {
+        return this.name + " " + this.name;
+    }
+
+    @Override
+    public int compareTo(User user) {
+        return this.getFullName().compareTo(user.getFullName());
+    }
 }

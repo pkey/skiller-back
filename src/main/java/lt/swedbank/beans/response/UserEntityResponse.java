@@ -1,7 +1,7 @@
 package lt.swedbank.beans.response;
 
-import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.entity.User;
+import lt.swedbank.beans.entity.UserSkill;
 
 import java.util.List;
 

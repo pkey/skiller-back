@@ -1,8 +1,6 @@
 package lt.swedbank.beans.entity;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 
 @Entity

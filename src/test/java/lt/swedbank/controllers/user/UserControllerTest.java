@@ -2,12 +2,10 @@ package lt.swedbank.controllers.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.entity.Skill;
+import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
-import lt.swedbank.exceptions.ApplicationException;
 import lt.swedbank.exceptions.user.UserNotFoundException;
-import lt.swedbank.beans.entity.User;
-import lt.swedbank.handlers.ExceptionHandler;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.user.UserService;
@@ -27,9 +25,9 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Matchers.any;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

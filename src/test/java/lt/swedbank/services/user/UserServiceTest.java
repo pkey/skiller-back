@@ -2,7 +2,6 @@ package lt.swedbank.services.user;
 
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.exceptions.ApplicationException;
-import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.handlers.ExceptionHandler;
 import lt.swedbank.repositories.UserRepository;
 import org.junit.After;

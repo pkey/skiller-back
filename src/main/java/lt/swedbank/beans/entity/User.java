@@ -2,9 +2,8 @@ package lt.swedbank.beans.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lt.swedbank.beans.entity.unit.Team;
 import lt.swedbank.beans.request.RegisterUserRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 
 import javax.persistence.*;
 import java.util.LinkedList;
@@ -35,13 +34,9 @@ public class User {
     @JoinColumn(name = "userid")
     private List<UserSkill> userSkills = new LinkedList<UserSkill>();
 
-    public List<UserSkill> getUserSkills() {
-        return userSkills;
-    }
+    @OneToOne
+    private Team team;
 
-    public void setUserSkills(List<UserSkill> userSkills) {
-        this.userSkills = userSkills;
-    }
 
     public User() {}
 
@@ -108,6 +103,14 @@ public class User {
 
     public void setAuthId(String authId) {
         this.authId = authId;
+    }
+
+    public List<UserSkill> getUserSkills() {
+        return userSkills;
+    }
+
+    public void setUserSkills(List<UserSkill> userSkills) {
+        this.userSkills = userSkills;
     }
 
 }

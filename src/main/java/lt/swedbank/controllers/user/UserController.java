@@ -16,7 +16,7 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
-@Controller
+@RestController
 @CrossOrigin(origins = "*")
 @RequestMapping(value = "/user")
 public class UserController {

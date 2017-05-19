@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.persistence.*;
 
-@Entity(name = "USER_SKILL")
+@Entity
 public class UserSkill {
 
     @Id

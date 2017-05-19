@@ -4,8 +4,11 @@ package lt.swedbank.services.skill;
 import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
+import lt.swedbank.exceptions.ApplicationException;
+import lt.swedbank.exceptions.ExceptionMessage;
 import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
 import lt.swedbank.exceptions.skill.SkillNotFoundException;
+import lt.swedbank.handlers.ExceptionHandler;
 import lt.swedbank.repositories.SkillRepository;
 import lt.swedbank.repositories.UserSkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,24 +17,26 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class SkillService implements ISkillService {
+public class SkillService {
 
     @Autowired
     private SkillRepository skillRepository;
     @Autowired
     private UserSkillRepository userSkillRepository;
 
+    @Autowired
+    private ExceptionHandler exceptionHandler;
+
     public SkillService(SkillRepository skillRepository, UserSkillRepository userSkillRepository) {
         this.skillRepository = skillRepository;
         this.userSkillRepository = userSkillRepository;
     }
 
-    @Override
-    public UserSkill addSkill(Long userID, AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
+    public UserSkill addSkill(Long userID, AddSkillRequest addSkillRequest) throws ApplicationException {
 
-        Skill skill;
+        Skill skill = skillRepository.findByTitle(addSkillRequest.getTitle());
 
-        if(isSkillNotExists(addSkillRequest.getTitle())) {
+        if(skill == null) {
             skill = new Skill(addSkillRequest.getTitle());
             skillRepository.save(skill);
         } else {
@@ -39,7 +44,7 @@ public class SkillService implements ISkillService {
         }
 
         if(isUserSkillAlreadyExists(userID, skill)) {
-            throw new SkillAlreadyExistsException();
+            throw exceptionHandler.handleException(ExceptionMessage.SKILL_ALREADY_EXISTS);
         }
 
         UserSkill userSkill = new UserSkill(userID, skill);
@@ -48,29 +53,21 @@ public class SkillService implements ISkillService {
         return userSkill;
     }
 
-    @Override
-    public UserSkill removeSkill(Long userID, Skill skill) throws SkillNotFoundException
-    {
-        if (!isUserSkillAlreadyExists(userID, skill)) {
-            throw new SkillNotFoundException();
-        }
+    public UserSkill removeSkill(Long userID, Skill skill) throws ApplicationException {
+
         UserSkill userSkill = userSkillRepository.findByUserIDAndSkill(userID, skill);
+
+        if(userSkill == null){
+            throw exceptionHandler.handleException(ExceptionMessage.SKILL_NOT_FOUND);
+        }
+
         userSkillRepository.delete(userSkill);
+
         return userSkill;
     }
 
     private boolean isUserSkillAlreadyExists(Long userID, Skill skill) {
         return Optional.ofNullable(userSkillRepository.findByUserIDAndSkill(userID, skill)).isPresent();
     }
-    private boolean isSkillAlreadyExists(String title)
-    {
-        return Optional.ofNullable(skillRepository.findByTitle(title)).isPresent();
-    }
-    private boolean isSkillNotExists(String title)
-    {
-        return !Optional.ofNullable(skillRepository.findByTitle(title)).isPresent();
-    }
-
-
 
 }

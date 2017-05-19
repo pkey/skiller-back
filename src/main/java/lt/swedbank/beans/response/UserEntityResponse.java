@@ -63,6 +63,6 @@ public class UserEntityResponse extends Response implements Comparable<UserEntit
 
     @Override
     public int compareTo(UserEntityResponse userEntityResponse) {
-        return this.getFullName().compareTo(userEntityResponse.getFullName());
+        return this.getFullName().toLowerCase().compareTo(userEntityResponse.getFullName().toLowerCase());
     }
 }

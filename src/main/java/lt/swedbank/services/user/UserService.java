@@ -1,8 +1,8 @@
 package lt.swedbank.services.user;
 
 import lt.swedbank.beans.entity.Skill;
-import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.entity.User;
+import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.UserEntityResponse;
@@ -13,10 +13,7 @@ import lt.swedbank.services.skill.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.OrderBy;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -90,25 +87,17 @@ public class UserService {
     }
 
     public Iterable<User> getAllUsers() {
-        return  userRepository.findAll();
-    }
-
-    public Iterable<UserEntityResponse> sortUserList(List<UserEntityResponse> users)
-    {
-         Collections.sort(users);
-         return users;
+        Iterable<User> users = (Iterable<User>) userRepository.findAll();
+        return users;
     }
 
     public Iterable<UserEntityResponse> getUserEntityResponseList() {
 
-        List<User> allUsers = (List) getAllUsers();
         List<UserEntityResponse> userList = new ArrayList<>();
-        for (User user: allUsers
+        for (User user: getAllUsers()
                 ) {
             userList.add(new UserEntityResponse(user));
         }
-        return sortUserList(userList);
+        return userList;
     }
-
-
 }

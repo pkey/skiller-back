@@ -14,4 +14,6 @@ public class TeamService {
     public Iterable<Team> getAllTeams(){
         return teamRepository.findAll();
     }
+
+    public Team getTeamById(Long id) { return teamRepository.findOne(id); };
 }

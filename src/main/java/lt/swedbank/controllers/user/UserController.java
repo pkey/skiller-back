@@ -2,6 +2,7 @@ package lt.swedbank.controllers.user;
 
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.AddSkillRequest;
+import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.services.auth.AuthenticationService;
@@ -44,8 +45,8 @@ public class UserController {
     @RequestMapping(produces = "application/json", value = "/skill/remove", method = RequestMethod.POST)
     public @ResponseBody
     UserEntityResponse removeUserSkill(@Valid @RequestBody RemoveSkillRequest removeSkillRequest,
-                                       @RequestHeader(value = "Authorization") String token) {
-        String authId = authService.extractAuthIdFromToken(token);
+                                       @RequestHeader(value = "Authorization") String authToken) {
+        String authId = authService.extractAuthIdFromToken(authToken);
         Long userId = userService.getUserByAuthId(authId).getId();
         userService.removeUserSkill(userId, removeSkillRequest);
         User userFromRepository = userService.getUserById(userId);
@@ -55,8 +56,18 @@ public class UserController {
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public @ResponseBody
-    List<UserEntityResponse> getAllUsers(@RequestHeader(value = "Authorization") String authToken) {
+    List<UserEntityResponse> getAllUsers() {
         return userService.getUserEntityResponseList();
     }
+
+    @RequestMapping(value = "/team", method = RequestMethod.PUT)
+    public @ResponseBody
+    UserEntityResponse assignUserTeam (@RequestHeader(value = "Authorization") String authToken,
+                                         @RequestBody AssignTeamRequest assignTeamRequest) {
+        String authId = authService.extractAuthIdFromToken(authToken);
+        Long userId = userService.getUserByAuthId(authId).getId();
+        return new UserEntityResponse(userService.assignTeam(userId, assignTeamRequest));
+    }
+
 
 }

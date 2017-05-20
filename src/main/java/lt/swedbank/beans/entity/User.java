@@ -34,7 +34,7 @@ public class User {
     @JoinColumn(name = "userid")
     private List<UserSkill> userSkills = new LinkedList<>();
 
-    @OneToMany
+    @ManyToOne
     private Team team;
 
 

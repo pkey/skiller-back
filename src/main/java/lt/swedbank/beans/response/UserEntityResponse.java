@@ -2,10 +2,13 @@ package lt.swedbank.beans.response;
 
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
+import lt.swedbank.beans.entity.unit.Team;
 
 import java.util.List;
 
 public class UserEntityResponse extends Response {
+
+    private Long id;
 
     private String name;
 
@@ -15,13 +18,24 @@ public class UserEntityResponse extends Response {
 
     private List<UserSkill> userSkills;
 
+    private Team team;
+
     public UserEntityResponse(User user) {
 
+        id = user.getId();
         name = user.getName();
         lastName = user.getLastName();
         email = user.getEmail();
         userSkills = user.getUserSkills();
+        team = user.getTeam();
+    }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -54,5 +68,13 @@ public class UserEntityResponse extends Response {
 
     public void setUserSkills(List<UserSkill> userSkills) {
         this.userSkills = userSkills;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
     }
 }

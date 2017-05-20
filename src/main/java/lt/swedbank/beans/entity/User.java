@@ -32,9 +32,9 @@ public class User {
 
     @OneToMany
     @JoinColumn(name = "userid")
-    private List<UserSkill> userSkills = new LinkedList<UserSkill>();
+    private List<UserSkill> userSkills = new LinkedList<>();
 
-    @OneToOne
+    @OneToMany
     private Team team;
 
 

@@ -1,7 +1,7 @@
-package lt.swedbank.controllers;
+package lt.swedbank.controllers.department;
 
 import lt.swedbank.beans.entity.unit.Department;
-import lt.swedbank.services.unit.DepartmentService;
+import lt.swedbank.services.department.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

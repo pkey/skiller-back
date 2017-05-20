@@ -14,7 +14,7 @@ import lt.swedbank.handlers.ExceptionHandler;
 import lt.swedbank.repositories.SkillRepository;
 import lt.swedbank.repositories.UserRepository;
 import lt.swedbank.services.skill.SkillService;
-import lt.swedbank.services.unit.TeamService;
+import lt.swedbank.services.team.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

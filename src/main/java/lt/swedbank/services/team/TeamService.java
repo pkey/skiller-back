@@ -1,4 +1,4 @@
-package lt.swedbank.services.unit;
+package lt.swedbank.services.team;
 
 import lt.swedbank.beans.entity.unit.Team;
 import lt.swedbank.repositories.TeamRepository;

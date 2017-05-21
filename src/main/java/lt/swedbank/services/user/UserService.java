@@ -5,11 +5,8 @@ import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
-import lt.swedbank.exceptions.ApplicationException;
-import lt.swedbank.exceptions.ExceptionMessage;
 import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.exceptions.user.UserNotFoundException;
-import lt.swedbank.handlers.ExceptionHandler;
 import lt.swedbank.repositories.SkillRepository;
 import lt.swedbank.repositories.UserRepository;
 import lt.swedbank.services.skill.SkillService;
@@ -31,8 +28,6 @@ public class UserService {
     @Autowired
     private SkillRepository skillRepository;
 
-    @Autowired
-    private ExceptionHandler exceptionHandler;
 
     /**
      *
@@ -41,11 +36,11 @@ public class UserService {
      * @param email - email of a user that should be found
      * @return found user
      */
-    public User getUserByEmail(String email) throws ApplicationException {
+    public User getUserByEmail(String email) throws UserNotFoundException {
         User user = userRepository.findByEmail(email);
 
         if (user == null) {
-            throw exceptionHandler.handleException(ExceptionMessage.USER_NOT_FOUND);
+            throw new UserNotFoundException();
         }
 
         return userRepository.findByEmail(email);
@@ -59,17 +54,17 @@ public class UserService {
      * @param addSkillRequest - data of the skill that should be added
      * @return the added skill
      */
-    public UserSkill addUserSkill(Long userid, AddSkillRequest addSkillRequest)  throws ApplicationException {
+    public UserSkill addUserSkill(Long userid, AddSkillRequest addSkillRequest) throws UserNotFoundException {
 
         if (getUserById(userid) == null) {
-            throw exceptionHandler.handleException(ExceptionMessage.USER_NOT_FOUND);
+            throw new UserNotFoundException();
             }
         return userSkillService.addSkill(userid, addSkillRequest);
     }
 
-    public UserSkill removeUserSkill(Long userid, RemoveSkillRequest removeSkillRequest)  throws ApplicationException {
+    public UserSkill removeUserSkill(Long userid, RemoveSkillRequest removeSkillRequest) throws UserNotFoundException {
         if (getUserById(userid) == null) {
-            throw exceptionHandler.handleException(ExceptionMessage.USER_NOT_FOUND);
+            throw new UserNotFoundException();
         }
         Skill skill = skillRepository.findByTitle(removeSkillRequest.getTitle());
         return userSkillService.removeSkill(userid, skill);
@@ -79,16 +74,16 @@ public class UserService {
         User user = userRepository.findByAuthId(authId);
 
         if (user == null) {
-            throw exceptionHandler.handleException(ExceptionMessage.USER_NOT_FOUND);
+            throw new UserNotFoundException();
         }
         return user;
     }
 
-    public User getUserById(Long id) throws ApplicationException {
+    public User getUserById(Long id) throws UserNotFoundException {
         User user = userRepository.findOne(id);
 
         if (user == null) {
-            throw exceptionHandler.handleException(ExceptionMessage.USER_NOT_FOUND);
+            throw new UserNotFoundException();
         }
         return user;
     }

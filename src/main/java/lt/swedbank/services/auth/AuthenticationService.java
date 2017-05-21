@@ -11,8 +11,6 @@ public interface AuthenticationService {
     User registerUser(RegisterUserRequest user) throws Auth0Exception;
 
     TokenHolder loginUser(LoginUserRequest user) throws Auth0Exception;
-
-    String extractAuthIdFromToken(String token);
 }
 
 

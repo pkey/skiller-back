@@ -4,7 +4,6 @@ package lt.swedbank.services.auth;
 import com.auth0.client.auth.AuthAPI;
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.TokenHolder;
-import com.auth0.jwt.JWT;
 import com.auth0.net.AuthRequest;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
@@ -130,16 +129,5 @@ public class Auth0AuthenticationService implements AuthenticationService {
 
         return holder;
     }
-
-    @Override
-    public String extractAuthIdFromToken(String token) {
-        return JWT.decode(removeTokenHead(token)).getSubject().replaceFirst(subjectPrefix, "");
-    }
-
-    private String removeTokenHead(String token) {
-        return token.replaceFirst(tokenPrefix, "");
-    }
-
-
 }
 

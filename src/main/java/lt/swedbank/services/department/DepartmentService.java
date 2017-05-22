@@ -1,6 +1,6 @@
 package lt.swedbank.services.department;
 
-import lt.swedbank.beans.entity.unit.Department;
+import lt.swedbank.beans.entity.Department;
 import lt.swedbank.repositories.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

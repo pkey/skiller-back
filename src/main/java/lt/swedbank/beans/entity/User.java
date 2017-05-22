@@ -2,7 +2,6 @@ package lt.swedbank.beans.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lt.swedbank.beans.entity.unit.Team;
 import lt.swedbank.beans.request.RegisterUserRequest;
 
 import javax.persistence.*;

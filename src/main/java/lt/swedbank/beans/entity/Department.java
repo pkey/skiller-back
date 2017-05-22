@@ -1,4 +1,4 @@
-package lt.swedbank.beans.entity.unit;
+package lt.swedbank.beans.entity;
 
 import javax.persistence.*;
 import java.util.Set;

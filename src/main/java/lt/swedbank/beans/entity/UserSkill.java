@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "user_skill",
+        uniqueConstraints = { @UniqueConstraint(columnNames =
+                { "skill_id", "userID" }) })
 public class UserSkill {
 
     @Id

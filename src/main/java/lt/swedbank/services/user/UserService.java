@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -96,18 +97,17 @@ public class UserService {
         return user;
     }
 
-    public List<User> getAllUsers() {
-        ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
-        return users;
+    public Iterable<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
-    public List<UserEntityResponse> getUserEntityResponseList() {
-
+    public Iterable<UserEntityResponse> getUserEntityResponseList() {
         List<UserEntityResponse> userList = new ArrayList<>();
         for (User user: getAllUsers()
                 ) {
             userList.add(new UserEntityResponse(user));
         }
+        Collections.sort(userList);
         return userList;
     }
 

@@ -3,10 +3,11 @@ package lt.swedbank.beans.response;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.entity.Team;
+import lt.swedbank.beans.entity.UserSkill;
 
 import java.util.List;
 
-public class UserEntityResponse extends Response {
+public class UserEntityResponse extends Response implements Comparable<UserEntityResponse> {
 
     private Long id;
 
@@ -76,5 +77,15 @@ public class UserEntityResponse extends Response {
 
     public void setTeam(Team team) {
         this.team = team;
+    }
+
+    private String getFullName()
+    {
+        return this.name + " " + this.lastName;
+    }
+
+    @Override
+    public int compareTo(UserEntityResponse userEntityResponse) {
+        return this.getFullName().toLowerCase().compareTo(userEntityResponse.getFullName().toLowerCase());
     }
 }

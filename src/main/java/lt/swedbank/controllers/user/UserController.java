@@ -56,8 +56,8 @@ public class UserController {
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public @ResponseBody
-    List<UserEntityResponse> getAllUsers() {
-        return userService.getUserEntityResponseList();
+    List<UserEntityResponse> getAllUsers(@RequestHeader(value = "Authorization") String authToken) {
+        return (List<UserEntityResponse>) userService.getUserEntityResponseList();
     }
 
     @RequestMapping(value = "/team", method = RequestMethod.PUT)

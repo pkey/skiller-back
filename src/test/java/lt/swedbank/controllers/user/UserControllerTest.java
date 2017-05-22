@@ -6,18 +6,13 @@ import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.response.UserEntityResponse;
-import lt.swedbank.exceptions.user.UserNotFoundException;
-import lt.swedbank.exceptions.ApplicationException;
-import lt.swedbank.handlers.ExceptionHandler;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
-import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.user.UserService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -25,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.nio.charset.Charset;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,14 +56,13 @@ public class UserControllerTest {
     private UserEntityResponse userEntityResponse;
     private UserEntityResponse userEntityResponse2;
 
+    private Principal principal;
+
     @InjectMocks
     private UserController userController;
 
     @Mock
     private UserService userService;
-    @Mock
-    private AuthenticationService authService;
-
 
     @Before
     public void setUp() throws Exception {
@@ -77,6 +72,7 @@ public class UserControllerTest {
                 .standaloneSetup(userController)
                 .setControllerAdvice(new RestResponseEntityExceptionHandler())
                 .build();
+
 
         mapper = new ObjectMapper();
 
@@ -126,6 +122,13 @@ public class UserControllerTest {
 
         skill = new UserSkill(userId, new Skill("SkillToAddLater"));
 
+        this.principal = new Principal() {
+            @Override
+            public String getName() {
+                return "TEST_PRINCIPAL";
+            }
+        };
+
     }
 
     @After
@@ -140,12 +143,12 @@ public class UserControllerTest {
 
         when(userService.getUserEntityResponseList()).thenReturn(correctUsers);
 
+
         mockMvc.perform(get("/user/all")
                 .header("Authorization", "Bearer")
                 .contentType(contentType))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
-
                 .andExpect(jsonPath("$[0].name", is("TestUserName")))
                 .andExpect(jsonPath("$[0].lastName", is("TestUserLastName")))
                 .andExpect(jsonPath("$[0].email", is("testuser@gmail.com")))
@@ -169,11 +172,12 @@ public class UserControllerTest {
     @Test
     public void get_user_success() throws Exception {
 
-
         when(userService.getUserByAuthId(any())).thenReturn(correctUser);
+
 
         mockMvc.perform(get("/user/get")
                 .header("Authorization", "Bearer")
+                .principal(principal)
                 .contentType(contentType))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is("TestUserName")))
@@ -203,6 +207,7 @@ public class UserControllerTest {
 
         mockMvc.perform(post("/user/skill/add").header("Authorization", "Bearer")
                 .contentType(contentType)
+                .principal(principal)
                 .content(skillJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is("TestUserName")))
@@ -236,6 +241,7 @@ public class UserControllerTest {
 
         mockMvc.perform(post("/user/skill/remove").header("Authorization", "Bearer")
                 .contentType(contentType)
+                .principal(principal)
                 .content(skillJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is("TestUserName")))
@@ -251,16 +257,4 @@ public class UserControllerTest {
 
         correctUser.setUserSkills(correctUserSkills);
     }
-
-    @Test
-    public void test_if_user_not_found_is_thrown_when_it_is_not() throws Exception {
-
-        Mockito.when(userService.getUserByAuthId(any())).thenThrow(new UserNotFoundException("Some error"));
-
-        mockMvc.perform(get("/user/get")
-                .header("Authorization", "Bearer fake_token")
-                .contentType(contentType))
-                .andExpect(status().isNotFound());
-    }
-
 }

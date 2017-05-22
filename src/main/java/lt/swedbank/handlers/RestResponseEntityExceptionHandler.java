@@ -5,10 +5,11 @@ import com.auth0.exception.Auth0Exception;
 import lt.swedbank.beans.response.AuthenticationError;
 import lt.swedbank.beans.response.AuthenticationErrorsWrapper;
 import lt.swedbank.beans.response.ErrorResponse;
-import lt.swedbank.exceptions.ApplicationException;
 import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
 import lt.swedbank.exceptions.skill.SkillNotFoundException;
 import lt.swedbank.exceptions.user.UserNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,19 +18,26 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler{
 
+    @Autowired
+    private MessageSource messageSource;
+
+
     @ExceptionHandler({ Auth0Exception.class })
     public ResponseEntity<Object> handleBadRequest(final APIException ex, final WebRequest request) {
-        final String bodyOfResponse = ex.getMessage();
-        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.valueOf(ex.getStatusCode()), request);
+        ErrorResponse er = new ErrorResponse(ex.getMessage());
+        return handleExceptionInternal(ex, er, new HttpHeaders(), HttpStatus.valueOf(ex.getStatusCode()), request);
     }
 
     @Override
@@ -46,22 +54,26 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         }
 
     @ExceptionHandler({ UserNotFoundException.class })
-    public ResponseEntity<ErrorResponse> handleUserNotFoundExeption(final UserNotFoundException ex, final WebRequest request) {
-        return new ResponseEntity<ErrorResponse>(new ErrorResponse(ex), HttpStatus.NOT_FOUND);
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ErrorResponse handleUserNotFoundExeption() {
+        return new ErrorResponse(messageSource.getMessage("user_not_found", null, Locale.getDefault()));
     }
 
+
     @ExceptionHandler({ SkillAlreadyExistsException.class })
-    public ResponseEntity<ErrorResponse> handleSkillAlreadyExistsException(SkillAlreadyExistsException ex, WebRequest request) {
-        return new ResponseEntity<ErrorResponse>(new ErrorResponse(ex), HttpStatus.CONFLICT);
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponse handleSkillAlreadyExistsException() {
+        return new ErrorResponse(messageSource.getMessage("skill_already_exists", null, Locale.getDefault()));
     }
 
     @ExceptionHandler({SkillNotFoundException.class })
-    public ResponseEntity<ErrorResponse> handleSkillNotFoundException(SkillNotFoundException ex, WebRequest request) {
-        return new ResponseEntity<ErrorResponse>(new ErrorResponse(ex), HttpStatus.NOT_FOUND);
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ErrorResponse handleSkillNotFoundException() {
+        return new ErrorResponse(messageSource.getMessage("skill_not_found", null, Locale.getDefault()));
     }
 
-    @ExceptionHandler({ApplicationException.class })
-    public ResponseEntity<ErrorResponse> handleApplicationException(SkillNotFoundException ex, WebRequest request) {
-        return new ResponseEntity<ErrorResponse>(new ErrorResponse(ex), HttpStatus.NOT_FOUND);
-    }
+
 }

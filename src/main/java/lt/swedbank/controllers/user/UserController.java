@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -20,21 +21,19 @@ public class UserController {
     @Autowired
     private UserService userService;
     @Autowired
-    private AuthenticationService authService;
+    private AuthenticationService authenticationService;
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public @ResponseBody
-    UserEntityResponse getUser(@RequestHeader(value = "Authorization") String authToken) {
-        String authId = authService.extractAuthIdFromToken(authToken);
-        return new UserEntityResponse(userService.getUserByAuthId(authId));
+    UserEntityResponse getUser(Principal principal) {
+        return new UserEntityResponse(userService.getUserByAuthId(principal.getName()));
     }
 
     @RequestMapping(produces = "application/json", value = "/skill/add", method = RequestMethod.POST)
     public @ResponseBody
     UserEntityResponse addUserSkill(@Valid @RequestBody AddSkillRequest addSkillRequest,
-                                    @RequestHeader(value = "Authorization") String authToken) {
-        String authId = authService.extractAuthIdFromToken(authToken);
-        Long userId = userService.getUserByAuthId(authId).getId();
+                                    Principal principal) {
+        Long userId = userService.getUserByAuthId(principal.getName()).getId();
         userService.addUserSkill(userId, addSkillRequest);
         User userFromRepository = userService.getUserById(userId);
 
@@ -44,9 +43,8 @@ public class UserController {
     @RequestMapping(produces = "application/json", value = "/skill/remove", method = RequestMethod.POST)
     public @ResponseBody
     UserEntityResponse removeUserSkill(@Valid @RequestBody RemoveSkillRequest removeSkillRequest,
-                                       @RequestHeader(value = "Authorization") String token) {
-        String authId = authService.extractAuthIdFromToken(token);
-        Long userId = userService.getUserByAuthId(authId).getId();
+                                       Principal principal) {
+        Long userId = userService.getUserByAuthId(principal.getName()).getId();
         userService.removeUserSkill(userId, removeSkillRequest);
         User userFromRepository = userService.getUserById(userId);
 

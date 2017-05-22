@@ -1,8 +1,7 @@
 package lt.swedbank.beans.response;
 
-import lt.swedbank.beans.entity.User;
-import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.entity.Team;
+import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 
 import java.util.List;
@@ -79,8 +78,7 @@ public class UserEntityResponse extends Response implements Comparable<UserEntit
         this.team = team;
     }
 
-    private String getFullName()
-    {
+    private String getFullName() {
         return this.name + " " + this.lastName;
     }
 

@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "user_skill",
+        uniqueConstraints = { @UniqueConstraint(columnNames =
+                { "skill", "userID" }) })
 public class UserSkill {
 
     @Id

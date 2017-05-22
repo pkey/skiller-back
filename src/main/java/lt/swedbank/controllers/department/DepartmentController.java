@@ -7,13 +7,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping(value = "/department")
+@RequestMapping(value = "/departments")
 public class DepartmentController {
 
     @Autowired
     private DepartmentService departmentService;
 
-    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public @ResponseBody
     Iterable<Department> getAllUnits() {
         return departmentService.getAllDepartments();

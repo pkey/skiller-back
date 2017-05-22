@@ -4,15 +4,17 @@ import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
+import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
+import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.exceptions.ApplicationException;
 import lt.swedbank.exceptions.ExceptionMessage;
-import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.handlers.ExceptionHandler;
 import lt.swedbank.repositories.SkillRepository;
 import lt.swedbank.repositories.UserRepository;
 import lt.swedbank.services.skill.SkillService;
+import lt.swedbank.services.team.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,8 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private SkillService userSkillService;
+    @Autowired
+    private TeamService teamService;
     @Autowired
     private SkillRepository skillRepository;
 
@@ -105,5 +109,12 @@ public class UserService {
         }
         Collections.sort(userList);
         return userList;
+    }
+
+    public User assignTeam (final Long userId, final AssignTeamRequest assignTeamRequest){
+        User user = getUserById(userId);
+        user.setTeam(teamService.getTeamById(assignTeamRequest.getTeamId()));
+        userRepository.save(user);
+        return user;
     }
 }

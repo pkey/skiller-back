@@ -6,8 +6,6 @@ import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.exceptions.ApplicationException;
 import lt.swedbank.exceptions.ExceptionMessage;
-import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
-import lt.swedbank.exceptions.skill.SkillNotFoundException;
 import lt.swedbank.handlers.ExceptionHandler;
 import lt.swedbank.repositories.SkillRepository;
 import lt.swedbank.repositories.UserSkillRepository;

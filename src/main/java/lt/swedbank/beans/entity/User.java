@@ -3,7 +3,6 @@ package lt.swedbank.beans.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lt.swedbank.beans.request.RegisterUserRequest;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.persistence.*;
 import java.util.LinkedList;
@@ -32,15 +31,11 @@ public class User implements Comparable<User> {
 
     @OneToMany
     @JoinColumn(name = "userid")
-    private List<UserSkill> userSkills = new LinkedList<UserSkill>();
+    private List<UserSkill> userSkills = new LinkedList<>();
 
-    public List<UserSkill> getUserSkills() {
-        return userSkills;
-    }
+    @ManyToOne
+    private Team team;
 
-    public void setUserSkills(List<UserSkill> userSkills) {
-        this.userSkills = userSkills;
-    }
 
     public User() {}
 
@@ -51,6 +46,11 @@ public class User implements Comparable<User> {
         setConnection(registerUserRequest.getConnection());
         setEmail(registerUserRequest.getEmail());
         setPassword(registerUserRequest.getPassword());
+    }
+
+    @Override
+    public int compareTo(User user) {
+        return this.getFullName().compareTo(user.getFullName());
     }
 
     public Long getId() {
@@ -109,13 +109,23 @@ public class User implements Comparable<User> {
         this.authId = authId;
     }
 
-    private String getFullName()
-    {
+    private String getFullName() {
         return this.name + " " + this.name;
     }
 
-    @Override
-    public int compareTo(User user) {
-        return this.getFullName().compareTo(user.getFullName());
+    public List<UserSkill> getUserSkills() {
+        return userSkills;
+    }
+
+    public void setUserSkills(List<UserSkill> userSkills) {
+        this.userSkills = userSkills;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
     }
 }

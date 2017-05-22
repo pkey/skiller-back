@@ -7,8 +7,6 @@ import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.exceptions.user.UserNotFoundException;
-import lt.swedbank.exceptions.ApplicationException;
-import lt.swedbank.handlers.ExceptionHandler;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.user.UserService;

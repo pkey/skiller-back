@@ -11,9 +11,11 @@ public class TeamService {
     @Autowired
     private TeamRepository teamRepository;
 
-    public Iterable<Team> getAllTeams(){
+    public Iterable<Team> getAllTeams() {
         return teamRepository.findAll();
     }
 
-    public Team getTeamById(Long id) { return teamRepository.findOne(id); };
+    public Team getTeamById(Long id) {
+        return teamRepository.findOne(id);
+    }
 }

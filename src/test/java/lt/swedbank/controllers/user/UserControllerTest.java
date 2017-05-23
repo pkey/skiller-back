@@ -6,7 +6,6 @@ import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.response.UserEntityResponse;
-import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.user.UserService;
@@ -15,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -249,16 +247,4 @@ public class UserControllerTest {
 
         correctUser.setUserSkills(correctUserSkills);
     }
-
-    @Test
-    public void test_if_user_not_found_is_thrown_when_it_is_not() throws Exception {
-
-        Mockito.when(userService.getUserByAuthId(any())).thenThrow(new UserNotFoundException("Some error"));
-
-        mockMvc.perform(get("/user/get")
-                .header("Authorization", "Bearer fake_token")
-                .contentType(contentType))
-                .andExpect(status().isNotFound());
-    }
-
 }

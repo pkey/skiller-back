@@ -6,7 +6,7 @@ import lt.swedbank.beans.entity.UserSkill;
 
 import java.util.List;
 
-public class UserEntityResponse extends Response implements Comparable<UserEntityResponse> {
+public class UserEntityResponse extends Response {
 
     private Long id;
 
@@ -82,8 +82,4 @@ public class UserEntityResponse extends Response implements Comparable<UserEntit
         return this.name + " " + this.lastName;
     }
 
-    @Override
-    public int compareTo(UserEntityResponse userEntityResponse) {
-        return this.getFullName().toLowerCase().compareTo(userEntityResponse.getFullName().toLowerCase());
-    }
 }

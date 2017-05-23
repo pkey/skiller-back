@@ -1,5 +1,6 @@
 package lt.swedbank.services.user;
 
+import com.auth0.json.mgmt.Page;
 import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
@@ -63,6 +64,7 @@ public class UserService {
      * @param addSkillRequest - data of the skill that should be added
      * @return the added skill
      */
+
     public UserSkill addUserSkill(Long userid, AddSkillRequest addSkillRequest)  throws ApplicationException {
 
         if (getUserById(userid) == null) {
@@ -97,17 +99,22 @@ public class UserService {
         return user;
     }
 
+    public Iterable<User> getSortedUsers()
+    {
+        return userRepository.findAllByOrderByNameAscLastNameAsc();
+    }
+
+
     public Iterable<User> getAllUsers() {
         return userRepository.findAll();
     }
 
     public Iterable<UserEntityResponse> getUserEntityResponseList() {
         List<UserEntityResponse> userList = new ArrayList<>();
-        for (User user: getAllUsers()
+        for (User user: getSortedUsers()
                 ) {
             userList.add(new UserEntityResponse(user));
         }
-        Collections.sort(userList);
         return userList;
     }
 

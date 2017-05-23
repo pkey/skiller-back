@@ -2,13 +2,15 @@ package lt.swedbank.exceptions.user;
 
 
 import lt.swedbank.exceptions.MainException;
+import org.springframework.http.HttpStatus;
 
 public class UserNotFoundException extends MainException {
 
-    private static final String MESSAGE_CODE = "user_not_found";
+
 
     public UserNotFoundException() {
-        this.messageCode = MESSAGE_CODE;
+        this.messageCode = "user_not_found";
+        this.statusCode = HttpStatus.NOT_FOUND;
     }
 }
 

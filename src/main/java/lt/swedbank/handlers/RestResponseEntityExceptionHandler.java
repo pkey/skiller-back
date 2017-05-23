@@ -52,9 +52,9 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         }
 
     @ExceptionHandler({MainException.class})
-    @ResponseStatus(value = HttpStatus.NOT_FOUND)
     @ResponseBody
-    public ErrorResponse handleMainException(MainException ex) {
-        return new ErrorResponse(messageSource.getMessage(ex.getMessageCode(), null, Locale.getDefault()));
+    public ResponseEntity<ErrorResponse> handleMainException(MainException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(messageSource.getMessage(ex.getMessageCode(), null, Locale.getDefault()));
+        return new  ResponseEntity<>(errorResponse, ex.getStatusCode());
     }
 }

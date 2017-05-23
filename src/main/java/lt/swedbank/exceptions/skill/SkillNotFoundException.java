@@ -1,12 +1,13 @@
 package lt.swedbank.exceptions.skill;
 
 import lt.swedbank.exceptions.MainException;
+import org.springframework.http.HttpStatus;
 
 public class SkillNotFoundException extends MainException {
-    private static final String MESSAGE_CODE = "skill_not_found";
 
     public SkillNotFoundException() {
-        this.messageCode = MESSAGE_CODE;
+        this.messageCode = "skill_not_found";
+        this.statusCode = HttpStatus.NOT_FOUND;
     }
 
 }

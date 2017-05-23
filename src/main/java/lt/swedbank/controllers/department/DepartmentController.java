@@ -14,7 +14,7 @@ public class DepartmentController {
     @Autowired
     private DepartmentService departmentService;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public @ResponseBody
     DepartmentsListResponse getAll() {
         return departmentService.getAllDepartments();

@@ -11,7 +11,7 @@ public class DepartmentService {
     @Autowired
     private DepartmentRepository departmentRepository;
 
-    public Iterable<Department> getAllDepartments(){
+    public Iterable<Department> getAllDepartments() {
         return departmentRepository.findAll();
     }
 

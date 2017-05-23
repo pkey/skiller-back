@@ -1,13 +1,16 @@
 package lt.swedbank.exceptions.skill;
 
 
-import lt.swedbank.exceptions.ApplicationException;
+import lt.swedbank.exceptions.MainException;
+import org.springframework.http.HttpStatus;
 
-public class SkillAlreadyExistsException extends ApplicationException {
+public class SkillAlreadyExistsException extends MainException {
 
-    public SkillAlreadyExistsException(String errorCause) {
-        super(errorCause);
+
+    public SkillAlreadyExistsException() {
+        this.messageCode = "skill_already_exists";
+        this.statusCode = HttpStatus.BAD_REQUEST;
     }
-
 }
+
 

@@ -4,9 +4,8 @@ package lt.swedbank.services.skill;
 import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
-import lt.swedbank.exceptions.ApplicationException;
-import lt.swedbank.exceptions.ExceptionMessage;
-import lt.swedbank.handlers.ExceptionHandler;
+import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
+import lt.swedbank.exceptions.skill.SkillNotFoundException;
 import lt.swedbank.repositories.SkillRepository;
 import lt.swedbank.repositories.UserSkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +21,12 @@ public class SkillService {
     @Autowired
     private UserSkillRepository userSkillRepository;
 
-    @Autowired
-    private ExceptionHandler exceptionHandler;
-
     public SkillService(SkillRepository skillRepository, UserSkillRepository userSkillRepository) {
         this.skillRepository = skillRepository;
         this.userSkillRepository = userSkillRepository;
     }
 
-    public UserSkill addSkill(Long userID, AddSkillRequest addSkillRequest) throws ApplicationException {
+    public UserSkill addSkill(Long userID, AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
 
         Skill skill = skillRepository.findByTitle(addSkillRequest.getTitle());
 
@@ -42,7 +38,7 @@ public class SkillService {
         }
 
         if(isUserSkillAlreadyExists(userID, skill)) {
-            throw exceptionHandler.handleException(ExceptionMessage.SKILL_ALREADY_EXISTS);
+            throw new SkillAlreadyExistsException();
         }
 
         UserSkill userSkill = new UserSkill(userID, skill);
@@ -51,12 +47,12 @@ public class SkillService {
         return userSkill;
     }
 
-    public UserSkill removeSkill(Long userID, Skill skill) throws ApplicationException {
+    public UserSkill removeSkill(Long userID, Skill skill) throws SkillNotFoundException {
 
         UserSkill userSkill = userSkillRepository.findByUserIDAndSkill(userID, skill);
 
         if(userSkill == null){
-            throw exceptionHandler.handleException(ExceptionMessage.SKILL_NOT_FOUND);
+            throw new SkillNotFoundException();
         }
 
         userSkillRepository.delete(userSkill);

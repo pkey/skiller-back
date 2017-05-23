@@ -6,7 +6,7 @@ import java.util.Set;
 @Entity
 public class Department {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     protected Long id;
 
     protected String name;

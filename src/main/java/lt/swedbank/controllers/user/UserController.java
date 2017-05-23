@@ -62,8 +62,8 @@ public class UserController {
 
     @RequestMapping(value = "/team", method = RequestMethod.PUT)
     public @ResponseBody
-    UserEntityResponse assignUserTeam (@RequestHeader(value = "Authorization") String authToken,
-                                         @RequestBody AssignTeamRequest assignTeamRequest) {
+    UserEntityResponse assignUserTeam(@RequestHeader(value = "Authorization") String authToken,
+                                      @RequestBody AssignTeamRequest assignTeamRequest) {
         String authId = authService.extractAuthIdFromToken(authToken);
         Long userId = userService.getUserByAuthId(authId).getId();
         return new UserEntityResponse(userService.assignTeam(userId, assignTeamRequest));

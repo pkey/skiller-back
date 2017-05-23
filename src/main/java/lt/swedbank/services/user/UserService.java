@@ -106,7 +106,7 @@ public class UserService {
         return userList;
     }
 
-    public User assignTeam (final Long userId, final AssignTeamRequest assignTeamRequest){
+    public User assignTeam(final Long userId, final AssignTeamRequest assignTeamRequest) {
         User user = getUserById(userId);
         user.setTeam(teamService.getTeamById(assignTeamRequest.getTeamId()));
         userRepository.save(user);

@@ -1,11 +1,14 @@
 package lt.swedbank.beans.response;
 
+import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 
 import java.util.List;
 
 public class UserEntityResponse extends Response implements Comparable<UserEntityResponse> {
+
+    private Long id;
 
     private String name;
 
@@ -15,13 +18,24 @@ public class UserEntityResponse extends Response implements Comparable<UserEntit
 
     private List<UserSkill> userSkills;
 
+    private Team team;
+
     public UserEntityResponse(User user) {
 
+        id = user.getId();
         name = user.getName();
         lastName = user.getLastName();
         email = user.getEmail();
         userSkills = user.getUserSkills();
+        team = user.getTeam();
+    }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -56,8 +70,15 @@ public class UserEntityResponse extends Response implements Comparable<UserEntit
         this.userSkills = userSkills;
     }
 
-    private String getFullName()
-    {
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
+    }
+
+    private String getFullName() {
         return this.name + " " + this.lastName;
     }
 

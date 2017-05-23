@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -12,7 +11,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.servlet.http.HttpServletResponse;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class SimpleCorsFilterTest {
@@ -21,9 +21,15 @@ public class SimpleCorsFilterTest {
     @InjectMocks
     private SimpleCorsFilter filter;
 
+    private MockFilterChain chain;
+    private MockHttpServletRequest req;
+    private MockHttpServletResponse res;
+
     @Before
     public void setUp() throws Exception {
-
+        this.chain = new MockFilterChain();
+        this.req = new MockHttpServletRequest();
+        this.res = new MockHttpServletResponse();
     }
 
     @Test
@@ -44,12 +50,10 @@ public class SimpleCorsFilterTest {
 
     @Test
     public void doFilterOptionsRequest() throws Exception {
-        MockFilterChain mockFilterChain = new MockFilterChain();
-        MockHttpServletRequest req = new MockHttpServletRequest();
-        MockHttpServletResponse res = new MockHttpServletResponse();
+
         req.setMethod("OPTIONS");
 
-        filter.doFilter(req, res, mockFilterChain);
+        filter.doFilter(req, res, chain);
 
         assertEquals(res.getHeader("Access-Control-Allow-Origin"), "*");
         assertEquals(res.getHeader("Access-Control-Allow-Methods"), "POST, GET, OPTIONS, DELETE");
@@ -62,7 +66,12 @@ public class SimpleCorsFilterTest {
 
     @Test
     public void init() throws Exception {
+        filter.init(any());
+    }
 
+    @Test
+    public void destroy() throws Exception {
+        filter.destroy();
     }
 
 }

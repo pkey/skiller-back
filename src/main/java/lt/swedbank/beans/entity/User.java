@@ -10,7 +10,7 @@ import java.util.List;
 
 
 @Entity
-public class User implements Comparable<User> {
+public class User {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -46,11 +46,6 @@ public class User implements Comparable<User> {
         setConnection(registerUserRequest.getConnection());
         setEmail(registerUserRequest.getEmail());
         setPassword(registerUserRequest.getPassword());
-    }
-
-    @Override
-    public int compareTo(User user) {
-        return this.getFullName().compareTo(user.getFullName());
     }
 
     public Long getId() {

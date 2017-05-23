@@ -1,5 +1,6 @@
 package lt.swedbank.controllers.user;
 
+import lt.swedbank.beans.MyUserPrincipal;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
@@ -7,6 +8,9 @@ import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -26,7 +30,10 @@ public class UserController {
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public @ResponseBody
     UserEntityResponse getUser(Principal principal) {
-        return new UserEntityResponse(userService.getUserByAuthId(principal.getName()));
+        principal.getName();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        MyUserPrincipal myUserPrincipal = (MyUserPrincipal) authentication.getPrincipal();
+        return new UserEntityResponse(userService.getUserByAuthId(principal.getUsername()));
     }
 
     @RequestMapping(produces = "application/json", value = "/skill/add", method = RequestMethod.POST)

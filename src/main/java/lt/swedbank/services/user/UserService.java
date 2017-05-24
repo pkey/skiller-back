@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -58,6 +57,7 @@ public class UserService {
      * @param addSkillRequest - data of the skill that should be added
      * @return the added skill
      */
+
     public UserSkill addUserSkill(Long userid, AddSkillRequest addSkillRequest) throws UserNotFoundException {
 
         if (getUserById(userid) == null) {
@@ -92,17 +92,22 @@ public class UserService {
         return user;
     }
 
+    public Iterable<User> getSortedUsers()
+    {
+        return userRepository.findAllByOrderByNameAscLastNameAsc();
+    }
+
+
     public Iterable<User> getAllUsers() {
         return userRepository.findAll();
     }
 
     public Iterable<UserEntityResponse> getUserEntityResponseList() {
         List<UserEntityResponse> userList = new ArrayList<>();
-        for (User user: getAllUsers()
+        for (User user: getSortedUsers()
                 ) {
             userList.add(new UserEntityResponse(user));
         }
-        Collections.sort(userList);
         return userList;
     }
 

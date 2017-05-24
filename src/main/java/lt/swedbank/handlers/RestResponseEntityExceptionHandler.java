@@ -5,9 +5,7 @@ import com.auth0.exception.Auth0Exception;
 import lt.swedbank.beans.response.AuthenticationError;
 import lt.swedbank.beans.response.AuthenticationErrorsWrapper;
 import lt.swedbank.beans.response.ErrorResponse;
-import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
-import lt.swedbank.exceptions.skill.SkillNotFoundException;
-import lt.swedbank.exceptions.user.UserNotFoundException;
+import lt.swedbank.exceptions.MainException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
@@ -35,7 +33,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
 
     @ExceptionHandler({ Auth0Exception.class })
-    public ResponseEntity<Object> handleBadRequest(final APIException ex, final WebRequest request) {
+    public ResponseEntity<Object> handleAuth0Exception(final APIException ex, final WebRequest request) {
         ErrorResponse er = new ErrorResponse(ex.getMessage());
         return handleExceptionInternal(ex, er, new HttpHeaders(), HttpStatus.valueOf(ex.getStatusCode()), request);
     }
@@ -53,27 +51,10 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return new ResponseEntity<Object>(fieldErrorList, HttpStatus.BAD_REQUEST);
         }
 
-    @ExceptionHandler({ UserNotFoundException.class })
-    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    @ExceptionHandler({MainException.class})
     @ResponseBody
-    public ErrorResponse handleUserNotFoundExeption() {
-        return new ErrorResponse(messageSource.getMessage("user_not_found", null, Locale.getDefault()));
+    public ResponseEntity<ErrorResponse> handleMainException(MainException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(messageSource.getMessage(ex.getMessageCode(), null, Locale.getDefault()));
+        return new  ResponseEntity<>(errorResponse, ex.getStatusCode());
     }
-
-
-    @ExceptionHandler({ SkillAlreadyExistsException.class })
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public ErrorResponse handleSkillAlreadyExistsException() {
-        return new ErrorResponse(messageSource.getMessage("skill_already_exists", null, Locale.getDefault()));
-    }
-
-    @ExceptionHandler({SkillNotFoundException.class })
-    @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    @ResponseBody
-    public ErrorResponse handleSkillNotFoundException() {
-        return new ErrorResponse(messageSource.getMessage("skill_not_found", null, Locale.getDefault()));
-    }
-
-
 }

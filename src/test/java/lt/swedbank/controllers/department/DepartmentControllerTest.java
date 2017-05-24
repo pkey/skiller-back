@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.entity.Department;
 import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.entity.User;
+import lt.swedbank.beans.response.DepartmentsListResponse;
 import lt.swedbank.controllers.auth.AuthController;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.services.auth.Auth0AuthenticationService;
@@ -107,24 +108,24 @@ public class DepartmentControllerTest {
         @Test
         public void get_department_success() throws Exception {
 
-            when(departmentService.getAllDepartments()).thenReturn(departments);
+            when(departmentService.getAllDepartments()).thenReturn( new DepartmentsListResponse(departments));
 
             mockMvc.perform(get("/departments/")
                     .header("Authorization", "Bearer")
                     .contentType(contentType))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$", hasSize(2)))
+                    .andExpect(jsonPath("$.departments", hasSize(2)))
 
-                    .andExpect(jsonPath("$[0].id", is(1)))
-                    .andExpect(jsonPath("$[0].name", is("pirmas")))
-                    .andExpect(jsonPath("$[0].teams", hasSize(1)))
-                    .andExpect(jsonPath("$[0].teams[0].name", is("vienas")))
+                    .andExpect(jsonPath("$.departments[0].id", is(1)))
+                    .andExpect(jsonPath("$.departments[0].name", is("pirmas")))
+                    .andExpect(jsonPath("$.departments[0].teams", hasSize(1)))
+                    .andExpect(jsonPath("$.departments[0].teams[0].name", is("vienas")))
 
-                    .andExpect(jsonPath("$[1].id", is(2)))
-                    .andExpect(jsonPath("$[1].name", is("antras")))
-                    .andExpect(jsonPath("$[1].teams", hasSize(2)))
-                    .andExpect(jsonPath("$[1].teams[0].name", is("du")))
-                    .andExpect(jsonPath("$[1].teams[1].name", is("trys")));
+                    .andExpect(jsonPath("$.departments[1].id", is(2)))
+                    .andExpect(jsonPath("$.departments[1].name", is("antras")))
+                    .andExpect(jsonPath("$.departments[1].teams", hasSize(2)))
+                    .andExpect(jsonPath("$.departments[1].teams[0].name", is("du")))
+                    .andExpect(jsonPath("$.departments[1].teams[1].name", is("trys")));
 
             verify(departmentService, times(1)).getAllDepartments();
 

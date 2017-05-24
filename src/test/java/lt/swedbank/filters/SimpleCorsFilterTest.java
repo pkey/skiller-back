@@ -4,6 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -18,7 +20,6 @@ import static org.mockito.Matchers.any;
 public class SimpleCorsFilterTest {
 
 
-    @InjectMocks
     private SimpleCorsFilter filter;
 
     private MockFilterChain chain;
@@ -27,6 +28,8 @@ public class SimpleCorsFilterTest {
 
     @Before
     public void setUp() throws Exception {
+        this.filter = new SimpleCorsFilter();
+
         this.chain = new MockFilterChain();
         this.req = new MockHttpServletRequest();
         this.res = new MockHttpServletResponse();
@@ -62,11 +65,6 @@ public class SimpleCorsFilterTest {
         assertEquals(res.getStatus(), HttpServletResponse.SC_OK);
 
 
-    }
-
-    @Test
-    public void init() throws Exception {
-        filter.init(any());
     }
 
     @Test

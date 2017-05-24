@@ -71,27 +71,23 @@ public class UserServiceTest {
     }
 
 
-        @Test
-        public void getUserByEmail() throws Exception {
-            Mockito.when(userRepository.findByEmail(any())).thenReturn(testUser);
-            User resultUser = userService.getUserByEmail("something");
-            assertEquals(testUser.getEmail(), resultUser.getEmail());
-        }
-
-        @Test
-        public void add_skill_to_user_success() {
-
-            Mockito.when(skillService.addSkill(anyLong(),any())).thenReturn(testUserSkill);
-            doReturn(testUser).when(userService).getUserById(any());
-
-            UserSkill newUserSkill = userService.addUserSkill(anyLong(), any());
-            assertEquals(testSkill.getTitle(), newUserSkill.getTitle());
-
-            verify(userService, times(1)).getUserById(testUser.getId());
-            verify(skillService, times(1)).addSkill(anyLong(), any());
-        }
-
+    @Test
+    public void getUserByEmail() throws Exception {
+        Mockito.when(userRepository.findByEmail(any())).thenReturn(testUser);
+        User resultUser = userService.getUserByEmail("something");
+        assertEquals(testUser.getEmail(), resultUser.getEmail());
     }
 
+    @Test
+    public void add_skill_to_user_success() {
 
+        Mockito.when(skillService.addSkill(anyLong(),any())).thenReturn(testUserSkill);
+        doReturn(testUser).when(userService).getUserById(any());
+
+        UserSkill newUserSkill = userService.addUserSkill(anyLong(), any());
+        assertEquals(testSkill.getTitle(), newUserSkill.getTitle());
+
+        verify(userService, times(1)).getUserById(testUser.getId());
+        verify(skillService, times(1)).addSkill(anyLong(), any());
+    }
 }

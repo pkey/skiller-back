@@ -1,12 +1,15 @@
 package lt.swedbank.services.user;
 
 import lt.swedbank.beans.entity.Skill;
+import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
+import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.repositories.UserRepository;
 import lt.swedbank.services.skill.SkillService;
+import lt.swedbank.services.team.TeamService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +25,8 @@ import static org.mockito.Matchers.any;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class UserServiceTest {
 
+    private AssignTeamRequest testAssignTeamRequest;
+    private Team testTeam;
     private User testUser;
     private UserSkill testUserSkill;
     private Skill testSkill;
@@ -35,26 +40,38 @@ public class UserServiceTest {
     private SkillService skillService;
 
     @Mock
+    private TeamService teamService;
+
+    @Mock
     private UserRepository userRepository;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
+        Long userID = Long.parseLong("0");
+        Long teamID = Long.parseLong("1");
+
         this.testUser = new User();
-        testUser.setId(new Long(0));
+        testUser.setId(userID);
         testUser.setName("Testas");
         testUser.setLastName("Testauskas");
         testUser.setEmail("test@test.com");
 
+        testTeam = new Team();
+        testTeam.setName("Testing Team");
+        testTeam.setId(teamID);
 
         testSkill = new Skill("testing");
-        testSkill.setId(Long.parseLong("911"));
+        testSkill.setId(userID);
 
         testUserSkill = new UserSkill(testUser.getId(), testSkill);
 
         testAddSkillRequest = new AddSkillRequest(testUserSkill);
 
+        testAssignTeamRequest = new AssignTeamRequest();
+        testAssignTeamRequest.setTeamId(teamID);
+        testAssignTeamRequest.setUserId(userID);
 
     }
 
@@ -90,4 +107,15 @@ public class UserServiceTest {
         verify(userService, times(1)).getUserById(testUser.getId());
         verify(skillService, times(1)).addSkill(anyLong(), any());
     }
+
+    @Test
+    public void set_team_to_user_success()
+    {
+        Mockito.when(teamService.getTeamById(any())).thenReturn(testTeam);
+        doReturn(testUser).when(userService).getUserById(any());
+
+        User newUser = userService.assignTeam(testUser.getId(), testAssignTeamRequest);
+        assertEquals(testTeam, newUser.getTeam());
+    }
+
 }

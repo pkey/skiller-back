@@ -44,7 +44,7 @@ public class SimpleCorsFilterTest {
         filter.doFilter(req, res, mockFilterChain);
 
         assertEquals(res.getHeader("Access-Control-Allow-Origin"), "*");
-        assertEquals(res.getHeader("Access-Control-Allow-Methods"), "POST, GET, OPTIONS, DELETE");
+        assertEquals(res.getHeader("Access-Control-Allow-Methods"), "POST, GET, OPTIONS, DELETE, PUT");
         assertEquals(res.getHeader("Access-Control-Max-Age"), "3600");
         assertEquals(res.getHeader("Access-Control-Allow-Headers"), "x-requested-with, authorization, Content-Type");
 
@@ -59,7 +59,7 @@ public class SimpleCorsFilterTest {
         filter.doFilter(req, res, chain);
 
         assertEquals(res.getHeader("Access-Control-Allow-Origin"), "*");
-        assertEquals(res.getHeader("Access-Control-Allow-Methods"), "POST, GET, OPTIONS, DELETE");
+        assertEquals(res.getHeader("Access-Control-Allow-Methods"), "POST, GET, OPTIONS, DELETE, PUT");
         assertEquals(res.getHeader("Access-Control-Max-Age"), "3600");
         assertEquals(res.getHeader("Access-Control-Allow-Headers"), "x-requested-with, authorization, Content-Type");
         assertEquals(res.getStatus(), HttpServletResponse.SC_OK);

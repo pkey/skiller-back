@@ -117,4 +117,8 @@ public class UserService {
         userRepository.save(user);
         return user;
     }
+
+    public UserEntityResponse getUserProfile(Long id) {
+            return new UserEntityResponse(getUserById(id));
+    }
 }

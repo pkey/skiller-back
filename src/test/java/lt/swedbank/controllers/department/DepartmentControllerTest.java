@@ -87,13 +87,10 @@ public class DepartmentControllerTest {
             Team team2 = new Team();
             team2.setName("du");
             team2.setDepartment(department2);
-            Team team3 = new Team();
-            team3.setName("trys");
-            team3.setDepartment(department2);
+
 
             teamList1.add(team1);
             teamList2.add(team2);
-            teamList2.add(team3);
 
             department1.setTeams(teamList1);
             department2.setTeams(teamList2);
@@ -123,9 +120,8 @@ public class DepartmentControllerTest {
 
                     .andExpect(jsonPath("$.departments[1].id", is(2)))
                     .andExpect(jsonPath("$.departments[1].name", is("antras")))
-                    .andExpect(jsonPath("$.departments[1].teams", hasSize(2)))
-                    .andExpect(jsonPath("$.departments[1].teams[0].name", is("du")))
-                    .andExpect(jsonPath("$.departments[1].teams[1].name", is("trys")));
+                    .andExpect(jsonPath("$.departments[1].teams", hasSize(1)))
+                    .andExpect(jsonPath("$.departments[1].teams[0].name", is("du")));
 
             verify(departmentService, times(1)).getAllDepartments();
 

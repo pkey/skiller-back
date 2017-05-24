@@ -62,28 +62,36 @@ public class UserServiceTest {
     public void tearDown() throws Exception {
     }
 
-    
+
+
     @Test(expected = UserNotFoundException.class)
     public void throws_use_does_not_exist_error() throws Exception{
         Mockito.when(userRepository.findByEmail(any())).thenReturn(null);
         User resultUser = userService.getUserByEmail("something");
     }
 
-    @Test public void add_skill_to_user_success() {
 
-        Mockito.when(skillService.addSkill(anyLong(),any())).thenReturn(testUserSkill);
-        doReturn(testUser).when(userService).getUserById(any());
+        @Test
+        public void getUserByEmail() throws Exception {
+            Mockito.when(userRepository.findByEmail(any())).thenReturn(testUser);
+            User resultUser = userService.getUserByEmail("something");
+            assertEquals(testUser.getEmail(), resultUser.getEmail());
+        }
 
-        UserSkill newUserSkill = userService.addUserSkill(anyLong(), any());
-        assertEquals(testSkill.getTitle(), newUserSkill.getTitle());
+        @Test
+        public void add_skill_to_user_success() {
 
-        verify(userService, times(1)).getUserById(testUser.getId());
-        verify(skillService, times(1)).addSkill(anyLong(), any());
+            Mockito.when(skillService.addSkill(anyLong(),any())).thenReturn(testUserSkill);
+            doReturn(testUser).when(userService).getUserById(any());
+
+            UserSkill newUserSkill = userService.addUserSkill(anyLong(), any());
+            assertEquals(testSkill.getTitle(), newUserSkill.getTitle());
+
+            verify(userService, times(1)).getUserById(testUser.getId());
+            verify(skillService, times(1)).addSkill(anyLong(), any());
+        }
+
     }
 
+
 }
-
-
-
-
-

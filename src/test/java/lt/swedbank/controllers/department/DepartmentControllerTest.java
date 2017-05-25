@@ -4,13 +4,9 @@ package lt.swedbank.controllers.department;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.entity.Department;
 import lt.swedbank.beans.entity.Team;
-import lt.swedbank.beans.entity.User;
-import lt.swedbank.controllers.auth.AuthController;
+import lt.swedbank.beans.response.DepartmentEntityResponse;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
-import lt.swedbank.services.auth.Auth0AuthenticationService;
 import lt.swedbank.services.department.DepartmentService;
-import lt.swedbank.services.user.UserService;
-import org.bouncycastle.jcajce.provider.symmetric.TEA;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -43,7 +39,7 @@ public class DepartmentControllerTest {
 
         private Department department1;
         private Department department2;
-        private List<Department> departments;
+        private List<DepartmentEntityResponse> departments;
 
 
         @InjectMocks
@@ -78,8 +74,8 @@ public class DepartmentControllerTest {
             department2.setName("antras");
             department2.setId(Long.parseLong("2"));
 
-            Set<Team> teamList1 = new HashSet<>();
-            Set<Team> teamList2 = new HashSet<>();
+            List<Team> teamList1 = new ArrayList<>();
+            List<Team> teamList2 = new ArrayList<>();
             Team team1 = new Team();
             team1.setName("vienas");
             team1.setDepartment(department1);
@@ -87,15 +83,18 @@ public class DepartmentControllerTest {
             team2.setName("du");
             team2.setDepartment(department2);
 
+
             teamList1.add(team1);
             teamList2.add(team2);
 
             department1.setTeams(teamList1);
             department2.setTeams(teamList2);
 
-            departments = new LinkedList<>();
-            departments.add(department1);
-            departments.add(department2);
+            departments = new ArrayList<>();
+            departments.add(new DepartmentEntityResponse(department1));
+            departments.add(new DepartmentEntityResponse(department2));
+
+
 
         }
 

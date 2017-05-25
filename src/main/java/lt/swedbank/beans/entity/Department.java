@@ -1,6 +1,7 @@
 package lt.swedbank.beans.entity;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -12,7 +13,7 @@ public class Department {
     protected String name;
 
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
-    private Set<Team> teams;
+    private List<Team> teams;
 
     public Long getId() {
         return id;
@@ -30,13 +31,11 @@ public class Department {
         this.name = name;
     }
 
-
-    public Set<Team> getTeams() {
+    public List<Team> getTeams() {
         return teams;
     }
 
-
-    public void setTeams(Set<Team> teams) {
+    public void setTeams(List<Team> teams) {
         this.teams = teams;
     }
 }

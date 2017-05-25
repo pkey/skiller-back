@@ -1,6 +1,7 @@
 package lt.swedbank.controllers.department;
 
 import lt.swedbank.beans.entity.Department;
+import lt.swedbank.beans.response.DepartmentEntityResponse;
 import lt.swedbank.services.department.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +14,9 @@ public class DepartmentController {
     @Autowired
     private DepartmentService departmentService;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public @ResponseBody
-    Iterable<Department> getAll() {
+    Iterable<DepartmentEntityResponse> getAll() {
         return departmentService.getAllDepartments();
     }
 

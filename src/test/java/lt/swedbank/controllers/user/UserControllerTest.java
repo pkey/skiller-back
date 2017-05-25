@@ -131,6 +131,28 @@ public class UserControllerTest {
     // TODO: 17.5.18  fix /user/all test
 
     @Test
+    public void get_user_profile_success() throws Exception {
+        when(userService.getUserProfile(Long.parseLong("1"))).thenReturn(userEntityResponse);
+
+        mockMvc.perform(get("/user/profile/1")
+                .header("Authorization", "Bearer")
+                .contentType(contentType))
+                .andExpect(status().isOk())
+
+                .andExpect(jsonPath("$.name", is("TestUserName")))
+                .andExpect(jsonPath("$.lastName", is("TestUserLastName")))
+                .andExpect(jsonPath("$.email", is("testuser@gmail.com")))
+                .andExpect(jsonPath("$.userSkills", hasSize(3)))
+                .andExpect(jsonPath("$.userSkills[0].title", is("SkillName1")))
+                .andExpect(jsonPath("$.userSkills[1].title", is("SkillName2")))
+                .andExpect(jsonPath("$.userSkills[2].title", is("SkillName3")));
+
+
+        verify(userService, times(1)).getUserProfile(any());
+        verifyNoMoreInteractions(userService);
+    }
+
+    @Test
     public void get_users_success() throws Exception {
 
 

@@ -69,5 +69,12 @@ public class UserController {
         return new UserEntityResponse(userService.assignTeam(userId, assignTeamRequest));
     }
 
+    @RequestMapping(value = "/profile/{id}", method = RequestMethod.GET)
+    public @ResponseBody
+    UserEntityResponse getUserProfile(@RequestHeader(value = "Authorization") String authToken, @PathVariable("id") Long id) {
+        return userService.getUserProfile(id);
+    }
+
+
 
 }

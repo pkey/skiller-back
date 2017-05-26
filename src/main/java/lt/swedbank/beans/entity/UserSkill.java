@@ -16,7 +16,7 @@ public class UserSkill {
     @JsonIgnore
     private Long userID;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Skill skill;
 
     public UserSkill(Long userID)

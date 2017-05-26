@@ -19,6 +19,7 @@ public class User {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
 
+    @Column(name = "name")
     @Field(index= Index.YES, analyze= Analyze.YES, store= Store.NO)
     private String name;
 

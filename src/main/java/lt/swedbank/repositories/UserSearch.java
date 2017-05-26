@@ -1,23 +1,14 @@
 package lt.swedbank.repositories;
 
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
 import lt.swedbank.beans.entity.User;
-import org.hibernate.Session;
-import org.hibernate.search.FullTextSession;
-import org.hibernate.search.Search;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.query.dsl.QueryBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -36,14 +27,19 @@ public class UserSearch {
         // create the query using Hibernate Search query DSL
         QueryBuilder queryBuilder =
                 fullTextEntityManager.getSearchFactory()
-                        .buildQueryBuilder().forEntity(User.class).get();
+                        .buildQueryBuilder().forEntity(User.class)
+                        // .overridesForField( "name", "customanalyzer_query" )
+                        .get();
+
+        String queryText = "*" + text.toLowerCase() + "*";
 
         // a very basic query by keywords
         org.apache.lucene.search.Query query =
                 queryBuilder
                         .keyword()
-                        .onFields("name")
-                        .matching(text)
+                        .wildcard()
+                        .onFields("name", "lastName")
+                        .matching(queryText)
                         .createQuery();
 
         // wrap Lucene query in an Hibernate Query object

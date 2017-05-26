@@ -1,9 +1,16 @@
 package lt.swedbank.beans.entity;
 
 
+
+
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.*;
+import org.hibernate.search.annotations.Index;
+
 import javax.persistence.*;
 
 @Entity
+@Indexed
 public class Skill {
 
 
@@ -11,6 +18,8 @@ public class Skill {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+    @Field(index= Index.YES, analyze= Analyze.YES, store= Store.NO)
     @Column(unique = true)
     private String title;
 

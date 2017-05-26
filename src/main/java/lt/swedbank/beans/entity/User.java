@@ -3,6 +3,8 @@ package lt.swedbank.beans.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lt.swedbank.beans.request.RegisterUserRequest;
+import org.hibernate.search.annotations.*;
+import org.hibernate.search.annotations.Index;
 
 import javax.persistence.*;
 import java.util.LinkedList;
@@ -10,14 +12,17 @@ import java.util.List;
 
 
 @Entity
+@Indexed
 public class User {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
 
+    @Field(index= Index.YES, analyze= Analyze.YES, store= Store.NO)
     private String name;
 
+    @Field(index= Index.YES, analyze= Analyze.YES, store= Store.NO)
     private String lastName;
     @Transient
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

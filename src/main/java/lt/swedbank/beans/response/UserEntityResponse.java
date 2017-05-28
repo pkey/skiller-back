@@ -22,7 +22,7 @@ public class UserEntityResponse extends Response {
 
 
     @JsonSerialize(using = UserSkillsSerializer.class)
-    private List<UserSkill> skills;
+    private List<UserSkill> userSkills;
 
     @JsonSerialize(using = UserTeamSerializer.class)
     private Team team;
@@ -33,7 +33,7 @@ public class UserEntityResponse extends Response {
         name = user.getName();
         lastName = user.getLastName();
         email = user.getEmail();
-        skills = user.getUserSkills();
+        userSkills = user.getUserSkills();
         team = user.getTeam();
     }
 
@@ -69,12 +69,12 @@ public class UserEntityResponse extends Response {
         this.email = email;
     }
 
-    public List<UserSkill> getSkills() {
-        return skills;
+    public List<UserSkill> getUserSkills() {
+        return userSkills;
     }
 
-    public void setSkills(List<UserSkill> skills) {
-        this.skills = skills;
+    public void setUserSkills(List<UserSkill> userSkills) {
+        this.userSkills = userSkills;
     }
 
     public Team getTeam() {

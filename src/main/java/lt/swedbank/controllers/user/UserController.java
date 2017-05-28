@@ -5,11 +5,10 @@ import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.UserEntityResponse;
-import lt.swedbank.repositories.UserSearch;
+import lt.swedbank.repositories.search.UserSearch;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -80,19 +79,8 @@ public class UserController {
     }
 
     @RequestMapping("/search")
-    public List search(String q, Model model) {
-
-        List searchResults = null;
-        try {
-            searchResults = userSearch.search(q);
-        }
-        catch (Exception ex) {
-            // here you should handle unexpected errors
-            // ...
-            // throw ex;
-        }
-        model.addAttribute("searchResults", searchResults);
-        return (List<User>) searchResults;
+    public List<UserEntityResponse> search(String q) {
+        return userSearch.search(q);
     }
 
 }

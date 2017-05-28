@@ -3,9 +3,6 @@ package lt.swedbank.filters;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -14,7 +11,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.servlet.http.HttpServletResponse;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class SimpleCorsFilterTest {

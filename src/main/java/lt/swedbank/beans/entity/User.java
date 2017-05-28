@@ -1,13 +1,10 @@
 package lt.swedbank.beans.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import lt.swedbank.beans.request.RegisterUserRequest;
-import org.hibernate.search.annotations.*;
-import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -19,27 +16,26 @@ public class User {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "name")
-    @Field(index= Index.YES, analyze= Analyze.YES, store= Store.NO)
     private String name;
 
-    @Field(index= Index.YES, analyze= Analyze.YES, store= Store.NO)
     private String lastName;
+
     @Transient
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+
     @Transient
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String connection;
+
     private String email;
-    @JsonIgnore
+
     private String authId;
 
-    @OneToMany
-    @JoinColumn(name = "userid")
-    private List<UserSkill> userSkills = new LinkedList<>();
+    @OneToMany(mappedBy = "user")
+    private List<UserSkill> userSkills;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private Team team;
 
 
@@ -108,10 +104,6 @@ public class User {
 
     public void setAuthId(String authId) {
         this.authId = authId;
-    }
-
-    private String getFullName() {
-        return this.name + " " + this.name;
     }
 
     public List<UserSkill> getUserSkills() {

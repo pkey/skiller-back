@@ -1,5 +1,6 @@
 package lt.swedbank.beans.entity;
 
+import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ public class Skill {
     private Long id;
 
     @Column(unique = true)
+    @Field
     private String title;
 
     @OneToMany(mappedBy = "skill")

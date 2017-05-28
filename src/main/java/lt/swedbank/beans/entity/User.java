@@ -1,7 +1,8 @@
 package lt.swedbank.beans.entity;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lt.swedbank.beans.request.RegisterUserRequest;
+import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
@@ -16,8 +17,10 @@ public class User {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
 
+    @Field
     private String name;
 
+    @Field
     private String lastName;
 
     @Transient

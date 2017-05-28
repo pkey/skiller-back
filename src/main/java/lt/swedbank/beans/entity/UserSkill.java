@@ -1,8 +1,11 @@
 package lt.swedbank.beans.entity;
 
+import org.hibernate.search.annotations.Indexed;
+
 import javax.persistence.*;
 
 @Entity
+@Indexed
 public class UserSkill {
 
     @Id

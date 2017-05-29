@@ -1,6 +1,5 @@
 package lt.swedbank.controllers.department;
 
-import lt.swedbank.beans.entity.Department;
 import lt.swedbank.beans.response.DepartmentEntityResponse;
 import lt.swedbank.services.department.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,14 +1,17 @@
 package lt.swedbank.beans.response;
 
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lt.swedbank.beans.entity.Department;
 import lt.swedbank.beans.entity.Team;
+import lt.swedbank.beans.response.serializers.DepartmentTeamsSerializer;
 
 public class DepartmentEntityResponse extends Response {
 
     private Long id;
     private String name;
 
+    @JsonSerialize(using = DepartmentTeamsSerializer.class)
     private Iterable<Team> teams;
 
     public DepartmentEntityResponse(Department department) {

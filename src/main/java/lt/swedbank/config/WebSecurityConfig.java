@@ -31,7 +31,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .forRS256(audience, issuer)
                 .configure(http)
                 .authorizeRequests()
-                .antMatchers("/login", "/register").permitAll()
+                .antMatchers("/login", "/register", "user/search").permitAll()
                 .antMatchers("/user/get", "/user/skill/add", "/user/skill/remove", "/user/all","/user/team", "user/profile/{id}").authenticated();
     }
 }

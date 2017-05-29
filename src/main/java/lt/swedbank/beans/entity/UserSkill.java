@@ -1,55 +1,56 @@
 package lt.swedbank.beans.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "user_skill",
-        uniqueConstraints = {@UniqueConstraint(columnNames =
-                {"skill_id", "userID"})})
+@Indexed
 public class UserSkill {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @JsonIgnore
-    private Long userID;
 
     @ManyToOne
+    private User user;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     private Skill skill;
 
-    public UserSkill(Long userID)
-    {
-        this.userID = userID;
-    }
+    public UserSkill(){}
 
-    public UserSkill(Long userID, Skill skill) {
+    public UserSkill(User user, Skill skill) {
         this.skill = skill;
-        this.userID = userID;
-    }
-
-    public UserSkill() {}
-
-    public Long getUserID() {
-        return userID;
-    }
-
-    public void setUserID(Long userID) {
-        this.userID = userID;
+        this.user = user;
     }
 
     public Long getId() {
         return id;
     }
 
-    private void setId(Long id) {
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Skill getSkill() {
+        return skill;
+    }
+
+    public void setSkill(Skill skill) {
+        this.skill = skill;
     }
 
     public String getTitle()
     {
         return skill.getTitle();
     }
-
 }

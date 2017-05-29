@@ -5,6 +5,7 @@ import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.UserEntityResponse;
+import lt.swedbank.repositories.search.UserSearch;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private AuthenticationService authService;
+    @Autowired
+    private UserSearch userSearch;
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public @ResponseBody
@@ -75,6 +78,9 @@ public class UserController {
         return userService.getUserProfile(id);
     }
 
-
+    @RequestMapping("/search")
+    public List<UserEntityResponse> search(String q) {
+        return userSearch.search(q);
+    }
 
 }

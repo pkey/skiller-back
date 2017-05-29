@@ -2,11 +2,13 @@ package lt.swedbank.services.skill;
 
 
 import lt.swedbank.beans.entity.Skill;
+import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
 import lt.swedbank.exceptions.skill.SkillNotFoundException;
 import lt.swedbank.repositories.SkillRepository;
+import lt.swedbank.repositories.UserRepository;
 import lt.swedbank.repositories.UserSkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,8 @@ public class SkillService {
     private SkillRepository skillRepository;
     @Autowired
     private UserSkillRepository userSkillRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public SkillService(SkillRepository skillRepository, UserSkillRepository userSkillRepository) {
         this.skillRepository = skillRepository;
@@ -29,6 +33,8 @@ public class SkillService {
     public UserSkill addSkill(Long userID, AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
 
         Skill skill = skillRepository.findByTitle(addSkillRequest.getTitle());
+
+        User user = userRepository.findOne(userID);
 
         if(skill == null) {
             skill = new Skill(addSkillRequest.getTitle());
@@ -41,7 +47,8 @@ public class SkillService {
             throw new SkillAlreadyExistsException();
         }
 
-        UserSkill userSkill = new UserSkill(userID, skill);
+
+        UserSkill userSkill = new UserSkill(user, skill);
         userSkillRepository.save(userSkill);
 
         return userSkill;
@@ -49,7 +56,7 @@ public class SkillService {
 
     public UserSkill removeSkill(Long userID, Skill skill) throws SkillNotFoundException {
 
-        UserSkill userSkill = userSkillRepository.findByUserIDAndSkill(userID, skill);
+        UserSkill userSkill = userSkillRepository.findByUserIdAndSkill(userID, skill);
 
         if(userSkill == null){
             throw new SkillNotFoundException();
@@ -61,7 +68,7 @@ public class SkillService {
     }
 
     private boolean isUserSkillAlreadyExists(Long userID, Skill skill) {
-        return Optional.ofNullable(userSkillRepository.findByUserIDAndSkill(userID, skill)).isPresent();
+        return Optional.ofNullable(userSkillRepository.findByUserIdAndSkill(userID, skill)).isPresent();
     }
 
 }

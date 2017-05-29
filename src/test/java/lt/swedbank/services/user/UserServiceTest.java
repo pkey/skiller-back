@@ -16,11 +16,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import static org.mockito.Mockito.*;
-
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class UserServiceTest {
@@ -65,7 +64,7 @@ public class UserServiceTest {
         testSkill = new Skill("testing");
         testSkill.setId(userID);
 
-        testUserSkill = new UserSkill(testUser.getId(), testSkill);
+        testUserSkill = new UserSkill(testUser, testSkill);
 
         testAddSkillRequest = new AddSkillRequest(testUserSkill);
 

@@ -1,9 +1,7 @@
 package lt.swedbank.services.department;
 
 import lt.swedbank.beans.entity.Department;
-import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.response.DepartmentEntityResponse;
-import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.repositories.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

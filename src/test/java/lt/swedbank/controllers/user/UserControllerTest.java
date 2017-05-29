@@ -99,14 +99,14 @@ public class UserControllerTest {
         correctSkills.add(new Skill("SkillName3"));
 
         correctUserSkills = new ArrayList<>();
-        correctUserSkills.add(new UserSkill(userId, correctSkills.get(0)));
-        correctUserSkills.add(new UserSkill(userId, correctSkills.get(1)));
-        correctUserSkills.add(new UserSkill(userId, correctSkills.get(2)));
+        correctUserSkills.add(new UserSkill(correctUser, correctSkills.get(0)));
+        correctUserSkills.add(new UserSkill(correctUser, correctSkills.get(1)));
+        correctUserSkills.add(new UserSkill(correctUser, correctSkills.get(2)));
 
         correctUserSkills2 = new ArrayList<>();
-        correctUserSkills2.add(new UserSkill(user2Id, correctSkills.get(0)));
-        correctUserSkills2.add(new UserSkill(user2Id, correctSkills.get(1)));
-        correctUserSkills2.add(new UserSkill(user2Id, correctSkills.get(2)));
+        correctUserSkills2.add(new UserSkill(correctUser, correctSkills.get(0)));
+        correctUserSkills2.add(new UserSkill(correctUser, correctSkills.get(1)));
+        correctUserSkills2.add(new UserSkill(correctUser, correctSkills.get(2)));
 
         correctUser.setUserSkills(correctUserSkills);
         correctUser2.setUserSkills(correctUserSkills2);
@@ -120,7 +120,7 @@ public class UserControllerTest {
         correctUsers.add(userEntityResponse);
         correctUsers.add(userEntityResponse2);
 
-        skill = new UserSkill(userId, new Skill("SkillToAddLater"));
+        skill = new UserSkill(correctUser, new Skill("SkillToAddLater"));
 
     }
 
@@ -128,7 +128,6 @@ public class UserControllerTest {
     public void tearDown() throws Exception {
     }
 
-    // TODO: 17.5.18  fix /user/all test
 
     @Test
     public void get_user_profile_success() throws Exception {

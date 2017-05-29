@@ -1,10 +1,14 @@
 package lt.swedbank.beans.response;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
+import lt.swedbank.beans.response.serializers.UserSkillsSerializer;
+import lt.swedbank.beans.response.serializers.UserTeamSerializer;
 
 import java.util.List;
+
 
 public class UserEntityResponse extends Response {
 
@@ -16,8 +20,11 @@ public class UserEntityResponse extends Response {
 
     private String email;
 
+
+    @JsonSerialize(using = UserSkillsSerializer.class)
     private List<UserSkill> userSkills;
 
+    @JsonSerialize(using = UserTeamSerializer.class)
     private Team team;
 
     public UserEntityResponse(User user) {
@@ -77,9 +84,4 @@ public class UserEntityResponse extends Response {
     public void setTeam(Team team) {
         this.team = team;
     }
-
-    private String getFullName() {
-        return this.name + " " + this.lastName;
-    }
-
 }

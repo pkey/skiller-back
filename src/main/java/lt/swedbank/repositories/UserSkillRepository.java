@@ -6,5 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 
 
 public interface UserSkillRepository extends CrudRepository<UserSkill, Long> {
-    UserSkill findByUserIDAndSkill(Long userid, Skill skill);
+    UserSkill findByUserIdAndSkill(Long userId, Skill skill);
 }

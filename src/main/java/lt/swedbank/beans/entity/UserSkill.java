@@ -15,7 +15,7 @@ public class UserSkill {
     @ManyToOne
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Skill skill;
 
     public UserSkill(){}

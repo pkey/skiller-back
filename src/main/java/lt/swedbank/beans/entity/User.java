@@ -35,7 +35,7 @@ public class User {
 
     private String authId;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true)
     private List<UserSkill> userSkills;
 
     @ManyToOne

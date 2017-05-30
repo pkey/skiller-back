@@ -33,9 +33,10 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
 
     @ExceptionHandler({ Auth0Exception.class })
-    public ResponseEntity<Object> handleAuth0Exception(final APIException ex, final WebRequest request) {
+    public ResponseEntity<Object> handleAuth0Exception(final Auth0Exception ex, final WebRequest request) {
+        System.out.println("HASDADWDADADWdaadwdadadwdad");
         ErrorResponse er = new ErrorResponse(ex.getMessage());
-        return handleExceptionInternal(ex, er, new HttpHeaders(), HttpStatus.valueOf(ex.getStatusCode()), request);
+        return handleExceptionInternal(ex, er, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package lt.swedbank.beans.response;
 
 
-
 public class ErrorResponse extends Response {
 
     private String message;

@@ -71,4 +71,9 @@ public class SkillService {
         return Optional.ofNullable(userSkillRepository.findByUserIdAndSkill(userID, skill)).isPresent();
     }
 
+    public Iterable<Skill> getAllSkills()
+    {
+        return skillRepository.findAll();
+    }
+
 }

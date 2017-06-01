@@ -5,6 +5,7 @@ import lt.swedbank.beans.entity.Department;
 import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.response.DepartmentEntityResponse;
+import lt.swedbank.beans.response.SkillEntityResponse;
 import lt.swedbank.controllers.department.DepartmentController;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.services.department.DepartmentService;
@@ -41,7 +42,7 @@ public class SkillControllerTest {
 
     private MockMvc mockMvc;
 
-    private List<Skill> skills;
+    private List<SkillEntityResponse> skills;
 
 
     @InjectMocks
@@ -69,18 +70,15 @@ public class SkillControllerTest {
         mapper = new ObjectMapper();
 
         skills = new ArrayList<>();
-        skills.add(new Skill("Testing"));
-        skills.add(new Skill("Java"));
-        skills.add(new Skill("CSS"));
-
-
+        skills.add(new SkillEntityResponse(new Skill("Testing")));
+        skills.add(new SkillEntityResponse(new Skill("Java")));
+        skills.add(new SkillEntityResponse(new Skill("CSS")));
     }
-
 
     @Test
     public void get_skills_success() throws Exception {
 
-        when(skillService.getAllSkills()).thenReturn(skills);
+        when(skillService.getSkillEntityResponseList()).thenReturn(skills);
 
         mockMvc.perform(get("/skill/all")
                 .header("Authorization", "Bearer")
@@ -92,7 +90,7 @@ public class SkillControllerTest {
                 .andExpect(jsonPath("$[1].title", is("Java")))
                 .andExpect(jsonPath("$[2].title", is("CSS")));
 
-        verify(skillService, times(1)).getAllSkills();
+        verify(skillService, times(1)).getSkillEntityResponseList();
 
     }
 

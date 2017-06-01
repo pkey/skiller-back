@@ -120,7 +120,7 @@ public class AuthControllerTest {
         mockMvc.perform(post("/login")
                 .contentType(contentType)
                 .content(bookmarkJson))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isBadRequest());
     }
 
     @Test

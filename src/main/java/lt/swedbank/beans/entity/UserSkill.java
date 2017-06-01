@@ -34,6 +34,7 @@ public class UserSkill {
     public UserSkill(User user, Skill skill) {
         this.skill = skill;
         this.user = user;
+
     }
 
     public Long getId() {
@@ -88,4 +89,6 @@ public class UserSkill {
     public void setUpdated(Date updated) {
         this.updated = updated;
     }
+
+
 }

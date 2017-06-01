@@ -12,6 +12,8 @@ import java.util.List;
 @Service
 public class SkillLevelService {
 
+
+
     @Autowired
     private SkillLevelRepository skillLevelRepository;
 
@@ -22,6 +24,11 @@ public class SkillLevelService {
             skillLevelResponseList.add(new SkillLevelResponse(skillLevel));
         }
         return skillLevelResponseList;
+    }
+
+    public SkillLevel getDefault() {
+        Long defaultLevel = new Long(1);
+        return skillLevelRepository.findByLevel(defaultLevel);
     }
 
 

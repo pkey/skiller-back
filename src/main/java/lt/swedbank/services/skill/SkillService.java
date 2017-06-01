@@ -2,6 +2,7 @@ package lt.swedbank.services.skill;
 
 
 import lt.swedbank.beans.entity.Skill;
+import lt.swedbank.beans.entity.SkillLevel;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
@@ -14,9 +15,7 @@ import lt.swedbank.repositories.UserSkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class SkillService {
@@ -27,6 +26,8 @@ public class SkillService {
     private UserSkillRepository userSkillRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private SkillLevelService skillLevelService;
 
     public SkillService(SkillRepository skillRepository, UserSkillRepository userSkillRepository) {
         this.skillRepository = skillRepository;
@@ -52,6 +53,9 @@ public class SkillService {
 
 
         UserSkill userSkill = new UserSkill(user, skill);
+        Set<SkillLevel> skillLevels = new HashSet<>();
+        skillLevels.add(skillLevelService.getDefault());
+        userSkill.setSkillLevel(skillLevels);
         userSkillRepository.save(userSkill);
 
         return userSkill;
@@ -90,4 +94,5 @@ public class SkillService {
         }
         return skillList;
     }
+
 }

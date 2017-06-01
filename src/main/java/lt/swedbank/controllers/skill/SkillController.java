@@ -5,8 +5,8 @@ import lt.swedbank.beans.response.SkillEntityResponse;
 import lt.swedbank.services.skill.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -18,6 +18,7 @@ public class SkillController {
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public @ResponseBody
+
     Iterable<SkillEntityResponse> getUser(@RequestHeader(value = "Authorization") String authToken) {
         return skillService.getSkillEntityResponseList();
     }

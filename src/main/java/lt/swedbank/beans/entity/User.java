@@ -11,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Indexed
-public class User implements Comparable<User>{
+public class User implements Comparable<User> {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)

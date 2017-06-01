@@ -15,10 +15,7 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -72,9 +69,9 @@ public class UserSearch {
             }
         }
 
-
-        return convertUserSetToUserResponseList(userResults);
+        return sortUserEntityResponse(convertUserSetToUserResponseList(userResults));
     }
+
 
 
     private Set<User> resultsByUserName(String keyword) {
@@ -168,6 +165,13 @@ public class UserSearch {
             responseList.add(new UserEntityResponse(user));
         }
         return responseList;
+    }
+
+    //TODO This one too
+    private List sortUserEntityResponse(List userEntityResponseList)
+    {
+        Collections.sort(userEntityResponseList);
+        return userEntityResponseList;
     }
 }
 

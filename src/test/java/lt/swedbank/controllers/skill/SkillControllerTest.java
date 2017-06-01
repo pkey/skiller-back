@@ -78,7 +78,7 @@ public class SkillControllerTest {
 
 
     @Test
-    public void get_department_success() throws Exception {
+    public void get_skills_success() throws Exception {
 
         when(skillService.getAllSkills()).thenReturn(skills);
 

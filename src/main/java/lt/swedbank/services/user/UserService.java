@@ -119,12 +119,6 @@ public class UserService {
         return user;
     }
 
-    public List<User> sortUsers(List<User> users)
-    {
-        Collections.sort(users);
-        return users;
-    }
-
     public UserEntityResponse getUserProfile(Long id) {
             return new UserEntityResponse(getUserById(id));
     }

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -116,6 +117,12 @@ public class UserService {
         user.setTeam(teamService.getTeamById(assignTeamRequest.getTeamId()));
         userRepository.save(user);
         return user;
+    }
+
+    public List<User> sortUsers(List<User> users)
+    {
+        Collections.sort(users);
+        return users;
     }
 
     public UserEntityResponse getUserProfile(Long id) {

@@ -5,6 +5,7 @@ import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
+import lt.swedbank.beans.response.SkillEntityResponse;
 import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
 import lt.swedbank.exceptions.skill.SkillNotFoundException;
 import lt.swedbank.repositories.SkillRepository;
@@ -13,6 +14,8 @@ import lt.swedbank.repositories.UserSkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -71,9 +74,20 @@ public class SkillService {
         return Optional.ofNullable(userSkillRepository.findByUserIdAndSkill(userID, skill)).isPresent();
     }
 
+
     public Iterable<Skill> getAllSkills()
     {
         return skillRepository.findAll();
     }
 
+
+    public Iterable<SkillEntityResponse> getSkillEntityResponseList()
+    {
+        List<SkillEntityResponse> skillList = new ArrayList<>();
+        for (Skill skill: getAllSkills()
+             ) {
+                skillList.add(new SkillEntityResponse(skill));
+        }
+        return skillList;
+    }
 }

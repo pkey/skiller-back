@@ -7,28 +7,49 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class SkillLevelDescription {
+public class SkillLevel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
     private Long level;
+
+    private String title;
 
     private String description;
 
-    public SkillLevelDescription() {}
 
-    public SkillLevelDescription(Long level, String description)
-    {
+    public SkillLevel() {
+    }
+
+    public SkillLevel(String title, String description) {
+        this.title = title;
         this.description = description;
-        this.level = level;
     }
 
     public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getLevel() {
         return level;
     }
 
-    public void setId(Long level) {
+    public void setLevel(Long level) {
         this.level = level;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getDescription() {
@@ -38,4 +59,6 @@ public class SkillLevelDescription {
     public void setDescription(String description) {
         this.description = description;
     }
+
+
 }

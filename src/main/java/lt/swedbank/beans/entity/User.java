@@ -11,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Indexed
-public class User implements Comparable<User> {
+public class User {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -124,14 +124,5 @@ public class User implements Comparable<User> {
     public void setTeam(Team team) {
         this.team = team;
     }
-
-    private String getFullname()
-    {
-        return this.name + " " + this.lastName;
-    }
-
-    @Override
-    public int compareTo(User user) {
-        return this.getFullname().compareTo(user.getFullname());
-    }
+    
 }

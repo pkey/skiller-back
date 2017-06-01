@@ -13,9 +13,7 @@ public class SkillEntityResponse extends Response {
     private String title;
     private Long id;
 
-    @JsonSerialize(using = UserSkillsSerializer.class)
-    private List<UserSkill> userSkills;
-
+    
     public SkillEntityResponse(Skill skill)
     {
         this.id = skill.getId();

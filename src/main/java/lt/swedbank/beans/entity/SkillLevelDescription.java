@@ -17,9 +17,10 @@ public class SkillLevelDescription {
 
     public SkillLevelDescription() {}
 
-    public SkillLevelDescription(String description)
+    public SkillLevelDescription(Long level, String description)
     {
         this.description = description;
+        this.level = level;
     }
 
     public Long getId() {

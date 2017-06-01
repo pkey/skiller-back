@@ -4,9 +4,6 @@
   "scripts": {
   },
   "env": {
-    "CLEARDB_DATABASE_URL": {
-      "required": true
-    },
     "CLIENT_DOMAIN": {
       "required": true
     },

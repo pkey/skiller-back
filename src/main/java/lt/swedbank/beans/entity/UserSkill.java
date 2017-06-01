@@ -1,8 +1,11 @@
 package lt.swedbank.beans.entity;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
+import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Indexed
@@ -17,6 +20,14 @@ public class UserSkill {
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Skill skill;
+
+    @OneToMany
+    private Set<SkillLevel> skillLevel;
+
+    private String description;
+
+    @CreationTimestamp
+    private Date updated;
 
     public UserSkill(){}
 
@@ -52,5 +63,29 @@ public class UserSkill {
     public String getTitle()
     {
         return skill.getTitle();
+    }
+
+    public Set<SkillLevel> getSkillLevel() {
+        return skillLevel;
+    }
+
+    public void setSkillLevel(Set<SkillLevel> skillLevel) {
+        this.skillLevel = skillLevel;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Date getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Date updated) {
+        this.updated = updated;
     }
 }

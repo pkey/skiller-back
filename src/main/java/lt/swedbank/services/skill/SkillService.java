@@ -80,13 +80,11 @@ public class SkillService {
         return skillRepository.findAll();
     }
 
-
-    public Iterable<SkillEntityResponse> getSkillEntityResponseList()
-    {
+    public Iterable<SkillEntityResponse> getSkillEntityResponseList() {
         List<SkillEntityResponse> skillList = new ArrayList<>();
-        for (Skill skill: getAllSkills()
-             ) {
-                skillList.add(new SkillEntityResponse(skill));
+        for (Skill skill : getAllSkills()
+                ) {
+            skillList.add(new SkillEntityResponse(skill));
         }
         return skillList;
     }

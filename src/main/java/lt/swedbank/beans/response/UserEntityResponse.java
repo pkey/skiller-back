@@ -10,7 +10,7 @@ import lt.swedbank.beans.response.serializers.UserTeamSerializer;
 import java.util.List;
 
 
-public class UserEntityResponse extends Response {
+public class UserEntityResponse extends Response implements Comparable<UserEntityResponse> {
 
     private Long id;
 
@@ -83,5 +83,15 @@ public class UserEntityResponse extends Response {
 
     public void setTeam(Team team) {
         this.team = team;
+    }
+
+    private String getFullname()
+    {
+        return this.name + this.lastName;
+    }
+
+    @Override
+    public int compareTo(UserEntityResponse userEntityResponse) {
+        return userEntityResponse.getFullname().compareTo(userEntityResponse.getFullname());
     }
 }

@@ -41,7 +41,7 @@ public class UserSkillService {
         }
 
         UserSkill userSkill = new UserSkill(user, skill);
-        userSkill.setSkillLevel(skillLevelService.gegit tDefault());
+        userSkill.setSkillLevel(skillLevelService.getDefault());
         userSkillRepository.save(userSkill);
 
         return userSkill;

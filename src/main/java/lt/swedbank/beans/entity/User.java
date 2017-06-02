@@ -51,6 +51,8 @@ public class User {
         setConnection(registerUserRequest.getConnection());
         setEmail(registerUserRequest.getEmail());
         setPassword(registerUserRequest.getPassword());
+        capitalizeUserNameAndLastName();
+
     }
 
     public Long getId() {
@@ -124,5 +126,10 @@ public class User {
     public void setTeam(Team team) {
         this.team = team;
     }
-    
+
+    private void capitalizeUserNameAndLastName() {
+        this.setName(name.substring(0,1).toUpperCase() + name.substring(1));
+        this.setLastName(lastName.substring(0,1).toUpperCase() + lastName.substring(1));
+    }
+
 }

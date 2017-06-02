@@ -119,6 +119,8 @@ public class UserService {
         return user;
     }
 
+
+
     public UserEntityResponse getUserProfile(Long id) {
             return new UserEntityResponse(getUserById(id));
     }

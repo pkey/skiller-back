@@ -60,6 +60,7 @@ public class Auth0AuthenticationService implements AuthenticationService {
 
     private UserRepository userRepository;
 
+
     @Autowired
     public Auth0AuthenticationService(@Value("${auth0.clientId}") String clientId,
                                       @Value("${auth0.clientSecret}") String clientSecret,
@@ -135,6 +136,7 @@ public class Auth0AuthenticationService implements AuthenticationService {
     public String extractAuthIdFromToken(String token) {
         return JWT.decode(removeTokenHead(token)).getSubject().replaceFirst(subjectPrefix, "");
     }
+
 
     private String removeTokenHead(String token) {
         return token.replaceFirst(tokenPrefix, "");

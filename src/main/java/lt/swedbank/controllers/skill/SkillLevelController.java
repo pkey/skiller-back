@@ -1,5 +1,6 @@
 package lt.swedbank.controllers.skill;
 
+import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.response.SkillLevelResponse;
 import lt.swedbank.services.skill.SkillLevelService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,4 +21,5 @@ public class SkillLevelController {
     List<SkillLevelResponse> getUser() {
         return skillService.getAll();
     }
+
 }

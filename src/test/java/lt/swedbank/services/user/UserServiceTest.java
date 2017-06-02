@@ -9,6 +9,7 @@ import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.repositories.UserRepository;
 import lt.swedbank.services.skill.SkillService;
+import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.team.TeamService;
 import org.junit.After;
 import org.junit.Before;
@@ -36,7 +37,7 @@ public class UserServiceTest {
     private UserService userService;
 
     @Mock
-    private SkillService skillService;
+    private UserSkillService skillService;
 
     @Mock
     private TeamService teamService;
@@ -96,15 +97,14 @@ public class UserServiceTest {
 
     @Test
     public void add_skill_to_user_success() {
-
-        Mockito.when(skillService.addSkill(anyLong(),any())).thenReturn(testUserSkill);
+        Mockito.when(skillService.addUserSkill(any(), any())).thenReturn(testUserSkill);
         doReturn(testUser).when(userService).getUserById(any());
 
         UserSkill newUserSkill = userService.addUserSkill(anyLong(), any());
         assertEquals(testSkill.getTitle(), newUserSkill.getTitle());
 
         verify(userService, times(1)).getUserById(testUser.getId());
-        verify(skillService, times(1)).addSkill(anyLong(), any());
+        verify(skillService, times(1)).addUserSkill(any(), any());
     }
 
     @Test

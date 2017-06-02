@@ -2,9 +2,11 @@ package lt.swedbank.services.skill;
 
 
 import lt.swedbank.beans.entity.Skill;
+import lt.swedbank.beans.entity.SkillLevel;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
+import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.response.SkillEntityResponse;
 import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
 import lt.swedbank.exceptions.skill.SkillNotFoundException;
@@ -14,9 +16,7 @@ import lt.swedbank.repositories.UserSkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class SkillService {
@@ -27,52 +27,48 @@ public class SkillService {
     private UserSkillRepository userSkillRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private SkillLevelService skillLevelService;
 
     public SkillService(SkillRepository skillRepository, UserSkillRepository userSkillRepository) {
         this.skillRepository = skillRepository;
         this.userSkillRepository = userSkillRepository;
     }
 
-    public UserSkill addSkill(Long userID, AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
 
+
+    public Skill addSkill(AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
         Skill skill = skillRepository.findByTitle(addSkillRequest.getTitle());
-
-        User user = userRepository.findOne(userID);
 
         if(skill == null) {
             skill = new Skill(addSkillRequest.getTitle());
             skillRepository.save(skill);
-        } else {
-            skill = skillRepository.findByTitle(addSkillRequest.getTitle());
         }
 
-        if(isUserSkillAlreadyExists(userID, skill)) {
-            throw new SkillAlreadyExistsException();
-        }
-
-
-        UserSkill userSkill = new UserSkill(user, skill);
-        userSkillRepository.save(userSkill);
-
-        return userSkill;
+        return skill;
     }
 
-    public UserSkill removeSkill(Long userID, Skill skill) throws SkillNotFoundException {
+    public Skill findByTitle(String title) throws SkillNotFoundException {
+        Skill skill = skillRepository.findByTitle(title);
 
-        UserSkill userSkill = userSkillRepository.findByUserIdAndSkill(userID, skill);
-
-        if(userSkill == null){
+        if(skill == null) {
             throw new SkillNotFoundException();
         }
 
-        userSkillRepository.delete(userSkill);
-
-        return userSkill;
+        return skill;
     }
 
-    private boolean isUserSkillAlreadyExists(Long userID, Skill skill) {
-        return Optional.ofNullable(userSkillRepository.findByUserIdAndSkill(userID, skill)).isPresent();
+    public Skill findById(Long id) throws SkillNotFoundException {
+        Skill skill = skillRepository.findOne(id);
+
+        if(skill == null) {
+            throw new SkillNotFoundException();
+        }
+
+        return skill;
     }
+
+
 
 
     public Iterable<Skill> getAllSkills()
@@ -88,4 +84,5 @@ public class SkillService {
         }
         return skillList;
     }
+
 }

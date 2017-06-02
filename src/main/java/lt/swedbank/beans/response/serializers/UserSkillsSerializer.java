@@ -30,6 +30,7 @@ public class UserSkillsSerializer extends StdSerializer<List<UserSkill>>{
                 Map<String, Object> skill = new HashMap<>();
                 skill.put("id", userSkill.getSkill().getId());
                 skill.put("title", userSkill.getSkill().getTitle());
+                skill.put("level", userSkill.getSkillLevel());
                 skills.add(skill);
             }
             gen.writeObject(skills);

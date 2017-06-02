@@ -1,14 +1,16 @@
 package lt.swedbank.beans.entity;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.Set;
 
 @Entity
 @Indexed
+@Audited
 public class UserSkill {
 
     @Id
@@ -16,15 +18,18 @@ public class UserSkill {
     private Long id;
 
     @ManyToOne
+    @NotAudited
     private User user;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @NotAudited
     private Skill skill;
 
-    @OneToMany
-    private Set<SkillLevel> skillLevel;
+    @OneToOne
+    @NotAudited
+    private SkillLevel skillLevel;
 
-    private String description;
+    private String motivation;
 
     @CreationTimestamp
     private Date updated;
@@ -65,20 +70,20 @@ public class UserSkill {
         return skill.getTitle();
     }
 
-    public Set<SkillLevel> getSkillLevel() {
+    public SkillLevel getSkillLevel() {
         return skillLevel;
     }
 
-    public void setSkillLevel(Set<SkillLevel> skillLevel) {
+    public void setSkillLevel(SkillLevel skillLevel) {
         this.skillLevel = skillLevel;
     }
 
-    public String getDescription() {
-        return description;
+    public String getMotivation() {
+        return motivation;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setMotivation(String motivation) {
+        this.motivation = motivation;
     }
 
     public Date getUpdated() {
@@ -88,4 +93,6 @@ public class UserSkill {
     public void setUpdated(Date updated) {
         this.updated = updated;
     }
+
+
 }

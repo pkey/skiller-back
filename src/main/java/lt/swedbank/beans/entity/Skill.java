@@ -25,6 +25,7 @@ public class Skill {
 
     public Skill(String title) {
         this.title = title;
+        capitalizeTitle();
     }
 
     public Long getId() {
@@ -49,5 +50,10 @@ public class Skill {
 
     public void setUserSkills(List<UserSkill> userSkills) {
         this.userSkills = userSkills;
+    }
+
+    private void capitalizeTitle()
+    {
+        title = title.substring(0,1).toUpperCase() + title.substring(1);
     }
 }

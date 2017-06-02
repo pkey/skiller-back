@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public class SkillLevelService {
 
-
+    public static int DEFAULT_SKILL_LEVEL = 1;
 
     @Autowired
     private SkillLevelRepository skillLevelRepository;
@@ -30,8 +30,12 @@ public class SkillLevelService {
         return skillLevelRepository.findByLevel(level);
     }
 
+    public SkillLevel getById(Long id) {
+        return skillLevelRepository.findOne(id);
+    }
+
     public SkillLevel getDefault() {
-        Long defaultLevel = new Long(1);
+        Long defaultLevel = new Long(DEFAULT_SKILL_LEVEL);
         return skillLevelRepository.findByLevel(defaultLevel);
     }
 

@@ -35,63 +35,40 @@ public class SkillService {
         this.userSkillRepository = userSkillRepository;
     }
 
-    public UserSkill addSkill(Long userID, AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
 
-        Skill skill = skillRepository.findByTitle(addSkillRequest.getTitle());
 
-        User user = userRepository.findOne(userID);
+    public Skill addSkill(Skill skillToAdd) throws SkillAlreadyExistsException {
+        Skill skill = skillRepository.findByTitle(skillToAdd.getTitle());
 
         if(skill == null) {
-            skill = new Skill(addSkillRequest.getTitle());
+            skill = new Skill(skillToAdd.getTitle());
             skillRepository.save(skill);
-        } else {
-            skill = skillRepository.findByTitle(addSkillRequest.getTitle());
         }
 
-        if(isUserSkillAlreadyExists(userID, skill)) {
-            throw new SkillAlreadyExistsException();
-        }
-
-
-        UserSkill userSkill = new UserSkill(user, skill);
-        userSkill.setSkillLevel(skillLevelService.getDefault());
-        userSkillRepository.save(userSkill);
-
-        return userSkill;
+        return skill;
     }
 
-    public UserSkill removeSkill(Long userID, Skill skill) throws SkillNotFoundException {
+    public Skill findByTitle(String title) throws SkillNotFoundException {
+        Skill skill = skillRepository.findByTitle(title);
 
-        UserSkill userSkill = userSkillRepository.findByUserIdAndSkill(userID, skill);
-
-        if(userSkill == null){
+        if(skill == null) {
             throw new SkillNotFoundException();
         }
 
-        userSkillRepository.delete(userSkill);
+        return skill;
+    }
 
-        return userSkill;
+    public Skill findById(Long id) throws SkillNotFoundException {
+        Skill skill = skillRepository.findOne(id);
+
+        if(skill == null) {
+            throw new SkillNotFoundException();
+        }
+
+        return skill;
     }
 
 
-    public UserSkill assignSkillLevel(Long userID, AssignSkillLevelRequest request){
-        User user = userRepository.findOne(userID);
-
-        Skill skill = skillRepository.findOne(request.getSkillId());
-        UserSkill userSkill = userSkillRepository.findByUserIdAndSkill(userID, skill);
-        userSkill.setDescription(request.getMotivation());
-
-        SkillLevel level = new SkillLevel();
-        level.setId(request.getLevelId());
-        userSkill.setSkillLevel(level);
-        userSkillRepository.save(userSkill);
-
-        return userSkill;
-    }
-
-    private boolean isUserSkillAlreadyExists(Long userID, Skill skill) {
-        return Optional.ofNullable(userSkillRepository.findByUserIdAndSkill(userID, skill)).isPresent();
-    }
 
 
     public Iterable<Skill> getAllSkills()

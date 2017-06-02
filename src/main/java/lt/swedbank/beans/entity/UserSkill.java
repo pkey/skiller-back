@@ -7,7 +7,6 @@ import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.Set;
 
 @Entity
 @Indexed
@@ -30,7 +29,7 @@ public class UserSkill {
     @NotAudited
     private SkillLevel skillLevel;
 
-    private String description;
+    private String motivation;
 
     @CreationTimestamp
     private Date updated;
@@ -79,12 +78,12 @@ public class UserSkill {
         this.skillLevel = skillLevel;
     }
 
-    public String getDescription() {
-        return description;
+    public String getMotivation() {
+        return motivation;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setMotivation(String motivation) {
+        this.motivation = motivation;
     }
 
     public Date getUpdated() {

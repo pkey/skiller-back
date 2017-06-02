@@ -28,14 +28,20 @@ public class UserSkillService {
 
     public UserSkill addUserSkill(User user, AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
 
-        Skill skill = skillService.findByTitle(addSkillRequest.getTitle());
+        Skill skill;
+
+        try {
+            skill = skillService.findByTitle(addSkillRequest.getTitle());
+        } catch (SkillNotFoundException e) {
+            skill =  skillService.addSkill(addSkillRequest);
+        }
 
         if(userSkillAlreadyExists(user.getId(), skill)) {
             throw new SkillAlreadyExistsException();
         }
 
         UserSkill userSkill = new UserSkill(user, skill);
-        userSkill.setSkillLevel(skillLevelService.getDefault());
+        userSkill.setSkillLevel(skillLevelService.gegit tDefault());
         userSkillRepository.save(userSkill);
 
         return userSkill;

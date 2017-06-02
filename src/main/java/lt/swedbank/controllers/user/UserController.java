@@ -42,6 +42,7 @@ public class UserController {
         String authId = authService.extractAuthIdFromToken(authToken);
         Long userId = userService.getUserByAuthId(authId).getId();
         userService.addUserSkill(userId, addSkillRequest);
+
         User userFromRepository = userService.getUserById(userId);
 
         return new UserEntityResponse(userFromRepository);

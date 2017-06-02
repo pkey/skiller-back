@@ -37,11 +37,11 @@ public class SkillService {
 
 
 
-    public Skill addSkill(Skill skillToAdd) throws SkillAlreadyExistsException {
-        Skill skill = skillRepository.findByTitle(skillToAdd.getTitle());
+    public Skill addSkill(AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
+        Skill skill = skillRepository.findByTitle(addSkillRequest.getTitle());
 
         if(skill == null) {
-            skill = new Skill(skillToAdd.getTitle());
+            skill = new Skill(addSkillRequest.getTitle());
             skillRepository.save(skill);
         }
 

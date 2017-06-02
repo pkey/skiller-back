@@ -16,7 +16,7 @@ public class AssignSkillLevelRequest {
 
     @NotNull(message = "Description is required")
     @ApiModelProperty(required = true, example = "I am upgrading, because I am too cool")
-    private String description;
+    private String motivation;
 
     public AssignSkillLevelRequest() {
     }
@@ -37,11 +37,11 @@ public class AssignSkillLevelRequest {
         this.skillId = skillId;
     }
 
-    public String getDescription() {
-        return description;
+    public String getMotivation() {
+        return motivation;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setMotivation(String motivation) {
+        this.motivation = motivation;
     }
 }

@@ -79,7 +79,7 @@ public class SkillService {
 
         Skill skill = skillRepository.findOne(request.getSkillId());
         UserSkill userSkill = userSkillRepository.findByUserIdAndSkill(userID, skill);
-        userSkill.setDescription(request.getDescription());
+        userSkill.setDescription(request.getMotivation());
 
         SkillLevel level = new SkillLevel();
         level.setId(request.getLevelId());

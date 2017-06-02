@@ -14,7 +14,6 @@ public interface AuthenticationService {
 
     String extractAuthIdFromToken(String token);
 
-    void capitalizeUserNameAndLastName(User user);
 }
 
 

@@ -99,7 +99,6 @@ public class Auth0AuthenticationService implements AuthenticationService {
 
         User user = new User(registerUserRequest);
         user.setAuthId(authId);
-        capitalizeUserNameAndLastName(user);
         userRepository.save(user);
 
         return user;
@@ -136,13 +135,6 @@ public class Auth0AuthenticationService implements AuthenticationService {
     @Override
     public String extractAuthIdFromToken(String token) {
         return JWT.decode(removeTokenHead(token)).getSubject().replaceFirst(subjectPrefix, "");
-    }
-
-    public void capitalizeUserNameAndLastName(User user) {
-        String name = user.getName();
-        String lastname = user.getLastName();
-        user.setName(name.substring(0,1).toUpperCase() + name.substring(1));
-        user.setLastName(lastname.substring(0,1).toUpperCase() + lastname.substring(1));
     }
 
 

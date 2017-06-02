@@ -26,6 +26,10 @@ public class SkillLevelService {
         return skillLevelResponseList;
     }
 
+    public SkillLevel getByLevel(Long level) {
+        return skillLevelRepository.findByLevel(level);
+    }
+
     public SkillLevel getDefault() {
         Long defaultLevel = new Long(1);
         return skillLevelRepository.findByLevel(defaultLevel);

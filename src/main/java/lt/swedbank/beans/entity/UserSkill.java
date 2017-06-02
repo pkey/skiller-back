@@ -1,6 +1,8 @@
 package lt.swedbank.beans.entity;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
@@ -9,6 +11,7 @@ import java.util.Set;
 
 @Entity
 @Indexed
+@Audited
 public class UserSkill {
 
     @Id
@@ -16,13 +19,16 @@ public class UserSkill {
     private Long id;
 
     @ManyToOne
+    @NotAudited
     private User user;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @NotAudited
     private Skill skill;
 
-    @OneToMany
-    private Set<SkillLevel> skillLevel;
+    @OneToOne
+    @NotAudited
+    private SkillLevel skillLevel;
 
     private String description;
 
@@ -34,7 +40,6 @@ public class UserSkill {
     public UserSkill(User user, Skill skill) {
         this.skill = skill;
         this.user = user;
-
     }
 
     public Long getId() {
@@ -66,11 +71,11 @@ public class UserSkill {
         return skill.getTitle();
     }
 
-    public Set<SkillLevel> getSkillLevel() {
+    public SkillLevel getSkillLevel() {
         return skillLevel;
     }
 
-    public void setSkillLevel(Set<SkillLevel> skillLevel) {
+    public void setSkillLevel(SkillLevel skillLevel) {
         this.skillLevel = skillLevel;
     }
 

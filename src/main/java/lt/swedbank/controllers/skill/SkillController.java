@@ -21,4 +21,6 @@ public class SkillController {
     Iterable<SkillEntityResponse> getUser(@RequestHeader(value = "Authorization") String authToken) {
         return skillService.getSkillEntityResponseList();
     }
+
+
 }

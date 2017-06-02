@@ -4,6 +4,7 @@ import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
+import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.UserEntityResponse;
@@ -66,6 +67,14 @@ public class UserService {
         return userSkillService.addSkill(userid, addSkillRequest);
     }
 
+    public UserSkill assignUserSkillLevel(Long userid, AssignSkillLevelRequest request) throws UserNotFoundException {
+        if (getUserById(userid) == null) {
+            throw new UserNotFoundException();
+        }
+
+        return userSkillService.assignSkillLevel(userid, request);
+    }
+
     public UserSkill removeUserSkill(Long userid, RemoveSkillRequest removeSkillRequest) throws UserNotFoundException {
         if (getUserById(userid) == null) {
             throw new UserNotFoundException();
@@ -73,6 +82,8 @@ public class UserService {
         Skill skill = skillRepository.findByTitle(removeSkillRequest.getTitle());
         return userSkillService.removeSkill(userid, skill);
     }
+
+
 
     public User getUserByAuthId(String authId) throws UserNotFoundException {
         User user = userRepository.findByAuthId(authId);

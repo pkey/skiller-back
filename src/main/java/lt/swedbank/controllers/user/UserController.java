@@ -2,8 +2,10 @@ package lt.swedbank.controllers.user;
 
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.AddSkillRequest;
+import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
+import lt.swedbank.beans.response.SkillEntityResponse;
 import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.repositories.search.UserSearch;
 import lt.swedbank.services.auth.AuthenticationService;
@@ -47,11 +49,23 @@ public class UserController {
 
     @RequestMapping(produces = "application/json", value = "/skill/remove", method = RequestMethod.POST)
     public @ResponseBody
-    UserEntityResponse removeUserSkill(@Valid @RequestBody RemoveSkillRequest removeSkillRequest,
-                                       @RequestHeader(value = "Authorization") String authToken) {
+    UserEntityResponse assignUserSkillLevel(@Valid @RequestBody RemoveSkillRequest removeSkillRequest,
+                                            @RequestHeader(value = "Authorization") String authToken) {
         String authId = authService.extractAuthIdFromToken(authToken);
         Long userId = userService.getUserByAuthId(authId).getId();
         userService.removeUserSkill(userId, removeSkillRequest);
+        User userFromRepository = userService.getUserById(userId);
+
+        return new UserEntityResponse(userFromRepository);
+    }
+
+    @RequestMapping(value = "/skill/level", method = RequestMethod.POST)
+    public @ResponseBody
+    UserEntityResponse assignUserSkillLevel(@Valid @RequestBody AssignSkillLevelRequest request,
+                                            @RequestHeader(value = "Authorization") String authToken) {
+        String authId = authService.extractAuthIdFromToken(authToken);
+        Long userId = userService.getUserByAuthId(authId).getId();
+        userService.assignUserSkillLevel(userId, request);
         User userFromRepository = userService.getUserById(userId);
 
         return new UserEntityResponse(userFromRepository);

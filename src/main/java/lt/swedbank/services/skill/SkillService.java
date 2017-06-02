@@ -6,6 +6,7 @@ import lt.swedbank.beans.entity.SkillLevel;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
+import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.response.SkillEntityResponse;
 import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
 import lt.swedbank.exceptions.skill.SkillNotFoundException;
@@ -53,9 +54,7 @@ public class SkillService {
 
 
         UserSkill userSkill = new UserSkill(user, skill);
-        Set<SkillLevel> skillLevels = new HashSet<>();
-        skillLevels.add(skillLevelService.getDefault());
-        userSkill.setSkillLevel(skillLevels);
+        userSkill.setSkillLevel(skillLevelService.getDefault());
         userSkillRepository.save(userSkill);
 
         return userSkill;
@@ -70,6 +69,22 @@ public class SkillService {
         }
 
         userSkillRepository.delete(userSkill);
+
+        return userSkill;
+    }
+
+
+    public UserSkill assignSkillLevel(Long userID, AssignSkillLevelRequest request){
+        User user = userRepository.findOne(userID);
+
+        Skill skill = skillRepository.findOne(request.getSkillId());
+        UserSkill userSkill = userSkillRepository.findByUserIdAndSkill(userID, skill);
+        userSkill.setDescription(request.getDescription());
+
+        SkillLevel level = new SkillLevel();
+        level.setId(request.getLevelId());
+        userSkill.setSkillLevel(level);
+        userSkillRepository.save(userSkill);
 
         return userSkill;
     }

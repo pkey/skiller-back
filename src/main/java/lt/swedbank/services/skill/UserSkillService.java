@@ -1,7 +1,6 @@
 package lt.swedbank.services.skill;
 
 import lt.swedbank.beans.entity.Skill;
-import lt.swedbank.beans.entity.SkillLevel;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
@@ -74,6 +73,7 @@ public class UserSkillService {
     }
 
     private boolean userSkillAlreadyExists(Long userID, Skill skill) {
+        UserSkill userSkill = userSkillRepository.findByUserIdAndSkillId(userID, skill.getId());
         return Optional.ofNullable(userSkillRepository.findByUserIdAndSkillId(userID, skill.getId())).isPresent();
     }
 }

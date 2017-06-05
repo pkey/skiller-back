@@ -103,7 +103,7 @@ public class DepartmentControllerTest {
         @Test
         public void get_department_success() throws Exception {
 
-            when(departmentService.getAllDepartments()).thenReturn(departments);
+            when(departmentService.getAllDepartmentEntityResponseList()).thenReturn(departments);
 
             mockMvc.perform(get("/departments/")
                     .header("Authorization", "Bearer")
@@ -121,7 +121,7 @@ public class DepartmentControllerTest {
                     .andExpect(jsonPath("$[1].teams", hasSize(1)))
                     .andExpect(jsonPath("$[1].teams[0].name", is("du")));
 
-            verify(departmentService, times(1)).getAllDepartments();
+            verify(departmentService, times(1)).getAllDepartmentEntityResponseList();
 
         }
 

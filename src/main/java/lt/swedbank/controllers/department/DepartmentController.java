@@ -16,7 +16,7 @@ public class DepartmentController {
     @RequestMapping(method = RequestMethod.GET)
     public @ResponseBody
     Iterable<DepartmentEntityResponse> getAll() {
-        return departmentService.getAllDepartments();
+        return departmentService.getAllDepartmentEntityResponseList();
     }
 
 }

@@ -15,9 +15,13 @@ public class DepartmentService {
     @Autowired
     private DepartmentRepository departmentRepository;
 
-    public Iterable<DepartmentEntityResponse> getAllDepartments() {
+    public Iterable<Department> getAllDepartments() {
+        return departmentRepository.findAll();
+    }
+
+    public Iterable<DepartmentEntityResponse> getAllDepartmentEntityResponseList() {
         List<DepartmentEntityResponse> departmentList = new ArrayList<>();
-        for (Department department: departmentRepository.findAll()
+        for (Department department : getAllDepartments()
                 ) {
             departmentList.add(new DepartmentEntityResponse(department));
         }

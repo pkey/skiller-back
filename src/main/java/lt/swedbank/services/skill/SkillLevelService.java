@@ -17,13 +17,8 @@ public class SkillLevelService {
     @Autowired
     private SkillLevelRepository skillLevelRepository;
 
-    public List<SkillLevelResponse> getAll() {
-        List<SkillLevelResponse> skillLevelResponseList = new ArrayList<>();
-        for (SkillLevel skillLevel : skillLevelRepository.findAll()
-                ) {
-            skillLevelResponseList.add(new SkillLevelResponse(skillLevel));
-        }
-        return skillLevelResponseList;
+    public Iterable<SkillLevel> getAll(){
+        return skillLevelRepository.findAll();
     }
 
     public SkillLevel getByLevel(Long level) {
@@ -38,6 +33,18 @@ public class SkillLevelService {
         Long defaultLevel = new Long(DEFAULT_SKILL_LEVEL);
         return skillLevelRepository.findByLevel(defaultLevel);
     }
+
+    public List<SkillLevelResponse> getSkillLevelResponseList() {
+        List<SkillLevelResponse> skillLevelResponseList = new ArrayList<>();
+        for (SkillLevel skillLevel : this.getAll()
+                ) {
+            skillLevelResponseList.add(new SkillLevelResponse(skillLevel));
+        }
+        return skillLevelResponseList;
+    }
+
+
+
 
 
 }

@@ -2,6 +2,7 @@ package lt.swedbank.services.skill;
 
 import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.request.AddSkillRequest;
+import lt.swedbank.beans.response.SkillEntityResponse;
 import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
 import lt.swedbank.exceptions.skill.SkillNotFoundException;
 import lt.swedbank.repositories.SkillRepository;
@@ -15,6 +16,8 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.hamcrest.CoreMatchers.is;
 
 
 public class SkillServiceTest {
@@ -105,6 +108,11 @@ public class SkillServiceTest {
 
     @Test
     public void getSkillEntityResponseList() throws Exception {
+            Mockito.when(skillRepository.findAll()).thenReturn(testSkills);
+
+            List<SkillEntityResponse> resultSkillLevelResponseList = (List<SkillEntityResponse>) skillService.getSkillEntityResponseList();
+
+            Assert.assertThat(resultSkillLevelResponseList.size(), is(testSkills.size()));
     }
 
 }

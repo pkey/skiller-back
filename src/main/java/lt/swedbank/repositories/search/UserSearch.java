@@ -40,7 +40,7 @@ public class UserSearch {
         }
     }
 
-    public List<UserEntityResponse> search(String searchText) {
+    public Set<User> search(String searchText) {
 
 
         Set<User> userResults = new HashSet<>();
@@ -69,7 +69,7 @@ public class UserSearch {
             }
         }
 
-        return sortUserEntityResponse(convertUserSetToUserResponseList(userResults));
+        return userResults;//sortUserEntityResponse(convertUserSetToUserResponseList(userResults));
     }
 
 
@@ -158,20 +158,6 @@ public class UserSearch {
         return queries;
     }
 
-    //TODO Method is widely used, should be somewhere else
-    private List<UserEntityResponse> convertUserSetToUserResponseList(Set<User> userList) {
-        List<UserEntityResponse> responseList = new ArrayList<>();
-        for (User user : userList) {
-            responseList.add(new UserEntityResponse(user));
-        }
-        return responseList;
-    }
 
-    //TODO This one too
-    private List sortUserEntityResponse(List userEntityResponseList)
-    {
-        Collections.sort(userEntityResponseList);
-        return userEntityResponseList;
-    }
 }
 

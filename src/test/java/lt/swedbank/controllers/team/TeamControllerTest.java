@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-public class TeamCopntrollerTest {
+public class TeamControllerTest {
 
     @InjectMocks
     private TeamController teamController;

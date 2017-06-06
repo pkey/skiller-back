@@ -17,7 +17,7 @@ public class SkillLevelController {
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public @ResponseBody
-    List<SkillLevelResponse> getUser() {
+    List<SkillLevelResponse> getSkillLevels() {
         return skillService.getSkillLevelResponseList();
     }
 

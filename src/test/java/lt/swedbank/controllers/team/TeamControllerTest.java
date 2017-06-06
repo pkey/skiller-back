@@ -2,6 +2,7 @@ package lt.swedbank.controllers.team;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.entity.Team;
+import lt.swedbank.beans.response.TeamEntityResponse;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.services.team.TeamService;
 import org.junit.Before;
@@ -41,7 +42,7 @@ public class TeamControllerTest {
     private MockMvc mockMvc;
     private ObjectMapper mapper;
     private List<Team> teams;
-
+    private List<TeamEntityResponse> teamEntityResponseList;
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
@@ -66,12 +67,15 @@ public class TeamControllerTest {
         teams.add(tempTeam1);
         teams.add(tempTeam2);
 
+        teamEntityResponseList = new ArrayList<>();
+        teamEntityResponseList.add(new TeamEntityResponse(tempTeam1));
+        teamEntityResponseList.add(new TeamEntityResponse(tempTeam2));
 
     }
 
     @Test
     public void get_all_user_success() throws Exception {
-        Mockito.when(teamService.getAllTeams()).thenReturn(teams);
+        Mockito.when(teamService.getTeamEntityResponseList()).thenReturn(teamEntityResponseList);
 
         mockMvc.perform(get("/teams/all")
                 .header("Authorization", "Bearer")
@@ -85,7 +89,7 @@ public class TeamControllerTest {
                 .andExpect(jsonPath("$[1].name", is("Team2")))
                 .andExpect(jsonPath("$[1].id", is(2)));
 
-        verify(teamService, times(1)).getAllTeams();
+        verify(teamService, times(1)).getTeamEntityResponseList();
         verifyNoMoreInteractions(teamService);
     }
 

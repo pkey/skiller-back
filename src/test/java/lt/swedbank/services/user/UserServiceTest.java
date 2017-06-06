@@ -6,9 +6,9 @@ import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
+import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.repositories.UserRepository;
-import lt.swedbank.services.skill.SkillService;
 import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.team.TeamService;
 import org.junit.After;
@@ -17,6 +17,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -31,6 +33,7 @@ public class UserServiceTest {
     private UserSkill testUserSkill;
     private Skill testSkill;
     private AddSkillRequest testAddSkillRequest;
+    private ArrayList<User> testUserList;
 
     @Spy
     @InjectMocks
@@ -57,6 +60,7 @@ public class UserServiceTest {
         testUser.setName("Testas");
         testUser.setLastName("Testauskas");
         testUser.setEmail("test@test.com");
+        testUser.setAuthId("auth0id");
 
         testTeam = new Team();
         testTeam.setName("Testing Team");
@@ -72,6 +76,9 @@ public class UserServiceTest {
         testAssignTeamRequest = new AssignTeamRequest();
         testAssignTeamRequest.setTeamId(teamID);
         testAssignTeamRequest.setUserId(userID);
+
+        testUserList = new ArrayList<User>();
+        testUserList.add(testUser);
 
     }
 
@@ -96,6 +103,13 @@ public class UserServiceTest {
     }
 
     @Test
+    public void getUserByAuthId() throws Exception {
+        Mockito.when(userRepository.findByAuthId(any())).thenReturn(testUser);
+        User resultUser = userService.getUserByAuthId("auth0id");
+        assertEquals(testUser, resultUser);
+    }
+
+    @Test
     public void add_skill_to_user_success() {
         Mockito.when(skillService.addUserSkill(any(), any())).thenReturn(testUserSkill);
         doReturn(testUser).when(userService).getUserById(any());
@@ -108,6 +122,16 @@ public class UserServiceTest {
     }
 
     @Test
+    public void getUserEntityResponseList() {
+
+        Mockito.when(userService.getSortedUsers()).thenReturn(testUserList);
+        ArrayList<UserEntityResponse> resultList = new ArrayList<>();
+        resultList.add(new UserEntityResponse(testUser));
+        ArrayList<UserEntityResponse> testList = (ArrayList<UserEntityResponse>) userService.getUserEntityResponseList();
+        assertEquals(testList.get(0).getEmail(), resultList.get(0).getEmail());
+    }
+
+    @Test
     public void set_team_to_user_success()
     {
         Mockito.when(teamService.getTeamById(any())).thenReturn(testTeam);
@@ -115,6 +139,15 @@ public class UserServiceTest {
 
         User newUser = userService.assignTeam(testUser.getId(), testAssignTeamRequest);
         assertEquals(testTeam, newUser.getTeam());
+    }
+
+    @Test
+    public void getUserProfile() {
+        doReturn(testUser).when(userService).getUserById(any());
+
+        UserEntityResponse resultEntity = new UserEntityResponse(testUser);
+        UserEntityResponse testEntity = userService.getUserProfile(any());
+        assertEquals(resultEntity.getEmail(), testEntity.getEmail());
     }
 
 }

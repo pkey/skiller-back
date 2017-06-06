@@ -2,10 +2,7 @@ package lt.swedbank.services.user;
 
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
-import lt.swedbank.beans.request.AddSkillRequest;
-import lt.swedbank.beans.request.AssignSkillLevelRequest;
-import lt.swedbank.beans.request.AssignTeamRequest;
-import lt.swedbank.beans.request.RemoveSkillRequest;
+import lt.swedbank.beans.request.*;
 import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.repositories.SkillRepository;
@@ -46,7 +43,7 @@ public class UserService {
 
         if (user == null) {
             throw new UserNotFoundException();
-            }
+        }
 
         return userSkillService.addUserSkill(user, addSkillRequest);
     }
@@ -68,7 +65,6 @@ public class UserService {
     }
 
 
-
     public User getUserByAuthId(String authId) throws UserNotFoundException {
         User user = userRepository.findByAuthId(authId);
 
@@ -86,8 +82,7 @@ public class UserService {
         return user;
     }
 
-    public Iterable<User> getSortedUsers()
-    {
+    public Iterable<User> getSortedUsers() {
         return userRepository.findAllByOrderByNameAscLastNameAsc();
     }
 
@@ -98,7 +93,7 @@ public class UserService {
 
     public Iterable<UserEntityResponse> getUserEntityResponseList() {
         List<UserEntityResponse> userList = new ArrayList<>();
-        for (User user: getSortedUsers()
+        for (User user : getSortedUsers()
                 ) {
             userList.add(new UserEntityResponse(user));
         }
@@ -113,6 +108,12 @@ public class UserService {
     }
 
     public UserEntityResponse getUserProfile(Long id) {
-            return new UserEntityResponse(getUserById(id));
+        return new UserEntityResponse(getUserById(id));
+    }
+
+    public User addUser(RegisterUserRequest registerUserRequest, String authId) {
+        User user = new User(registerUserRequest);
+        user.setAuthId(authId);
+        return userRepository.save(user);
     }
 }

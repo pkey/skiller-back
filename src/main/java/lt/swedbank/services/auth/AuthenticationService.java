@@ -5,10 +5,11 @@ import com.auth0.json.auth.TokenHolder;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.LoginUserRequest;
 import lt.swedbank.beans.request.RegisterUserRequest;
+import lt.swedbank.beans.response.RegisterUserResponse;
 
 public interface AuthenticationService {
 
-    User registerUser(RegisterUserRequest user) throws Auth0Exception;
+    RegisterUserResponse registerUser(RegisterUserRequest user) throws Auth0Exception;
 
     TokenHolder loginUser(LoginUserRequest user) throws Auth0Exception;
 

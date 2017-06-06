@@ -1,6 +1,7 @@
 package lt.swedbank.services.team;
 
 import lt.swedbank.beans.entity.Team;
+import lt.swedbank.beans.response.TeamEntityResponse;
 import lt.swedbank.repositories.TeamRepository;
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,6 +25,8 @@ public class TeamServiceTest {
 
     private List<Team> teams;
 
+    private List<TeamEntityResponse> teamEntityResponseList;
+
     private Team testTeam;
 
     @Before
@@ -37,6 +40,10 @@ public class TeamServiceTest {
         teams = new ArrayList<>();
         teams.add(testTeam);
         teams.add(testTeam);
+
+        teamEntityResponseList = new ArrayList<>();
+        teamEntityResponseList.add(new TeamEntityResponse(testTeam));
+        teamEntityResponseList.add(new TeamEntityResponse(testTeam));
     }
 
     @Test
@@ -47,6 +54,15 @@ public class TeamServiceTest {
         resultTeams = (ArrayList<Team>) teamService.getAllTeams();
 
         Assert.assertEquals(teams, resultTeams);
+    }
+
+    @Test
+    public void getTeamEntityResponseList() throws Exception {
+        Mockito.when(teamRepository.findAll()).thenReturn(teams);
+
+        List<TeamEntityResponse>resultTeams = (List<TeamEntityResponse>) teamService.getTeamEntityResponseList();
+
+        Assert.assertEquals(teamEntityResponseList.size(), resultTeams.size());
     }
 
     @Test

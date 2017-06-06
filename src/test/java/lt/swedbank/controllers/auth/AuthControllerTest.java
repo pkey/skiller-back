@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.LoginUserRequest;
 import lt.swedbank.beans.request.RegisterUserRequest;
+import lt.swedbank.beans.response.RegisterUserResponse;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.services.auth.Auth0AuthenticationService;
 import org.junit.Before;
@@ -92,7 +93,7 @@ public class AuthControllerTest {
 
         String bookmarkJson = mapper.writeValueAsString(new RegisterUserRequest(correctUser));
 
-        when(auth0AuthenticationService.registerUser(any())).thenReturn(correctUser);
+        when(auth0AuthenticationService.registerUser(any())).thenReturn(new RegisterUserResponse(correctUser));
         mockMvc.perform(post("/register")
                 .contentType(contentType)
                 .content(bookmarkJson))

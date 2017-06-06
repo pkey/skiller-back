@@ -39,8 +39,7 @@ public class AuthController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public @ResponseBody
     RegisterUserResponse register(@Valid @RequestBody RegisterUserRequest user) throws Auth0Exception {
-        User registeredUser = authService.registerUser(user);
-        return new RegisterUserResponse(registeredUser);
+        return  authService.registerUser(user);
     }
 
 }

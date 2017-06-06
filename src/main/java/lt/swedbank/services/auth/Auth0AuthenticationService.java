@@ -12,7 +12,9 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.LoginUserRequest;
 import lt.swedbank.beans.request.RegisterUserRequest;
+import lt.swedbank.beans.response.RegisterUserResponse;
 import lt.swedbank.repositories.UserRepository;
+import lt.swedbank.services.user.UserService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,25 +60,24 @@ public class Auth0AuthenticationService implements AuthenticationService {
 
     private AuthAPI auth; //Auth0 Authentication API
 
-    private UserRepository userRepository;
+    @Autowired
+    private UserService userService;
 
 
     @Autowired
     public Auth0AuthenticationService(@Value("${auth0.clientId}") String clientId,
                                       @Value("${auth0.clientSecret}") String clientSecret,
-                                      @Value("${auth0.clientDomain}") String clientDomain,
-                                      UserRepository userRepository) {
+                                      @Value("${auth0.clientDomain}") String clientDomain) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.clientDomain = clientDomain;
 
         this.auth = new AuthAPI(clientDomain, clientId, clientSecret);
 
-        this.userRepository = userRepository;
     }
 
     @Override
-    public User registerUser(final RegisterUserRequest registerUserRequest) throws Auth0Exception {
+    public RegisterUserResponse registerUser(final RegisterUserRequest registerUserRequest) throws Auth0Exception {
 
         HttpResponse<String> response;
 
@@ -97,11 +98,7 @@ public class Auth0AuthenticationService implements AuthenticationService {
 
         String authId = responseBody.getString("_id");
 
-        User user = new User(registerUserRequest);
-        user.setAuthId(authId);
-        userRepository.save(user);
-
-        return user;
+        return new RegisterUserResponse(userService.addUser(registerUserRequest, authId));
     }
 
     private JSONObject produceRegisterRequestBody(final RegisterUserRequest registerUserRequest) {

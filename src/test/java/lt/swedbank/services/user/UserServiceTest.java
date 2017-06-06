@@ -150,4 +150,7 @@ public class UserServiceTest {
         assertEquals(resultEntity.getEmail(), testEntity.getEmail());
     }
 
+    @Test
+    public 
+
 }

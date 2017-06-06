@@ -1,6 +1,7 @@
 package lt.swedbank.controllers.team;
 
 import lt.swedbank.beans.entity.Team;
+import lt.swedbank.beans.response.TeamEntityResponse;
 import lt.swedbank.services.team.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,7 @@ public class TeamController {
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public @ResponseBody
-    Iterable<Team> getAll() {
-        return teamService.getAllTeams();
+    Iterable<TeamEntityResponse> getAll() {
+        return teamService.getTeamEntityResponseList();
     }
 }

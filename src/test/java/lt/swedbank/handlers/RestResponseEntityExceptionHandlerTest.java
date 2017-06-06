@@ -2,6 +2,8 @@ package lt.swedbank.handlers;
 
 import lt.swedbank.beans.response.ErrorResponse;
 import lt.swedbank.exceptions.MainException;
+import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,12 +12,21 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.context.request.WebRequest;
+
+import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.isNotNull;
+import static org.mockito.Mockito.mock;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class RestResponseEntityExceptionHandlerTest {
@@ -46,5 +57,26 @@ public class RestResponseEntityExceptionHandlerTest {
 
         assertEquals(testResponse.getBody().getMessage(), resultResponse.getBody().getMessage());
     }
+
+    @Test
+    public void handleMethodArgumentNotValid() throws Exception {
+        MethodArgumentNotValidException ex = mock(MethodArgumentNotValidException.class);
+        HttpHeaders headers = mock(HttpHeaders.class);
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        BindingResult bindingResult = mock(BindingResult.class);
+        WebRequest request = mock(WebRequest.class);
+
+        Mockito.when(bindingResult.getAllErrors())
+                .thenReturn(Arrays.asList(
+                        new FieldError("user", "name", "should not be empty"))
+                );
+
+        Mockito.when(ex.getBindingResult()).thenReturn(bindingResult);
+
+        ResponseEntity<Object> responseEntity = restResponseEntityExceptionHandler.handleMethodArgumentNotValid(ex, headers, status, request);
+
+        Assert.assertNotEquals(responseEntity, null);
+    }
+
 
 }

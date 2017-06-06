@@ -1,9 +1,6 @@
 package lt.swedbank.services.user;
 
-import lt.swedbank.beans.entity.Skill;
-import lt.swedbank.beans.entity.Team;
-import lt.swedbank.beans.entity.User;
-import lt.swedbank.beans.entity.UserSkill;
+import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.beans.response.UserEntityResponse;
@@ -70,6 +67,7 @@ public class UserServiceTest {
         testSkill.setId(userID);
 
         testUserSkill = new UserSkill(testUser, testSkill);
+        testUserSkill.setSkillLevel(new SkillLevel("test","test"));
 
         testAddSkillRequest = new AddSkillRequest(testUserSkill);
 
@@ -102,11 +100,23 @@ public class UserServiceTest {
         assertEquals(testUser.getEmail(), resultUser.getEmail());
     }
 
+    @Test(expected = UserNotFoundException.class)
+    public void assignUserSkillLevelExceptionTest() {
+        doReturn(null).when(userService).getUserById(any());
+        userService.assignUserSkillLevel(any(),any());
+    }
+
     @Test
     public void getUserByAuthId() throws Exception {
         Mockito.when(userRepository.findByAuthId(any())).thenReturn(testUser);
         User resultUser = userService.getUserByAuthId("auth0id");
         assertEquals(testUser, resultUser);
+    }
+
+    @Test(expected = UserNotFoundException.class)
+    public void getUserByAuthIdExceptionTest() throws Exception {
+        Mockito.when(userRepository.findByAuthId(any())).thenReturn(null);
+        userService.getUserByAuthId(any());
     }
 
     @Test
@@ -120,6 +130,33 @@ public class UserServiceTest {
         verify(userService, times(1)).getUserById(testUser.getId());
         verify(skillService, times(1)).addUserSkill(any(), any());
     }
+
+    @Test(expected = UserNotFoundException.class)
+    public void addUserSkillExceptionTest() {
+        doReturn(null).when(userService).getUserById(any());
+
+        userService.addUserSkill(any(), any());
+    }
+
+    @Test
+    public void remove_skill_from_user() {
+        Mockito.when(skillService.removeUserSkill(any(), any())).thenReturn(testUserSkill);
+        doReturn(testUser).when(userService).getUserById(any());
+
+        UserSkill newUserSkill = userService.removeUserSkill(anyLong(), any());
+        assertEquals(testSkill.getTitle(), newUserSkill.getTitle());
+
+        verify(userService, times(1)).getUserById(testUser.getId());
+        verify(skillService, times(1)).removeUserSkill(any(), any());
+    }
+
+    @Test(expected = UserNotFoundException.class)
+    public void removeUserSkillExceptionTest() {
+        doReturn(null).when(userService).getUserById(any());
+
+        userService.removeUserSkill(any(), any());
+    }
+
 
     @Test
     public void getUserEntityResponseList() {
@@ -151,6 +188,42 @@ public class UserServiceTest {
     }
 
     @Test
-    public 
+    public void assignUserSkillLevelTest() {
+
+        doReturn(testUser).when(userService).getUserById(any());
+        Mockito.when(skillService.assignSkillLevel(any(),any())).thenReturn(testUserSkill);
+
+        assertEquals(userService.assignUserSkillLevel(any(), any()), testUserSkill);
+    }
+
+
+    @Test
+    public void getUserById()
+    {
+        Mockito.when(userRepository.findOne(any())).thenReturn(testUser);
+
+        assertEquals(testUser, userService.getUserById(any()));
+    }
+
+    @Test(expected = UserNotFoundException.class)
+    public void getUserByIdExceptionTest()
+    {
+        Mockito.when(userRepository.findOne(any())).thenReturn(null);
+
+        userService.getUserById(any());
+    }
+
+    @Test
+    public void getSortedUsersTest() {
+        Mockito.when(userRepository.findAllByOrderByNameAscLastNameAsc()).thenReturn(testUserList);
+
+        assertEquals(testUserList, userService.getSortedUsers());
+    }
+    @Test
+    public void getAllUsersTest() {
+        Mockito.when(userService.getAllUsers()).thenReturn(testUserList);
+
+        assertEquals(testUserList, userService.getAllUsers());
+    }
 
 }

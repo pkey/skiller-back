@@ -80,7 +80,6 @@ public class UserService {
 
     public User getUserById(Long id) throws UserNotFoundException {
         User user = userRepository.findOne(id);
-
         if (user == null) {
             throw new UserNotFoundException();
         }

@@ -52,28 +52,24 @@ public class Auth0AuthenticationService implements AuthenticationService {
     @Value("${auth0.prefix.token}")
     private String tokenPrefix;
 
-    private String clientId; //Auth0 client ID
+    @Value("${auth0.clientId}")
+    private String clientId;
 
-    private String clientSecret; //Auth0 client secret
+    @Value("${auth0.clientSecret}")
+    private String clientSecret;
 
-    private String clientDomain; //Auth0 client domain
+    @Value("${auth0.clientDomain}")
+    private String clientDomain;
 
-    private AuthAPI auth; //Auth0 Authentication API
+    private AuthAPI auth;
 
     @Autowired
     private UserService userService;
 
 
     @Autowired
-    public Auth0AuthenticationService(@Value("${auth0.clientId}") String clientId,
-                                      @Value("${auth0.clientSecret}") String clientSecret,
-                                      @Value("${auth0.clientDomain}") String clientDomain) {
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
-        this.clientDomain = clientDomain;
-
+    public Auth0AuthenticationService() {
         this.auth = new AuthAPI(clientDomain, clientId, clientSecret);
-
     }
 
     @Override

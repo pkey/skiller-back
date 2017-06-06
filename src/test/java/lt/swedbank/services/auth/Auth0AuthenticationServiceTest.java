@@ -1,8 +1,12 @@
 package lt.swedbank.services.auth;
 
 import com.auth0.client.auth.AuthAPI;
+import com.auth0.json.auth.TokenHolder;
+import com.auth0.net.AuthRequest;
 import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.request.HttpRequestWithBody;
 import lt.swedbank.beans.entity.User;
+import lt.swedbank.beans.request.LoginUserRequest;
 import lt.swedbank.beans.request.RegisterUserRequest;
 import lt.swedbank.beans.response.RegisterUserResponse;
 import lt.swedbank.services.user.UserService;
@@ -20,7 +24,10 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @PrepareForTest({AuthAPI.class, Auth0AuthenticationService.class})
@@ -35,19 +42,20 @@ public class Auth0AuthenticationServiceTest {
     @Mock
     private UserService userService;
 
-//    @Mock
-//    private AuthAPI authAPI;
+
+    @Mock
+    private AuthAPI authAPI;
 
 
     private RegisterUserRequest registerUserRequest;
 
     @Before
     public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+
         AuthAPI authAPIMock = Mockito.mock(AuthAPI.class);
 
         whenNew(AuthAPI.class).withAnyArguments().thenReturn(authAPIMock);
-
-        auth0AuthenticationService = new Auth0AuthenticationService("something", "something", "something");
 
         //MockitoAnnotations.initMocks(this);
 
@@ -65,24 +73,39 @@ public class Auth0AuthenticationServiceTest {
     @Test
     public void registerUser() throws Exception {
 
-
-        AuthAPI authAPIMock = Mockito.mock(AuthAPI.class);
-
-        HttpResponse response = Mockito.mock(HttpResponse.class);
-
-        whenNew(HttpResponse.class).withArguments("something").thenReturn(response);
-
-
-
-        RegisterUserResponse registerUserResponse = auth0AuthenticationService.registerUser(registerUserRequest);
-
-
-
-        Assert.assertEquals(registerUserResponse.getName(), registerUserResponse.getName());
+//
+//        AuthAPI authAPIMock = Mockito.mock(AuthAPI.class);
+//
+//        HttpResponse response = Mockito.mock(HttpResponse.class);
+//
+//        mockStatic(Unirest.class);
+//
+//        when(Unirest.post(Mockito.anyString())).thenReturn());
+//        RegisterUserResponse registerUserResponse = auth0AuthenticationService.registerUser(registerUserRequest);
+//
+//
+//
+//        Assert.assertEquals(registerUserResponse.getName(), registerUserResponse.getName());
     }
 
     @Test
     public void loginUser() throws Exception {
+        AuthRequest request = Mockito.mock(AuthRequest.class);
+        request.setAudience("something");
+
+        TokenHolder tokenHolder = Mockito.mock(TokenHolder.class);
+
+        when(authAPI.login(Mockito.anyString(), anyString())).thenReturn(request);
+        when(request.execute()).thenReturn(tokenHolder);
+
+        LoginUserRequest loginUserRequest = new LoginUserRequest();
+        loginUserRequest.setConnection("connection");
+        loginUserRequest.setEmail("connection");
+        loginUserRequest.setPassword("connection");
+
+        auth0AuthenticationService.loginUser(loginUserRequest);
+
+
     }
 
     @Test

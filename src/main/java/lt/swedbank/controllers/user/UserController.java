@@ -14,8 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -97,7 +96,22 @@ public class UserController {
     @RequestMapping("/search")
     public List<UserEntityResponse> search(String q) {
 
-        return userSearch.search(q);
+        return sortUserEntityResponse(convertUserSetToUserResponseList(userSearch.search(q)));
+    }
+
+
+    private List<UserEntityResponse> convertUserSetToUserResponseList(Set<User> userList) {
+        List<UserEntityResponse> responseList = new ArrayList<>();
+        for (User user : userList) {
+            responseList.add(new UserEntityResponse(user));
+        }
+        return responseList;
+    }
+
+    private List sortUserEntityResponse(List userEntityResponseList)
+    {
+        Collections.sort(userEntityResponseList);
+        return userEntityResponseList;
     }
 
 }

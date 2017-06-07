@@ -1,10 +1,10 @@
 package lt.swedbank.controllers.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lt.swedbank.beans.entity.Skill;
-import lt.swedbank.beans.entity.User;
-import lt.swedbank.beans.entity.UserSkill;
+import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AddSkillRequest;
+import lt.swedbank.beans.request.AssignSkillLevelRequest;
+import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.services.auth.AuthenticationService;
@@ -14,11 +14,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -30,6 +32,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -55,6 +58,9 @@ public class UserControllerTest {
     private List<UserEntityResponse> correctUsers;
     private UserEntityResponse userEntityResponse;
     private UserEntityResponse userEntityResponse2;
+    private UserSkill correctUserSkill;
+    private AssignSkillLevelRequest correctAssignSkillLevelRequest;
+    private Team correctTeam;
 
     @InjectMocks
     private UserController userController;
@@ -75,6 +81,15 @@ public class UserControllerTest {
                 .build();
 
         mapper = new ObjectMapper();
+
+        correctAssignSkillLevelRequest = new AssignSkillLevelRequest();
+        correctAssignSkillLevelRequest.setMotivation("test");
+        correctAssignSkillLevelRequest.setLevelId(Long.parseLong("1"));
+        correctAssignSkillLevelRequest.setSkillId(Long.parseLong("1"));
+
+        correctTeam = new Team();
+        correctTeam.setName("Test");
+
 
         Long userId = Integer.toUnsignedLong(0);
         Long user2Id = Integer.toUnsignedLong(1);
@@ -107,6 +122,9 @@ public class UserControllerTest {
         correctUserSkills2.add(new UserSkill(correctUser, correctSkills.get(0)));
         correctUserSkills2.add(new UserSkill(correctUser, correctSkills.get(1)));
         correctUserSkills2.add(new UserSkill(correctUser, correctSkills.get(2)));
+
+        correctUserSkill = new UserSkill();
+        correctUserSkill.setSkill(new Skill("testing"));
 
         correctUser.setUserSkills(correctUserSkills);
         correctUser2.setUserSkills(correctUserSkills2);
@@ -272,6 +290,70 @@ public class UserControllerTest {
     @Test
     public void assignUserSkillLevel() throws Exception {
 
+        String skillJson = mapper.writeValueAsString(correctAssignSkillLevelRequest);
+
+        Mockito.when(authService.extractAuthIdFromToken(any())).thenReturn("TestAuth0Token");
+        Mockito.when(userService.getUserByAuthId(any())).thenReturn(correctUser);
+        Mockito.when(userService.assignUserSkillLevel(any(), any())).thenReturn(correctUserSkill);
+        Mockito.when(userService.getUserById(any())).thenReturn(correctUser);
+
+        correctUserSkills.get(0).setSkillLevel(new SkillLevel("PRO", "testing"));
+        correctUser.setUserSkills(correctUserSkills);
+
+        mockMvc.perform(post("/user/skill/level").header("Authorization", "Bearer")
+                .contentType(contentType)
+                .content(skillJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is("TestUserName")))
+                .andExpect(jsonPath("$.lastName", is("TestUserLastName")))
+                .andExpect(jsonPath("$.email", is("testuser@gmail.com")))
+                .andExpect(jsonPath("$.userSkills", hasSize(3)))
+                .andExpect(jsonPath("$.userSkills[0].title", is("SkillName1")))
+                .andExpect(jsonPath("$.userSkills[0].level.title", is("PRO")))
+                .andExpect(jsonPath("$.userSkills[1].title", is("SkillName2")))
+                .andExpect(jsonPath("$.userSkills[2].title", is("SkillName3")));
+
+        verify(userService, times(1)).getUserByAuthId(any());
+        verify(userService, times(1)).assignUserSkillLevel(any(), any());
+        verify(userService, times(1)).getUserById(any());
+        verify(authService, times(1)).extractAuthIdFromToken(any());
+
+        correctUserSkill.setSkillLevel(null);
+        correctUser.setUserSkills(correctUserSkills);
+    }
+
+
+
+    @Test
+    public void assignUserTeam() throws Exception {
+
+        Mockito.when(authService.extractAuthIdFromToken(any())).thenReturn("TestAuth0Token");
+        Mockito.when(userService.getUserByAuthId(any())).thenReturn(correctUser);
+        Mockito.when(userService.assignTeam(any(), any())).thenReturn(correctUser);
+
+        String skillJson = mapper.writeValueAsString(new AssignTeamRequest());
+
+        correctUser.setTeam(correctTeam);
+
+        mockMvc.perform(put("/user/team").header("Authorization", "Bearer")
+                .contentType(contentType)
+                .content(skillJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is("TestUserName")))
+                .andExpect(jsonPath("$.lastName", is("TestUserLastName")))
+                .andExpect(jsonPath("$.email", is("testuser@gmail.com")))
+                .andExpect(jsonPath("$.team.name", is("Test")))
+                .andExpect(jsonPath("$.userSkills", hasSize(3)))
+                .andExpect(jsonPath("$.userSkills[0].title", is("SkillName1")))
+                .andExpect(jsonPath("$.userSkills[1].title", is("SkillName2")))
+                .andExpect(jsonPath("$.userSkills[2].title", is("SkillName3")));
+
+        verify(userService, times(1)).getUserByAuthId(any());
+        verify(userService, times(1)).assignTeam(any(), any());
+        verify(authService, times(1)).extractAuthIdFromToken(any());
+
+        correctUser.setTeam(null);
 
     }
+
 }

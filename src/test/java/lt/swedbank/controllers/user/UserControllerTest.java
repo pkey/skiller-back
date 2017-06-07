@@ -268,4 +268,10 @@ public class UserControllerTest {
 
         correctUser.setUserSkills(correctUserSkills);
     }
+
+    @Test
+    public void assignUserSkillLevel() throws Exception {
+
+
+    }
 }

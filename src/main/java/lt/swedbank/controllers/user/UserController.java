@@ -5,7 +5,6 @@ import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
-import lt.swedbank.beans.response.SkillEntityResponse;
 import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.repositories.search.UserSearch;
 import lt.swedbank.services.auth.AuthenticationService;
@@ -14,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -95,23 +94,8 @@ public class UserController {
 
     @RequestMapping("/search")
     public List<UserEntityResponse> search(String q) {
-
-        return sortUserEntityResponse(convertUserSetToUserResponseList(userSearch.search(q)));
-    }
-
-
-    private List<UserEntityResponse> convertUserSetToUserResponseList(Set<User> userList) {
-        List<UserEntityResponse> responseList = new ArrayList<>();
-        for (User user : userList) {
-            responseList.add(new UserEntityResponse(user));
-        }
-        return responseList;
-    }
-
-    private List sortUserEntityResponse(List userEntityResponseList)
-    {
-        Collections.sort(userEntityResponseList);
-        return userEntityResponseList;
+        return userService.searchUsers(q);
+       // return sortUserEntityResponse(convertUserSetToUserResponseList(userSearch.search(q)));
     }
 
 }

@@ -8,8 +8,8 @@ import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.exceptions.user.UserNotFoundException;
-import lt.swedbank.repositories.SkillRepository;
 import lt.swedbank.repositories.UserRepository;
+import lt.swedbank.repositories.search.UserSearch;
 import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.team.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 
 @Service
@@ -27,6 +28,8 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private UserSkillService userSkillService;
+    @Autowired
+    private UserSearch userSearch;
     @Autowired
     private TeamService teamService;
 
@@ -114,5 +117,24 @@ public class UserService {
 
     public UserEntityResponse getUserProfile(Long id) {
             return new UserEntityResponse(getUserById(id));
+    }
+
+    public List<UserEntityResponse> searchUsers(String searchText) {
+       return sortUserEntityResponse(convertUserSetToUserResponseList(userSearch.search(searchText)));
+    }
+
+
+    private List<UserEntityResponse> convertUserSetToUserResponseList(Set<User> userList) {
+        List<UserEntityResponse> responseList = new ArrayList<>();
+        for (User user : userList) {
+            responseList.add(new UserEntityResponse(user));
+        }
+        return responseList;
+    }
+
+    private List sortUserEntityResponse(List userEntityResponseList)
+    {
+        Collections.sort(userEntityResponseList);
+        return userEntityResponseList;
     }
 }

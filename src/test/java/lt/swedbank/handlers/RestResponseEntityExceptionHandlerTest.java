@@ -2,7 +2,6 @@ package lt.swedbank.handlers;
 
 import lt.swedbank.beans.response.ErrorResponse;
 import lt.swedbank.exceptions.MainException;
-import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +24,6 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.isNotNull;
 import static org.mockito.Mockito.mock;
 
 @RunWith(SpringJUnit4ClassRunner.class)

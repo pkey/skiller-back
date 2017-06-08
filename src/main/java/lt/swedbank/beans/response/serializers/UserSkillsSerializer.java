@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UserSkillsSerializer extends StdSerializer<List<UserSkill>>{
+public class UserSkillsSerializer extends StdSerializer<List<UserSkill>> {
 
     public UserSkillsSerializer() {
         this(null);
@@ -25,14 +25,14 @@ public class UserSkillsSerializer extends StdSerializer<List<UserSkill>>{
     @Override
     public void serialize(List<UserSkill> userSkills, JsonGenerator gen, SerializerProvider provider) throws IOException {
 
-            List<Map<String, Object>> skills = new ArrayList<>();
-            for (UserSkill userSkill : userSkills) {
-                Map<String, Object> skill = new HashMap<>();
-                skill.put("id", userSkill.getSkill().getId());
-                skill.put("title", userSkill.getSkill().getTitle());
-                //skill.put("level", userSkill.getSkillLevel());
-                skills.add(skill);
-            }
-            gen.writeObject(skills);
+        List<Map<String, Object>> skills = new ArrayList<>();
+        for (UserSkill userSkill : userSkills) {
+            Map<String, Object> skill = new HashMap<>();
+            skill.put("id", userSkill.getSkill().getId());
+            skill.put("title", userSkill.getSkill().getTitle());
+            //skill.put("level", userSkill.getSkillLevel());
+            skills.add(skill);
+        }
+        gen.writeObject(skills);
     }
 }

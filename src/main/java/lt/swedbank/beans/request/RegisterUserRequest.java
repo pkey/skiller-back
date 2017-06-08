@@ -25,7 +25,8 @@ public class RegisterUserRequest {
     @Email(message = "Not an email")
     private String email;
 
-    public RegisterUserRequest() {}
+    public RegisterUserRequest() {
+    }
 
     public RegisterUserRequest(User user) {
 

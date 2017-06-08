@@ -44,10 +44,10 @@ public class UserSkillService {
         try {
             skill = skillService.findByTitle(addSkillRequest.getTitle());
         } catch (SkillNotFoundException e) {
-            skill =  skillService.addSkill(addSkillRequest);
+            skill = skillService.addSkill(addSkillRequest);
         }
 
-        if(userSkillAlreadyExists(user.getId(), skill)) {
+        if (userSkillAlreadyExists(user.getId(), skill)) {
             throw new SkillAlreadyExistsException();
         }
 
@@ -68,7 +68,7 @@ public class UserSkillService {
 
         UserSkill userSkill = userSkillRepository.findByUserIdAndSkillId(userId, skill.getId());
 
-        if(userSkill == null){
+        if (userSkill == null) {
             throw new SkillNotFoundException();
         }
 
@@ -77,7 +77,7 @@ public class UserSkillService {
         return userSkill;
     }
 
-    public UserSkill assignSkillLevel(User user, AssignSkillLevelRequest request){
+    public UserSkill assignSkillLevel(User user, AssignSkillLevelRequest request) {
 
         UserSkill userSkill = userSkillRepository.findByUserIdAndSkillId(user.getId(), request.getSkillId());
 

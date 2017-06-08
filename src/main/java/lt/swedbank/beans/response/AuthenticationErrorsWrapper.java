@@ -12,7 +12,7 @@ public class AuthenticationErrorsWrapper extends Response {
         this.errors = new ArrayList<AuthenticationError>();
     }
 
-    public List<AuthenticationError> getErrors () {
+    public List<AuthenticationError> getErrors() {
         return errors;
     }
 

@@ -34,12 +34,12 @@ public class DepartmentServiceTest {
         departmentList = generateDepartmentList();
     }
 
-    private List<Department> generateDepartmentList(){
+    private List<Department> generateDepartmentList() {
 
         List<Department> departmentsToBeGenerated = new ArrayList<>();
         int numberOfDepartments = 5;
 
-        for(int i = 0; i < numberOfDepartments; i++){
+        for (int i = 0; i < numberOfDepartments; i++) {
             Department department = generateDepartment(i);
             departmentsToBeGenerated.add(department);
         }
@@ -47,7 +47,7 @@ public class DepartmentServiceTest {
         return departmentsToBeGenerated;
     }
 
-    private Department generateDepartment(int index){
+    private Department generateDepartment(int index) {
         Department department = new Department();
         department.setId(Long.valueOf(index));
         department.setName("Department No. " + index);

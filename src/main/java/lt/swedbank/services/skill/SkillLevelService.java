@@ -18,7 +18,7 @@ public class SkillLevelService {
     @Autowired
     private SkillLevelRepository skillLevelRepository;
 
-    public Iterable<SkillLevel> getAll(){
+    public Iterable<SkillLevel> getAll() {
         return skillLevelRepository.findAll();
     }
 
@@ -33,7 +33,7 @@ public class SkillLevelService {
     public SkillLevel getDefault() throws SkillLevelDoesNotExist {
         Long defaultLevelNo = new Long(DEFAULT_SKILL_LEVEL);
         SkillLevel defaultSkillLevel = skillLevelRepository.findByLevel(defaultLevelNo);
-        if(defaultSkillLevel == null){
+        if (defaultSkillLevel == null) {
             throw new SkillLevelDoesNotExist();
         }
         return defaultSkillLevel;
@@ -47,9 +47,6 @@ public class SkillLevelService {
         }
         return skillLevelResponseList;
     }
-
-
-
 
 
 }

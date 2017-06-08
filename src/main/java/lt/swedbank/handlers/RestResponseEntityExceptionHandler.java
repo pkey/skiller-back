@@ -1,6 +1,5 @@
 package lt.swedbank.handlers;
 
-import com.auth0.exception.APIException;
 import com.auth0.exception.Auth0Exception;
 import lt.swedbank.beans.response.AuthenticationError;
 import lt.swedbank.beans.response.AuthenticationErrorsWrapper;
@@ -25,13 +24,13 @@ import java.util.List;
 import java.util.Locale;
 
 @ControllerAdvice
-public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler{
+public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Autowired
     private MessageSource messageSource;
 
 
-    @ExceptionHandler({ Auth0Exception.class })
+    @ExceptionHandler({Auth0Exception.class})
     public ResponseEntity<Object> handleAuth0Exception(final Auth0Exception ex, final WebRequest request) {
         ErrorResponse er = new ErrorResponse(ex.getMessage());
         return handleExceptionInternal(ex, er, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
@@ -48,12 +47,12 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         }
 
         return new ResponseEntity<Object>(fieldErrorList, HttpStatus.BAD_REQUEST);
-        }
+    }
 
     @ExceptionHandler({MainException.class})
     @ResponseBody
     public ResponseEntity<ErrorResponse> handleMainException(MainException ex) {
         ErrorResponse errorResponse = new ErrorResponse(messageSource.getMessage(ex.getMessageCode(), null, Locale.getDefault()));
-        return new  ResponseEntity<>(errorResponse, ex.getStatusCode());
+        return new ResponseEntity<>(errorResponse, ex.getStatusCode());
     }
 }

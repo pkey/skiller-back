@@ -33,6 +33,7 @@ public class SkillServiceTest {
     private Skill testSkill;
 
     private List<Skill> testSkills;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
@@ -108,11 +109,11 @@ public class SkillServiceTest {
 
     @Test
     public void getSkillEntityResponseList() throws Exception {
-            Mockito.when(skillRepository.findAll()).thenReturn(testSkills);
+        Mockito.when(skillRepository.findAll()).thenReturn(testSkills);
 
-            List<SkillEntityResponse> resultSkillLevelResponseList = (List<SkillEntityResponse>) skillService.getSkillEntityResponseList();
+        List<SkillEntityResponse> resultSkillLevelResponseList = (List<SkillEntityResponse>) skillService.getSkillEntityResponseList();
 
-            Assert.assertThat(resultSkillLevelResponseList.size(), is(testSkills.size()));
+        Assert.assertThat(resultSkillLevelResponseList.size(), is(testSkills.size()));
     }
 
 }

@@ -113,7 +113,6 @@ public class UserController {
     }
 
 
-
     private List<UserEntityResponse> convertUserSetToUserResponseList(Set<User> userList) {
         List<UserEntityResponse> responseList = new ArrayList<>();
         for (User user : userList) {
@@ -122,8 +121,7 @@ public class UserController {
         return responseList;
     }
 
-    private List sortUserEntityResponse(List userEntityResponseList)
-    {
+    private List sortUserEntityResponse(List userEntityResponseList) {
         Collections.sort(userEntityResponseList);
         return userEntityResponseList;
     }

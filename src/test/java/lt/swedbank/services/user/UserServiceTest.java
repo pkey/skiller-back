@@ -72,12 +72,11 @@ public class UserServiceTest {
 
         testUserSkill = new UserSkill(testUser, testSkill);
 
-        testUserSkillLevel = new UserSkillLevel(testUserSkill, new SkillLevel("test","test"));
+        testUserSkillLevel = new UserSkillLevel(testUserSkill, new SkillLevel("test", "test"));
 
         List<UserSkillLevel> userSkillLevelList = new ArrayList<>();
         userSkillLevelList.add(testUserSkillLevel);
         testUserSkill.setUserSkillLevels(userSkillLevelList);
-
 
 
         testAddSkillRequest = new AddSkillRequest(testUserSkill);
@@ -96,9 +95,8 @@ public class UserServiceTest {
     }
 
 
-
     @Test(expected = UserNotFoundException.class)
-    public void throws_use_does_not_exist_error() throws Exception{
+    public void throws_use_does_not_exist_error() throws Exception {
         Mockito.when(userRepository.findByEmail(any())).thenReturn(null);
         User resultUser = userService.getUserByEmail("something");
     }
@@ -114,7 +112,7 @@ public class UserServiceTest {
     @Test(expected = UserNotFoundException.class)
     public void assignUserSkillLevelExceptionTest() {
         doReturn(null).when(userService).getUserById(any());
-        userService.assignUserSkillLevel(any(),any());
+        userService.assignUserSkillLevel(any(), any());
     }
 
     @Test
@@ -182,8 +180,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void set_team_to_user_success()
-    {
+    public void set_team_to_user_success() {
         Mockito.when(teamService.getTeamById(any())).thenReturn(testTeam);
         doReturn(testUser).when(userService).getUserById(any());
 
@@ -204,23 +201,21 @@ public class UserServiceTest {
     public void assignUserSkillLevelTest() {
 
         doReturn(testUser).when(userService).getUserById(any());
-        Mockito.when(userSkillService.assignSkillLevel(any(),any())).thenReturn(testUserSkill);
+        Mockito.when(userSkillService.assignSkillLevel(any(), any())).thenReturn(testUserSkill);
 
         assertEquals(userService.assignUserSkillLevel(any(), any()), testUserSkill);
     }
 
 
     @Test
-    public void getUserById()
-    {
+    public void getUserById() {
         Mockito.when(userRepository.findOne(any())).thenReturn(testUser);
 
         assertEquals(testUser, userService.getUserById(any()));
     }
 
     @Test(expected = UserNotFoundException.class)
-    public void getUserByIdExceptionTest()
-    {
+    public void getUserByIdExceptionTest() {
         Mockito.when(userRepository.findOne(any())).thenReturn(null);
 
         userService.getUserById(any());
@@ -232,6 +227,7 @@ public class UserServiceTest {
 
         assertEquals(testUserList, userService.getSortedUsers());
     }
+
     @Test
     public void getAllUsersTest() {
         Mockito.when(userService.getAllUsers()).thenReturn(testUserList);

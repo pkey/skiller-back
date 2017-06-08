@@ -14,7 +14,7 @@ import java.util.List;
 public class User {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Field
@@ -42,7 +42,8 @@ public class User {
     private Team team;
 
 
-    public User() {}
+    public User() {
+    }
 
     public User(RegisterUserRequest registerUserRequest) {
 
@@ -132,8 +133,8 @@ public class User {
     }
 
     private void capitalizeUserNameAndLastName() {
-        this.setName(name.substring(0,1).toUpperCase() + name.substring(1));
-        this.setLastName(lastName.substring(0,1).toUpperCase() + lastName.substring(1));
+        this.setName(name.substring(0, 1).toUpperCase() + name.substring(1));
+        this.setLastName(lastName.substring(0, 1).toUpperCase() + lastName.substring(1));
     }
 
 }

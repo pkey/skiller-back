@@ -10,7 +10,8 @@ public class RemoveSkillRequest {
     @NotNull(message = "Skill title is required!")
     private String title;
 
-    public RemoveSkillRequest() {}
+    public RemoveSkillRequest() {
+    }
 
     public RemoveSkillRequest(UserSkill userSkill) {
         setTitle(userSkill.getTitle());

@@ -85,8 +85,7 @@ public class UserEntityResponse extends Response implements Comparable<UserEntit
         this.team = team;
     }
 
-    private String getFullname()
-    {
+    private String getFullname() {
         return this.name + this.lastName;
     }
 

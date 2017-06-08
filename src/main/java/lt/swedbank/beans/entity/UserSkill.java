@@ -22,7 +22,8 @@ public class UserSkill {
     @OneToMany(mappedBy = "userSkill", orphanRemoval = true)
     private List<UserSkillLevel> userSkillLevels;
 
-    public UserSkill(){}
+    public UserSkill() {
+    }
 
     public UserSkill(User user, Skill skill) {
         this.skill = skill;
@@ -53,8 +54,7 @@ public class UserSkill {
         this.skill = skill;
     }
 
-    public String getTitle()
-    {
+    public String getTitle() {
         return skill.getTitle();
     }
 

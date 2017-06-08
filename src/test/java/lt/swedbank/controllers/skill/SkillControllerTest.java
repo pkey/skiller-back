@@ -1,14 +1,9 @@
 package lt.swedbank.controllers.skill;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lt.swedbank.beans.entity.Department;
 import lt.swedbank.beans.entity.Skill;
-import lt.swedbank.beans.entity.Team;
-import lt.swedbank.beans.response.DepartmentEntityResponse;
 import lt.swedbank.beans.response.SkillEntityResponse;
-import lt.swedbank.controllers.department.DepartmentController;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
-import lt.swedbank.services.department.DepartmentService;
 import lt.swedbank.services.skill.SkillService;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,9 +21,7 @@ import java.util.List;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;

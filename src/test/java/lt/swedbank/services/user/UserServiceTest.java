@@ -133,7 +133,6 @@ public class UserServiceTest {
         Mockito.when(userSkillService.addUserSkill(any(), any())).thenReturn(testUserSkill);
         Mockito.when(userRepository.findOne(testUser.getId())).thenReturn(testUser);
 
-        //doReturn(testUser).when(testUser).getUserSkills();
 
         User user = userService.addUserSkill(testUser.getId(), testAddSkillRequest);
         assertEquals(testSkill.getTitle(), user.getUserSkills().get(0).getTitle());

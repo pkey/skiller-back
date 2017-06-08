@@ -6,6 +6,7 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -121,6 +122,9 @@ public class User {
     }
 
     public void setUserSkill(UserSkill userSkill) {
+        if(userSkills == null){
+            this.userSkills = new ArrayList<>();
+        }
         this.userSkills.add(userSkill);
     }
 

@@ -12,18 +12,20 @@ public class Approval {
     private Long id;
 
     private String message;
+    private Boolean isApproved;
 
     @OneToOne
     private User approver;
 
-    @OneToOne
+    @ManyToOne
     private RequestNotification requestNotification;
 
     public Approval() {}
 
-    public Approval(User approver, RequestNotification requestNotification)
+    public Approval(User approver, RequestNotification requestNotification, Boolean isApproved)
     {
         this.approver = approver;
+        this.isApproved = isApproved;
         this.requestNotification = requestNotification;
     }
 
@@ -58,4 +60,14 @@ public class Approval {
     public void setRequestNotification(RequestNotification requestNotification) {
         this.requestNotification = requestNotification;
     }
+
+
+    public Boolean getApproved() {
+        return isApproved;
+    }
+
+    public void setApproved(Boolean approved) {
+        isApproved = approved;
+    }
+
 }

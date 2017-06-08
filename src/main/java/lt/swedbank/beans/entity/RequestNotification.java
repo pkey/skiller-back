@@ -1,6 +1,7 @@
 package lt.swedbank.beans.entity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class RequestNotification  {
@@ -11,15 +12,16 @@ public class RequestNotification  {
 
     @OneToOne
     private User sender;
+
     @OneToOne
     private UserSkill userSkill;
-    @OneToOne
-    private Approval approval;
 
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Approval> approval;
 
     public RequestNotification() {}
 
-    public RequestNotification(User sender, UserSkill userSkill, Approval approval)
+    public RequestNotification(User sender, UserSkill userSkill, List<Approval> approval)
     {
         this.sender = sender;
         this.userSkill = userSkill;
@@ -50,11 +52,11 @@ public class RequestNotification  {
         this.userSkill = userSkill;
     }
 
-    public Approval getApproval() {
+    public List<Approval> getApproval() {
         return approval;
     }
 
-    public void setApproval(Approval approval) {
+    public void setApproval(List<Approval> approval) {
         this.approval = approval;
     }
 

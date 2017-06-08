@@ -1,8 +1,6 @@
 package lt.swedbank.services.skill;
 
-import lt.swedbank.beans.entity.Skill;
-import lt.swedbank.beans.entity.User;
-import lt.swedbank.beans.entity.UserSkill;
+import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
@@ -16,6 +14,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Matchers.any;
 
@@ -32,7 +33,7 @@ public class UserSkillServiceTest {
     private UserSkillRepository userSkillRepository;
 
     @Mock
-    private SkillLevelService skillLevelService;
+    private UserSkillLevelService userSkillLevelService;
 
     private AddSkillRequest addSkillRequest;
     private RemoveSkillRequest removeSkillRequest;
@@ -43,6 +44,8 @@ public class UserSkillServiceTest {
     private User user;
 
     private UserSkill testUserSkill;
+
+    private List<UserSkillLevel> testUserSkillLevels;
 
     @Before
     public void setUp() throws Exception {
@@ -67,6 +70,18 @@ public class UserSkillServiceTest {
         user.setId(Long.valueOf(0));
 
         testUserSkill = new UserSkill(user, skill);
+
+        UserSkillLevel testUserSkillLevel = new UserSkillLevel(testUserSkill,
+                new SkillLevel("Level title", "Level Description"));
+
+        UserSkillLevel testDefaultUserSkillLevel = new UserSkillLevel(testUserSkill,
+                new SkillLevel("Default Level title", "Default Level Description"));
+
+        testUserSkillLevels = new ArrayList<>();
+        testUserSkillLevels.add(testDefaultUserSkillLevel);
+
+        testUserSkill.setUserSkillLevels(testUserSkillLevels);
+
     }
 
     @Test
@@ -128,11 +143,20 @@ public class UserSkillServiceTest {
                 user.getId(), assignSkillLevelRequest.getSkillId()))
                 .thenReturn(testUserSkill);
 
-        UserSkill resultUserSkill = userSkillService.assignSkillLevel(user.getId(), assignSkillLevelRequest);
+        UserSkillLevel testUserSkillLevel = new UserSkillLevel(testUserSkill,
+                new SkillLevel("Level title", "Level Description"));
 
-        Assert.assertEquals(assignSkillLevelRequest.getMotivation(), resultUserSkill.getMotivation());
+        testUserSkillLevel.setMotivation(assignSkillLevelRequest.getMotivation());
 
-        Mockito.verify(userSkillRepository, Mockito.times(1)).save(any(UserSkill.class));
+        Mockito.when(userSkillLevelService.addUserSkillLevel(
+                testUserSkill, assignSkillLevelRequest))
+                .thenReturn(testUserSkillLevel);
+
+        UserSkill resultUserSkill = userSkillService.assignSkillLevel(user, assignSkillLevelRequest);
+
+        Assert.assertEquals(assignSkillLevelRequest.getMotivation(), resultUserSkill.getUserSkillLevels().get(1).getMotivation());
+
+        Mockito.verify(userSkillRepository, Mockito.times(1)).findByUserIdAndSkillId(any(), any());
     }
 
 }

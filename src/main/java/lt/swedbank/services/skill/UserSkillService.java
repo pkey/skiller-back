@@ -70,7 +70,8 @@ public class UserSkillService {
         UserSkill userSkill = userSkillRepository.findByUserIdAndSkillId(user.getId(), request.getSkillId());
 
         List<UserSkillLevel> userSkillLevels = userSkill.getUserSkillLevels();
-        userSkillLevels.add(userSkillLevelService.addUserSkillLevel(userSkill, request));
+        UserSkillLevel userSkillLevel = userSkillLevelService.addUserSkillLevel(userSkill, request);
+        userSkillLevels.add(userSkillLevel);
 
         userSkill.setUserSkillLevels(userSkillLevels);
 

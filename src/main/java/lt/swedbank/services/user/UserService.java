@@ -48,8 +48,10 @@ public class UserService {
             throw new UserNotFoundException();
             }
 
-        List<UserSkill> userSkills = user.getUserSkills();
+        List<UserSkill> userSkills = new ArrayList<>();
+
         userSkills.add(userSkillService.addUserSkill(user, addSkillRequest));
+
         user.setUserSkills(userSkills);
 
         return user;

@@ -215,7 +215,7 @@ public class UserControllerTest {
         correctUser.setUserSkills(tmpSkills);
 
         when(userService.getUserByAuthId(any())).thenReturn(correctUser);
-        when(userService.addUserSkill(any(), any())).thenReturn(skill);
+        when(userService.addUserSkill(any(), any())).thenReturn(correctUser);
         when(userService.getUserById(any())).thenReturn(correctUser);
 
         mockMvc.perform(post("/user/skill/add").header("Authorization", "Bearer")

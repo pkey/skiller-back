@@ -41,22 +41,28 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public UserSkill addUserSkill(Long userId, AddSkillRequest addSkillRequest) throws UserNotFoundException {
+    public User addUserSkill(Long userId, AddSkillRequest addSkillRequest) throws UserNotFoundException {
         User user = getUserById(userId);
 
         if (user == null) {
             throw new UserNotFoundException();
             }
 
-        return userSkillService.addUserSkill(user, addSkillRequest);
+        List<UserSkill> userSkills = user.getUserSkills();
+        userSkills.add(userSkillService.addUserSkill(user, addSkillRequest));
+        user.setUserSkills(userSkills);
+
+        return user;
     }
 
     public UserSkill assignUserSkillLevel(Long userid, AssignSkillLevelRequest request) throws UserNotFoundException {
-        if (getUserById(userid) == null) {
+        User user = getUserById(userid);
+
+        if (user == null) {
             throw new UserNotFoundException();
         }
 
-        return userSkillService.assignSkillLevel(userid, request);
+        return userSkillService.assignSkillLevel(user, request);
     }
 
     public UserSkill removeUserSkill(Long userid, RemoveSkillRequest removeSkillRequest) throws UserNotFoundException {

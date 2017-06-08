@@ -1,8 +1,6 @@
 package lt.swedbank.services.skill;
 
-import lt.swedbank.beans.entity.Skill;
-import lt.swedbank.beans.entity.User;
-import lt.swedbank.beans.entity.UserSkill;
+import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
@@ -12,6 +10,8 @@ import lt.swedbank.repositories.UserSkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,7 +22,7 @@ public class UserSkillService {
     @Autowired
     private SkillService skillService;
     @Autowired
-    private SkillLevelService skillLevelService;
+    private UserSkillLevelService userSkillLevelService;
 
 
     public UserSkill addUserSkill(User user, AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
@@ -40,8 +40,12 @@ public class UserSkillService {
         }
 
         UserSkill userSkill = new UserSkill(user, skill);
-        userSkill.setSkillLevel(skillLevelService.getDefault());
         userSkillRepository.save(userSkill);
+
+        List<UserSkillLevel> userSkillLevels = new ArrayList<>();
+        userSkillLevels.add(userSkillLevelService.addDefaultUserSkillLevel(userSkill));
+
+        userSkill.setUserSkillLevels(userSkillLevels);
 
         return userSkill;
     }
@@ -61,13 +65,14 @@ public class UserSkillService {
         return userSkill;
     }
 
-    public UserSkill assignSkillLevel(Long userID, AssignSkillLevelRequest request){
+    public UserSkill assignSkillLevel(User user, AssignSkillLevelRequest request){
 
-        UserSkill userSkill = userSkillRepository.findByUserIdAndSkillId(userID, request.getSkillId());
-        userSkill.setMotivation(request.getMotivation());
+        UserSkill userSkill = userSkillRepository.findByUserIdAndSkillId(user.getId(), request.getSkillId());
 
-        userSkill.setSkillLevel(skillLevelService.getById(request.getLevelId()));
-        userSkillRepository.save(userSkill);
+        List<UserSkillLevel> userSkillLevels = userSkill.getUserSkillLevels();
+        userSkillLevels.add(userSkillLevelService.addUserSkillLevel(userSkill, request));
+
+        userSkill.setUserSkillLevels(userSkillLevels);
 
         return userSkill;
     }

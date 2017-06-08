@@ -2,6 +2,7 @@ package lt.swedbank.services.skill;
 
 import lt.swedbank.beans.entity.SkillLevel;
 import lt.swedbank.beans.response.SkillLevelResponse;
+import lt.swedbank.exceptions.skill.SkillLevelDoesNotExist;
 import lt.swedbank.repositories.SkillLevelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,9 +30,13 @@ public class SkillLevelService {
         return skillLevelRepository.findOne(id);
     }
 
-    public SkillLevel getDefault() {
-        Long defaultLevel = new Long(DEFAULT_SKILL_LEVEL);
-        return skillLevelRepository.findByLevel(defaultLevel);
+    public SkillLevel getDefault() throws SkillLevelDoesNotExist {
+        Long defaultLevelNo = new Long(DEFAULT_SKILL_LEVEL);
+        SkillLevel defaultSkillLevel = skillLevelRepository.findByLevel(defaultLevelNo);
+        if(defaultSkillLevel == null){
+            throw new SkillLevelDoesNotExist();
+        }
+        return defaultSkillLevel;
     }
 
     public List<SkillLevelResponse> getSkillLevelResponseList() {

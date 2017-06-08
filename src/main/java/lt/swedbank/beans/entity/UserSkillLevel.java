@@ -26,7 +26,7 @@ public class UserSkillLevel {
 
     private Date validUntil;
 
-    @OneToMany
+    @OneToMany(mappedBy = "userSkillLevel")
     private List<Vote> vote;
 
     public UserSkillLevel() {

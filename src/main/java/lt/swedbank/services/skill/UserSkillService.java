@@ -1,11 +1,15 @@
 package lt.swedbank.services.skill;
 
-import lt.swedbank.beans.entity.*;
+import lt.swedbank.beans.entity.Skill;
+import lt.swedbank.beans.entity.User;
+import lt.swedbank.beans.entity.UserSkill;
+import lt.swedbank.beans.entity.UserSkillLevel;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
 import lt.swedbank.exceptions.skill.SkillNotFoundException;
+import lt.swedbank.exceptions.userSkill.UserSkillNotFoundException;
 import lt.swedbank.repositories.UserSkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +28,14 @@ public class UserSkillService {
     @Autowired
     private UserSkillLevelService userSkillLevelService;
 
+    public UserSkill getUserSkillByUserIdAndSkillId(Long userId, Long skillId) throws UserSkillNotFoundException {
+
+        UserSkill userSkill = userSkillRepository.findByUserIdAndSkillId(userId, skillId);
+        if (userSkill == null) {
+            throw new UserSkillNotFoundException();
+        }
+        return userSkill;
+    }
 
     public UserSkill addUserSkill(User user, AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
 
@@ -69,14 +81,11 @@ public class UserSkillService {
 
         UserSkill userSkill = userSkillRepository.findByUserIdAndSkillId(user.getId(), request.getSkillId());
 
-        List<UserSkillLevel> userSkillLevels = userSkill.getUserSkillLevels();
-        UserSkillLevel userSkillLevel = userSkillLevelService.addUserSkillLevel(userSkill, request);
-        userSkillLevels.add(userSkillLevel);
-
-        userSkill.setUserSkillLevels(userSkillLevels);
+        userSkill.setUserSkillLevel(userSkillLevelService.addUserSkillLevel(userSkill, request));
 
         return userSkill;
     }
+
 
     private boolean userSkillAlreadyExists(Long userID, Skill skill) {
         UserSkill userSkill = userSkillRepository.findByUserIdAndSkillId(userID, skill.getId());

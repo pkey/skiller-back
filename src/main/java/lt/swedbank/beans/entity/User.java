@@ -119,6 +119,10 @@ public class User {
         this.userSkills = userSkills;
     }
 
+    public void setUserSkill(UserSkill userSkill) {
+        this.userSkills.add(userSkill);
+    }
+
     public Team getTeam() {
         return team;
     }

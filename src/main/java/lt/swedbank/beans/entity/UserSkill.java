@@ -67,5 +67,9 @@ public class UserSkill {
         this.userSkillLevels = userSkillLevels;
     }
 
+    public void setUserSkillLevel(UserSkillLevel userSkillLevel) {
+        this.userSkillLevels.add(userSkillLevel);
+    }
+
 
 }

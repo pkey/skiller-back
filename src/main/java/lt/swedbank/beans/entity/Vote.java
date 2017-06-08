@@ -3,6 +3,12 @@ package lt.swedbank.beans.entity;
 import javax.persistence.*;
 
 @Entity
+@Table(
+        name = "vote",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"voter_id", "user_skill_level_id" })
+        }
+)
 public class Vote {
 
     @Id
@@ -10,11 +16,20 @@ public class Vote {
     private Long id;
 
     @ManyToOne
-    private User user;
+    private User voter;
 
-    private String description;
+    @ManyToOne
+    private UserSkillLevel userSkillLevel;
+
+    private String message;
 
     public Vote() {
+    }
+
+    public Vote(User voter, UserSkillLevel userSkillLevel, String message) {
+        this.voter = voter;
+        this.userSkillLevel = userSkillLevel;
+        this.message = message;
     }
 
     public Long getId() {
@@ -25,19 +40,27 @@ public class Vote {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public User getVoter() {
+        return voter;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setVoter(User voter) {
+        this.voter = voter;
     }
 
-    public String getDescription() {
-        return description;
+    public String getMessage() {
+        return message;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public UserSkillLevel getUserSkillLevel() {
+        return userSkillLevel;
+    }
+
+    public void setUserSkillLevel(UserSkillLevel userSkillLevel) {
+        this.userSkillLevel = userSkillLevel;
     }
 }

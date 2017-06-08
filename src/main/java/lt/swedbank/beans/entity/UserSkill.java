@@ -1,10 +1,8 @@
 package lt.swedbank.beans.entity;
 
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -21,7 +19,7 @@ public class UserSkill {
     @ManyToOne(fetch = FetchType.EAGER)
     private Skill skill;
 
-    @OneToMany(mappedBy = "userSkill",  fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "userSkill", orphanRemoval = true)
     private List<UserSkillLevel> userSkillLevels;
 
     public UserSkill(){}

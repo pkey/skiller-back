@@ -1,6 +1,5 @@
 package lt.swedbank.services.skill;
 
-import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.entity.UserSkillLevel;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
@@ -8,9 +7,6 @@ import lt.swedbank.exceptions.userSkillLevel.UserSkillLevelNotFoundException;
 import lt.swedbank.repositories.UserSkillLevelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Comparator;
-import java.util.List;
 
 @Service
 public class UserSkillLevelService {
@@ -33,7 +29,6 @@ public class UserSkillLevelService {
         return userSkillLevel;
 
     }
-
 
 
     public UserSkillLevel addDefaultUserSkillLevel(UserSkill userSkill) {

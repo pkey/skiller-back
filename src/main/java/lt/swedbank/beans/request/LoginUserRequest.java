@@ -23,7 +23,8 @@ public class LoginUserRequest {
     @ApiModelProperty(required = true, example = "email@email.com")
     private String email;
 
-    public LoginUserRequest() {}
+    public LoginUserRequest() {
+    }
 
     public LoginUserRequest(User user) {
 
@@ -33,27 +34,27 @@ public class LoginUserRequest {
     }
 
     public String getPassword() {
-            return password;
-        }
+        return password;
+    }
 
     public void setPassword(String password) {
-            this.password = password;
-        }
+        this.password = password;
+    }
 
     public String getConnection() {
-            return connection;
-        }
+        return connection;
+    }
 
     public void setConnection(String connection) {
-            this.connection = connection;
-        }
+        this.connection = connection;
+    }
 
     public String getEmail() {
-            return email;
-        }
+        return email;
+    }
 
     public void setEmail(String email) {
-            this.email = email;
-        }
+        this.email = email;
+    }
 
 }

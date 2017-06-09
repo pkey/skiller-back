@@ -32,8 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AuthControllerTest {
 
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
-                                                MediaType.APPLICATION_JSON.getSubtype(),
-                                                Charset.forName("utf8"));
+            MediaType.APPLICATION_JSON.getSubtype(),
+            Charset.forName("utf8"));
 
     private MockMvc mockMvc;
 
@@ -106,7 +106,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    public void returns_unauthorized_with_message_if_email_or_password_is_wrong()  throws Exception {
+    public void returns_unauthorized_with_message_if_email_or_password_is_wrong() throws Exception {
         int statusCode = 401;
         String errorMessage = "Wrong email or password";
 
@@ -143,19 +143,18 @@ public class AuthControllerTest {
     }
 
 
-    private String getErrorAnnotation(int statusCode){
+    private String getErrorAnnotation(int statusCode) {
 
-       return "Request failed with status code " + statusCode + ": ";
+        return "Request failed with status code " + statusCode + ": ";
     }
 
-    private Map<String, Object> getErrorMap(String errorMessage){
+    private Map<String, Object> getErrorMap(String errorMessage) {
 
         Map<String, Object> errorMap = new HashMap<String, Object>();
         errorMap.put("error", errorMessage);
 
         return errorMap;
     }
-
 
 
 }

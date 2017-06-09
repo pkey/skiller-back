@@ -9,7 +9,8 @@ public class AddSkillRequest {
     @NotNull(message = "Skill title is required!")
     private String title;
 
-    public AddSkillRequest() {}
+    public AddSkillRequest() {
+    }
 
     public AddSkillRequest(UserSkill userSkill) {
         setTitle(userSkill.getTitle());

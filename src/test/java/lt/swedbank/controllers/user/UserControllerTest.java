@@ -8,6 +8,7 @@ import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.services.auth.AuthenticationService;
+import lt.swedbank.services.skill.UserSkillLevelService;
 import lt.swedbank.services.user.UserService;
 import org.junit.After;
 import org.junit.Before;
@@ -62,7 +63,8 @@ public class UserControllerTest {
     @Mock
     private UserService userService;
     @Mock
-    private AuthenticationService authService;
+    private AuthenticationService authenticationService;
+
 
 
     @Before
@@ -215,7 +217,7 @@ public class UserControllerTest {
         correctUser.setUserSkills(tmpSkills);
 
         when(userService.getUserByAuthId(any())).thenReturn(correctUser);
-        when(userService.addUserSkill(any(), any())).thenReturn(skill);
+        when(userService.addUserSkill(any(), any())).thenReturn(correctUser);
         when(userService.getUserById(any())).thenReturn(correctUser);
 
         mockMvc.perform(post("/user/skill/add").header("Authorization", "Bearer")

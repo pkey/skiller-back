@@ -1,11 +1,7 @@
 package lt.swedbank.repositories.search;
 
-import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.User;
-import lt.swedbank.beans.entity.UserSkill;
-import lt.swedbank.repositories.SkillRepository;
 import lt.swedbank.repositories.UserRepository;
-import lt.swedbank.repositories.UserSkillRepository;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
 import org.junit.Assert;
@@ -58,14 +54,14 @@ public class UserSearchTest {
     private List<User> generateUserList() {
         List<User> userList = new ArrayList<>();
 
-        for(int i = 1; i < 5; i++){
+        for (int i = 1; i < 5; i++) {
             userList.add(generateUser(i));
         }
 
         return userList;
     }
 
-    private User generateUser(int id){
+    private User generateUser(int id) {
         User user = new User();
         user.setId(Long.valueOf(id));
         user.setName("Name " + id);

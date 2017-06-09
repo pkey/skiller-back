@@ -21,7 +21,8 @@ public class Skill {
     @OneToMany(mappedBy = "skill")
     private List<UserSkill> userSkills;
 
-    public Skill(){}
+    public Skill() {
+    }
 
     public Skill(String title) {
         this.title = title;
@@ -52,8 +53,7 @@ public class Skill {
         this.userSkills = userSkills;
     }
 
-    private void capitalizeTitle()
-    {
-        title = title.substring(0,1).toUpperCase() + title.substring(1);
+    private void capitalizeTitle() {
+        title = title.substring(0, 1).toUpperCase() + title.substring(1);
     }
 }

@@ -1,6 +1,5 @@
 package lt.swedbank.repositories;
 
-import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.UserSkill;
 import org.springframework.data.repository.CrudRepository;
 

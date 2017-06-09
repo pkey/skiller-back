@@ -1,6 +1,5 @@
 package lt.swedbank.controllers.team;
 
-import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.response.TeamEntityResponse;
 import lt.swedbank.services.team.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;

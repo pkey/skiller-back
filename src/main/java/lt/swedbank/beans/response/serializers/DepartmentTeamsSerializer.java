@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DepartmentTeamsSerializer extends StdSerializer<List<Team>>{
+public class DepartmentTeamsSerializer extends StdSerializer<List<Team>> {
 
     public DepartmentTeamsSerializer() {
         this(null);
@@ -25,7 +25,7 @@ public class DepartmentTeamsSerializer extends StdSerializer<List<Team>>{
     @Override
     public void serialize(List<Team> value, JsonGenerator gen, SerializerProvider provider) throws IOException {
         List<Map<String, Object>> teams = new ArrayList<>();
-        for(Team team : value){
+        for (Team team : value) {
             Map<String, Object> teamMap = new HashMap<>();
             teamMap.put("id", team.getId());
             teamMap.put("name", team.getName());

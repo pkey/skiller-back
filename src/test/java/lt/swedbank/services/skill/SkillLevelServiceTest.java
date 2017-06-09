@@ -40,20 +40,20 @@ public class SkillLevelServiceTest {
         testSkillLevel = skillLevels.get(0);
     }
 
-    private List<SkillLevel> generateSkillLevelList(){
+    private List<SkillLevel> generateSkillLevelList() {
 
         List<SkillLevel> skillLevelsToBeGenerated = new ArrayList<>();
         int overAllLevels = 5;
 
-        for(int i = 0; i < overAllLevels; i++){
-            SkillLevel level = generateSkillLevel(i+1);
+        for (int i = 0; i < overAllLevels; i++) {
+            SkillLevel level = generateSkillLevel(i + 1);
             skillLevelsToBeGenerated.add(level);
         }
 
         return skillLevelsToBeGenerated;
     }
 
-    private SkillLevel generateSkillLevel(int levelNo){
+    private SkillLevel generateSkillLevel(int levelNo) {
         SkillLevel level = new SkillLevel();
         level.setId(Long.valueOf(levelNo - 1));
         level.setLevel(Long.valueOf(levelNo));

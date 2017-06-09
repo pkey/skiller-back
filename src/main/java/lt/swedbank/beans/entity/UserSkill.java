@@ -1,16 +1,12 @@
 package lt.swedbank.beans.entity;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
 import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.util.List;
 
 @Entity
 @Indexed
-@Audited
 public class UserSkill {
 
     @Id
@@ -18,23 +14,16 @@ public class UserSkill {
     private Long id;
 
     @ManyToOne
-    @NotAudited
     private User user;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @NotAudited
     private Skill skill;
 
-    @OneToOne
-    @NotAudited
-    private SkillLevel skillLevel;
+    @OneToMany(mappedBy = "userSkill", orphanRemoval = true)
+    private List<UserSkillLevel> userSkillLevels;
 
-    private String motivation;
-
-    @CreationTimestamp
-    private Date updated;
-
-    public UserSkill(){}
+    public UserSkill() {
+    }
 
     public UserSkill(User user, Skill skill) {
         this.skill = skill;
@@ -65,33 +54,21 @@ public class UserSkill {
         this.skill = skill;
     }
 
-    public String getTitle()
-    {
+    public String getTitle() {
         return skill.getTitle();
     }
 
-    public SkillLevel getSkillLevel() {
-        return skillLevel;
+    public List<UserSkillLevel> getUserSkillLevels() {
+
+        return userSkillLevels;
     }
 
-    public void setSkillLevel(SkillLevel skillLevel) {
-        this.skillLevel = skillLevel;
+    public void setUserSkillLevels(List<UserSkillLevel> userSkillLevels) {
+        this.userSkillLevels = userSkillLevels;
     }
 
-    public String getMotivation() {
-        return motivation;
-    }
-
-    public void setMotivation(String motivation) {
-        this.motivation = motivation;
-    }
-
-    public Date getUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(Date updated) {
-        this.updated = updated;
+    public void setUserSkillLevel(UserSkillLevel userSkillLevel) {
+        this.userSkillLevels.add(userSkillLevel);
     }
 
 

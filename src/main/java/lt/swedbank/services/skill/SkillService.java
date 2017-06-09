@@ -21,8 +21,8 @@ public class SkillService {
 
     public Skill addSkill(AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
 
-        if(skillRepository.findByTitle(addSkillRequest.getTitle()) != null) {
-           throw new SkillAlreadyExistsException();
+        if (skillRepository.findByTitle(addSkillRequest.getTitle()) != null) {
+            throw new SkillAlreadyExistsException();
         }
 
         Skill skill = new Skill(addSkillRequest.getTitle());
@@ -34,7 +34,7 @@ public class SkillService {
     public Skill findByTitle(String title) throws SkillNotFoundException {
         Skill skill = skillRepository.findByTitle(title);
 
-        if(skill == null) {
+        if (skill == null) {
             throw new SkillNotFoundException();
         }
 
@@ -44,7 +44,7 @@ public class SkillService {
     public Skill findById(Long id) throws SkillNotFoundException {
         Skill skill = skillRepository.findOne(id);
 
-        if(skill == null) {
+        if (skill == null) {
             throw new SkillNotFoundException();
         }
 
@@ -52,10 +52,7 @@ public class SkillService {
     }
 
 
-
-
-    public Iterable<Skill> getAllSkills()
-    {
+    public Iterable<Skill> getAllSkills() {
         return skillRepository.findAll();
     }
 

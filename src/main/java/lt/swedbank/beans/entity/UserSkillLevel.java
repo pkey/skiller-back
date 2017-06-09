@@ -27,7 +27,7 @@ public class UserSkillLevel {
     private Date validUntil;
 
     @OneToMany(mappedBy = "userSkillLevel")
-    private List<Vote> vote;
+    private List<Vote> votes;
 
     public UserSkillLevel() {
     }
@@ -85,11 +85,11 @@ public class UserSkillLevel {
         this.validUntil = validUntil;
     }
 
-    public List<Vote> getVote() {
-        return vote;
+    public List<Vote> getVotes() {
+        return votes;
     }
 
-    public void setVote(List<Vote> vote) {
-        this.vote = vote;
+    public void setVotes(List<Vote> votes) {
+        this.votes = votes;
     }
 }

@@ -8,6 +8,7 @@ import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.services.auth.AuthenticationService;
+import lt.swedbank.services.skill.UserSkillLevelService;
 import lt.swedbank.services.user.UserService;
 import org.junit.After;
 import org.junit.Before;
@@ -62,7 +63,7 @@ public class UserControllerTest {
     @Mock
     private UserService userService;
     @Mock
-    private AuthenticationService authService;
+    private UserSkillLevelService userSkillLevelService;
 
 
     @Before
@@ -132,7 +133,7 @@ public class UserControllerTest {
     @Test
     public void get_user_profile_success() throws Exception {
         when(userService.getUserProfile(Long.parseLong("1"))).thenReturn(userEntityResponse);
-
+        when(userSkillLevelService.getCurrentUserSkillLevelFromList(any())).thenReturn(null);
         mockMvc.perform(get("/user/profile/1")
                 .header("Authorization", "Bearer")
                 .contentType(contentType))

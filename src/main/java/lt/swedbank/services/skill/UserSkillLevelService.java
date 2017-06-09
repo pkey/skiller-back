@@ -34,23 +34,7 @@ public class UserSkillLevelService {
 
     }
 
-    public UserSkillLevel getCurrentUserSkillLevelFromList(List<UserSkillLevel> userSkillLevelList){
-        UserSkillLevel currentUserSkillLevel;
 
-        if(userSkillLevelList == null){
-            return null;
-        }
-        userSkillLevelList.sort(new Comparator<UserSkillLevel>() {
-            @Override
-            public int compare(UserSkillLevel o1, UserSkillLevel o2) {
-                return o2.getValidFrom().compareTo(o1.getValidFrom());
-            }
-        });
-
-        currentUserSkillLevel = userSkillLevelList.get(0);
-
-        return currentUserSkillLevel;
-    }
 
     public UserSkillLevel addDefaultUserSkillLevel(UserSkill userSkill) {
         UserSkillLevel userSkillLevel = new UserSkillLevel(userSkill, skillLevelService.getDefault());

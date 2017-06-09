@@ -63,7 +63,8 @@ public class UserControllerTest {
     @Mock
     private UserService userService;
     @Mock
-    private UserSkillLevelService userSkillLevelService;
+    private AuthenticationService authenticationService;
+
 
 
     @Before
@@ -133,7 +134,7 @@ public class UserControllerTest {
     @Test
     public void get_user_profile_success() throws Exception {
         when(userService.getUserProfile(Long.parseLong("1"))).thenReturn(userEntityResponse);
-        when(userSkillLevelService.getCurrentUserSkillLevelFromList(any())).thenReturn(null);
+
         mockMvc.perform(get("/user/profile/1")
                 .header("Authorization", "Bearer")
                 .contentType(contentType))

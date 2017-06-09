@@ -92,4 +92,5 @@ public class UserSkillLevel {
     public void setVotes(List<Vote> votes) {
         this.votes = votes;
     }
+
 }

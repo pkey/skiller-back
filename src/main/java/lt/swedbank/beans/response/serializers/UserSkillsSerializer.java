@@ -9,17 +9,12 @@ import lt.swedbank.beans.entity.UserSkillLevel;
 import lt.swedbank.beans.entity.Vote;
 import lt.swedbank.services.skill.UserSkillLevelService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class UserSkillsSerializer extends StdSerializer<List<UserSkill>> {
-
-    @Autowired
-    private UserSkillLevelService userSkillLevelService;
 
     public UserSkillsSerializer() {
         this(null);
@@ -47,8 +42,7 @@ public class UserSkillsSerializer extends StdSerializer<List<UserSkill>> {
     private Map<String, Object> formatLevel(UserSkill userSkill){
         Map<String, Object> level = new HashMap<>();
 
-        UserSkillLevel userSkillLevel = userSkillLevelService
-                .getCurrentUserSkillLevelFromList(userSkill.getUserSkillLevels());
+        UserSkillLevel userSkillLevel = getCurrentUserSkillLevelFromList(userSkill.getUserSkillLevels());
 
 
 
@@ -65,8 +59,7 @@ public class UserSkillsSerializer extends StdSerializer<List<UserSkill>> {
     private List<Map<String, Object>> formatVotes(UserSkill userSkill){
         List<Map<String, Object>> votes = new ArrayList<>();
 
-        UserSkillLevel userSkillLevel = userSkillLevelService
-                .getCurrentUserSkillLevelFromList(userSkill.getUserSkillLevels());
+        UserSkillLevel userSkillLevel = getCurrentUserSkillLevelFromList(userSkill.getUserSkillLevels());
 
         if(userSkillLevel == null)
             return null;
@@ -83,6 +76,24 @@ public class UserSkillsSerializer extends StdSerializer<List<UserSkill>> {
 
         return votes;
 
+    }
+
+    public UserSkillLevel getCurrentUserSkillLevelFromList(List<UserSkillLevel> userSkillLevelList){
+        UserSkillLevel currentUserSkillLevel;
+
+        if(userSkillLevelList == null){
+            return null;
+        }
+        userSkillLevelList.sort(new Comparator<UserSkillLevel>() {
+            @Override
+            public int compare(UserSkillLevel o1, UserSkillLevel o2) {
+                return o2.getValidFrom().compareTo(o1.getValidFrom());
+            }
+        });
+
+        currentUserSkillLevel = userSkillLevelList.get(0);
+
+        return currentUserSkillLevel;
     }
 
 }

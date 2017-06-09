@@ -1,7 +1,9 @@
 package lt.swedbank.services.skill;
 
+import lt.swedbank.beans.entity.SkillLevel;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.entity.UserSkillLevel;
+import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.exceptions.userSkillLevel.UserSkillLevelNotFoundException;
 import lt.swedbank.repositories.UserSkillLevelRepository;
 import org.junit.Before;
@@ -14,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 public class UserSkillLevelServiceTest {
 
@@ -29,6 +32,8 @@ public class UserSkillLevelServiceTest {
 
     private UserSkill userSkill;
     private UserSkillLevel userSkillLevel;
+    private AssignSkillLevelRequest assignSkillLevelRequest;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
@@ -37,7 +42,7 @@ public class UserSkillLevelServiceTest {
 
         userSkillLevel = mock(UserSkillLevel.class);
 
-
+        assignSkillLevelRequest = mock(AssignSkillLevelRequest.class);
 
     }
 
@@ -73,16 +78,23 @@ public class UserSkillLevelServiceTest {
 
     @Test
     public void addDefaultUserSkillLevel() throws Exception {
-        Mockito.when(new UserSkillLevel(any(), any())).thenReturn(userSkillLevel);
+        whenNew(UserSkillLevel.class).withArguments(any(UserSkill.class), any(SkillLevel.class)).thenReturn(userSkillLevel);
         Mockito.when(userSkillLevelRepository.save(any(UserSkillLevel.class))).thenReturn(userSkillLevel);
-
         UserSkillLevel resultUserSkillLevel = userSkillLevelService.addDefaultUserSkillLevel(userSkill);
-
         assertEquals(userSkillLevel, resultUserSkillLevel);
     }
 
     @Test
     public void addUserSkillLevel() throws Exception {
+        whenNew(UserSkillLevel.class).withAnyArguments().thenReturn(userSkillLevel);
+
+        Mockito.when
+                (userSkillLevelRepository.save(any(UserSkillLevel.class)))
+                .thenReturn(userSkillLevel);
+
+        UserSkillLevel resultUserSkillLevel = userSkillLevelService.addUserSkillLevel(userSkill, assignSkillLevelRequest);
+
+        assertEquals(userSkillLevel, resultUserSkillLevel);
     }
 
 }

@@ -35,8 +35,9 @@ public class VoteService {
 
         Vote vote = new Vote(voter, userSkillLevel, request.getMessage());
 
+        Vote savedVote = voteRepository.save(vote);
 
-        return new VoteResponse(voteRepository.save(vote));
+        return new VoteResponse(savedVote);
 
     }
 

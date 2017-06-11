@@ -23,13 +23,16 @@ public class SocketHandler extends TextWebSocketHandler {
         //    Map value = new Gson().fromJson(message.getPayload(), Map.class);
         //    webSocketSession.sendMessage(new TextMessage("Hello " + value.get("name") + " !"));
         //}
-        session.sendMessage(new TextMessage("Privet seni"));
-        System.out.println("SUP");
+        session.sendMessage(new TextMessage("Greetings from back-end"));
+        System.out.println("Received a message: " + message.getPayload());
+        System.out.println("In return message for a current session has been sent");
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         //the messages will be broadcasted to all users.
         sessions.add(session);
+        System.out.println("Connection has been established");
+        session.sendMessage(new TextMessage("Back-end says welcome"));
     }
 }

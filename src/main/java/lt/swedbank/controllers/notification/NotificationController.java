@@ -40,7 +40,7 @@ public class NotificationController {
         return new RequestNotificationResponse(notificationService.disapproveByApprovalRequestId(id));
     }
 
-    @RequestMapping(value = "/get/test", method = RequestMethod.PUT)
+    @RequestMapping(value = "/get/test/{id}", method = RequestMethod.PUT)
     public @ResponseBody
     Iterable<RequestNotificationResponse> test(@RequestHeader(value = "Authorization") String authToken, @PathVariable("id") Long id) {
 

@@ -61,6 +61,8 @@ public class UserSkillsSerializer extends StdSerializer<List<UserSkill>> {
         if(userSkillLevel == null)
             return null;
 
+
+
         for (Vote vote : userSkillLevel.getVotes()) {
             Map<String, Object> voteMap = new HashMap<>();
 

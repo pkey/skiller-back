@@ -7,9 +7,6 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.entity.UserSkillLevel;
 import lt.swedbank.beans.entity.Vote;
-import lt.swedbank.services.skill.UserSkillLevelService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.*;
@@ -45,12 +42,12 @@ public class UserSkillsSerializer extends StdSerializer<List<UserSkill>> {
         UserSkillLevel userSkillLevel = getCurrentUserSkillLevelFromList(userSkill.getUserSkillLevels());
 
 
-
         if(userSkillLevel == null)
             return null;
 
         level.put("id", userSkillLevel.getId());
         level.put("title", userSkillLevel.getSkillLevel().getTitle());
+
 
         return level;
 
@@ -81,7 +78,7 @@ public class UserSkillsSerializer extends StdSerializer<List<UserSkill>> {
     public UserSkillLevel getCurrentUserSkillLevelFromList(List<UserSkillLevel> userSkillLevelList){
         UserSkillLevel currentUserSkillLevel;
 
-        if(userSkillLevelList == null){
+        if (userSkillLevelList == null || userSkillLevelList.isEmpty()) {
             return null;
         }
         userSkillLevelList.sort(new Comparator<UserSkillLevel>() {

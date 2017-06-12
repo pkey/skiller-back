@@ -48,5 +48,4 @@ public class SkillLevelService {
         return skillLevelResponseList;
     }
 
-
 }

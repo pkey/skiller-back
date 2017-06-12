@@ -18,6 +18,9 @@ public class ApprovalRequest {
     private UserSkill userSkill;
 
     @OneToMany
+    private List<User> approvers;
+
+    @OneToMany
     private List<RequestNotification> requestNotification;
 
     public ApprovalRequest() {}
@@ -25,6 +28,19 @@ public class ApprovalRequest {
     public ApprovalRequest(List<RequestNotification> requestNotification)
     {
         this.requestNotification = requestNotification;
+    }
+
+    public List<User> getApprovers() {
+        return approvers;
+    }
+
+    public void setApprovers(List<User> approvers) {
+        this.approvers = approvers;
+    }
+
+    public void addApproer(User approver)
+    {
+        this.approvers.add(approver);
     }
 
     public Long getId() {

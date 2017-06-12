@@ -40,7 +40,7 @@ public class NotificationController {
         return new RequestNotificationResponse(notificationService.disapproveByApprovalRequestId(id));
     }
 
-    @RequestMapping(value = "/get/test/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/get/test/{id}", method = RequestMethod.GET)
     public @ResponseBody
     Iterable<RequestNotificationResponse> test(@RequestHeader(value = "Authorization") String authToken, @PathVariable("id") Long id) {
 
@@ -53,7 +53,16 @@ public class NotificationController {
         requestNotification.setApprovalRequest(approvalRequest);
         requestNotification.setReceiver(new User());
 
+        ApprovalRequest approvalRequest2 = new ApprovalRequest();
+        approvalRequest2.setId(Long.parseLong("3"));
+        approvalRequest2.setMessage("Mantelis expert in modal making!");
+        RequestNotification requestNotification2 = new RequestNotification();
+        requestNotification.setApprovalRequest(approvalRequest2);
+        requestNotification.setReceiver(new User());
+
+
         requestNotificationResponses.add(new RequestNotificationResponse(requestNotification));
+        requestNotificationResponses.add(new RequestNotificationResponse(requestNotification2));
         return requestNotificationResponses;
     }
 }

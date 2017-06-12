@@ -23,28 +23,22 @@ public class ApprovalService {
         request.approve();
         if(request.getApproves() >= 5)
         {
-            disableNotifications(request);
+            request.approve();
+            deleteNotifications(request);
         }
         approvalRepository.save(request);
         return request;
+    }
+
+    private void deleteNotifications(ApprovalRequest request) {
     }
 
     public ApprovalRequest disapprove(Long id) {
 
         ApprovalRequest request = approvalRepository.findOne(id);
         request.disapprove();
-        disableNotifications(request);
         approvalRepository.save(request);
         return request;
-    }
-
-    public ApprovalRequest disableNotifications(ApprovalRequest approvalRequest)
-    {
-        for (RequestNotification notification: approvalRequest.getRequestNotification()
-             ) {
-            notification.setAnswered(true);
-        }
-        return approvalRequest;
     }
 
 }

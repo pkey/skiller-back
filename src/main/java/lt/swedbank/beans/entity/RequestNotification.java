@@ -15,9 +15,7 @@ public class RequestNotification  {
     @ManyToOne
     private ApprovalRequest approvalRequest;
 
-
     public RequestNotification() {}
-
 
     public RequestNotification(User sender, ApprovalRequest approvalRequest)
     {

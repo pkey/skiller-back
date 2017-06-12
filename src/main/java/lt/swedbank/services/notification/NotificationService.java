@@ -27,7 +27,7 @@ public class NotificationService {
 
     public Iterable<RequestNotification> getNotificationsByUserId(Long id)
     {
-        return requestNotificationRepository.findByReceiverAndAnsweredFalse(userService.getUserById(id));
+        return requestNotificationRepository.findByReceiver(userService.getUserById(id));
     }
 
     public ArrayList<RequestNotificationResponse> getRequestNotificationResponse(Iterable<RequestNotification> requestNotifications)
@@ -42,24 +42,17 @@ public class NotificationService {
 
     public RequestNotification  approveByApprovalRequestId(Long id) {
         RequestNotification request = requestNotificationRepository.findOne(id);
-        requestNotificationRepository.delete(request);
         approvalService.approve(request.getApprovalRequest().getId());
+        requestNotificationRepository.delete(request);
+
         return request;
     }
 
     public RequestNotification disapproveByApprovalRequestId(Long id) {
         RequestNotification request = requestNotificationRepository.findOne(id);
-        requestNotificationRepository.delete(request);
         approvalService.disapprove(request.getApprovalRequest().getId());
+        requestNotificationRepository.delete(request);
         return request;
     }
-
-//    public void assignNotifications(ApprovalRequest approvalRequest)
-//    {
-//        for (UserSkill userSkill: userSkillService.getAllUserSkillsBySkill(approvalRequest.getUserSkill().getSkill())
-//             ) {
-//
-//        }
-//    }
 
 }

@@ -1,7 +1,13 @@
 package lt.swedbank.controllers.notification;
 
 
+import java.util.ArrayList;
 import java.util.List;
+
+import lt.swedbank.beans.entity.ApprovalRequest;
+import lt.swedbank.beans.entity.RequestNotification;
+import lt.swedbank.beans.entity.User;
+import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.response.RequestNotificationResponse;
 
 import lt.swedbank.services.notification.NotificationService;
@@ -34,6 +40,22 @@ public class NotificationController {
         return new RequestNotificationResponse(notificationService.disapproveByApprovalRequestId(id));
     }
 
+    @RequestMapping(value = "/get/test", method = RequestMethod.PUT)
+    public @ResponseBody
+    Iterable<RequestNotificationResponse> test(@RequestHeader(value = "Authorization") String authToken, @PathVariable("id") Long id) {
+
+        List<RequestNotificationResponse> requestNotificationResponses = new ArrayList<>();
+
+        ApprovalRequest approvalRequest = new ApprovalRequest();
+        approvalRequest.setId(Long.parseLong("2"));
+        approvalRequest.setMessage("Vilius67 is a Be(a)st!");
+        RequestNotification requestNotification = new RequestNotification();
+        requestNotification.setApprovalRequest(approvalRequest);
+        requestNotification.setReceiver(new User());
+
+        requestNotificationResponses.add(new RequestNotificationResponse(requestNotification));
+        return requestNotificationResponses;
+    }
 }
 
 

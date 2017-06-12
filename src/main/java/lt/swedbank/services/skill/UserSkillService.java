@@ -86,6 +86,11 @@ public class UserSkillService {
         return userSkill;
     }
 
+    public Iterable<UserSkill> getAllUserSkillsBySkill(Skill skill)
+    {
+        return userSkillRepository.findBySkill(skill);
+    }
+
 
     private boolean userSkillAlreadyExists(Long userID, Skill skill) {
         UserSkill userSkill = userSkillRepository.findByUserIdAndSkillId(userID, skill.getId());

@@ -1,47 +1,59 @@
 package lt.swedbank.beans.response;
 
-import lt.swedbank.beans.entity.ApprovalRequest;
-import lt.swedbank.beans.entity.RequestNotification;
-import lt.swedbank.beans.entity.User;
-import lt.swedbank.beans.entity.UserSkill;
+import lt.swedbank.beans.entity.*;
 import lt.swedbank.services.skill.UserSkillLevelService;
 
 public class RequestNotificationResponse {
 
-        private Long id;
+    private Long id;
 
-        private User receiver;
+    private String message;
 
-        private UserEntityResponse sender;
+    private UserEntityResponse sender;
 
-        private SkillEntityResponse skill;
+    private SkillEntityResponse skill;
+
+    public RequestNotificationResponse(Long id, User sender, Skill skill, String message)
+    {
+        this.id = id;
+        this.skill = new SkillEntityResponse(skill);
+        this.sender =  new UserEntityResponse(sender);
+        this.message = message;
+    }
+
+    public UserEntityResponse getSender() {
+        return sender;
+    }
+
+    public void setSender(UserEntityResponse sender) {
+        this.sender = sender;
+    }
+
+    public SkillEntityResponse getSkill() {
+        return skill;
+    }
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
 
-        public RequestNotificationResponse(){}
+    public void setSkill(SkillEntityResponse skill) {
+        this.skill = skill;
+    }
 
-        public RequestNotificationResponse(Long id, User receiver, ApprovalRequest approvalRequest)
-        {
-            this.id = id;
-            this.receiver = receiver;
-        }
+    public RequestNotificationResponse(){}
 
-        public RequestNotificationResponse(RequestNotification requestNotification)
-        {
-            this.receiver = requestNotification.getReceiver();
-            this.id = requestNotification.getId();
-            //TODO fix this shit
-            this.skill = new SkillEntityResponse(requestNotification.getApprovalRequest().getUserSkill().getSkill());
-            this.sender = new UserEntityResponse(requestNotification.getApprovalRequest().getUserSkill().getUser());
 
-        }
 
-        public User getReceiver() {
-            return receiver;
-        }
+    public RequestNotificationResponse(RequestNotification requestNotification)
+    {
+        this.id = requestNotification.getId();
+        //TODO fix this shit
+        this.skill = new SkillEntityResponse(requestNotification.getApprovalRequest().getUserSkill().getSkill());
+        this.sender = new UserEntityResponse(requestNotification.getApprovalRequest().getUserSkill().getUser());
+        this.message = requestNotification.getApprovalRequest().getMessage();
 
-        public void setReceiver(User receiver) {
-            this.receiver = receiver;
-        }
+    }
 
         public Long getId() {
             return id;

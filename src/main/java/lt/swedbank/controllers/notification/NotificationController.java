@@ -4,10 +4,7 @@ package lt.swedbank.controllers.notification;
 import java.util.ArrayList;
 import java.util.List;
 
-import lt.swedbank.beans.entity.ApprovalRequest;
-import lt.swedbank.beans.entity.RequestNotification;
-import lt.swedbank.beans.entity.User;
-import lt.swedbank.beans.entity.UserSkill;
+import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.response.RequestNotificationResponse;
 
 import lt.swedbank.services.notification.NotificationService;
@@ -46,23 +43,17 @@ public class NotificationController {
 
         List<RequestNotificationResponse> requestNotificationResponses = new ArrayList<>();
 
-        ApprovalRequest approvalRequest = new ApprovalRequest();
-        approvalRequest.setId(Long.parseLong("2"));
-        approvalRequest.setMessage("Vilius67 is a Be(a)st!");
-        RequestNotification requestNotification = new RequestNotification();
-        requestNotification.setApprovalRequest(approvalRequest);
-        requestNotification.setReceiver(new User());
-
-        ApprovalRequest approvalRequest2 = new ApprovalRequest();
-        approvalRequest2.setId(Long.parseLong("3"));
-        approvalRequest2.setMessage("Mantelis expert in modal making!");
-        RequestNotification requestNotification2 = new RequestNotification();
-        requestNotification2.setApprovalRequest(approvalRequest2);
-        requestNotification2.setReceiver(new User());
 
 
-        requestNotificationResponses.add(new RequestNotificationResponse(requestNotification));
-        requestNotificationResponses.add(new RequestNotificationResponse(requestNotification2));
+        Long ids = Long.parseLong("2");
+        User test = new User();
+        Skill skill = new Skill("kazkas");
+
+
+        requestNotificationResponses.add(new RequestNotificationResponse(ids, test, skill, "va!"));
+        requestNotificationResponses.add(new RequestNotificationResponse(ids, test, skill, "ASDAWDAD!"));
+        requestNotificationResponses.add(new RequestNotificationResponse(ids, test, skill, "wefwfweffwfe!"));
+        requestNotificationResponses.add(new RequestNotificationResponse(ids, test, skill, "wefwefwefwefwfwe!"));
         return requestNotificationResponses;
     }
 }

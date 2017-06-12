@@ -50,10 +50,10 @@ public class NotificationController {
         Skill skill = new Skill("kazkas");
 
 
-        requestNotificationResponses.add(new RequestNotificationResponse(ids, test, skill, "va!"));
-        requestNotificationResponses.add(new RequestNotificationResponse(ids, test, skill, "ASDAWDAD!"));
-        requestNotificationResponses.add(new RequestNotificationResponse(ids, test, skill, "wefwfweffwfe!"));
-        requestNotificationResponses.add(new RequestNotificationResponse(ids, test, skill, "wefwefwefwefwfwe!"));
+        requestNotificationResponses.add(new RequestNotificationResponse(ids, test, skill, "va!", "PRO"));
+        requestNotificationResponses.add(new RequestNotificationResponse(ids, test, skill, "ASDAWDAD!", "Novice"));
+        requestNotificationResponses.add(new RequestNotificationResponse(ids, test, skill, "wefwfweffwfe!", "Expert"));
+        requestNotificationResponses.add(new RequestNotificationResponse(ids, test, skill, "wefwefwefwefwfwe!","Advanced"));
         return requestNotificationResponses;
     }
 }

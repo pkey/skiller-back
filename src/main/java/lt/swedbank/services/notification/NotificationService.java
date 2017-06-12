@@ -16,7 +16,7 @@ public class NotificationService {
 
     public Iterable<RequestNotification> getNotificationsByUserId(Long id)
     {
-        return requestNotificationRepository.findByUser(userService.getUserById(id));
+        return requestNotificationRepository.findByReceiverAndAnsweredFalse(userService.getUserById(id));
     }
 
 }

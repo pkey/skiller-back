@@ -1,0 +1,92 @@
+package lt.swedbank.beans.entity;
+
+import java.util.List;
+import javax.persistence.*;
+
+@Entity
+public class ApprovalRequest {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    private String message;
+    private Integer approves = 0;
+    private boolean isApproved;
+
+    @OneToOne
+    private UserSkill userSkill;
+
+    @OneToMany
+    private List<RequestNotification> requestNotification;
+
+    public ApprovalRequest() {}
+
+    public ApprovalRequest(List<RequestNotification> requestNotification)
+    {
+        this.requestNotification = requestNotification;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public boolean isApproved() {
+        return isApproved;
+    }
+
+    public void setApproved(boolean approved) {
+        isApproved = approved;
+    }
+
+    public UserSkill getUserSkill() {
+        return userSkill;
+    }
+
+    public void setUserSkill(UserSkill userSkill) {
+        this.userSkill = userSkill;
+    }
+
+    public List<RequestNotification> getRequestNotification() {
+        return requestNotification;
+    }
+
+    public void setRequestNotification(List<RequestNotification> requestNotification) {
+        this.requestNotification = requestNotification;
+    }
+
+    public Integer getApproves() {
+        return approves;
+    }
+
+    public void setApproves(Integer approves) {
+        this.approves = approves;
+    }
+
+    public Integer approve()
+    {
+        this.approves++;
+        if(approves >= 5 && isApproved != false)
+        {
+            isApproved = true;
+        }
+        return approves;
+    }
+
+    public Integer disapprove() {
+        isApproved = false;
+        return -1;
+    }
+}

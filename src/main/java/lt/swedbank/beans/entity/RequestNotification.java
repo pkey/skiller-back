@@ -1,7 +1,6 @@
 package lt.swedbank.beans.entity;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 public class RequestNotification  {
@@ -10,22 +9,37 @@ public class RequestNotification  {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToOne
-    private User sender;
+    @ManyToOne
+    private User receiver;
 
-    @OneToOne
-    private UserSkill userSkill;
+    @ManyToOne
+    private ApprovalRequest approvalRequest;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<Approval> approval;
+    private Boolean answered = false;
 
     public RequestNotification() {}
 
-    public RequestNotification(User sender, UserSkill userSkill, List<Approval> approval)
+
+    public RequestNotification(User sender, ApprovalRequest approvalRequest)
     {
-        this.sender = sender;
-        this.userSkill = userSkill;
-        this.approval = approval;
+        this.receiver = sender;
+        this.approvalRequest = approvalRequest;
+    }
+
+    public User getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(User receiver) {
+        this.receiver = receiver;
+    }
+
+    public ApprovalRequest getApprovalRequest() {
+        return approvalRequest;
+    }
+
+    public void setApprovalRequest(ApprovalRequest approvalRequest) {
+        this.approvalRequest = approvalRequest;
     }
 
     public Long getId() {
@@ -36,28 +50,22 @@ public class RequestNotification  {
         this.id = id;
     }
 
-    public User getSender() {
-        return sender;
+    public Boolean getAnswered() {
+        return answered;
     }
 
-    public void setSender(User sender) {
-        this.sender = sender;
+    public void setAnswered(Boolean answered) {
+        this.answered = answered;
     }
 
-    public UserSkill getUserSkill() {
-        return userSkill;
+    public Integer approve()
+    {
+        this.answered = true;
+        return this.approvalRequest.approve();
     }
-
-    public void setUserSkill(UserSkill userSkill) {
-        this.userSkill = userSkill;
+    public Integer disapprove()
+    {
+        this.answered = true;
+        return this.approvalRequest.disapprove();
     }
-
-    public List<Approval> getApproval() {
-        return approval;
-    }
-
-    public void setApproval(List<Approval> approval) {
-        this.approval = approval;
-    }
-
 }

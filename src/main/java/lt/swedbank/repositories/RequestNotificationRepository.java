@@ -5,5 +5,5 @@ import lt.swedbank.beans.entity.User;
 import org.springframework.data.repository.CrudRepository;
 
 public interface RequestNotificationRepository extends CrudRepository<RequestNotification, Long> {
-    Iterable<RequestNotification> findByUser(User user);
+    Iterable<RequestNotification> findByReceiverAndAnsweredFalse(User user);
 }

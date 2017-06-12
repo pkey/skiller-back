@@ -77,16 +77,18 @@ public class ApprovalRequest {
 
     public Integer approve()
     {
-        this.approves++;
-        if(approves >= 5 && isApproved != false)
+        if(isApproved != false)
         {
-            isApproved = true;
+            this.approves++;
         }
         return approves;
     }
 
     public Integer disapprove() {
-        isApproved = false;
+        if (isApproved != true) {
+            isApproved = false;
+            return 1;
+        }
         return -1;
     }
 }

@@ -13,23 +13,38 @@ public class ApprovalService {
     @Autowired
     private ApprovalRepository approvalRepository;
     @Autowired
+    private NotificationService notificationService;
+    @Autowired
     private UserService userService;
 
-    public Iterable<ApprovalRequest> getApprovalRequestsByUserId(Long id)
-    {
-        return null;
-    }
-    public ApprovalRequest approveByApprovalRequestId(Long id) {
+
+    public ApprovalRequest approve(Long id) {
         ApprovalRequest request = approvalRepository.findOne(id);
         request.approve();
+        if(request.getApproves() >= 5)
+        {
+            disableNotifications(request);
+        }
         approvalRepository.save(request);
         return request;
     }
 
-    public ApprovalRequest disapproveByApprovalRequestId(Long id) {
+    public ApprovalRequest disapprove(Long id) {
+
         ApprovalRequest request = approvalRepository.findOne(id);
         request.disapprove();
+        disableNotifications(request);
         approvalRepository.save(request);
         return request;
     }
+
+    public ApprovalRequest disableNotifications(ApprovalRequest approvalRequest)
+    {
+        for (RequestNotification notification: approvalRequest.getRequestNotification()
+             ) {
+            notification.setAnswered(true);
+        }
+        return approvalRequest;
+    }
+
 }

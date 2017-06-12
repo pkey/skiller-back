@@ -57,15 +57,4 @@ public class RequestNotification  {
     public void setAnswered(Boolean answered) {
         this.answered = answered;
     }
-
-    public Integer approve()
-    {
-        this.answered = true;
-        return this.approvalRequest.approve();
-    }
-    public Integer disapprove()
-    {
-        this.answered = true;
-        return this.approvalRequest.disapprove();
-    }
 }

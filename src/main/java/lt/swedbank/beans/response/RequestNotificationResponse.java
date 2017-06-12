@@ -1,15 +1,12 @@
 package lt.swedbank.beans.response;
 
 import lt.swedbank.beans.entity.*;
-import lt.swedbank.services.skill.UserSkillLevelService;
 
 public class RequestNotificationResponse {
 
     private Long id;
 
     private String message;
-
-    private UserEntityResponse sender;
 
     private String senderName;
 
@@ -27,7 +24,6 @@ public class RequestNotificationResponse {
         this.senderLastname = sender.getLastName();
         this.senderName = sender.getName();
         this.skillLevel = skillLevel;
-
     }
 
     public String getSenderName() {
@@ -54,15 +50,6 @@ public class RequestNotificationResponse {
         this.skillLevel = skillLevel;
     }
 
-    public UserEntityResponse getSender() {
-
-        return sender;
-    }
-
-    public void setSender(UserEntityResponse sender) {
-        this.sender = sender;
-    }
-
     public SkillEntityResponse getSkill() {
         return skill;
     }
@@ -70,22 +57,20 @@ public class RequestNotificationResponse {
         this.message = message;
     }
 
-
     public void setSkill(SkillEntityResponse skill) {
         this.skill = skill;
     }
-
     public RequestNotificationResponse(){}
-
-
 
     public RequestNotificationResponse(RequestNotification requestNotification)
     {
-        this.id = requestNotification.getId();
         //TODO fix this shit
-        this.skill = new SkillEntityResponse(requestNotification.getApprovalRequest().getUserSkill().getSkill());
-        this.sender = new UserEntityResponse(requestNotification.getApprovalRequest().getUserSkill().getUser());
-        this.message = requestNotification.getApprovalRequest().getMessage();
+        User user = requestNotification.getApprovalRequest().getUserSkillLevel().getUserSkill().getUser();
+        this.id = requestNotification.getId();
+        this.skill = new SkillEntityResponse(requestNotification.getApprovalRequest().getUserSkillLevel().getUserSkill().getSkill());
+        this.message = requestNotification.getApprovalRequest().getUserSkillLevel().getMotivation();
+        this.senderName = user.getName();
+        this.senderLastname = user.getLastName();
     }
 
     public String getMessage() {

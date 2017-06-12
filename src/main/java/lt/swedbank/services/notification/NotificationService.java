@@ -4,6 +4,7 @@ import lt.swedbank.beans.entity.ApprovalRequest;
 import lt.swedbank.beans.entity.RequestNotification;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
+import lt.swedbank.beans.request.NotificationAnswerRequest;
 import lt.swedbank.beans.response.RequestNotificationResponse;
 import lt.swedbank.repositories.RequestNotificationRepository;
 import lt.swedbank.services.skill.UserSkillService;
@@ -40,19 +41,21 @@ public class NotificationService {
     }
 
 
-    public RequestNotification  approveByApprovalRequestId(Long id) {
-        RequestNotification request = requestNotificationRepository.findOne(id);
-        approvalService.approve(request.getApprovalRequest().getId());
-        requestNotificationRepository.delete(request);
-
-        return request;
-    }
-
-    public RequestNotification disapproveByApprovalRequestId(Long id) {
-        RequestNotification request = requestNotificationRepository.findOne(id);
-        approvalService.disapprove(request.getApprovalRequest().getId());
+    public RequestNotification  approveByApprovalRequestId(NotificationAnswerRequest notificationAnswerRequest) {
+        RequestNotification request = requestNotificationRepository.findOne(notificationAnswerRequest.getNotificationId());
+        approvalService.approve(request.getApprovalRequest().getId(), notificationAnswerRequest.getApproverId());
         requestNotificationRepository.delete(request);
         return request;
     }
 
+    public RequestNotification disapproveByApprovalRequestId(NotificationAnswerRequest notificationAnswerRequest) {
+        RequestNotification request = requestNotificationRepository.findOne(notificationAnswerRequest.getNotificationId());
+        approvalService.disapprove(request.getApprovalRequest().getId(), notificationAnswerRequest.getApproverId());
+        requestNotificationRepository.delete(request);
+        return request;
+    }
+
+    public void deleteNotifications(ApprovalRequest request) {
+        requestNotificationRepository.delete(request.getRequestNotification());
+    }
 }

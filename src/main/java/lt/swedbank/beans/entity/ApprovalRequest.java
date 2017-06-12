@@ -10,24 +10,26 @@ public class ApprovalRequest {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String message;
     private Integer approves = 0;
     private boolean isApproved;
 
     @OneToOne
-    private UserSkill userSkill;
+    private UserSkillLevel userSkillLevel;
 
     @OneToMany
     private List<User> approvers;
 
+    @OneToOne
+    private User disapprover;
+
     @OneToMany
-    private List<RequestNotification> requestNotification;
+    private List<RequestNotification> requestNotifications;
 
     public ApprovalRequest() {}
 
     public ApprovalRequest(List<RequestNotification> requestNotification)
     {
-        this.requestNotification = requestNotification;
+        this.requestNotifications = requestNotification;
     }
 
     public List<User> getApprovers() {
@@ -38,7 +40,7 @@ public class ApprovalRequest {
         this.approvers = approvers;
     }
 
-    public void addApproer(User approver)
+    public void addApprover(User approver)
     {
         this.approvers.add(approver);
     }
@@ -51,14 +53,6 @@ public class ApprovalRequest {
         this.id = id;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
     public boolean isApproved() {
         return isApproved;
     }
@@ -67,24 +61,32 @@ public class ApprovalRequest {
         isApproved = approved;
     }
 
-    public UserSkill getUserSkill() {
-        return userSkill;
+    public UserSkillLevel getUserSkillLevel() {
+        return userSkillLevel;
     }
 
-    public void setUserSkill(UserSkill userSkill) {
-        this.userSkill = userSkill;
+    public void setUserSkillLevel(UserSkillLevel userSkillLevel) {
+        this.userSkillLevel = userSkillLevel;
     }
 
     public List<RequestNotification> getRequestNotification() {
-        return requestNotification;
+        return requestNotifications;
     }
 
     public void setRequestNotification(List<RequestNotification> requestNotification) {
-        this.requestNotification = requestNotification;
+        this.requestNotifications = requestNotification;
     }
 
     public Integer getApproves() {
         return approves;
+    }
+
+    public User getDisapprover() {
+        return disapprover;
+    }
+
+    public void setDisapprover(User disapprover) {
+        this.disapprover = disapprover;
     }
 
     public void setApproves(Integer approves) {

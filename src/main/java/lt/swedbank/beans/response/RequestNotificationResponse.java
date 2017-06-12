@@ -3,6 +3,8 @@ package lt.swedbank.beans.response;
 import lt.swedbank.beans.entity.ApprovalRequest;
 import lt.swedbank.beans.entity.RequestNotification;
 import lt.swedbank.beans.entity.User;
+import lt.swedbank.beans.entity.UserSkill;
+import lt.swedbank.services.skill.UserSkillLevelService;
 
 public class RequestNotificationResponse {
 
@@ -10,13 +12,15 @@ public class RequestNotificationResponse {
 
         private User receiver;
 
-        private ApprovalRequest approvalRequest;
+        private UserEntityResponse sender;
+
+        private SkillEntityResponse skill;
+
 
         public RequestNotificationResponse(){}
 
         public RequestNotificationResponse(Long id, User receiver, ApprovalRequest approvalRequest)
         {
-            this.approvalRequest = approvalRequest;
             this.id = id;
             this.receiver = receiver;
         }
@@ -25,7 +29,10 @@ public class RequestNotificationResponse {
         {
             this.receiver = requestNotification.getReceiver();
             this.id = requestNotification.getId();
-            this.approvalRequest = requestNotification.getApprovalRequest();
+            //TODO fix this shit
+            this.skill = new SkillEntityResponse(requestNotification.getApprovalRequest().getUserSkill().getSkill());
+            this.sender = new UserEntityResponse(requestNotification.getApprovalRequest().getUserSkill().getUser());
+
         }
 
         public User getReceiver() {
@@ -34,14 +41,6 @@ public class RequestNotificationResponse {
 
         public void setReceiver(User receiver) {
             this.receiver = receiver;
-        }
-
-        public ApprovalRequest getApprovalRequest() {
-            return approvalRequest;
-        }
-
-        public void setApprovalRequest(ApprovalRequest approvalRequest) {
-            this.approvalRequest = approvalRequest;
         }
 
         public Long getId() {

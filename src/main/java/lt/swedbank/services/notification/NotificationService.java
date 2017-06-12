@@ -49,8 +49,7 @@ public class NotificationService {
 
     public RequestNotification disapproveByApprovalRequestId(Long id) {
         RequestNotification request = requestNotificationRepository.findOne(id);
-        request.setAnswered(true);
-        requestNotificationRepository.save(request);
+        requestNotificationRepository.delete(request);
         approvalService.disapprove(request.getApprovalRequest().getId());
         return request;
     }

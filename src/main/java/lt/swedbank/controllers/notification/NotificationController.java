@@ -57,8 +57,8 @@ public class NotificationController {
         approvalRequest2.setId(Long.parseLong("3"));
         approvalRequest2.setMessage("Mantelis expert in modal making!");
         RequestNotification requestNotification2 = new RequestNotification();
-        requestNotification.setApprovalRequest(approvalRequest2);
-        requestNotification.setReceiver(new User());
+        requestNotification2.setApprovalRequest(approvalRequest2);
+        requestNotification2.setReceiver(new User());
 
 
         requestNotificationResponses.add(new RequestNotificationResponse(requestNotification));

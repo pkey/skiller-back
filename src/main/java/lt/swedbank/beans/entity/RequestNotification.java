@@ -15,7 +15,6 @@ public class RequestNotification  {
     @ManyToOne
     private ApprovalRequest approvalRequest;
 
-    private Boolean answered = false;
 
     public RequestNotification() {}
 
@@ -50,11 +49,4 @@ public class RequestNotification  {
         this.id = id;
     }
 
-    public Boolean getAnswered() {
-        return answered;
-    }
-
-    public void setAnswered(Boolean answered) {
-        this.answered = answered;
-    }
 }

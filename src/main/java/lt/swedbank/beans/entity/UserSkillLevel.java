@@ -27,7 +27,7 @@ public class UserSkillLevel {
 
     private Date validUntil;
 
-    @OneToMany(mappedBy = "userSkillLevel")
+    @OneToMany(mappedBy = "userSkillLevel", fetch = FetchType.EAGER)
     private List<Vote> votes = new ArrayList<>();
 
     public UserSkillLevel() {

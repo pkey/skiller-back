@@ -15,7 +15,7 @@ public class NotificationAnswerRequest {
     private Long approverId;
 
     @NotNull(message = "Message is required!")
-    @ApiModelProperty(required = true, example = "Real expert here. Approved!")
+    @ApiModelProperty(required = true, example = "Real expert here. Approved!!")
     private String message;
 
     @NotNull(message = "Boolean is required!")

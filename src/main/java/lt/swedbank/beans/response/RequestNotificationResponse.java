@@ -4,6 +4,8 @@ import lt.swedbank.beans.entity.*;
 
 public class RequestNotificationResponse {
 
+    final private Integer type = 1;
+
     private Long id;
 
     private String message;
@@ -53,18 +55,17 @@ public class RequestNotificationResponse {
     public SkillEntityResponse getSkill() {
         return skill;
     }
+
     public void setMessage(String message) {
         this.message = message;
     }
-
     public void setSkill(SkillEntityResponse skill) {
         this.skill = skill;
     }
-    public RequestNotificationResponse(){}
 
+    public RequestNotificationResponse(){}
     public RequestNotificationResponse(RequestNotification requestNotification)
     {
-        //TODO fix this shit
         User user = requestNotification.getApprovalRequest().getUserSkillLevel().getUserSkill().getUser();
         this.id = requestNotification.getId();
         this.skill = new SkillEntityResponse(requestNotification.getApprovalRequest().getUserSkillLevel().getUserSkill().getSkill());
@@ -84,4 +85,8 @@ public class RequestNotificationResponse {
     public void setId(Long id) {
             this.id = id;
         }
+
+    public Integer getType() {
+        return type;
+    }
 }

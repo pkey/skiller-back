@@ -36,24 +36,6 @@ public class NotificationController {
         }
         return new RequestNotificationResponse(notificationService.disapproveByApprovalRequestId(notificationAnswerRequest));
     }
-
-
-    @RequestMapping(value = "/get/test/{id}", method = RequestMethod.GET)
-    public @ResponseBody
-    Iterable<RequestNotificationResponse> test(@RequestHeader(value = "Authorization") String authToken, @PathVariable("id") Long id) {
-
-        List<RequestNotificationResponse> requestNotificationResponses = new ArrayList<>();
-
-        Long ids = Long.parseLong("2");
-        User test = new User();
-        Skill skill = new Skill("kazkas");
-
-        requestNotificationResponses.add(new RequestNotificationResponse(ids, test, skill, "va!", "PRO"));
-        requestNotificationResponses.add(new RequestNotificationResponse(ids, test, skill, "ASDAWDAD!", "Novice"));
-        requestNotificationResponses.add(new RequestNotificationResponse(ids, test, skill, "wefwfweffwfe!", "Expert"));
-        requestNotificationResponses.add(new RequestNotificationResponse(ids, test, skill, "wefwefwefwefwfwe!","Advanced"));
-        return requestNotificationResponses;
-    }
 }
 
 

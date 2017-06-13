@@ -9,6 +9,7 @@ import lt.swedbank.beans.request.NotificationAnswerRequest;
 import lt.swedbank.beans.response.RequestNotificationResponse;
 
 import lt.swedbank.services.notification.NotificationService;
+import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,12 +19,15 @@ import org.springframework.web.bind.annotation.*;
 public class NotificationController {
 
     @Autowired
+    private UserService userService;
+    @Autowired
     private NotificationService notificationService;
 
-    @RequestMapping(value = "/all/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
     public @ResponseBody
     Iterable<RequestNotificationResponse> getNotificationById(@RequestHeader(value = "Authorization") String authToken, @PathVariable("id") Long id){
-         return notificationService.getRequestNotificationResponse(notificationService.getNotificationsByUserId(id));
+        User user = userService.getUserByAuthId(authToken);
+        return notificationService.getRequestNotificationResponse(notificationService.getNotificationsByUserId(user.getId()));
     }
 
     @RequestMapping(value = "/post", method = RequestMethod.POST)

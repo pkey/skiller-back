@@ -16,6 +16,7 @@ import org.mockito.*;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -35,6 +36,8 @@ public class UserServiceTest {
     private UserSkillLevel testUserSkillLevel;
     private AddSkillRequest testAddSkillRequest;
     private ArrayList<User> testUserList;
+
+    private User correctUser;
 
     @Spy
     @InjectMocks
@@ -63,6 +66,46 @@ public class UserServiceTest {
         testUser.setEmail("test@test.com");
         testUser.setAuthId("auth0id");
 
+        correctUser = new User();
+        correctUser.setId(Long.parseLong("0"));
+        correctUser.setName("TestUserName");
+        correctUser.setLastName("TestUserLastName");
+        correctUser.setPassword("TestUserPassword");
+        correctUser.setEmail("testuser@gmail.com");
+
+        UserSkill userSkill = new UserSkill();
+        userSkill.setId(Integer.toUnsignedLong(0));
+        userSkill.setUser(correctUser);
+        userSkill.setSkill(new Skill("Test Skill"));
+
+        UserSkillLevel userSkillLevel = new UserSkillLevel();
+        userSkillLevel.setId(Integer.toUnsignedLong(0));
+        userSkillLevel.setUserSkill(userSkill);
+        userSkillLevel.setMotivation("Motyvacija");
+        userSkillLevel.setValidFrom(new Date());
+
+        SkillLevel skillLevel = new SkillLevel();
+        skillLevel.setTitle("Test Default");
+        skillLevel.setDescription("About Test Default");
+        skillLevel.setLevel(Integer.toUnsignedLong(0));
+        skillLevel.setId(Integer.toUnsignedLong(0));
+
+        List<Vote> voteList= new ArrayList<>();
+        Vote vote = new Vote();
+        vote.setMessage("Voting message");
+        vote.setId(Integer.toUnsignedLong(0));
+        vote.setVoter(new User());
+        vote.setUserSkillLevel(userSkillLevel);
+        voteList.add(vote);
+
+        userSkillLevel.setVotes(voteList);
+        userSkillLevel.setSkillLevel(skillLevel);
+
+        userSkill.setUserSkillLevel(userSkillLevel);
+
+        correctUser.setUserSkill(userSkill);
+
+
         testTeam = new Team();
         testTeam.setName("Testing Team");
         testTeam.setId(teamID);
@@ -86,7 +129,7 @@ public class UserServiceTest {
         testAssignTeamRequest.setUserId(userID);
 
         testUserList = new ArrayList<User>();
-        testUserList.add(testUser);
+        testUserList.add(correctUser);
 
     }
 
@@ -173,7 +216,7 @@ public class UserServiceTest {
 
         Mockito.when(userService.getSortedUsers()).thenReturn(testUserList);
         ArrayList<UserEntityResponse> resultList = new ArrayList<>();
-        resultList.add(new UserEntityResponse(testUser));
+        resultList.add(new UserEntityResponse(correctUser));
         ArrayList<UserEntityResponse> testList = (ArrayList<UserEntityResponse>) userService.getUserEntityResponseList();
         assertEquals(testList.get(0).getEmail(), resultList.get(0).getEmail());
     }
@@ -189,9 +232,9 @@ public class UserServiceTest {
 
     @Test
     public void getUserProfile() {
-        doReturn(testUser).when(userService).getUserById(any());
+        doReturn(correctUser).when(userService).getUserById(any());
 
-        UserEntityResponse resultEntity = new UserEntityResponse(testUser);
+        UserEntityResponse resultEntity = new UserEntityResponse(correctUser);
         UserEntityResponse testEntity = userService.getUserProfile(any());
         assertEquals(resultEntity.getEmail(), testEntity.getEmail());
     }

@@ -1,14 +1,12 @@
 package lt.swedbank.controllers.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lt.swedbank.beans.entity.Skill;
-import lt.swedbank.beans.entity.User;
-import lt.swedbank.beans.entity.UserSkill;
+import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AddSkillRequest;
+import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.services.auth.AuthenticationService;
-import lt.swedbank.services.skill.UserSkillLevelService;
 import lt.swedbank.services.user.UserService;
 import org.junit.After;
 import org.junit.Before;
@@ -23,6 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
@@ -51,7 +50,7 @@ public class UserControllerTest {
     private User correctUser2;
     private List<UserSkill> correctUserSkills;
     private List<UserSkill> correctUserSkills2;
-    private UserSkill skill;
+    private UserSkill newlyAddedUserSkill;
     private List<Skill> correctSkills;
     private List<UserEntityResponse> correctUsers;
     private UserEntityResponse userEntityResponse;
@@ -88,41 +87,47 @@ public class UserControllerTest {
         correctUser.setPassword("TestUserPassword");
         correctUser.setEmail("testuser@gmail.com");
 
-        correctUser2 = new User();
-        correctUser2.setId(user2Id);
-        correctUser2.setName("TestUserName2");
-        correctUser2.setLastName("TestUserLastName2");
-        correctUser2.setPassword("TestUserPassword2");
-        correctUser2.setEmail("testuser2@gmail.com");
+        UserSkill userSkill = new UserSkill();
+        userSkill.setId(Integer.toUnsignedLong(0));
+        userSkill.setUser(correctUser);
+        userSkill.setSkill(new Skill("Test Skill"));
 
-        correctSkills = new ArrayList<Skill>();
-        correctSkills.add(new Skill("SkillName1"));
-        correctSkills.add(new Skill("SkillName2"));
-        correctSkills.add(new Skill("SkillName3"));
+        UserSkillLevel userSkillLevel = new UserSkillLevel();
+        userSkillLevel.setId(Integer.toUnsignedLong(0));
+        userSkillLevel.setUserSkill(userSkill);
+        userSkillLevel.setMotivation("Motyvacija");
+        userSkillLevel.setValidFrom(new Date());
 
-        correctUserSkills = new ArrayList<>();
-        correctUserSkills.add(new UserSkill(correctUser, correctSkills.get(0)));
-        correctUserSkills.add(new UserSkill(correctUser, correctSkills.get(1)));
-        correctUserSkills.add(new UserSkill(correctUser, correctSkills.get(2)));
+        SkillLevel skillLevel = new SkillLevel();
+        skillLevel.setTitle("Test Default");
+        skillLevel.setDescription("About Test Default");
+        skillLevel.setLevel(Integer.toUnsignedLong(0));
+        skillLevel.setId(Integer.toUnsignedLong(0));
 
-        correctUserSkills2 = new ArrayList<>();
-        correctUserSkills2.add(new UserSkill(correctUser, correctSkills.get(0)));
-        correctUserSkills2.add(new UserSkill(correctUser, correctSkills.get(1)));
-        correctUserSkills2.add(new UserSkill(correctUser, correctSkills.get(2)));
+        List<Vote> voteList= new ArrayList<>();
+        Vote vote = new Vote();
+        vote.setMessage("Voting message");
+        vote.setId(Integer.toUnsignedLong(0));
+        vote.setVoter(new User());
+        vote.setUserSkillLevel(userSkillLevel);
+        voteList.add(vote);
 
-        correctUser.setUserSkills(correctUserSkills);
-        correctUser2.setUserSkills(correctUserSkills2);
+        userSkillLevel.setVotes(voteList);
+        userSkillLevel.setSkillLevel(skillLevel);
 
+        userSkill.setUserSkillLevel(userSkillLevel);
+
+        correctUser.setUserSkill(userSkill);
         correctUsers = new ArrayList<>();
-        UserEntityResponse UserEntityResponse;
+
+
 
         userEntityResponse = new UserEntityResponse(correctUser);
-        userEntityResponse2 = new UserEntityResponse(correctUser2);
 
         correctUsers.add(userEntityResponse);
-        correctUsers.add(userEntityResponse2);
 
-        skill = new UserSkill(correctUser, new Skill("SkillToAddLater"));
+        newlyAddedUserSkill = new UserSkill(correctUser, new Skill("SkillToAddLater"));
+        newlyAddedUserSkill.setUserSkillLevel(userSkillLevel);
 
     }
 
@@ -133,20 +138,18 @@ public class UserControllerTest {
 
     @Test
     public void get_user_profile_success() throws Exception {
-        when(userService.getUserProfile(Long.parseLong("1"))).thenReturn(userEntityResponse);
+        when(userService.getUserProfile(Long.parseLong("0"))).thenReturn(userEntityResponse);
 
-        mockMvc.perform(get("/user/profile/1")
+        mockMvc.perform(get("/user/profile/0")
                 .header("Authorization", "Bearer")
                 .contentType(contentType))
                 .andExpect(status().isOk())
-
                 .andExpect(jsonPath("$.name", is("TestUserName")))
                 .andExpect(jsonPath("$.lastName", is("TestUserLastName")))
                 .andExpect(jsonPath("$.email", is("testuser@gmail.com")))
-                .andExpect(jsonPath("$.userSkills", hasSize(3)))
-                .andExpect(jsonPath("$.userSkills[0].title", is("SkillName1")))
-                .andExpect(jsonPath("$.userSkills[1].title", is("SkillName2")))
-                .andExpect(jsonPath("$.userSkills[2].title", is("SkillName3")));
+                .andExpect(jsonPath("$.skills", hasSize(1)))
+                .andExpect(jsonPath("$.skills[0].title", is("Test Skill")));
+
 
 
         verify(userService, times(1)).getUserProfile(any());
@@ -163,23 +166,14 @@ public class UserControllerTest {
                 .header("Authorization", "Bearer")
                 .contentType(contentType))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$", hasSize(1)))
 
                 .andExpect(jsonPath("$[0].name", is("TestUserName")))
                 .andExpect(jsonPath("$[0].lastName", is("TestUserLastName")))
                 .andExpect(jsonPath("$[0].email", is("testuser@gmail.com")))
-                .andExpect(jsonPath("$[0].userSkills", hasSize(3)))
-                .andExpect(jsonPath("$[0].userSkills[0].title", is("SkillName1")))
-                .andExpect(jsonPath("$[0].userSkills[1].title", is("SkillName2")))
-                .andExpect(jsonPath("$[0].userSkills[2].title", is("SkillName3")))
+                .andExpect(jsonPath("$[0].skills", hasSize(1)))
+                .andExpect(jsonPath("$[0].skills[0].title", is("Test Skill")));
 
-                .andExpect(jsonPath("$[1].name", is("TestUserName2")))
-                .andExpect(jsonPath("$[1].lastName", is("TestUserLastName2")))
-                .andExpect(jsonPath("$[1].email", is("testuser2@gmail.com")))
-                .andExpect(jsonPath("$[1].userSkills", hasSize(3)))
-                .andExpect(jsonPath("$[1].userSkills[0].title", is("SkillName1")))
-                .andExpect(jsonPath("$[1].userSkills[1].title", is("SkillName2")))
-                .andExpect(jsonPath("$[1].userSkills[2].title", is("SkillName3")));
 
         verify(userService, times(1)).getUserEntityResponseList();
         verifyNoMoreInteractions(userService);
@@ -198,10 +192,8 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name", is("TestUserName")))
                 .andExpect(jsonPath("$.lastName", is("TestUserLastName")))
                 .andExpect(jsonPath("$.email", is("testuser@gmail.com")))
-                .andExpect(jsonPath("$.userSkills", hasSize(3)))
-                .andExpect(jsonPath("$.userSkills[0].title", is("SkillName1")))
-                .andExpect(jsonPath("$.userSkills[1].title", is("SkillName2")))
-                .andExpect(jsonPath("$.userSkills[2].title", is("SkillName3")));
+                .andExpect(jsonPath("$.skills", hasSize(1)))
+                .andExpect(jsonPath("$.skills[0].title", is("Test Skill")));
 
         verify(userService, times(1)).getUserByAuthId(any());
         verifyNoMoreInteractions(userService);
@@ -210,10 +202,10 @@ public class UserControllerTest {
     @Test
     public void add_skill_to_user_success() throws Exception {
 
-        String skillJson = mapper.writeValueAsString(new AddSkillRequest(skill));
+        String skillJson = mapper.writeValueAsString(new AddSkillRequest(newlyAddedUserSkill));
 
-        List<UserSkill> tmpSkills = new ArrayList<UserSkill>(correctUserSkills);
-        tmpSkills.add(skill);
+        List<UserSkill> tmpSkills = correctUser.getUserSkills();
+        tmpSkills.add(newlyAddedUserSkill);
         correctUser.setUserSkills(tmpSkills);
 
         when(userService.getUserByAuthId(any())).thenReturn(correctUser);
@@ -227,11 +219,9 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name", is("TestUserName")))
                 .andExpect(jsonPath("$.lastName", is("TestUserLastName")))
                 .andExpect(jsonPath("$.email", is("testuser@gmail.com")))
-                .andExpect(jsonPath("$.userSkills", hasSize(4)))
-                .andExpect(jsonPath("$.userSkills[0].title", is("SkillName1")))
-                .andExpect(jsonPath("$.userSkills[1].title", is("SkillName2")))
-                .andExpect(jsonPath("$.userSkills[2].title", is("SkillName3")))
-                .andExpect(jsonPath("$.userSkills[3].title", is("SkillToAddLater")));
+                .andExpect(jsonPath("$.skills", hasSize(2)))
+                .andExpect(jsonPath("$.skills[0].title", is("Test Skill")))
+                .andExpect(jsonPath("$.skills[1].title", is("SkillToAddLater")));
 
         verify(userService, times(1)).getUserByAuthId(any());
         verify(userService, times(1)).addUserSkill(any(), any());
@@ -243,14 +233,14 @@ public class UserControllerTest {
     @Test
     public void remove_skill_from_user_success() throws Exception {
 
-        String skillJson = mapper.writeValueAsString(new AddSkillRequest(correctUserSkills.get(2)));
+        String skillJson = mapper.writeValueAsString(new RemoveSkillRequest(newlyAddedUserSkill));
 
-        List<UserSkill> tmpSkills = new ArrayList<>(correctUserSkills);
-        tmpSkills.remove(2);
+        List<UserSkill> tmpSkills = correctUser.getUserSkills();
+        tmpSkills.remove(0);
         correctUser.setUserSkills(tmpSkills);
 
         when(userService.getUserByAuthId(any())).thenReturn(correctUser);
-        when(userService.removeUserSkill(any(), any())).thenReturn(correctUserSkills.get(2));
+        when(userService.removeUserSkill(any(), any())).thenReturn(newlyAddedUserSkill);
         when(userService.getUserById(any())).thenReturn(correctUser);
 
         mockMvc.perform(post("/user/skill/remove").header("Authorization", "Bearer")
@@ -260,9 +250,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name", is("TestUserName")))
                 .andExpect(jsonPath("$.lastName", is("TestUserLastName")))
                 .andExpect(jsonPath("$.email", is("testuser@gmail.com")))
-                .andExpect(jsonPath("$.userSkills", hasSize(2)))
-                .andExpect(jsonPath("$.userSkills[0].title", is("SkillName1")))
-                .andExpect(jsonPath("$.userSkills[1].title", is("SkillName2")));
+                .andExpect(jsonPath("$.skills", hasSize(0)));
 
         verify(userService, times(1)).getUserByAuthId(any());
         verify(userService, times(1)).removeUserSkill(any(), any());

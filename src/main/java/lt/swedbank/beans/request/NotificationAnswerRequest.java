@@ -18,19 +18,18 @@ public class NotificationAnswerRequest {
     @ApiModelProperty(required = true, example = "Real expert here. Approved!!")
     private String message;
 
-    @NotNull(message = "Boolean is required!")
+    @NotNull(message = "Required string!")
     @ApiModelProperty(required = true, example = "true")
-    private Boolean isApproved;
+    private String approved;
 
     public NotificationAnswerRequest() {}
 
-
-    public Boolean getApproved() {
-        return isApproved;
+    public String getApproved() {
+        return approved;
     }
 
-    public void setApproved(Boolean approved) {
-        isApproved = approved;
+    public void setApproved(String approved) {
+        this.approved = approved;
     }
 
     public Long getNotificationId() {

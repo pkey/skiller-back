@@ -14,6 +14,8 @@ import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping(value = "/notification")
@@ -32,15 +34,16 @@ public class NotificationController {
 
         String authId = authenticationService.extractAuthIdFromToken(authToken);
         User user = userService.getUserByAuthId(authId);
-        
+
         return notificationService.getRequestNotificationResponse(notificationService.getNotificationsByUserId(user.getId()));
     }
 
     @RequestMapping(value = "/post", method = RequestMethod.POST)
     public @ResponseBody
-    RequestNotificationResponse approveRequest(@RequestHeader(value = "Authorization") String authToken,
-                                               @RequestBody NotificationAnswerRequest notificationAnswerRequest) {
-        if(notificationAnswerRequest.getApproved())
+    RequestNotificationResponse approveRequest(@Valid @RequestBody NotificationAnswerRequest notificationAnswerRequest,
+                                               @RequestHeader(value = "Authorization") String authToken) {
+
+        if(notificationAnswerRequest.getApproved().toLowerCase().equals("true"))
         {
             return new RequestNotificationResponse(notificationService.approveByApprovalRequestId(notificationAnswerRequest));
         }

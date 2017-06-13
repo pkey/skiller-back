@@ -18,7 +18,6 @@ public class AssignTeamRequest {
     public AssignTeamRequest() {
     }
 
-
     public Long getUserId() {
         return userId;
     }

@@ -72,6 +72,7 @@ public class RequestNotificationResponse {
         this.message = requestNotification.getApprovalRequest().getUserSkillLevel().getMotivation();
         this.senderName = user.getName();
         this.senderLastname = user.getLastName();
+        this.skillLevel = requestNotification.getApprovalRequest().getUserSkillLevel().getSkillLevel().getTitle();
     }
 
     public String getMessage() {

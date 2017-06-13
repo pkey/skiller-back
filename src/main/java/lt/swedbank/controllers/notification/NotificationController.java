@@ -8,6 +8,7 @@ import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.NotificationAnswerRequest;
 import lt.swedbank.beans.response.RequestNotificationResponse;
 
+import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.notification.NotificationService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +23,16 @@ public class NotificationController {
     private UserService userService;
     @Autowired
     private NotificationService notificationService;
+    @Autowired
+    private AuthenticationService authenticationService;
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public @ResponseBody
     Iterable<RequestNotificationResponse> getNotificationByAuthId(@RequestHeader(value = "Authorization") String authToken) {
-        User user = userService.getUserByAuthId(authToken);
+
+        String authId = authenticationService.extractAuthIdFromToken(authToken);
+        User user = userService.getUserByAuthId(authId);
+        
         return notificationService.getRequestNotificationResponse(notificationService.getNotificationsByUserId(user.getId()));
     }
 

@@ -90,6 +90,7 @@ public class UserController {
         Long userId = userService.getUserByAuthId(authId).getId();
         userService.assignUserSkillLevel(userId, request);
         User userFromRepository = userService.getUserById(userId);
+        
 
         return new UserEntityResponse(userFromRepository);
     }

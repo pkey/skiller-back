@@ -1,10 +1,7 @@
 package lt.swedbank.services.notification;
 
 import lt.swedbank.beans.entity.ApprovalRequest;
-import lt.swedbank.beans.entity.RequestNotification;
-import lt.swedbank.repositories.ApprovalRepository;
-import lt.swedbank.services.skill.SkillLevelService;
-import lt.swedbank.services.skill.SkillService;
+import lt.swedbank.repositories.ApprovalRequestRepository;
 import lt.swedbank.services.skill.UserSkillLevelService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class ApprovalService {
 
     @Autowired
-    private ApprovalRepository approvalRepository;
+    private ApprovalRequestRepository approvalRequestRepository;
     @Autowired
     private NotificationService notificationService;
     @Autowired
@@ -23,15 +20,15 @@ public class ApprovalService {
     private UserSkillLevelService userSkillLevelService;
 
     public ApprovalRequest approve(Long approvalRequestId, Long approverId) {
-        ApprovalRequest request = approvalRepository.findOne(approvalRequestId);
+        ApprovalRequest request = approvalRequestRepository.findOne(approvalRequestId);
         request.approve();
         request.addApprover(userService.getUserById(approverId));
         if(request.getApproves() >= 5)
         {
             deleteNotifications(request);
-            userSkillLevelService.levelUp(approvalRepository.findOne(approvalRequestId).getUserSkillLevel());
+            userSkillLevelService.levelUp(approvalRequestRepository.findOne(approvalRequestId).getUserSkillLevel());
         }
-        approvalRepository.save(request);
+        approvalRequestRepository.save(request);
         return request;
     }
 
@@ -41,10 +38,10 @@ public class ApprovalService {
 
     public ApprovalRequest disapprove(Long approvalRequestId, Long approverId) {
 
-        ApprovalRequest request = approvalRepository.findOne(approvalRequestId);
+        ApprovalRequest request = approvalRequestRepository.findOne(approvalRequestId);
         request.disapprove();
         request.setDisapprover(userService.getUserById(approverId));
-        approvalRepository.save(request);
+        approvalRequestRepository.save(request);
         return request;
     }
 

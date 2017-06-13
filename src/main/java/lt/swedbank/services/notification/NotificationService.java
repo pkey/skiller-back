@@ -40,17 +40,17 @@ public class NotificationService {
         return requestNotificationResponses;
     }
 
-    public RequestNotification  approveByApprovalRequestId(NotificationAnswerRequest notificationAnswerRequest) {
+    public RequestNotification approveByApprovalRequestId(NotificationAnswerRequest notificationAnswerRequest) {
         RequestNotification request = requestNotificationRepository.findOne(notificationAnswerRequest.getNotificationId());
-        requestNotificationRepository.delete(request);
         approvalService.approve(request.getApprovalRequest().getId(), notificationAnswerRequest.getApproverId());
+        requestNotificationRepository.delete(request);
         return request;
     }
 
     public RequestNotification disapproveByApprovalRequestId(NotificationAnswerRequest notificationAnswerRequest) {
         RequestNotification request = requestNotificationRepository.findOne(notificationAnswerRequest.getNotificationId());
-        requestNotificationRepository.delete(request);
         approvalService.disapprove(request.getApprovalRequest().getId(), notificationAnswerRequest.getApproverId());
+        requestNotificationRepository.delete(request);
         return request;
     }
 

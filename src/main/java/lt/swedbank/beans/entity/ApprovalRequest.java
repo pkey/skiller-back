@@ -11,6 +11,7 @@ public class ApprovalRequest {
     private Long id;
 
     private Integer approves = 0;
+
     private boolean isApproved;
 
     @OneToOne

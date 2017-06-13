@@ -67,11 +67,13 @@ public class RequestNotificationResponse {
     public RequestNotificationResponse(RequestNotification requestNotification)
     {
         User user = requestNotification.getApprovalRequest().getUserSkillLevel().getUserSkill().getUser();
+        UserSkillLevel userSkillLevel = requestNotification.getApprovalRequest().getUserSkillLevel();
         this.id = requestNotification.getId();
-        this.skill = new SkillEntityResponse(requestNotification.getApprovalRequest().getUserSkillLevel().getUserSkill().getSkill());
-        this.message = requestNotification.getApprovalRequest().getUserSkillLevel().getMotivation();
+        this.skill = new SkillEntityResponse(userSkillLevel.getUserSkill().getSkill());
+        this.message = userSkillLevel.getMotivation();
         this.senderName = user.getName();
         this.senderLastname = user.getLastName();
+        this.skillLevel = userSkillLevel.getSkillLevel().getTitle();
     }
 
     public String getMessage() {

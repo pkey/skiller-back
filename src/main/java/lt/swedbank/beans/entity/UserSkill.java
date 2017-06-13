@@ -3,6 +3,7 @@ package lt.swedbank.beans.entity;
 import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
+import java.util.Comparator;
 import java.util.List;
 
 @Entity
@@ -62,7 +63,6 @@ public class UserSkill {
     }
 
     public List<UserSkillLevel> getUserSkillLevels() {
-
         return userSkillLevels;
     }
 
@@ -72,6 +72,22 @@ public class UserSkill {
 
     public void setUserSkillLevel(UserSkillLevel userSkillLevel) {
         this.userSkillLevels.add(userSkillLevel);
+    }
+
+    public UserSkillLevel getCurrentUserSkillLevel() {
+        UserSkillLevel currentUserSkillLevel;
+
+        userSkillLevels.sort(new Comparator<UserSkillLevel>() {
+            @Override
+            public int compare(UserSkillLevel o1, UserSkillLevel o2) {
+                return o2.getValidFrom().compareTo(o1.getValidFrom());
+            }
+        });
+
+
+        currentUserSkillLevel = userSkillLevels.get(0);
+
+        return currentUserSkillLevel;
     }
 
 

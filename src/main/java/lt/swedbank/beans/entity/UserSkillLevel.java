@@ -3,6 +3,7 @@ package lt.swedbank.beans.entity;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class UserSkillLevel {
     private Date validUntil;
 
     @OneToMany(mappedBy = "userSkillLevel")
-    private List<Vote> votes;
+    private List<Vote> votes = new ArrayList<>();
 
     public UserSkillLevel() {
     }

@@ -25,7 +25,7 @@ public class NotificationController {
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public @ResponseBody
-    Iterable<RequestNotificationResponse> getNotificationById(@RequestHeader(value = "Authorization") String authToken) {
+    Iterable<RequestNotificationResponse> getNotificationByAuthId(@RequestHeader(value = "Authorization") String authToken) {
         User user = userService.getUserByAuthId(authToken);
         return notificationService.getRequestNotificationResponse(notificationService.getNotificationsByUserId(user.getId()));
     }

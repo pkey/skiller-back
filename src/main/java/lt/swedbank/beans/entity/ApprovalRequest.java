@@ -12,7 +12,7 @@ public class ApprovalRequest {
 
     private Integer approves = 0;
 
-    private boolean isApproved;
+    private Integer isApproved = 0;
 
     @OneToOne
     private UserSkillLevel userSkillLevel;
@@ -28,9 +28,9 @@ public class ApprovalRequest {
 
     public ApprovalRequest() {}
 
-    public ApprovalRequest(List<RequestNotification> requestNotification)
+    public ApprovalRequest(List<RequestNotification> requestNotifications)
     {
-        this.requestNotifications = requestNotification;
+        this.requestNotifications = requestNotifications;
     }
 
     public List<User> getApprovers() {
@@ -54,11 +54,11 @@ public class ApprovalRequest {
         this.id = id;
     }
 
-    public boolean isApproved() {
+    public Integer isApproved() {
         return isApproved;
     }
 
-    public void setApproved(boolean approved) {
+    public void setApproved(Integer approved) {
         isApproved = approved;
     }
 
@@ -68,14 +68,6 @@ public class ApprovalRequest {
 
     public void setUserSkillLevel(UserSkillLevel userSkillLevel) {
         this.userSkillLevel = userSkillLevel;
-    }
-
-    public List<RequestNotification> getRequestNotification() {
-        return requestNotifications;
-    }
-
-    public void setRequestNotification(List<RequestNotification> requestNotification) {
-        this.requestNotifications = requestNotification;
     }
 
     public Integer getApproves() {
@@ -94,18 +86,30 @@ public class ApprovalRequest {
         this.approves = approves;
     }
 
+    public List<RequestNotification> getRequestNotifications() {
+        return requestNotifications;
+    }
+
+    public void setRequestNotifications(List<RequestNotification> requestNotifications) {
+        this.requestNotifications = requestNotifications;
+    }
+
     public Integer approve()
     {
-        if(isApproved != false)
+        if(isApproved == 0)
         {
             this.approves++;
+            if(approves >= 5)
+            {
+                this.isApproved = 1;
+            }
         }
         return approves;
     }
 
     public Integer disapprove() {
-        if (isApproved != true) {
-            isApproved = false;
+        if (isApproved == 0) {
+            isApproved = -1;
             return 1;
         }
         return -1;

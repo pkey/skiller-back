@@ -6,6 +6,7 @@ import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.NotificationAnswerRequest;
 import lt.swedbank.beans.response.RequestNotificationResponse;
+import lt.swedbank.exceptions.notification.NoSuchNotificationException;
 import lt.swedbank.repositories.RequestNotificationRepository;
 import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.user.UserService;
@@ -40,21 +41,30 @@ public class NotificationService {
         return requestNotificationResponses;
     }
 
-    public RequestNotification approveByApprovalRequestId(NotificationAnswerRequest notificationAnswerRequest) {
-        RequestNotification request = requestNotificationRepository.findOne(notificationAnswerRequest.getNotificationId());
-        approvalService.approve(request.getApprovalRequest().getId(), notificationAnswerRequest.getApproverId());
+    public RequestNotification approveByApprovalRequestId(NotificationAnswerRequest notificationAnswerRequest,Long approversId) {
+        RequestNotification request = getNotificationById(notificationAnswerRequest.getNotificationId());
+        approvalService.approve(notificationAnswerRequest, request.getApprovalRequest().getId(), approversId);
         requestNotificationRepository.delete(request);
         return request;
     }
 
-    public RequestNotification disapproveByApprovalRequestId(NotificationAnswerRequest notificationAnswerRequest) {
-        RequestNotification request = requestNotificationRepository.findOne(notificationAnswerRequest.getNotificationId());
-        approvalService.disapprove(request.getApprovalRequest().getId(), notificationAnswerRequest.getApproverId());
+    public RequestNotification getNotificationById(Long id)
+    {
+        if(requestNotificationRepository.findOne(id) == null)
+        {
+            throw new NoSuchNotificationException();
+        }
+        return requestNotificationRepository.findOne(id);
+    }
+
+    public RequestNotification disapproveByApprovalRequestId(NotificationAnswerRequest notificationAnswerRequest,Long approversId) {
+        RequestNotification request = getNotificationById(notificationAnswerRequest.getNotificationId());
+        approvalService.disapprove(request.getApprovalRequest().getId(), approversId);
         requestNotificationRepository.delete(request);
         return request;
     }
 
     public void deleteNotifications(ApprovalRequest request) {
-        requestNotificationRepository.delete(request.getRequestNotification());
+        requestNotificationRepository.delete(request.getRequestNotifications());
     }
 }

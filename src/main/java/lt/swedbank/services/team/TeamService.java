@@ -19,14 +19,6 @@ public class TeamService {
         return teamRepository.findAll();
     }
 
-    public Iterable<TeamEntityResponse> getTeamEntityResponseList() {
-        List<TeamEntityResponse> responseList = new ArrayList<>();
-        for (Team team : getAllTeams()) {
-            responseList.add(new TeamEntityResponse(team));
-        }
-        return responseList;
-    }
-
     public Team getTeamById(Long id) {
         return teamRepository.findOne(id);
     }

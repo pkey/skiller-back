@@ -53,5 +53,4 @@ test {
 	systemProperty "DB_PASSWORD", System.getProperty("DB_PASSWORD")
 	systemProperty "DB_URL", System.getProperty("DB_URL")
 	systemProperty "HIBERNATE_BEHAVIOR", System.getProperty("HIBERNATE_BEHAVIOR")
-	//TODO Add Audience
 }

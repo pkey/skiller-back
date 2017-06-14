@@ -10,4 +10,5 @@ import java.util.logging.Level;
 @Repository
 public interface UserSkillLevelRepository extends CrudRepository<UserSkillLevel, Level> {
     UserSkillLevel findTopByUserSkillOrderByValidFromDesc(UserSkill userSkill);
+    UserSkillLevel findByUserSkill(UserSkill userSkill);
 }

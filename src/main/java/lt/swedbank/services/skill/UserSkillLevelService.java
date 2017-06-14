@@ -1,5 +1,6 @@
 package lt.swedbank.services.skill;
 
+import lt.swedbank.beans.entity.SkillLevel;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.entity.UserSkillLevel;
@@ -31,9 +32,7 @@ public class UserSkillLevelService {
         }
 
         return userSkillLevel;
-
     }
-
 
 
     public UserSkillLevel addDefaultUserSkillLevel(UserSkill userSkill) {
@@ -47,6 +46,13 @@ public class UserSkillLevelService {
 
         userSkillLevel.setMotivation(assignSkillLevelRequest.getMotivation());
 
+        return userSkillLevelRepository.save(userSkillLevel);
+    }
+
+    public UserSkillLevel levelUp(UserSkillLevel userSkillLevel)
+    {
+        Long oldLevel = userSkillLevel.getSkillLevel().getLevel().longValue();
+        userSkillLevel.setSkillLevel(skillLevelService.getByLevel(oldLevel+1));
         return userSkillLevelRepository.save(userSkillLevel);
     }
 

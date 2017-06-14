@@ -23,6 +23,9 @@ public class UserSkill {
     @OneToMany(mappedBy = "userSkill", orphanRemoval = true)
     private List<UserSkillLevel> userSkillLevels;
 
+    @OneToOne
+    private ApprovalRequest approvalRequest;
+
     public UserSkill() {
     }
 

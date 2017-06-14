@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
-import lt.swedbank.beans.response.serializers.UserSkillsSerializer;
 import lt.swedbank.beans.response.serializers.UserTeamSerializer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -21,8 +21,8 @@ public class UserEntityResponse extends Response implements Comparable<UserEntit
     private String email;
 
 
-    @JsonSerialize(using = UserSkillsSerializer.class)
-    private List<UserSkill> userSkills;
+    private List<UserSkillResponse> skills;
+
 
     @JsonSerialize(using = UserTeamSerializer.class)
     private Team team;
@@ -33,7 +33,9 @@ public class UserEntityResponse extends Response implements Comparable<UserEntit
         name = user.getName();
         lastName = user.getLastName();
         email = user.getEmail();
-        userSkills = user.getUserSkills();
+
+        setSkills(user.getUserSkills());
+
         team = user.getTeam();
     }
 
@@ -69,13 +71,22 @@ public class UserEntityResponse extends Response implements Comparable<UserEntit
         this.email = email;
     }
 
-    public List<UserSkill> getUserSkills() {
-        return userSkills;
+    public List<UserSkillResponse> getSkills() {
+        return skills;
     }
 
-    public void setUserSkills(List<UserSkill> userSkills) {
-        this.userSkills = userSkills;
+    public void setSkills(List<UserSkill> skills) {
+
+        List<UserSkillResponse> userSkills = new ArrayList<>();
+
+        for (UserSkill userSkill : skills
+                ) {
+            userSkills.add(new UserSkillResponse(userSkill));
+        }
+
+        this.skills = userSkills;
     }
+
 
     public Team getTeam() {
         return team;
@@ -94,3 +105,4 @@ public class UserEntityResponse extends Response implements Comparable<UserEntit
         return userEntityResponse.getFullname().compareToIgnoreCase(userEntityResponse.getFullname());
     }
 }
+

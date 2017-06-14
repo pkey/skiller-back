@@ -201,8 +201,7 @@ public class UserControllerTest {
         whenNew(UserEntityResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
 
         when(userService.getUserByAuthId(any())).thenReturn(testUser);
-        when(userService.removeUserSkill(any(), any())).thenReturn(newlyAddedUserSkill);
-        when(userService.getUserById(any())).thenReturn(testUser);
+        when(userService.removeUserSkill(any(), any())).thenReturn(testUser);
 
         mockMvc.perform(post("/user/skill/remove").header("Authorization", "Bearer")
                 .contentType(contentType)
@@ -215,7 +214,6 @@ public class UserControllerTest {
 
         verify(userService, times(1)).getUserByAuthId(any());
         verify(userService, times(1)).removeUserSkill(any(), any());
-        verify(userService, times(1)).getUserById(any());
 
     }
 }

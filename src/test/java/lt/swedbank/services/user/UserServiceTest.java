@@ -146,8 +146,8 @@ public class UserServiceTest {
         Mockito.when(userSkillService.removeUserSkill(any(), any())).thenReturn(testUserSkill);
         doReturn(testUser).when(userService).getUserById(any());
 
-        UserSkill newUserSkill = userService.removeUserSkill(anyLong(), any());
-        assertEquals(newUserSkill, testUserSkill);
+        User resultUser = userService.removeUserSkill(anyLong(), any());
+        assertEquals(testUser, resultUser);
 
         verify(userService, times(1)).getUserById(testUser.getId());
         verify(userSkillService, times(1)).removeUserSkill(any(), any());

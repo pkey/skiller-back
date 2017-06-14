@@ -17,9 +17,9 @@ public class RequestNotification  {
 
     public RequestNotification() {}
 
-    public RequestNotification(User sender, ApprovalRequest approvalRequest)
+    public RequestNotification(User receiver, ApprovalRequest approvalRequest)
     {
-        this.receiver = sender;
+        this.receiver = receiver;
         this.approvalRequest = approvalRequest;
     }
 

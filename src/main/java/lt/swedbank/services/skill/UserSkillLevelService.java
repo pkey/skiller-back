@@ -1,7 +1,6 @@
 package lt.swedbank.services.skill;
 
 import lt.swedbank.beans.entity.SkillLevel;
-import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.entity.UserSkillLevel;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
@@ -10,8 +9,8 @@ import lt.swedbank.repositories.UserSkillLevelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class UserSkillLevelService {
@@ -34,7 +33,6 @@ public class UserSkillLevelService {
         return userSkillLevel;
     }
 
-
     public UserSkillLevel addDefaultUserSkillLevel(UserSkill userSkill) {
         UserSkillLevel userSkillLevel = new UserSkillLevel(userSkill, skillLevelService.getDefault());
         return userSkillLevelRepository.save(userSkillLevel);
@@ -49,14 +47,26 @@ public class UserSkillLevelService {
         return userSkillLevelRepository.save(userSkillLevel);
     }
 
-    public UserSkillLevel levelUp(UserSkillLevel userSkillLevel)
-    {
+    public UserSkillLevel levelUp(UserSkillLevel userSkillLevel) {
         Long oldLevel = userSkillLevel.getSkillLevel().getLevel().longValue();
-        userSkillLevel.setSkillLevel(skillLevelService.getByLevel(oldLevel+1));
+        userSkillLevel.setSkillLevel(skillLevelService.getByLevel(oldLevel + 1));
         return userSkillLevelRepository.save(userSkillLevel);
     }
 
+    public Iterable<UserSkillLevel> getAllBySkillLevel(SkillLevel skillLevel) {
+        return userSkillLevelRepository.findAllBySkillLevel(skillLevel);
+    }
 
+    public Set<UserSkillLevel> getAllUserSkillLevelsSetBySkillLevels(Iterable<SkillLevel> skillLevels) {
+        Set<UserSkillLevel> userSkillLevels = new HashSet<>();
+        for (SkillLevel skillLevel : skillLevels) {
+            Iterable<UserSkillLevel> oneLevelSkillLevels = getAllBySkillLevel(skillLevel);
+
+            oneLevelSkillLevels.forEach(userSkillLevels::add);
+        }
+
+        return userSkillLevels;
+    }
 }
 
 

@@ -15,7 +15,7 @@ public class ApprovalRequest {
     private boolean isApproved;
 
     @OneToOne
-    private UserSkillLevel userSkillLevel;
+    private UserSkillLevel userSkillLevel;//skill level ir user skill -> userSkillLevel. UserSkill gausiu pagal useri
 
     @OneToMany
     private List<User> approvers;
@@ -25,6 +25,8 @@ public class ApprovalRequest {
 
     @OneToMany
     private List<RequestNotification> requestNotifications;
+
+    private String motivation;
 
     public ApprovalRequest() {}
 
@@ -92,6 +94,14 @@ public class ApprovalRequest {
 
     public void setApproves(Integer approves) {
         this.approves = approves;
+    }
+
+    public String getMotivation() {
+        return motivation;
+    }
+
+    public void setMotivation(String motivation) {
+        this.motivation = motivation;
     }
 
     public Integer approve()

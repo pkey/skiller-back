@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class NotificationService {
@@ -52,6 +53,11 @@ public class NotificationService {
         requestNotificationRepository.delete(request);
         approvalService.disapprove(request.getApprovalRequest().getId(), notificationAnswerRequest.getApproverId());
         return request;
+    }
+
+    //TODO should return something to know that notifications were saved successfully
+    public void addNotifications(Iterable<RequestNotification> notificationsList) {
+        requestNotificationRepository.save(notificationsList);
     }
 
     public void deleteNotifications(ApprovalRequest request) {

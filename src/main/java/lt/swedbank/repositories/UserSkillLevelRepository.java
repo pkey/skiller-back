@@ -1,5 +1,6 @@
 package lt.swedbank.repositories;
 
+import lt.swedbank.beans.entity.SkillLevel;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.entity.UserSkillLevel;
 import org.springframework.data.repository.CrudRepository;
@@ -10,5 +11,5 @@ import java.util.logging.Level;
 @Repository
 public interface UserSkillLevelRepository extends CrudRepository<UserSkillLevel, Level> {
     UserSkillLevel findTopByUserSkillOrderByValidFromDesc(UserSkill userSkill);
-    UserSkillLevel findByUserSkill(UserSkill userSkill);
+    Iterable<UserSkillLevel> findAllBySkillLevel(SkillLevel skillLevel);
 }

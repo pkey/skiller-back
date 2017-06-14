@@ -76,10 +76,8 @@ public class UserController {
                                             @RequestHeader(value = "Authorization") String authToken) {
         String authId = authService.extractAuthIdFromToken(authToken);
         Long userId = userService.getUserByAuthId(authId).getId();
-        userService.removeUserSkill(userId, removeSkillRequest);
-        User userFromRepository = userService.getUserById(userId);
 
-        return new UserEntityResponse(userFromRepository);
+        return new UserEntityResponse(userService.removeUserSkill(userId, removeSkillRequest));
     }
 
     @RequestMapping(value = "/skill/level", method = RequestMethod.POST)

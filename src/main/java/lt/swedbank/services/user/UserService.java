@@ -89,12 +89,19 @@ public class UserService {
         return user;
     }
 
-    public UserSkill removeUserSkill(Long userid, RemoveSkillRequest removeSkillRequest) throws UserNotFoundException {
-        if (getUserById(userid) == null) {
+    public User removeUserSkill(Long userid, RemoveSkillRequest removeSkillRequest) throws UserNotFoundException {
+        User user = getUserById(userid);
+
+        if (user == null) {
             throw new UserNotFoundException();
         }
 
-        return userSkillService.removeUserSkill(userid, removeSkillRequest);
+        List<UserSkill> userSkills = user.getUserSkills();
+        userSkills.remove(userSkillService.removeUserSkill(userid, removeSkillRequest));
+
+        user.setUserSkills(userSkills);
+
+        return user;
     }
 
     public UserSkill assignUserSkillLevel(Long userid, AssignSkillLevelRequest request) throws UserNotFoundException {

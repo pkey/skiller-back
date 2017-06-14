@@ -8,6 +8,7 @@ import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
+import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.user.UserService;
 import org.junit.After;
@@ -18,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.lang.UsesSunHttpServer;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -52,6 +54,7 @@ public class UserControllerTest {
     private UserSkill newlyAddedUserSkill;
     private List<UserEntityResponse> testUserEntityResponseList;
     private UserEntityResponse testUserEntityResponse;
+    private List<User> testUsers;
 
     @InjectMocks
     private UserController userController;
@@ -74,14 +77,10 @@ public class UserControllerTest {
 
         mapper = new ObjectMapper();
 
-        testUser = new User();
-        testUser.setId(Integer.toUnsignedLong(0));
-        testUser.setName("TestUserName");
-        testUser.setLastName("TestUserLastName");
-        testUser.setPassword("TestUserPassword");
-        testUser.setEmail("testuser@gmail.com");
-        testUser.setUserSkills(new ArrayList<>());
+        testUsers = TestHelper.fetchUsers(5);
 
+
+        testUser = testUsers.get(0);
 
         testUserEntityResponse = new UserEntityResponse(testUser);
 
@@ -120,24 +119,26 @@ public class UserControllerTest {
     }
 
     @Test
-    public void get_users_success() throws Exception {
+    public void get_colleagues_success() throws Exception {
+        List<User> colleagues = testUsers;
 
+        colleagues.remove(testUser);
 
-        when(userService.getUserEntityResponseList()).thenReturn(testUserEntityResponseList);
+        when(userService.getColleagues(testUser.getId())).thenReturn(colleagues);
+        when(userService.getUserByAuthId(any())).thenReturn(testUser);
 
         mockMvc.perform(get("/user/all")
                 .header("Authorization", "Bearer")
                 .contentType(contentType))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$", hasSize(4)))
 
                 .andExpect(jsonPath("$[0].name", is("TestUserName")))
                 .andExpect(jsonPath("$[0].lastName", is("TestUserLastName")))
                 .andExpect(jsonPath("$[0].email", is("testuser@gmail.com")))
                 .andExpect(jsonPath("$[0].skills", hasSize(0)));
 
-        verify(userService, times(1)).getUserEntityResponseList();
-        verifyNoMoreInteractions(userService);
+        verify(userService, times(1)).getColleagues(testUser.getId());
     }
 
     @Test

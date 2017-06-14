@@ -37,16 +37,6 @@ public class UserService {
         return user;
     }
 
-    public User getUserByEmail(String email) throws UserNotFoundException {
-        User user = userRepository.findByEmail(email);
-
-        if (user == null) {
-            throw new UserNotFoundException();
-        }
-
-        return userRepository.findByEmail(email);
-    }
-
     public User getUserByAuthId(String authId) throws UserNotFoundException {
         User user = userRepository.findByAuthId(authId);
 
@@ -56,25 +46,12 @@ public class UserService {
         return user;
     }
 
-    public Iterable<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    public Iterable<User> getSortedUsers() {
-        return userRepository.findAllByOrderByNameAscLastNameAsc();
+    public Iterable<User> getColleagues(Long userId){
+         return userRepository.findAllByIdIsNotOrderByNameAscLastNameAsc(userId);
     }
 
     public UserEntityResponse getUserProfile(Long id) {
         return new UserEntityResponse(getUserById(id));
-    }
-
-    public Iterable<UserEntityResponse> getUserEntityResponseList() {
-        List<UserEntityResponse> userList = new ArrayList<>();
-        for (User user : getSortedUsers()
-                ) {
-            userList.add(new UserEntityResponse(user));
-        }
-        return userList;
     }
 
     public User addUserSkill(Long userId, AddSkillRequest addSkillRequest) throws UserNotFoundException {

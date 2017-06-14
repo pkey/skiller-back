@@ -87,19 +87,6 @@ public class UserServiceTest {
     }
 
 
-    @Test(expected = UserNotFoundException.class)
-    public void throws_use_does_not_exist_error() throws Exception {
-        Mockito.when(userRepository.findByEmail(any())).thenReturn(null);
-        User resultUser = userService.getUserByEmail("something");
-    }
-
-
-    @Test
-    public void getUserByEmail() throws Exception {
-        Mockito.when(userRepository.findByEmail(any())).thenReturn(testUser);
-        User resultUser = userService.getUserByEmail("something");
-        assertEquals(testUser.getEmail(), resultUser.getEmail());
-    }
 
     @Test(expected = UserNotFoundException.class)
     public void assignUserSkillLevelExceptionTest() {
@@ -160,17 +147,6 @@ public class UserServiceTest {
         userService.removeUserSkill(any(), any());
     }
 
-
-    @Test
-    public void getUserEntityResponseList() {
-
-        Mockito.when(userService.getSortedUsers()).thenReturn(testUserList);
-        ArrayList<UserEntityResponse> resultList = new ArrayList<>();
-        resultList.add(new UserEntityResponse(testUser));
-        ArrayList<UserEntityResponse> testList = (ArrayList<UserEntityResponse>) userService.getUserEntityResponseList();
-        assertEquals(testList.get(0).getEmail(), resultList.get(0).getEmail());
-    }
-
     @Test
     public void set_team_to_user_success() {
         Mockito.when(teamService.getTeamById(any())).thenReturn(testTeam);
@@ -211,20 +187,6 @@ public class UserServiceTest {
         Mockito.when(userRepository.findOne(any())).thenReturn(null);
 
         userService.getUserById(any());
-    }
-
-    @Test
-    public void getSortedUsersTest() {
-        Mockito.when(userRepository.findAllByOrderByNameAscLastNameAsc()).thenReturn(testUserList);
-
-        assertEquals(testUserList, userService.getSortedUsers());
-    }
-
-    @Test
-    public void getAllUsersTest() {
-        Mockito.when(userService.getAllUsers()).thenReturn(testUserList);
-
-        assertEquals(testUserList, userService.getAllUsers());
     }
 
 }

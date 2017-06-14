@@ -47,13 +47,14 @@ public class UserController {
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public @ResponseBody
     List<UserEntityResponse> getAllUsers(@RequestHeader(value = "Authorization") String authToken) {
-        return (List<UserEntityResponse>) userService.getUserEntityResponseList();
+        String authId = authService.extractAuthIdFromToken(authToken);
+        Long userId = userService.getUserByAuthId(authId).getId();
+        return convertToUserEntityResponseList(userService.getColleagues(userId));
     }
 
     @RequestMapping("/search")
     public List<UserEntityResponse> searchUsers(String q) {
-
-        return sortUserEntityResponse(convertUserSetToUserResponseList(userSearch.search(q)));
+        return sortUserEntityResponse(convertToUserEntityResponseList(userSearch.search(q)));
     }
 
 
@@ -111,12 +112,21 @@ public class UserController {
     }
 
 
-    private List<UserEntityResponse> convertUserSetToUserResponseList(Set<User> userList) {
+    private List<UserEntityResponse> convertToUserEntityResponseList(Set<User> userList) {
         List<UserEntityResponse> responseList = new ArrayList<>();
         for (User user : userList) {
             responseList.add(new UserEntityResponse(user));
         }
         return responseList;
+    }
+
+    private List<UserEntityResponse> convertToUserEntityResponseList(Iterable<User> users) {
+        List<UserEntityResponse> userList = new ArrayList<>();
+        for (User user : users
+                ) {
+            userList.add(new UserEntityResponse(user));
+        }
+        return userList;
     }
 
     private List sortUserEntityResponse(List userEntityResponseList) {

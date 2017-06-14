@@ -12,4 +12,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
     User findByAuthId(String authId);
 
     Iterable<User> findAllByOrderByNameAscLastNameAsc();
+
+    Iterable<User> findAllByIdIsNotOrderByNameAscLastNameAsc(Long id);
 }

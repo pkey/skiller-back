@@ -2,14 +2,20 @@ package lt.swedbank.controllers.notification;
 
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.NotificationAnswerRequest;
 import lt.swedbank.beans.response.RequestNotificationResponse;
 
+import lt.swedbank.repositories.ApprovalRequestRepository;
+import lt.swedbank.repositories.RequestNotificationRepository;
+import lt.swedbank.repositories.UserSkillRepository;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.notification.NotificationService;
+import lt.swedbank.services.skill.UserSkillLevelService;
+import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +37,6 @@ public class NotificationController {
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public @ResponseBody
     Iterable<RequestNotificationResponse> getNotificationByAuthId(@RequestHeader(value = "Authorization") String authToken) {
-
         String authId = authenticationService.extractAuthIdFromToken(authToken);
         User user = userService.getUserByAuthId(authId);
 
@@ -42,12 +47,41 @@ public class NotificationController {
     public @ResponseBody
     RequestNotificationResponse approveRequest(@Valid @RequestBody NotificationAnswerRequest notificationAnswerRequest,
                                                @RequestHeader(value = "Authorization") String authToken) {
-
-        if(notificationAnswerRequest.getApproved().toLowerCase().equals("true"))
+        User approver = userService.getUserByAuthId(authenticationService.extractAuthIdFromToken(authToken));
+        if(notificationAnswerRequest.getApproved() == 1)
         {
-            return new RequestNotificationResponse(notificationService.approveByApprovalRequestId(notificationAnswerRequest));
+            return new RequestNotificationResponse(notificationService.approveByApprovalRequestId(notificationAnswerRequest, approver.getId()));
         }
-        return new RequestNotificationResponse(notificationService.disapproveByApprovalRequestId(notificationAnswerRequest));
+        return new RequestNotificationResponse(notificationService.disapproveByApprovalRequestId(notificationAnswerRequest, approver.getId()));
+    }
+
+    @Autowired
+    private RequestNotificationRepository requestNotificationRepository;
+    @Autowired
+    private ApprovalRequestRepository approvalRequestRepository;
+    @Autowired
+    private UserSkillRepository userSkillRepository;
+
+
+    @RequestMapping(value = "/add/{userid}/{userskillid}/{levelid}", method = RequestMethod.POST )
+    public @ResponseBody
+    String addRequest(@PathVariable Long userid, @PathVariable Long userskillid, @PathVariable Integer levelid)
+    {
+        RequestNotification requestNotification = new RequestNotification();
+        List<RequestNotification> list = new LinkedList<>();
+        list.add(requestNotification);
+
+        requestNotification.setReceiver(userService.getUserById(userid));
+        requestNotificationRepository.save(requestNotification);
+
+
+        ApprovalRequest approvalRequest= new ApprovalRequest(list);
+        approvalRequest.setUserSkillLevel(userSkillRepository.findOne(userskillid).getUserSkillLevels().get(levelid));
+        approvalRequestRepository.save(approvalRequest);
+
+        requestNotification.setApprovalRequest(approvalRequest);
+        requestNotificationRepository.save(requestNotification);
+        return "success";
     }
 }
 

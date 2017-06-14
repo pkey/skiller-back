@@ -40,9 +40,6 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true)
     private List<UserSkill> userSkills;
 
-    @OneToMany
-    private List<RequestNotification> requestNotifications;
-
     @ManyToOne
     private Team team;
 
@@ -139,13 +136,7 @@ public class User {
     public void setTeam(Team team) {
         this.team = team;
     }
-    public List<RequestNotification> getRequestNotifications() {
-        return requestNotifications;
-    }
 
-    public void setRequestNotifications(List<RequestNotification> requestNotifications) {
-        this.requestNotifications = requestNotifications;
-    }
     private void capitalizeUserNameAndLastName() {
         this.setName(name.substring(0, 1).toUpperCase() + name.substring(1));
         this.setLastName(lastName.substring(0, 1).toUpperCase() + lastName.substring(1));

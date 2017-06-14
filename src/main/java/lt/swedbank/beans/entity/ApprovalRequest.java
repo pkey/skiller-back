@@ -15,15 +15,15 @@ public class ApprovalRequest {
     private boolean isApproved;
 
     @OneToOne
-    private UserSkillLevel userSkillLevel;//skill level ir user skill -> userSkillLevel. UserSkill gausiu pagal useri
+    private UserSkillLevel userSkillLevel;
 
-    @OneToMany
+    @OneToMany(cascade = {CascadeType.ALL})
     private List<User> approvers;
 
     @OneToOne
     private User disapprover;
 
-    @OneToMany
+    @OneToMany(cascade = {CascadeType.ALL})
     private List<RequestNotification> requestNotifications;
 
     private String motivation;
@@ -72,7 +72,7 @@ public class ApprovalRequest {
         this.userSkillLevel = userSkillLevel;
     }
 
-    public List<RequestNotification> getRequestNotification() {
+    public List<RequestNotification> getRequestNotifications() {
         return requestNotifications;
     }
 

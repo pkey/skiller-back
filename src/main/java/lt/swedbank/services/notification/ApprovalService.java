@@ -29,17 +29,15 @@ public class ApprovalService {
     @Autowired
     private UserSkillLevelService userSkillLevelService;
 
-    public ApprovalRequest createAndSaveSkillLevelApprovalRequest(Long userId, AssignSkillLevelRequest request) {
+    public ApprovalRequest createSkillLevelApprovalRequest(Long userId, AssignSkillLevelRequest assignSkillLevelRequest) {
 
         ApprovalRequest approvalRequest = new ApprovalRequest();
-        //Gaunu userSkillLevel.user pagal skill id
-        //pagal level id gausiu skill level
-        UserSkillLevel userSkillLevel = userSkillLevelService.getCurrentUserSkillLevelByUserIdAndSkillId(userId, request.getSkillId());
+        UserSkillLevel userSkillLevel = userSkillLevelService.getCurrentUserSkillLevelByUserIdAndSkillId(userId, assignSkillLevelRequest.getSkillId());
 
         approvalRequest.setUserSkillLevel(userSkillLevel);
-        approvalRequest.setMotivation(request.getMotivation());
+        approvalRequest.setMotivation(assignSkillLevelRequest.getMotivation());
 
-        Iterable<SkillLevel> skillLevels = skillLevelService.getAllByLevelGreaterThan(request.getLevelId());
+        Iterable<SkillLevel> skillLevels = skillLevelService.getAllByLevelGreaterThan(assignSkillLevelRequest.getLevelId());
         Iterable<UserSkillLevel> userSkillLevels = userSkillLevelService.getAllUserSkillLevelsSetBySkillLevels(skillLevels);
 
         List<User> usersToBeNotified = new ArrayList<>();
@@ -51,10 +49,11 @@ public class ApprovalService {
         for (User user : usersToBeNotified) {
             notifications.add(new RequestNotification(user, approvalRequest));
         }
-        notificationService.addNotifications(notifications);
-        approvalRequest.setRequestNotification(notifications);
 
+        approvalRequest.setRequestNotification(notifications);
         approvalRequestRepository.save(approvalRequest);
+        //TODO ask about a way how to persist notifications since the approvalRequest has cascade type all strategy for notifications that this request stores
+        //notificationService.addNotifications(approvalRequest);
         return approvalRequest;
     }
 

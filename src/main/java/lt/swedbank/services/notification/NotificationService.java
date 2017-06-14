@@ -2,8 +2,6 @@ package lt.swedbank.services.notification;
 
 import lt.swedbank.beans.entity.ApprovalRequest;
 import lt.swedbank.beans.entity.RequestNotification;
-import lt.swedbank.beans.entity.User;
-import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.NotificationAnswerRequest;
 import lt.swedbank.beans.response.RequestNotificationResponse;
 import lt.swedbank.repositories.RequestNotificationRepository;
@@ -13,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class NotificationService {
@@ -56,11 +53,11 @@ public class NotificationService {
     }
 
     //TODO should return something to know that notifications were saved successfully
-    public void addNotifications(Iterable<RequestNotification> notificationsList) {
-        requestNotificationRepository.save(notificationsList);
+    public void addNotifications(ApprovalRequest request) {
+        requestNotificationRepository.save(request.getRequestNotifications());
     }
 
     public void deleteNotifications(ApprovalRequest request) {
-        requestNotificationRepository.delete(request.getRequestNotification());
+        requestNotificationRepository.delete(request.getRequestNotifications());
     }
 }

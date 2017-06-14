@@ -93,8 +93,7 @@ public class UserController {
         Long userId = userService.getUserByAuthId(authId).getId();
         //userService.assignUserSkillLevel(userId, request);
         User userFromRepository = userService.getUserById(userId);
-
-        approvalService.createAndSaveSkillLevelApprovalRequest(userId, request);
+        approvalService.createSkillLevelApprovalRequest(userId, request);
 
         return new UserEntityResponse(userFromRepository);
     }

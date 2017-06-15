@@ -5,19 +5,24 @@ import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.exceptions.user.UserNotFoundException;
+import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.repositories.UserRepository;
+import lt.swedbank.repositories.search.UserSearchRepository;
 import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.team.TeamService;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -30,7 +35,8 @@ public class UserServiceTest {
     private Skill testSkill;
     private UserSkillLevel testUserSkillLevel;
     private AddSkillRequest testAddSkillRequest;
-    private ArrayList<User> testUserList;
+
+    private List<User> testUserList;
 
     private User testUser;
 
@@ -47,6 +53,9 @@ public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private UserSearchRepository userSearchRepository;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
@@ -54,13 +63,11 @@ public class UserServiceTest {
         Long userID = Long.parseLong("0");
         Long teamID = Long.parseLong("1");
 
-        testUser = new User();
-        testUser.setId(Long.parseLong("0"));
-        testUser.setName("TestUserName");
-        testUser.setLastName("TestUserLastName");
-        testUser.setPassword("TestUserPassword");
-        testUser.setEmail("testuser@gmail.com");
-        testUser.setUserSkills(new ArrayList<>());
+
+
+        testUserList = TestHelper.fetchUsers(10);
+
+        testUser = testUserList.get(0);
 
         testUserSkill = new UserSkill();
         testUserSkill.setId(Integer.toUnsignedLong(0));
@@ -77,8 +84,6 @@ public class UserServiceTest {
         testAssignTeamRequest.setTeamId(teamID);
         testAssignTeamRequest.setUserId(userID);
 
-        testUserList = new ArrayList<User>();
-        testUserList.add(testUser);
 
     }
 
@@ -87,19 +92,6 @@ public class UserServiceTest {
     }
 
 
-    @Test(expected = UserNotFoundException.class)
-    public void throws_use_does_not_exist_error() throws Exception {
-        Mockito.when(userRepository.findByEmail(any())).thenReturn(null);
-        User resultUser = userService.getUserByEmail("something");
-    }
-
-
-    @Test
-    public void getUserByEmail() throws Exception {
-        Mockito.when(userRepository.findByEmail(any())).thenReturn(testUser);
-        User resultUser = userService.getUserByEmail("something");
-        assertEquals(testUser.getEmail(), resultUser.getEmail());
-    }
 
     @Test(expected = UserNotFoundException.class)
     public void assignUserSkillLevelExceptionTest() {
@@ -160,17 +152,6 @@ public class UserServiceTest {
         userService.removeUserSkill(any(), any());
     }
 
-
-    @Test
-    public void getUserEntityResponseList() {
-
-        Mockito.when(userService.getSortedUsers()).thenReturn(testUserList);
-        ArrayList<UserEntityResponse> resultList = new ArrayList<>();
-        resultList.add(new UserEntityResponse(testUser));
-        ArrayList<UserEntityResponse> testList = (ArrayList<UserEntityResponse>) userService.getUserEntityResponseList();
-        assertEquals(testList.get(0).getEmail(), resultList.get(0).getEmail());
-    }
-
     @Test
     public void set_team_to_user_success() {
         Mockito.when(teamService.getTeamById(any())).thenReturn(testTeam);
@@ -214,17 +195,45 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getSortedUsersTest() {
-        Mockito.when(userRepository.findAllByOrderByNameAscLastNameAsc()).thenReturn(testUserList);
+    public void searchUsers() throws Exception {
 
-        assertEquals(testUserList, userService.getSortedUsers());
+        Mockito.when(userSearchRepository.search(anyString())).thenReturn(new HashSet<>(testUserList));
+
+        List<User> resultList = userService.searchUsers("");
+
+        Assert.assertEquals(testUserList.size(), resultList.size());
+
+        for (int i = 0; i < testUserList.size() - 1; i++) {
+            assertNotEquals(1, compareNames(testUserList.get(i), resultList.get(i+1)));
+
+            if(compareNames(testUserList.get(i), resultList.get(i+1)) == 0){
+                assertNotEquals(1, compareLastNames(testUserList.get(i), resultList.get(i+1) ));
+            }
+
+        }
+
     }
 
     @Test
-    public void getAllUsersTest() {
-        Mockito.when(userService.getAllUsers()).thenReturn(testUserList);
+    public void searchColleagues() throws Exception {
 
-        assertEquals(testUserList, userService.getAllUsers());
+        Mockito.when(userRepository.findOne(testUser.getId())).thenReturn(testUser);
+
+        Mockito.when(userSearchRepository.search(anyString())).thenReturn(new HashSet<>(testUserList));
+
+        List<User> resultList = userService.searchColleagues(testUser.getId(), "");
+
+        Assert.assertEquals(testUserList.size() - 1, resultList.size());
+
+
+    }
+
+    private int compareNames(User actualUser, User resultUser) {
+        return actualUser.getName().compareTo(resultUser.getName());
+    }
+
+    private int compareLastNames(User actualUser, User resultUser) {
+        return actualUser.getLastName().compareTo(resultUser.getLastName());
     }
 
 }

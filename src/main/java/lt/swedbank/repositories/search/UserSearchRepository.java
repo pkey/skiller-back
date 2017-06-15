@@ -19,7 +19,7 @@ import java.util.Set;
 
 @Repository
 @SuppressWarnings("unchecked")
-public class UserSearch {
+public class UserSearchRepository {
 
     @PersistenceContext
     private EntityManager entityManager;

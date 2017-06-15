@@ -41,8 +41,13 @@ public class ApprovalService {
         Iterable<UserSkillLevel> userSkillLevels = userSkillLevelService.getAllUserSkillLevelsSetBySkillLevels(skillLevels);
 
         List<User> usersToBeNotified = new ArrayList<>();
+        Long skillFromRequestId = approvalRequest.getUserSkillLevel().getUserSkill().getSkill().getId();
         for (UserSkillLevel u : userSkillLevels) {
-            usersToBeNotified.add(u.getUserSkill().getUser());
+
+            Long skillId = u.getUserSkill().getSkill().getId();
+            if(skillId.equals(skillFromRequestId)) {
+                usersToBeNotified.add(u.getUserSkill().getUser());
+            }
         }
 
         List<RequestNotification> notifications = new ArrayList<>();
@@ -52,7 +57,7 @@ public class ApprovalService {
 
         approvalRequest.setRequestNotification(notifications);
         approvalRequestRepository.save(approvalRequest);
-        //TODO ask about a way how to persist notifications since the approvalRequest has cascade type all strategy for notifications that this request stores
+        //TODO ask about a way how to persist notifications since the approvalRequest has "cascade type all" strategy for notifications that this request stores
         //notificationService.addNotifications(approvalRequest);
         return approvalRequest;
     }

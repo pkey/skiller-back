@@ -19,7 +19,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.lang.UsesSunHttpServer;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -108,9 +107,9 @@ public class UserControllerTest {
                 .header("Authorization", "Bearer")
                 .contentType(contentType))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is("TestUserName")))
-                .andExpect(jsonPath("$.lastName", is("TestUserLastName")))
-                .andExpect(jsonPath("$.email", is("testuser@gmail.com")))
+                .andExpect(jsonPath("$.name", is(testUser.getName())))
+                .andExpect(jsonPath("$.lastName", is(testUser.getLastName())))
+                .andExpect(jsonPath("$.email", is(testUser.getEmail())))
                 .andExpect(jsonPath("$.skills", hasSize(0)));
 
 
@@ -131,11 +130,7 @@ public class UserControllerTest {
                 .header("Authorization", "Bearer")
                 .contentType(contentType))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(4)))
-
-                .andExpect(jsonPath("$[0].name", is("TestUserName")))
-                .andExpect(jsonPath("$[0].lastName", is("TestUserLastName")))
-                .andExpect(jsonPath("$[0].email", is("testuser@gmail.com")))
+                .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].skills", hasSize(0)));
 
         verify(userService, times(1)).getColleagues(testUser.getId());
@@ -155,9 +150,9 @@ public class UserControllerTest {
                 .header("Authorization", "Bearer")
                 .contentType(contentType))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is("TestUserName")))
-                .andExpect(jsonPath("$.lastName", is("TestUserLastName")))
-                .andExpect(jsonPath("$.email", is("testuser@gmail.com")))
+                .andExpect(jsonPath("$.name", is(testUser.getName())))
+                .andExpect(jsonPath("$.lastName", is(testUser.getLastName())))
+                .andExpect(jsonPath("$.email", is(testUser.getEmail())))
                 .andExpect(jsonPath("$.skills", hasSize(0)));
 
         verify(userService, times(1)).getUserByAuthId(any());
@@ -181,9 +176,9 @@ public class UserControllerTest {
                 .contentType(contentType)
                 .content(skillJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is("TestUserName")))
-                .andExpect(jsonPath("$.lastName", is("TestUserLastName")))
-                .andExpect(jsonPath("$.email", is("testuser@gmail.com")))
+                .andExpect(jsonPath("$.name", is(testUser.getName())))
+                .andExpect(jsonPath("$.lastName", is(testUser.getLastName())))
+                .andExpect(jsonPath("$.email", is(testUser.getEmail())))
                 .andExpect(jsonPath("$.skills", hasSize(0)));
 
         verify(userService, times(1)).getUserByAuthId(any());
@@ -208,9 +203,9 @@ public class UserControllerTest {
                 .contentType(contentType)
                 .content(skillJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is("TestUserName")))
-                .andExpect(jsonPath("$.lastName", is("TestUserLastName")))
-                .andExpect(jsonPath("$.email", is("testuser@gmail.com")))
+                .andExpect(jsonPath("$.name", is(testUser.getName())))
+                .andExpect(jsonPath("$.lastName", is(testUser.getLastName())))
+                .andExpect(jsonPath("$.email", is(testUser.getEmail())))
                 .andExpect(jsonPath("$.skills", hasSize(0)));
 
         verify(userService, times(1)).getUserByAuthId(any());

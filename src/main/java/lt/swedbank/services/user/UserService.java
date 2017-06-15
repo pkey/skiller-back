@@ -2,7 +2,6 @@ package lt.swedbank.services.user;
 
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
-import lt.swedbank.beans.entity.UserSkillLevel;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
@@ -16,7 +15,9 @@ import lt.swedbank.services.team.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 
 @Service
@@ -53,10 +54,20 @@ public class UserService {
          return userRepository.findAllByIdIsNotOrderByNameAscLastNameAsc(userId);
     }
 
-    public List<User> searchUsersByQuery(String query){
+    public List<User> searchColleagues(Long userId, String query) {
+        List<User> userList = this.searchUsers(query);
+
+        userList.remove(getUserById(userId));
+
+        return userList;
+    }
+
+    public List<User> searchUsers(String query) {
+
         List<User> userList = new ArrayList<>(userSearchRepository.search(query));
 
-       userList.sort(new Comparator<User>(){
+
+        userList.sort(new Comparator<User>() {
             @Override
             public int compare(User o1, User o2) {
                 if (o1.getName().compareTo(o2.getName()) == 0){

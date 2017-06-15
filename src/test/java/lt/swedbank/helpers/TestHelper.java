@@ -14,14 +14,18 @@ public class TestHelper {
 
         Fairy fairy = Fairy.create();
 
+        String[] names = {"John", "Jane", "Jane", "Sam"};
+        String[] lastNames = {"Lifter", "Uber", "Vuber", "Smith"};
+
+
         List<User> userList = new ArrayList<>();
-        for(int i = 0; i < amount; i++){
+        for (int i = 0; i < 4; i++) {
             Person person = fairy.person();
 
             User user = new User();
             user.setId(Integer.toUnsignedLong(i));
-            user.setName(person.getFirstName());
-            user.setLastName(person.getLastName());
+            user.setName(names[i]);
+            user.setLastName(lastNames[i]);
             user.setPassword("password");
             user.setEmail(person.getEmail());
             user.setUserSkills(new ArrayList<>());

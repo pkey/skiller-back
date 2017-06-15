@@ -13,9 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -53,8 +51,11 @@ public class UserController {
     }
 
     @RequestMapping("/search")
-    public List<UserEntityResponse> searchUsers(String q) {
-        return convertToUserEntityResponseList(userService.searchUsersByQuery(q));
+    public List<UserEntityResponse> searchColleagues(@RequestHeader(value = "Authorization") String authToken,
+                                                     String q) {
+        String authId = authService.extractAuthIdFromToken(authToken);
+        Long userId = userService.getUserByAuthId(authId).getId();
+        return convertToUserEntityResponseList(userService.searchColleagues(userId, q));
     }
 
 
@@ -111,15 +112,6 @@ public class UserController {
         return new UserEntityResponse(userService.assignTeam(userId, assignTeamRequest));
     }
 
-
-    private List<UserEntityResponse> convertToUserEntityResponseList(Set<User> userList) {
-        List<UserEntityResponse> responseList = new ArrayList<>();
-        for (User user : userList) {
-            responseList.add(new UserEntityResponse(user));
-        }
-        return responseList;
-    }
-
     private List<UserEntityResponse> convertToUserEntityResponseList(Iterable<User> users) {
         List<UserEntityResponse> userList = new ArrayList<>();
         for (User user : users
@@ -127,11 +119,6 @@ public class UserController {
             userList.add(new UserEntityResponse(user));
         }
         return userList;
-    }
-
-    private List sortUserEntityResponse(List userEntityResponseList) {
-        Collections.sort(userEntityResponseList);
-        return userEntityResponseList;
     }
 
 }

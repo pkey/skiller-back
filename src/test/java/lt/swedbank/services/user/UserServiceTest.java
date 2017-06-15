@@ -18,7 +18,6 @@ import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -196,10 +195,11 @@ public class UserServiceTest {
     }
 
     @Test
-    public void searchUsersByQuery() throws Exception {
+    public void searchUsers() throws Exception {
+
         Mockito.when(userSearchRepository.search(anyString())).thenReturn(new HashSet<>(testUserList));
 
-        List<User> resultList = userService.searchUsersByQuery("");
+        List<User> resultList = userService.searchUsers("");
 
         Assert.assertEquals(testUserList.size(), resultList.size());
 
@@ -211,6 +211,20 @@ public class UserServiceTest {
             }
 
         }
+
+    }
+
+    @Test
+    public void searchColleagues() throws Exception {
+
+        Mockito.when(userRepository.findOne(testUser.getId())).thenReturn(testUser);
+
+        Mockito.when(userSearchRepository.search(anyString())).thenReturn(new HashSet<>(testUserList));
+
+        List<User> resultList = userService.searchColleagues(testUser.getId(), "");
+
+        Assert.assertEquals(testUserList.size() - 1, resultList.size());
+
 
     }
 

@@ -23,43 +23,49 @@ public class ApprovalService {
     @Autowired
     private UserService userService;
     @Autowired
-    private SkillService skillService;
-    @Autowired
     private SkillLevelService skillLevelService;
     @Autowired
     private UserSkillLevelService userSkillLevelService;
 
     public ApprovalRequest createSkillLevelApprovalRequest(Long userId, AssignSkillLevelRequest assignSkillLevelRequest) {
 
-        ApprovalRequest approvalRequest = new ApprovalRequest();
         UserSkillLevel userSkillLevel = userSkillLevelService.getCurrentUserSkillLevelByUserIdAndSkillId(userId, assignSkillLevelRequest.getSkillId());
 
-        approvalRequest.setUserSkillLevel(userSkillLevel);
-        approvalRequest.setMotivation(assignSkillLevelRequest.getMotivation());
+        if (approvalRequestRepository.findByUserSkillLevel(userSkillLevel) != null) {
+            System.out.println("request already submitted");
+        } else {
 
-        Iterable<SkillLevel> skillLevels = skillLevelService.getAllByLevelGreaterThan(assignSkillLevelRequest.getLevelId());
-        Iterable<UserSkillLevel> userSkillLevels = userSkillLevelService.getAllUserSkillLevelsSetBySkillLevels(skillLevels);
+            ApprovalRequest approvalRequest = new ApprovalRequest();
 
-        List<User> usersToBeNotified = new ArrayList<>();
-        Long skillFromRequestId = approvalRequest.getUserSkillLevel().getUserSkill().getSkill().getId();
-        for (UserSkillLevel u : userSkillLevels) {
+            approvalRequest.setUserSkillLevel(userSkillLevel);
+            approvalRequest.setMotivation(assignSkillLevelRequest.getMotivation());
 
-            Long skillId = u.getUserSkill().getSkill().getId();
-            if(skillId.equals(skillFromRequestId)) {
-                usersToBeNotified.add(u.getUserSkill().getUser());
+            Iterable<SkillLevel> skillLevels = skillLevelService.getAllByLevelGreaterThan(assignSkillLevelRequest.getLevelId());
+            Iterable<UserSkillLevel> userSkillLevels = userSkillLevelService.getAllUserSkillLevelsSetBySkillLevels(skillLevels);
+
+            List<User> usersToBeNotified = new ArrayList<>();
+            Long skillIdFromRequest = approvalRequest.getUserSkillLevel().getUserSkill().getSkill().getId();
+            for (UserSkillLevel u : userSkillLevels) {
+
+                Long skillId = u.getUserSkill().getSkill().getId();
+                if (skillId.equals(skillIdFromRequest)) {
+                    usersToBeNotified.add(u.getUserSkill().getUser());
+                }
             }
-        }
 
-        List<RequestNotification> notifications = new ArrayList<>();
-        for (User user : usersToBeNotified) {
-            notifications.add(new RequestNotification(user, approvalRequest));
-        }
+            List<RequestNotification> notifications = new ArrayList<>();
+            for (User user : usersToBeNotified) {
+                notifications.add(new RequestNotification(user, approvalRequest));
+            }
 
-        approvalRequest.setRequestNotification(notifications);
-        approvalRequestRepository.save(approvalRequest);
-        //TODO ask about a way how to persist notifications since the approvalRequest has "cascade type all" strategy for notifications that this request stores
-        //notificationService.addNotifications(approvalRequest);
-        return approvalRequest;
+            approvalRequest.setRequestNotification(notifications);
+            approvalRequestRepository.save(approvalRequest);
+            //TODO ask about a way how to persist notifications since the approvalRequest has "cascade type all" strategy for notifications that this request stores
+            //notificationService.addNotifications(approvalRequest);
+
+            return approvalRequest;
+        }
+        return null;
     }
 
     public ApprovalRequest approve(Long approvalRequestId, Long approverId) {

@@ -12,7 +12,7 @@ public class RequestNotification  {
     @ManyToOne
     private User receiver;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.ALL})
     private ApprovalRequest approvalRequest;
 
     public RequestNotification() {}

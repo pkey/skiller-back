@@ -110,7 +110,6 @@ public class UserService {
         if (user == null) {
             throw new UserNotFoundException();
         }
-
         return userSkillService.assignSkillLevel(user, request);
     }
 

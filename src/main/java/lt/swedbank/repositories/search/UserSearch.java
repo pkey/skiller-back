@@ -141,6 +141,28 @@ public class UserSearch {
 
     }
 
+    private Set<User> resultsByExactSkillName(String keyword) {
+        //Initialises full text entity manager
+        FullTextEntityManager fullTextEntityManager =
+                org.hibernate.search.jpa.Search.
+                        getFullTextEntityManager(entityManager);
+
+        //Forms user class query builder
+        QueryBuilder queryBuilder =
+                fullTextEntityManager.getSearchFactory()
+                        .buildQueryBuilder().forEntity(Skill.class)
+                        .get();
+
+        Query query = queryBuilder.keyword().wildcard().onField("title").matching(keyword).createQuery();
+
+        //Converts into full text query
+        FullTextQuery jpaQuery = fullTextEntityManager.createFullTextQuery(query, Skill.class);
+
+        //Return results
+        return getUsersFromSkills(jpaQuery.getResultList());
+
+    }
+
     private Set<User> getUsersFromSkills(List<Skill> skills) {
         Set<User> users = new HashSet<>();
         for (Skill skill : skills) {

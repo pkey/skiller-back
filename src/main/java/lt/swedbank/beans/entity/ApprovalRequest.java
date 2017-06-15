@@ -17,14 +17,16 @@ public class ApprovalRequest {
     @OneToOne
     private UserSkillLevel userSkillLevel;
 
-    @OneToMany
+    @OneToMany(cascade = {CascadeType.ALL})
     private List<User> approvers;
 
     @OneToOne
     private User disapprover;
 
-    @OneToMany
+    @OneToMany(cascade = {CascadeType.ALL})
     private List<RequestNotification> requestNotifications;
+
+    private String motivation;
 
     public ApprovalRequest() {}
 
@@ -70,6 +72,10 @@ public class ApprovalRequest {
         this.userSkillLevel = userSkillLevel;
     }
 
+    public List<RequestNotification> getRequestNotifications() {
+        return requestNotifications;
+    }
+
     public Integer getApproves() {
         return approves;
     }
@@ -86,12 +92,16 @@ public class ApprovalRequest {
         this.approves = approves;
     }
 
-    public List<RequestNotification> getRequestNotifications() {
-        return requestNotifications;
-    }
-
     public void setRequestNotifications(List<RequestNotification> requestNotifications) {
         this.requestNotifications = requestNotifications;
+    }
+
+    public String getMotivation() {
+        return motivation;
+    }
+
+    public void setMotivation(String motivation) {
+        this.motivation = motivation;
     }
 
     public Integer approve()

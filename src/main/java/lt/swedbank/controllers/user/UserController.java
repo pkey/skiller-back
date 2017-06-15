@@ -6,6 +6,7 @@ import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.beans.response.VoteResponse;
 import lt.swedbank.repositories.search.UserSearch;
 import lt.swedbank.services.auth.AuthenticationService;
+import lt.swedbank.services.notification.ApprovalService;
 import lt.swedbank.services.user.UserService;
 import lt.swedbank.services.vote.VoteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ public class UserController {
     private UserSearch userSearch;
     @Autowired
     private VoteService voteService;
+    @Autowired
+    private ApprovalService approvalService;
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public @ResponseBody
@@ -86,8 +89,8 @@ public class UserController {
                                             @RequestHeader(value = "Authorization") String authToken) {
         String authId = authService.extractAuthIdFromToken(authToken);
         Long userId = userService.getUserByAuthId(authId).getId();
-        userService.assignUserSkillLevel(userId, request);
         User userFromRepository = userService.getUserById(userId);
+        approvalService.createSkillLevelApprovalRequest(userId, request);
 
         return new UserEntityResponse(userFromRepository);
     }

@@ -58,8 +58,7 @@ public class SkillService {
 
     public Iterable<SkillEntityResponse> getSkillEntityResponseList() {
         List<SkillEntityResponse> skillList = new ArrayList<>();
-        for (Skill skill : this.getAllSkills()
-                ) {
+        for (Skill skill : this.getAllSkills()) {
             skillList.add(new SkillEntityResponse(skill));
         }
         return skillList;

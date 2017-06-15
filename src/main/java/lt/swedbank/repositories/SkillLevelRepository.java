@@ -5,4 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface SkillLevelRepository extends CrudRepository<SkillLevel, Long> {
     SkillLevel findByLevel(Long level);
+    Iterable<SkillLevel> findAllByLevelGreaterThan(Long level);
 }

@@ -23,7 +23,7 @@ public class ApprovalRequest {
     @OneToOne
     private User disapprover;
 
-    @OneToMany(cascade = {CascadeType.ALL})
+    @OneToMany
     private List<RequestNotification> requestNotifications;
 
     private String motivation;

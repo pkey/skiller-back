@@ -2,9 +2,9 @@ package lt.swedbank.services.notification;
 
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
+import lt.swedbank.exceptions.request.RequestAlreadySubmittedException;
 import lt.swedbank.repositories.ApprovalRequestRepository;
 import lt.swedbank.services.skill.SkillLevelService;
-import lt.swedbank.services.skill.SkillService;
 import lt.swedbank.services.skill.UserSkillLevelService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,45 +27,43 @@ public class ApprovalService {
     @Autowired
     private UserSkillLevelService userSkillLevelService;
 
-    public ApprovalRequest createSkillLevelApprovalRequest(Long userId, AssignSkillLevelRequest assignSkillLevelRequest) {
+    public ApprovalRequest createSkillLevelApprovalRequest(Long userId, AssignSkillLevelRequest assignSkillLevelRequest) throws RequestAlreadySubmittedException {
 
         UserSkillLevel userSkillLevel = userSkillLevelService.getCurrentUserSkillLevelByUserIdAndSkillId(userId, assignSkillLevelRequest.getSkillId());
 
         if (approvalRequestRepository.findByUserSkillLevel(userSkillLevel) != null) {
-            System.out.println("request already submitted");
-        } else {
-
-            ApprovalRequest approvalRequest = new ApprovalRequest();
-
-            approvalRequest.setUserSkillLevel(userSkillLevel);
-            approvalRequest.setMotivation(assignSkillLevelRequest.getMotivation());
-
-            Iterable<SkillLevel> skillLevels = skillLevelService.getAllByLevelGreaterThan(assignSkillLevelRequest.getLevelId());
-            Iterable<UserSkillLevel> userSkillLevels = userSkillLevelService.getAllUserSkillLevelsSetBySkillLevels(skillLevels);
-
-            List<User> usersToBeNotified = new ArrayList<>();
-            Long skillIdFromRequest = approvalRequest.getUserSkillLevel().getUserSkill().getSkill().getId();
-            for (UserSkillLevel u : userSkillLevels) {
-
-                Long skillId = u.getUserSkill().getSkill().getId();
-                if (skillId.equals(skillIdFromRequest)) {
-                    usersToBeNotified.add(u.getUserSkill().getUser());
-                }
-            }
-
-            List<RequestNotification> notifications = new ArrayList<>();
-            for (User user : usersToBeNotified) {
-                notifications.add(new RequestNotification(user, approvalRequest));
-            }
-
-            approvalRequest.setRequestNotification(notifications);
-            approvalRequestRepository.save(approvalRequest);
-            //TODO ask about a way how to persist notifications since the approvalRequest has "cascade type all" strategy for notifications that this request stores
-            //notificationService.addNotifications(approvalRequest);
-
-            return approvalRequest;
+            throw new RequestAlreadySubmittedException();
         }
-        return null;
+
+        ApprovalRequest approvalRequest = new ApprovalRequest();
+
+        approvalRequest.setUserSkillLevel(userSkillLevel);
+        approvalRequest.setMotivation(assignSkillLevelRequest.getMotivation());
+
+        Iterable<SkillLevel> skillLevels = skillLevelService.getAllByLevelGreaterThan(assignSkillLevelRequest.getLevelId());
+        Iterable<UserSkillLevel> userSkillLevels = userSkillLevelService.getAllUserSkillLevelsSetBySkillLevels(skillLevels);
+
+        List<User> usersToBeNotified = new ArrayList<>();
+        Long skillIdFromRequest = approvalRequest.getUserSkillLevel().getUserSkill().getSkill().getId();
+        for (UserSkillLevel u : userSkillLevels) {
+
+            Long skillId = u.getUserSkill().getSkill().getId();
+            if (skillId.equals(skillIdFromRequest)) {
+                usersToBeNotified.add(u.getUserSkill().getUser());
+            }
+        }
+
+        List<RequestNotification> notifications = new ArrayList<>();
+        for (User user : usersToBeNotified) {
+            notifications.add(new RequestNotification(user, approvalRequest));
+        }
+
+        approvalRequest.setRequestNotification(notifications);
+        approvalRequestRepository.save(approvalRequest);
+        //TODO ask about a way how to persist notifications since the approvalRequest has "cascade type all" strategy for notifications that this request stores
+        //notificationService.addNotifications(approvalRequest);
+
+        return approvalRequest;
     }
 
     public ApprovalRequest approve(Long approvalRequestId, Long approverId) {

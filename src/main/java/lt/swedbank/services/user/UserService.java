@@ -2,6 +2,7 @@ package lt.swedbank.services.user;
 
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
+import lt.swedbank.beans.entity.UserSkillLevel;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
@@ -9,13 +10,13 @@ import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.repositories.UserRepository;
+import lt.swedbank.repositories.search.UserSearchRepository;
 import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.team.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 @Service
@@ -27,6 +28,8 @@ public class UserService {
     private UserSkillService userSkillService;
     @Autowired
     private TeamService teamService;
+    @Autowired
+    private UserSearchRepository userSearchRepository;
 
 
     public User getUserById(Long id) throws UserNotFoundException {
@@ -49,6 +52,26 @@ public class UserService {
     public Iterable<User> getColleagues(Long userId){
          return userRepository.findAllByIdIsNotOrderByNameAscLastNameAsc(userId);
     }
+
+    public List<User> searchUsersByQuery(String query){
+        List<User> userList = new ArrayList<>(userSearchRepository.search(query));
+
+       userList.sort(new Comparator<User>(){
+            @Override
+            public int compare(User o1, User o2) {
+                if (o1.getName().compareTo(o2.getName()) == 0){
+                    return o1.getLastName().compareTo(o2.getLastName());
+                } else {
+                    return o1.getName().compareTo(o2.getName());
+                }
+            }
+        });
+
+       return userList;
+    }
+
+
+
 
     public UserEntityResponse getUserProfile(Long id) {
         return new UserEntityResponse(getUserById(id));

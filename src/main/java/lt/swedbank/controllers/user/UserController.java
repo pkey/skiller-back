@@ -4,7 +4,7 @@ import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.*;
 import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.beans.response.VoteResponse;
-import lt.swedbank.repositories.search.UserSearch;
+import lt.swedbank.repositories.search.UserSearchRepository;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.user.UserService;
 import lt.swedbank.services.vote.VoteService;
@@ -27,7 +27,7 @@ public class UserController {
     @Autowired
     private AuthenticationService authService;
     @Autowired
-    private UserSearch userSearch;
+    private UserSearchRepository userSearchRepository;
     @Autowired
     private VoteService voteService;
 
@@ -54,7 +54,7 @@ public class UserController {
 
     @RequestMapping("/search")
     public List<UserEntityResponse> searchUsers(String q) {
-        return sortUserEntityResponse(convertToUserEntityResponseList(userSearch.search(q)));
+        return convertToUserEntityResponseList(userService.searchUsersByQuery(q));
     }
 
 

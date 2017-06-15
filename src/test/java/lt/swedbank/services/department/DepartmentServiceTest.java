@@ -71,7 +71,6 @@ public class DepartmentServiceTest {
         List<DepartmentEntityResponse> resultDepartmentList
                 = (List<DepartmentEntityResponse>) departmentService.getAllDepartmentEntityResponseList();
 
-
         Assert.assertThat(resultDepartmentList.size(), is(departmentList.size()));
 
     }

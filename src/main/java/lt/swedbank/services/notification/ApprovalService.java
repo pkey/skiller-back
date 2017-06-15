@@ -69,18 +69,20 @@ public class ApprovalService {
         return approvalRequest;
     }
 
-    public ApprovalRequest approve(NotificationAnswerRequest notificationAnswerRequest, Long approvalRequestId, Long approverId) {
-        ApprovalRequest request = approvalRequestRepository.findOne(approvalRequestId);
-        request.approve();
-        request.addApprover(userService.getUserById(approverId));
+    public ApprovalRequest approve(NotificationAnswerRequest notificationAnswerRequest, ApprovalRequest request, Long approverId) {
 
-        RequestNotification notification = notificationService.getNotificationById(notificationAnswerRequest.getNotificationId());
-        request.getRequestNotifications().remove(notification);
+        if(request.isApproved() == 0) {
+            request.addApprover(userService.getUserById(approverId));
+            RequestNotification notification = notificationService.getNotificationById(notificationAnswerRequest.getNotificationId());
+            notificationService.removeRequestNotification(notification);
+            request.removeNotification(notification);
+        }
 
         if(request.getApproves() >= 5)
         {
+            request.setIsApproved(1);
             deleteNotifications(request);
-            userSkillLevelService.levelUp(approvalRequestRepository.findOne(approvalRequestId).getUserSkillLevel());
+            userSkillLevelService.levelUp(approvalRequestRepository.findOne(request.getId()).getUserSkillLevel());
         }
         approvalRequestRepository.save(request);
         return request;
@@ -90,13 +92,17 @@ public class ApprovalService {
         notificationService.deleteNotifications(request);
     }
 
-    public ApprovalRequest disapprove(Long approvalRequestId, Long approverId) {
+    public ApprovalRequest disapprove(ApprovalRequest request, Long approverId) {
 
-        ApprovalRequest request = approvalRequestRepository.findOne(approvalRequestId);
-        request.disapprove();
-        request.setRequestNotifications(null);
-        request.setDisapprover(userService.getUserById(approverId));
-        approvalRequestRepository.save(request);
+        if(request.isApproved() == 0)
+        {
+            request.setDisapprover(userService.getUserById(approverId));
+            request.setIsApproved(-1);
+            deleteNotifications(request);
+            request.setRequestNotifications(null);
+            approvalRequestRepository.save(request);
+        }
+
         return request;
     }
 

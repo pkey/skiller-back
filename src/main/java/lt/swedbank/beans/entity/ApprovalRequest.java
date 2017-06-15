@@ -95,6 +95,12 @@ public class ApprovalRequest {
     public void setRequestNotifications(List<RequestNotification> requestNotifications) {
         this.requestNotifications = requestNotifications;
     }
+    public boolean removeNotification(RequestNotification requestNotification)
+    {
+        requestNotifications.remove(requestNotification);
+        return true;
+    }
+
 
     public String getMotivation() {
         return motivation;
@@ -104,24 +110,12 @@ public class ApprovalRequest {
         this.motivation = motivation;
     }
 
-    public Integer approve()
-    {
-        if(isApproved == 0)
-        {
-            this.approves++;
-            if(approves >= 5)
-            {
-                this.isApproved = 1;
-            }
-        }
-        return approves;
+    public Integer getIsApproved() {
+        return isApproved;
     }
 
-    public Integer disapprove() {
-        if (isApproved == 0) {
-            isApproved = -1;
-            return 1;
-        }
-        return -1;
+    public void setIsApproved(Integer isApproved) {
+        this.isApproved = isApproved;
     }
+
 }

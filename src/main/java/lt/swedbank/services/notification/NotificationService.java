@@ -41,7 +41,7 @@ public class NotificationService {
 
     public RequestNotification approveByApprovalRequestId(NotificationAnswerRequest notificationAnswerRequest,Long approversId) {
         RequestNotification request = getNotificationById(notificationAnswerRequest.getNotificationId());
-        approvalService.approve(notificationAnswerRequest, request.getApprovalRequest().getId(), approversId);
+        approvalService.approve(notificationAnswerRequest, request.getApprovalRequest(), approversId);
         requestNotificationRepository.delete(request);
         return request;
     }
@@ -57,7 +57,7 @@ public class NotificationService {
 
     public RequestNotification disapproveByApprovalRequestId(NotificationAnswerRequest notificationAnswerRequest,Long approversId) {
         RequestNotification request = getNotificationById(notificationAnswerRequest.getNotificationId());
-        approvalService.disapprove(request.getApprovalRequest().getId(), approversId);
+        approvalService.disapprove(request.getApprovalRequest(), approversId);
         requestNotificationRepository.delete(request);
         return request;
     }
@@ -69,5 +69,9 @@ public class NotificationService {
 
     public void deleteNotifications(ApprovalRequest request) {
         requestNotificationRepository.delete(request.getRequestNotifications());
+    }
+
+    public void removeRequestNotification(RequestNotification notification) {
+        requestNotificationRepository.delete(notification.getId());
     }
 }

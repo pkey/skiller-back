@@ -26,8 +26,8 @@ public class SkillLevelService {
         return skillLevelRepository.findByLevel(level);
     }
 
-    public Iterable<SkillLevel> getAllByLevelGreaterThan(Long level) {
-        return skillLevelRepository.findAllByLevelGreaterThan(level);
+    public Iterable<SkillLevel> getAllByLevelGreaterThanOrEqual(Long level) {
+        return skillLevelRepository.findAllByLevelGreaterThanEqual(level);
     }
 
     public SkillLevel getById(Long id) {

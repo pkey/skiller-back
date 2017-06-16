@@ -57,7 +57,7 @@ public class NotificationController {
         {
             return new RequestNotificationResponse(notificationService.disapproveByApprovalRequestId(notificationAnswerRequest, approver.getId()));
         }
-        return notificationService.removeRequestNotification(requestNotification);
+        return new RequestNotificationResponse(notificationService.removeRequestNotification(requestNotification));
     }
 
     @Autowired

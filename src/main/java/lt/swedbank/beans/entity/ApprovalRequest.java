@@ -76,4 +76,14 @@ public class ApprovalRequest {
     public void awnser(ApprovalRequestAnswerers approvalRequestAnswerers) {
         this.approvalRequestaAnswerers.add(approvalRequestAnswerers);
     }
+
+    public void approve()
+    {
+        this.isApproved = 1;
+    }
+
+    public void disapprove()
+    {
+        this.isApproved = -1;
+    }
 }

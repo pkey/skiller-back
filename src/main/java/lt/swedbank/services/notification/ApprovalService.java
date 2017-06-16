@@ -41,7 +41,7 @@ public class ApprovalService {
         if (approvalRequestRepository.findByUserSkillLevel(userSkillLevel) != null) {
             throw new RequestAlreadySubmittedException();
         }
-        
+
         ApprovalRequest approvalRequest = new ApprovalRequest();
 
         approvalRequest.setUserSkillLevel(userSkillLevel);
@@ -92,7 +92,7 @@ public class ApprovalService {
 
         if(getApprovesByApprovalRequest(request) >= 5)
         {
-            request.setIsApproved(1);
+            request.approve();
             deleteNotifications(request);
             userSkillLevelService.levelUp(approvalRequestRepository.findOne(request.getId()).getUserSkillLevel());
         }
@@ -114,7 +114,7 @@ public class ApprovalService {
         if(request.isApproved() == 0)
         {
             request.awnser(new ApprovalRequestAnswerers(userService.getUserById(approverId), notificationAnswerRequest.getMessage(), false));
-            request.setIsApproved(-1);
+            request.disapprove();
             deleteNotifications(request);
             request.setRequestNotifications(null);
             approvalRequestRepository.save(request);

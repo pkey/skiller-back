@@ -71,7 +71,8 @@ public class NotificationService {
         requestNotificationRepository.delete(request.getRequestNotifications());
     }
 
-    public void removeRequestNotification(RequestNotification notification) {
+    public RequestNotification removeRequestNotification(RequestNotification notification) {
         requestNotificationRepository.delete(notification.getId());
+        return notification;
     }
 }

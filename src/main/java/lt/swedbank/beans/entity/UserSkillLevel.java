@@ -30,6 +30,9 @@ public class UserSkillLevel {
     @OneToMany(mappedBy = "userSkillLevel")
     private List<Vote> votes = new ArrayList<>();
 
+    @OneToOne
+    private ApprovalRequest approvalRequest;
+
     public UserSkillLevel() {
     }
 
@@ -94,4 +97,11 @@ public class UserSkillLevel {
         this.votes = votes;
     }
 
+    public ApprovalRequest getApprovalRequest() {
+        return approvalRequest;
+    }
+
+    public void setApprovalRequest(ApprovalRequest approvalRequest) {
+        this.approvalRequest = approvalRequest;
+    }
 }

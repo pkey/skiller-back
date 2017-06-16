@@ -6,6 +6,7 @@ import lt.swedbank.beans.entity.UserSkillLevel;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.exceptions.userSkillLevel.UserSkillLevelNotFoundException;
 import lt.swedbank.repositories.UserSkillLevelRepository;
+import lt.swedbank.services.notification.ApprovalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,8 @@ public class UserSkillLevelService {
     private SkillLevelService skillLevelService;
     @Autowired
     private UserSkillService userSkillService;
+    @Autowired
+    private ApprovalService approvalService;
 
     public UserSkillLevel getCurrentUserSkillLevelByUserIdAndSkillId(Long userId, Long skillId) throws UserSkillLevelNotFoundException {
         UserSkill userSkill = userSkillService.getUserSkillByUserIdAndSkillId(userId, skillId);
@@ -35,7 +38,14 @@ public class UserSkillLevelService {
 
     public UserSkillLevel addDefaultUserSkillLevel(UserSkill userSkill) {
         UserSkillLevel userSkillLevel = new UserSkillLevel(userSkill, skillLevelService.getDefault());
-        return userSkillLevelRepository.save(userSkillLevel);
+
+        //TODO Double save, should be one
+        userSkillLevelRepository.save(userSkillLevel);
+
+        userSkillLevel.setApprovalRequest(approvalService.addDefaultApprovalRequest(userSkillLevel));
+
+        userSkillLevelRepository.save(userSkillLevel);
+        return userSkillLevel;
     }
 
     public UserSkillLevel addUserSkillLevel(UserSkill userSkill, AssignSkillLevelRequest assignSkillLevelRequest) {

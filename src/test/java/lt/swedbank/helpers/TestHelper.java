@@ -39,13 +39,13 @@ public class TestHelper {
     }
 
     public static List<RequestNotification> fetchRequestNotifications(int amount, ApprovalRequest approvalRequest){
+
         List<User> userList = fetchUsers(amount);
         List<RequestNotification> notificationList = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
             RequestNotification requestNotification = new RequestNotification(userList.get(0), approvalRequest);
             notificationList.add(requestNotification);
         }
-
         return notificationList;
     }
 

@@ -17,7 +17,7 @@ public class ApprovalRequest {
     @OneToOne
     private UserSkillLevel userSkillLevel;
 
-    @OneToMany(cascade = {CascadeType.ALL})
+    @OneToMany(cascade = {CascadeType.PERSIST})
     private List<User> approvers;
 
     @OneToOne

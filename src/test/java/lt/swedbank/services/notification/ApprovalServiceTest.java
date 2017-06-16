@@ -2,6 +2,7 @@ package lt.swedbank.services.notification;
 
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AddSkillRequest;
+import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.repositories.ApprovalRequestRepository;
@@ -57,6 +58,8 @@ public class ApprovalServiceTest {
     private List<User> testUserList;
     private List<RequestNotification> testNotificationsList;
 
+    private AssignSkillLevelRequest testAssignSkillLevelRequest;
+
     private User testUser;
 
     @Before
@@ -76,9 +79,16 @@ public class ApprovalServiceTest {
         testSkillLevel = new SkillLevel("Skill level 1", "description level 1");
         testUserSkillLevel = new UserSkillLevel(testUserSkill, testSkillLevel);
 
+        Long zeroId = Long.parseLong("0");
+
+        testAssignSkillLevelRequest = new AssignSkillLevelRequest();
+        testAssignSkillLevelRequest.setLevelId(zeroId);
+        testAssignSkillLevelRequest.setMotivation("Approval request test motivation");
+        testAssignSkillLevelRequest.setSkillId(zeroId);
+
         testApprovalRequest = new ApprovalRequest();
         testApprovalRequest.setUserSkillLevel(testUserSkillLevel);
-        testApprovalRequest.setMotivation("Approval request test motivation");
+        testApprovalRequest.setMotivation(testAssignSkillLevelRequest.getMotivation());
         testApprovalRequest.setRequestNotifications(testNotificationsList);
     }
 
@@ -88,18 +98,14 @@ public class ApprovalServiceTest {
 
     @Test
     public void create_approval_request_success() {
-        //UserSkillLevel testUserSkillLevel = mock(UserSkillLevel.class);
-        //ApprovalRequest alreadyFoundApprovalRequest = mock(ApprovalRequest.class);
+        Mockito.when(userSkillLevelService.getCurrentUserSkillLevelByUserIdAndSkillId(any(), any())).thenReturn(testUserSkillLevel);
+        Mockito.when(approvalRequestRepository.findByUserSkillLevel(any())).thenReturn(null);
+        Mockito.when(skillLevelService.getAllByLevelGreaterThan(any())).thenReturn(null);
+        Mockito.when(userSkillLevelService.getAllUserSkillLevelsSetBySkillLevels(any())).thenReturn(null);
 
-        Mockito.when(userSkillLevelService.getCurrentUserSkillLevelByUserIdAndSkillId(any(), any())).thenReturn(any());
-        Mockito.when(approvalRequestRepository.findByUserSkillLevel(any())).thenReturn(any());
-        Mockito.when(skillLevelService.getAllByLevelGreaterThan(any())).thenReturn(any());
-        Mockito.when(userSkillLevelService.getAllUserSkillLevelsSetBySkillLevels(any())).thenReturn(any());
+        ApprovalRequest approvalRequest = approvalService.createSkillLevelApprovalRequest(testUser.getId(), testAssignSkillLevelRequest);
+        assertEquals(approvalRequest.getMotivation(), testApprovalRequest.getMotivation());
 
-        User user = userService.addUserSkill(testUser.getId(), testAddSkillRequest);
-        assertEquals(user, testUser);
-
-        verify(userService, times(1)).getUserById(testUser.getId());
-        verify(userSkillService, times(1)).addUserSkill(any(), any());
+        verify(approvalService, times(1)).createSkillLevelApprovalRequest(testUser.getId(), testAssignSkillLevelRequest);
     }
 }

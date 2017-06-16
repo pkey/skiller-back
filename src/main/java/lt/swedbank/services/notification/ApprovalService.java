@@ -49,11 +49,13 @@ public class ApprovalService {
 
         List<User> usersToBeNotified = new ArrayList<>();
         Long skillIdFromRequest = approvalRequest.getUserSkillLevel().getUserSkill().getSkill().getId();
-        for (UserSkillLevel u : userSkillLevels) {
+        if(userSkillLevels != null) {
+            for (UserSkillLevel u : userSkillLevels) {
 
-            Long skillId = u.getUserSkill().getSkill().getId();
-            if (skillId.equals(skillIdFromRequest)) {
-                usersToBeNotified.add(u.getUserSkill().getUser());
+                Long skillId = u.getUserSkill().getSkill().getId();
+                if (skillId.equals(skillIdFromRequest)) {
+                    usersToBeNotified.add(u.getUserSkill().getUser());
+                }
             }
         }
 

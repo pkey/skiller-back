@@ -60,13 +60,13 @@ public class NotificationController {
         return new RequestNotificationResponse(notificationService.removeRequestNotification(requestNotification));
     }
 
+    /* TODO: delete this sometime */
     @Autowired
     private RequestNotificationRepository requestNotificationRepository;
     @Autowired
     private ApprovalRequestRepository approvalRequestRepository;
     @Autowired
     private UserSkillRepository userSkillRepository;
-
 
     @RequestMapping(value = "/add/{userid}/{userskillid}/{levelid}", method = RequestMethod.POST )
     public @ResponseBody

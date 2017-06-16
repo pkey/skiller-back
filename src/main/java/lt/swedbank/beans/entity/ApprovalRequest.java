@@ -18,7 +18,7 @@ public class ApprovalRequest {
     private UserSkillLevel userSkillLevel;
 
     @OneToMany(cascade = {CascadeType.PERSIST})
-    private List<User> approvers;
+    private List<ApprovalRequestApprovers> approvalRequestApprovers;
 
     @OneToOne
     private User disapprover;
@@ -35,17 +35,17 @@ public class ApprovalRequest {
         this.requestNotifications = requestNotifications;
     }
 
-    public List<User> getApprovers() {
-        return approvers;
+    public List<ApprovalRequestApprovers> getApprovers() {
+        return approvalRequestApprovers;
     }
 
-    public void setApprovers(List<User> approvers) {
-        this.approvers = approvers;
+    public void setApprovers(List<ApprovalRequestApprovers> approvers) {
+        this.approvalRequestApprovers = approvers;
     }
 
-    public void addApprover(User approver)
+    public void addApprover(ApprovalRequestApprovers approver)
     {
-        this.approvers.add(approver);
+        this.approvalRequestApprovers.add(approver);
     }
 
     public Long getId() {

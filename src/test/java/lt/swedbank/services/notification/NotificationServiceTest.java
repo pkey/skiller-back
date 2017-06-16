@@ -66,5 +66,10 @@ public class NotificationServiceTest {
         assertEquals(requestNotificationResponses,(ArrayList<RequestNotificationResponse>) notificationService.getRequestNotificationResponse(requestNotificationList));
     }
 
+    @Test
+    public void approveByApprovalRequestIdTest(){
+
+    }
+
 
 }

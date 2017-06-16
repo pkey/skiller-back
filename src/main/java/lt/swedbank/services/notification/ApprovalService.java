@@ -7,6 +7,7 @@ import lt.swedbank.beans.request.NotificationAnswerRequest;
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.exceptions.request.RequestAlreadySubmittedException;
+import lt.swedbank.repositories.ApprovalRequestAnswerersRepository;
 import lt.swedbank.repositories.ApprovalRequestRepository;
 import lt.swedbank.services.skill.SkillLevelService;
 import lt.swedbank.services.skill.UserSkillLevelService;
@@ -20,6 +21,8 @@ import java.util.List;
 @Service
 public class ApprovalService {
 
+    @Autowired
+    private ApprovalRequestAnswerersRepository approvalRequestAnswerersRepository;
     @Autowired
     private ApprovalRequestRepository approvalRequestRepository;
     @Autowired
@@ -38,13 +41,12 @@ public class ApprovalService {
         if (approvalRequestRepository.findByUserSkillLevel(userSkillLevel) != null) {
             throw new RequestAlreadySubmittedException();
         }
-
+        
         ApprovalRequest approvalRequest = new ApprovalRequest();
 
         approvalRequest.setUserSkillLevel(userSkillLevel);
-        approvalRequest.setMotivation(assignSkillLevelRequest.getMotivation());
 
-        Iterable<SkillLevel> skillLevels = skillLevelService.getAllByLevelGreaterThan(assignSkillLevelRequest.getLevelId());
+        Iterable<SkillLevel> skillLevels = skillLevelService.getAllByLevelGreaterThanOrEqual(assignSkillLevelRequest.getLevelId());
         Iterable<UserSkillLevel> userSkillLevels = userSkillLevelService.getAllUserSkillLevelsSetBySkillLevels(skillLevels);
 
         List<User> usersToBeNotified = new ArrayList<>();
@@ -69,16 +71,26 @@ public class ApprovalService {
         return approvalRequest;
     }
 
+    public Iterable<ApprovalRequestAnswerers> getApproversByApprovalRequest(ApprovalRequest approvalRequest)
+    {
+        return approvalRequestAnswerersRepository.findByApprovalRequestAndApprovedTrue(approvalRequest);
+    }
+
+    public Long getApprovesByApprovalRequest(ApprovalRequest approvalRequest)
+    {
+        return approvalRequestAnswerersRepository.count();
+    }
+
     public ApprovalRequest approve(NotificationAnswerRequest notificationAnswerRequest, ApprovalRequest request, Long approverId) {
 
         if(request.isApproved() == 0) {
-            request.addApprover(userService.getUserById(approverId));
+            request.awnser(new ApprovalRequestAnswerers(userService.getUserById(approverId), notificationAnswerRequest.getMessage(), true));
             RequestNotification notification = notificationService.getNotificationById(notificationAnswerRequest.getNotificationId());
             notificationService.removeRequestNotification(notification);
             request.removeNotification(notification);
         }
 
-        if(request.getApproves() >= 5)
+        if(getApprovesByApprovalRequest(request) >= 5)
         {
             request.setIsApproved(1);
             deleteNotifications(request);
@@ -97,11 +109,11 @@ public class ApprovalService {
         return approvalRequestRepository.findOne(notification.getApprovalRequest().getId());
     }
 
-    public ApprovalRequest disapprove(ApprovalRequest request, Long approverId) {
+    public ApprovalRequest disapprove(NotificationAnswerRequest notificationAnswerRequest, ApprovalRequest request, Long approverId) {
 
         if(request.isApproved() == 0)
         {
-            request.setDisapprover(userService.getUserById(approverId));
+            request.awnser(new ApprovalRequestAnswerers(userService.getUserById(approverId), notificationAnswerRequest.getMessage(), false));
             request.setIsApproved(-1);
             deleteNotifications(request);
             request.setRequestNotifications(null);

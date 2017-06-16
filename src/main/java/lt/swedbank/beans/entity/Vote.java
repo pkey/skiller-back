@@ -16,6 +16,7 @@ public class Vote {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+
     @ManyToOne
     private User voter;
 

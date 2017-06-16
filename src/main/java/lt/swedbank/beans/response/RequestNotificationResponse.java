@@ -70,7 +70,7 @@ public class RequestNotificationResponse {
         UserSkillLevel userSkillLevel = requestNotification.getApprovalRequest().getUserSkillLevel();
         this.id = requestNotification.getId();
         this.skill = new SkillEntityResponse(userSkillLevel.getUserSkill().getSkill());
-        this.message = requestNotification.getApprovalRequest().getMotivation();
+        this.message = userSkillLevel.getMotivation();
         this.senderName = user.getName();
         this.senderLastname = user.getLastName();
         this.skillLevel = userSkillLevel.getSkillLevel().getTitle();

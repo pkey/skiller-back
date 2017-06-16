@@ -4,24 +4,30 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 @Entity
-public class ApprovalRequestApprovers {
+public class ApprovalRequestAnswerers {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @ManyToOne
+    private ApprovalRequest approvalRequest;
+
     @Size(max=500)
     private String message;
+
+    private Boolean approved;
 
     @OneToOne
     private User approver;
 
-    ApprovalRequestApprovers() {}
+    public ApprovalRequestAnswerers() {}
 
-    ApprovalRequestApprovers(User approver, String message)
+    public ApprovalRequestAnswerers(User approver, String message, Boolean approved)
     {
         this.approver = approver;
         this.message = message;
+        this.approved = approved;
     }
 
     public Long getId() {

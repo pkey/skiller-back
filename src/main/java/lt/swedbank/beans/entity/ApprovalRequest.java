@@ -10,42 +10,22 @@ public class ApprovalRequest {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private Integer approves = 0;
-
     private Integer isApproved = 0;
 
     @OneToOne
     private UserSkillLevel userSkillLevel;
 
     @OneToMany(cascade = {CascadeType.PERSIST})
-    private List<ApprovalRequestApprovers> approvalRequestApprovers;
-
-    @OneToOne
-    private User disapprover;
+    private List<ApprovalRequestAnswerers> approvalRequestaAnswerers;
 
     @OneToMany(cascade = {CascadeType.ALL})
     private List<RequestNotification> requestNotifications;
-
-    private String motivation;
 
     public ApprovalRequest() {}
 
     public ApprovalRequest(List<RequestNotification> requestNotifications)
     {
         this.requestNotifications = requestNotifications;
-    }
-
-    public List<ApprovalRequestApprovers> getApprovers() {
-        return approvalRequestApprovers;
-    }
-
-    public void setApprovers(List<ApprovalRequestApprovers> approvers) {
-        this.approvalRequestApprovers = approvers;
-    }
-
-    public void addApprover(ApprovalRequestApprovers approver)
-    {
-        this.approvalRequestApprovers.add(approver);
     }
 
     public Long getId() {
@@ -76,22 +56,6 @@ public class ApprovalRequest {
         return requestNotifications;
     }
 
-    public Integer getApproves() {
-        return approves;
-    }
-
-    public User getDisapprover() {
-        return disapprover;
-    }
-
-    public void setDisapprover(User disapprover) {
-        this.disapprover = disapprover;
-    }
-
-    public void setApproves(Integer approves) {
-        this.approves = approves;
-    }
-
     public void setRequestNotifications(List<RequestNotification> requestNotifications) {
         this.requestNotifications = requestNotifications;
     }
@@ -99,15 +63,6 @@ public class ApprovalRequest {
     {
         requestNotifications.remove(requestNotification);
         return true;
-    }
-
-
-    public String getMotivation() {
-        return motivation;
-    }
-
-    public void setMotivation(String motivation) {
-        this.motivation = motivation;
     }
 
     public Integer getIsApproved() {
@@ -118,4 +73,7 @@ public class ApprovalRequest {
         this.isApproved = isApproved;
     }
 
+    public void awnser(ApprovalRequestAnswerers approvalRequestAnswerers) {
+        this.approvalRequestaAnswerers.add(approvalRequestAnswerers);
+    }
 }

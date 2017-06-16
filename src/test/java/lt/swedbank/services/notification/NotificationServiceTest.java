@@ -4,6 +4,7 @@ package lt.swedbank.services.
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
+import lt.swedbank.beans.response.RequestNotificationResponse;
 import lt.swedbank.repositories.RequestNotificationRepository;
 import lt.swedbank.services.user.UserService;
 import org.junit.Before;
@@ -32,11 +33,16 @@ public class NotificationServiceTest {
     private RequestNotification requestNotification1;
     private RequestNotification requestNotification2;
     private List<RequestNotification> requestNotificationList;
+    private List<RequestNotificationResponse> requestNotificationResponses;
     private User user;
 
     @Before
     public void setUp()
     {
+
+        requestNotificationResponses = new ArrayList<>();
+        requestNotificationResponses.add(new RequestNotificationResponse(requestNotification1));
+        requestNotificationResponses.add(new RequestNotificationResponse(requestNotification2));
         user = new User();
         requestNotification1 = new RequestNotification();
         requestNotification2 = new RequestNotification();
@@ -54,6 +60,11 @@ public class NotificationServiceTest {
         assertEquals(notificationService.getNotificationsByUserId(any()), requestNotificationList);
     }
 
+    @Test
+    public void getRequestNotificationResponseTest()
+    {
+        assertEquals(requestNotificationResponses,(ArrayList<RequestNotificationResponse>) notificationService.getRequestNotificationResponse(requestNotificationList));
+    }
 
 
 }

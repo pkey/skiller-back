@@ -72,6 +72,9 @@ public class NotificationService {
     }
 
     public RequestNotification removeRequestNotification(RequestNotification notification) {
+        ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(notification);
+        approvalRequest.removeNotification(notification);
+        approvalService.update(approvalRequest);
         requestNotificationRepository.delete(notification.getId());
         return notification;
     }

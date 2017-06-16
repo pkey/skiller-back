@@ -44,7 +44,7 @@ public class ApprovalService {
         approvalRequest.setUserSkillLevel(userSkillLevel);
         approvalRequest.setMotivation(assignSkillLevelRequest.getMotivation());
 
-        Iterable<SkillLevel> skillLevels = skillLevelService.getAllByLevelGreaterThan(assignSkillLevelRequest.getLevelId());
+        Iterable<SkillLevel> skillLevels = skillLevelService.getAllByLevelGreaterThanOrEqual(assignSkillLevelRequest.getLevelId());
         Iterable<UserSkillLevel> userSkillLevels = userSkillLevelService.getAllUserSkillLevelsSetBySkillLevels(skillLevels);
 
         List<User> usersToBeNotified = new ArrayList<>();

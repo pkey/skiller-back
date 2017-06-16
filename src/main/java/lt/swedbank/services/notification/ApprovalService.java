@@ -92,6 +92,11 @@ public class ApprovalService {
         notificationService.deleteNotifications(request);
     }
 
+    public ApprovalRequest getApprovalRequestByRequestNotification(RequestNotification notification)
+    {
+        return approvalRequestRepository.findOne(notification.getApprovalRequest().getId());
+    }
+
     public ApprovalRequest disapprove(ApprovalRequest request, Long approverId) {
 
         if(request.isApproved() == 0)
@@ -106,4 +111,7 @@ public class ApprovalService {
         return request;
     }
 
+    public ApprovalRequest update(ApprovalRequest approvalRequest) {
+        return approvalRequestRepository.save(approvalRequest);
+    }
 }

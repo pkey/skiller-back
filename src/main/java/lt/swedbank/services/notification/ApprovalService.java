@@ -1,9 +1,11 @@
 package lt.swedbank.services.notification;
 
 
+import lt.swedbank.beans.entity.ApprovalRequest;
+import lt.swedbank.beans.entity.RequestNotification;
+import lt.swedbank.beans.request.NotificationAnswerRequest;
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
-import lt.swedbank.beans.request.NotificationAnswerRequest;
 import lt.swedbank.exceptions.request.RequestAlreadySubmittedException;
 import lt.swedbank.repositories.ApprovalRequestRepository;
 import lt.swedbank.services.skill.SkillLevelService;
@@ -31,16 +33,15 @@ public class ApprovalService {
 
     public ApprovalRequest createSkillLevelApprovalRequest(Long userId, AssignSkillLevelRequest assignSkillLevelRequest) throws RequestAlreadySubmittedException {
 
-        UserSkillLevel currentUserSkillLevel = userSkillLevelService.getCurrentUserSkillLevelByUserIdAndSkillId(userId, assignSkillLevelRequest.getSkillId());
+        UserSkillLevel userSkillLevel = userSkillLevelService.getCurrentUserSkillLevelByUserIdAndSkillId(userId, assignSkillLevelRequest.getSkillId());
 
-        if (approvalRequestRepository.findByUserSkillLevel(currentUserSkillLevel) != null) {
+        if (approvalRequestRepository.findByUserSkillLevel(userSkillLevel) != null) {
             throw new RequestAlreadySubmittedException();
         }
 
         ApprovalRequest approvalRequest = new ApprovalRequest();
 
-        UserSkillLevel newUserSkillLevel = getNewUserSkillLevel(currentUserSkillLevel);
-        approvalRequest.setUserSkillLevel(newUserSkillLevel);
+        approvalRequest.setUserSkillLevel(userSkillLevel);
         approvalRequest.setMotivation(assignSkillLevelRequest.getMotivation());
 
         Iterable<SkillLevel> skillLevels = skillLevelService.getAllByLevelGreaterThanOrEqual(assignSkillLevelRequest.getLevelId());
@@ -68,27 +69,17 @@ public class ApprovalService {
         return approvalRequest;
     }
 
-    private UserSkillLevel getNewUserSkillLevel(UserSkillLevel currentUserSkillLevel) {
-        SkillLevel newSkillLevel = getOneLevelHigherSkillLevel(currentUserSkillLevel);
-        return new UserSkillLevel(currentUserSkillLevel.getUserSkill(), newSkillLevel);
-    }
-
-    private SkillLevel getOneLevelHigherSkillLevel(UserSkillLevel currentSkillLevel) {
-        Long oldLevel = currentSkillLevel.getSkillLevel().getLevel();
-        //TODO throw exception if user has the highest possible skill level
-        return skillLevelService.getByLevel(oldLevel + 1);
-    }
-
     public ApprovalRequest approve(NotificationAnswerRequest notificationAnswerRequest, ApprovalRequest request, Long approverId) {
 
-        if (request.isApproved() == 0) {
+        if(request.isApproved() == 0) {
             request.addApprover(userService.getUserById(approverId));
             RequestNotification notification = notificationService.getNotificationById(notificationAnswerRequest.getNotificationId());
             notificationService.removeRequestNotification(notification);
             request.removeNotification(notification);
         }
 
-        if (request.getApproves() >= 5) {
+        if(request.getApproves() >= 5)
+        {
             request.setIsApproved(1);
             deleteNotifications(request);
             userSkillLevelService.levelUp(approvalRequestRepository.findOne(request.getId()).getUserSkillLevel());
@@ -101,13 +92,15 @@ public class ApprovalService {
         notificationService.deleteNotifications(request);
     }
 
-    public ApprovalRequest getApprovalRequestByRequestNotification(RequestNotification notification) {
+    public ApprovalRequest getApprovalRequestByRequestNotification(RequestNotification notification)
+    {
         return approvalRequestRepository.findOne(notification.getApprovalRequest().getId());
     }
 
     public ApprovalRequest disapprove(ApprovalRequest request, Long approverId) {
 
-        if (request.isApproved() == 0) {
+        if(request.isApproved() == 0)
+        {
             request.setDisapprover(userService.getUserById(approverId));
             request.setIsApproved(-1);
             deleteNotifications(request);

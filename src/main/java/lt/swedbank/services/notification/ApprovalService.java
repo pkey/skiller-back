@@ -1,11 +1,9 @@
 package lt.swedbank.services.notification;
 
 
-import lt.swedbank.beans.entity.ApprovalRequest;
-import lt.swedbank.beans.entity.RequestNotification;
-import lt.swedbank.beans.request.NotificationAnswerRequest;
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
+import lt.swedbank.beans.request.NotificationAnswerRequest;
 import lt.swedbank.exceptions.request.RequestAlreadySubmittedException;
 import lt.swedbank.repositories.ApprovalRequestRepository;
 import lt.swedbank.services.skill.SkillLevelService;
@@ -30,6 +28,13 @@ public class ApprovalService {
     private SkillLevelService skillLevelService;
     @Autowired
     private UserSkillLevelService userSkillLevelService;
+
+    public ApprovalRequest addDefaultApprovalRequest(UserSkillLevel userSkillLevel) {
+        ApprovalRequest defaultApprovalRequest = new ApprovalRequest();
+        defaultApprovalRequest.setUserSkillLevel(userSkillLevel);
+        defaultApprovalRequest.setIsApproved(1);
+        return approvalRequestRepository.save(defaultApprovalRequest);
+    }
 
     public ApprovalRequest createSkillLevelApprovalRequest(Long userId, AssignSkillLevelRequest assignSkillLevelRequest) throws RequestAlreadySubmittedException {
 

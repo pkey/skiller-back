@@ -27,6 +27,7 @@ public class UserSkillLevelService {
 
     public UserSkillLevel getCurrentUserSkillLevelByUserIdAndSkillId(Long userId, Long skillId) throws UserSkillLevelNotFoundException {
         UserSkill userSkill = userSkillService.getUserSkillByUserIdAndSkillId(userId, skillId);
+
         UserSkillLevel userSkillLevel = userSkillLevelRepository.findTopByUserSkillOrderByValidFromDesc(userSkill);
 
         if (userSkillLevel == null) {
@@ -39,12 +40,11 @@ public class UserSkillLevelService {
     public UserSkillLevel addDefaultUserSkillLevel(UserSkill userSkill) {
         UserSkillLevel userSkillLevel = new UserSkillLevel(userSkill, skillLevelService.getDefault());
 
-        //TODO Double save, should be one
-        userSkillLevelRepository.save(userSkillLevel);
 
         userSkillLevel.setApprovalRequest(approvalService.addDefaultApprovalRequest(userSkillLevel));
 
         userSkillLevelRepository.save(userSkillLevel);
+
         return userSkillLevel;
     }
 

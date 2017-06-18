@@ -19,7 +19,7 @@ public class ApprovalRequest {
 
     private Integer isApproved = 0;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.ALL})
     private UserSkillLevel userSkillLevel;
 
     @OneToMany(cascade = {CascadeType.PERSIST})

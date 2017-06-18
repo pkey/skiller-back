@@ -12,7 +12,7 @@ public class CurrentSkillLevelResponse {
     public CurrentSkillLevelResponse(UserSkillLevel skillLevel) {
         id = skillLevel.getSkillLevel().getId();
         title = skillLevel.getSkillLevel().getTitle();
-        status = skillLevel.getApprovalRequest().getCurrentRequestStatus();
+        status = skillLevel.getCurrentSkillLevelStatus();
     }
 
     public Long getId() {

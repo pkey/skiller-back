@@ -122,6 +122,7 @@ public class ApprovalRequest {
 
     public void setIsApproved(Integer isApproved) {
         this.isApproved = isApproved;
+        userSkillLevel.setIsApproved(isApproved);
     }
 
     public String getCurrentRequestStatus() {

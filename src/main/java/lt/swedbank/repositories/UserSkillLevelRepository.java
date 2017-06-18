@@ -10,6 +10,6 @@ import java.util.logging.Level;
 
 @Repository
 public interface UserSkillLevelRepository extends CrudRepository<UserSkillLevel, Level> {
-    UserSkillLevel findTopByUserSkillOrderByValidFromDesc(UserSkill userSkill);
+    UserSkillLevel findTopByUserSkillAndIsApprovedOrderByValidFromDesc(UserSkill userSkill, Integer isApproved);
     Iterable<UserSkillLevel> findAllBySkillLevel(SkillLevel skillLevel);
 }

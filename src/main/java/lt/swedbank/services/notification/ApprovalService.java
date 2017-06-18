@@ -8,6 +8,7 @@ import lt.swedbank.exceptions.request.RequestAlreadySubmittedException;
 import lt.swedbank.repositories.ApprovalRequestRepository;
 import lt.swedbank.services.skill.SkillLevelService;
 import lt.swedbank.services.skill.UserSkillLevelService;
+import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,8 @@ public class ApprovalService {
     @Autowired
     private UserService userService;
     @Autowired
+    private UserSkillService userSkillService;
+    @Autowired
     private SkillLevelService skillLevelService;
     @Autowired
     private UserSkillLevelService userSkillLevelService;
@@ -38,19 +41,19 @@ public class ApprovalService {
 
     public ApprovalRequest createSkillLevelApprovalRequest(Long userId, AssignSkillLevelRequest assignSkillLevelRequest) throws RequestAlreadySubmittedException {
 
-        UserSkillLevel userSkillLevel = userSkillLevelService.getCurrentUserSkillLevelByUserIdAndSkillId(userId, assignSkillLevelRequest.getSkillId());
-
-        if (approvalRequestRepository.findByUserSkillLevel(userSkillLevel) != null) {
+        if (userSkillLevelService.isLatestUserSkillLevelPending(userId, assignSkillLevelRequest.getSkillId())) {
             throw new RequestAlreadySubmittedException();
         }
 
-        ApprovalRequest approvalRequest = new ApprovalRequest();
+        UserSkill userSkill = userSkillService.getUserSkillByUserIdAndSkillId(userId, assignSkillLevelRequest.getSkillId());
+        UserSkillLevel newUserSkillLevel = userSkillLevelService.addUserSkillLevel(userSkill, assignSkillLevelRequest);
 
-        approvalRequest.setUserSkillLevel(userSkillLevel);
+        ApprovalRequest approvalRequest = new ApprovalRequest();
+        approvalRequest.setUserSkillLevel(newUserSkillLevel);
         approvalRequest.setMotivation(assignSkillLevelRequest.getMotivation());
 
         Iterable<SkillLevel> skillLevels = skillLevelService.getAllByLevelGreaterThanOrEqual(assignSkillLevelRequest.getLevelId());
-        Iterable<UserSkillLevel> userSkillLevels = userSkillLevelService.getAllUserSkillLevelsSetBySkillLevels(skillLevels);
+        Iterable<UserSkillLevel> userSkillLevels = userSkillLevelService.getAllUserSkillLevelsBySkillLevels(skillLevels);
 
         List<User> usersToBeNotified = new ArrayList<>();
         Long skillIdFromRequest = approvalRequest.getUserSkillLevel().getUserSkill().getSkill().getId();
@@ -69,8 +72,6 @@ public class ApprovalService {
 
         approvalRequest.setRequestNotifications(notifications);
         approvalRequestRepository.save(approvalRequest);
-        /* TODO ask about a way how to persist notifications since the approvalRequest has "cascade type all" strategy for notifications that this request stores
-            notificationService.addNotifications(approvalRequest);*/
         return approvalRequest;
     }
 

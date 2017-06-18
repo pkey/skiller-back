@@ -28,7 +28,8 @@ public class UserSkillLevelService {
     public UserSkillLevel getCurrentUserSkillLevelByUserIdAndSkillId(Long userId, Long skillId) throws UserSkillLevelNotFoundException {
         UserSkill userSkill = userSkillService.getUserSkillByUserIdAndSkillId(userId, skillId);
 
-        UserSkillLevel userSkillLevel = userSkillLevelRepository.findTopByUserSkillOrderByValidFromDesc(userSkill);
+        UserSkillLevel userSkillLevel =
+                userSkillLevelRepository.findTopByUserSkillAndIsApprovedOrderByValidFromDesc(userSkill, 1);
 
         if (userSkillLevel == null) {
             throw new UserSkillLevelNotFoundException();
@@ -37,12 +38,24 @@ public class UserSkillLevelService {
         return userSkillLevel;
     }
 
+    public boolean isLatestUserSkillLevelPending(Long userId, Long skillId) throws UserSkillLevelNotFoundException {
+        UserSkill userSkill = userSkillService.getUserSkillByUserIdAndSkillId(userId, skillId);
+
+        UserSkillLevel lastPendingUserSkillLevel =
+                userSkillLevelRepository.findTopByUserSkillAndIsApprovedOrderByValidFromDesc(userSkill, 0);
+
+        if (lastPendingUserSkillLevel == null) {
+            return false;
+        }
+
+        UserSkillLevel currentUserSkillLevel = getCurrentUserSkillLevelByUserIdAndSkillId(userId, skillId);
+        return !currentUserSkillLevel.getValidFrom().after(lastPendingUserSkillLevel.getValidFrom());
+    }
+
     public UserSkillLevel addDefaultUserSkillLevel(UserSkill userSkill) {
         UserSkillLevel userSkillLevel = new UserSkillLevel(userSkill, skillLevelService.getDefault());
 
-
-        userSkillLevel.setApprovalRequest(approvalService.addDefaultApprovalRequest(userSkillLevel));
-
+        approvalService.addDefaultApprovalRequest(userSkillLevel);
         userSkillLevelRepository.save(userSkillLevel);
 
         return userSkillLevel;
@@ -63,14 +76,14 @@ public class UserSkillLevelService {
         return userSkillLevelRepository.save(userSkillLevel);
     }
 
-    public Iterable<UserSkillLevel> getAllBySkillLevel(SkillLevel skillLevel) {
+    public Iterable<UserSkillLevel> getAllByOneSkillLevel(SkillLevel skillLevel) {
         return userSkillLevelRepository.findAllBySkillLevel(skillLevel);
     }
 
-    public Set<UserSkillLevel> getAllUserSkillLevelsSetBySkillLevels(Iterable<SkillLevel> skillLevels) {
+    public Set<UserSkillLevel> getAllUserSkillLevelsBySkillLevels(Iterable<SkillLevel> skillLevels) {
         Set<UserSkillLevel> userSkillLevels = new HashSet<>();
         for (SkillLevel skillLevel : skillLevels) {
-            Iterable<UserSkillLevel> oneLevelSkillLevels = getAllBySkillLevel(skillLevel);
+            Iterable<UserSkillLevel> oneLevelSkillLevels = getAllByOneSkillLevel(skillLevel);
 
             oneLevelSkillLevels.forEach(userSkillLevels::add);
         }

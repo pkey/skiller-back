@@ -40,7 +40,7 @@ public class ApprovalService {
         return approvalRequestRepository.save(defaultApprovalRequest);
     }
 
-    public ApprovalRequest addSkillLevelApprovalRequestWithNotifications(Long userId, AssignSkillLevelRequest assignSkillLevelRequest) throws RequestAlreadySubmittedException {
+    public ApprovalRequest addSkillLevelApprovalRequestWithNotifications(Long userId, AssignSkillLevelRequest assignSkillLevelRequest) throws RequestAlreadySubmittedException, TooHighSkillLevelRequestException {
 
         if (userSkillLevelService.isLatestUserSkillLevelPending(userId, assignSkillLevelRequest.getSkillId())) {
             throw new RequestAlreadySubmittedException();
@@ -51,13 +51,19 @@ public class ApprovalService {
             throw new TooHighSkillLevelRequestException();
         }
 
-
         UserSkill userSkill = userSkillService.getUserSkillByUserIdAndSkillId(userId, assignSkillLevelRequest.getSkillId());
         UserSkillLevel newUserSkillLevel = userSkillLevelService.addUserSkillLevel(userSkill, assignSkillLevelRequest);
 
         ApprovalRequest approvalRequest = new ApprovalRequest();
         approvalRequest.setUserSkillLevel(newUserSkillLevel);
         approvalRequest.setMotivation(assignSkillLevelRequest.getMotivation());
+
+        approvalRequest.setRequestNotifications(createNotifications(userId, assignSkillLevelRequest, approvalRequest));
+        approvalRequestRepository.save(approvalRequest);
+        return approvalRequest;
+    }
+
+    private List<RequestNotification> createNotifications(Long userId, AssignSkillLevelRequest assignSkillLevelRequest, ApprovalRequest approvalRequest) {
 
         Iterable<SkillLevel> skillLevels = skillLevelService.getAllByLevelGreaterThanOrEqual(assignSkillLevelRequest.getLevelId());
         Iterable<UserSkillLevel> userSkillLevels = userSkillLevelService.getAllApprovedUserSkillLevelsBySkillLevels(skillLevels);
@@ -78,9 +84,7 @@ public class ApprovalService {
             notifications.add(new RequestNotification(user, approvalRequest));
         }
 
-        approvalRequest.setRequestNotifications(notifications);
-        approvalRequestRepository.save(approvalRequest);
-        return approvalRequest;
+        return notifications;
     }
 
     public ApprovalRequest approve(NotificationAnswerRequest notificationAnswerRequest, ApprovalRequest request, Long approverId) {

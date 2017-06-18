@@ -4,7 +4,8 @@ package lt.swedbank.services.notification;
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.request.NotificationAnswerRequest;
-import lt.swedbank.exceptions.request.RequestAlreadySubmittedException;
+import lt.swedbank.exceptions.userSkillLevel.RequestAlreadySubmittedException;
+import lt.swedbank.exceptions.userSkillLevel.TooHighSkillLevelRequestException;
 import lt.swedbank.repositories.ApprovalRequestRepository;
 import lt.swedbank.services.skill.SkillLevelService;
 import lt.swedbank.services.skill.UserSkillLevelService;
@@ -39,11 +40,17 @@ public class ApprovalService {
         return approvalRequestRepository.save(defaultApprovalRequest);
     }
 
-    public ApprovalRequest createSkillLevelApprovalRequest(Long userId, AssignSkillLevelRequest assignSkillLevelRequest) throws RequestAlreadySubmittedException {
+    public ApprovalRequest addSkillLevelApprovalRequestWithNotifications(Long userId, AssignSkillLevelRequest assignSkillLevelRequest) throws RequestAlreadySubmittedException {
 
         if (userSkillLevelService.isLatestUserSkillLevelPending(userId, assignSkillLevelRequest.getSkillId())) {
             throw new RequestAlreadySubmittedException();
         }
+        if(assignSkillLevelRequest.getLevelId() -
+                userSkillLevelService.getCurrentUserSkillLevelByUserIdAndSkillId(userId, assignSkillLevelRequest.getSkillId())
+                .getSkillLevel().getLevel() > 1) {
+            throw new TooHighSkillLevelRequestException();
+        }
+
 
         UserSkill userSkill = userSkillService.getUserSkillByUserIdAndSkillId(userId, assignSkillLevelRequest.getSkillId());
         UserSkillLevel newUserSkillLevel = userSkillLevelService.addUserSkillLevel(userSkill, assignSkillLevelRequest);
@@ -53,15 +60,16 @@ public class ApprovalService {
         approvalRequest.setMotivation(assignSkillLevelRequest.getMotivation());
 
         Iterable<SkillLevel> skillLevels = skillLevelService.getAllByLevelGreaterThanOrEqual(assignSkillLevelRequest.getLevelId());
-        Iterable<UserSkillLevel> userSkillLevels = userSkillLevelService.getAllUserSkillLevelsBySkillLevels(skillLevels);
+        Iterable<UserSkillLevel> userSkillLevels = userSkillLevelService.getAllApprovedUserSkillLevelsBySkillLevels(skillLevels);
 
         List<User> usersToBeNotified = new ArrayList<>();
         Long skillIdFromRequest = approvalRequest.getUserSkillLevel().getUserSkill().getSkill().getId();
         for (UserSkillLevel u : userSkillLevels) {
 
             Long skillId = u.getUserSkill().getSkill().getId();
-            if (skillId.equals(skillIdFromRequest)) {
-                usersToBeNotified.add(u.getUserSkill().getUser());
+            User user = u.getUserSkill().getUser();
+            if (skillId.equals(skillIdFromRequest) && !user.getId().equals(userId)) {
+                usersToBeNotified.add(user);
             }
         }
 

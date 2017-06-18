@@ -76,14 +76,14 @@ public class UserSkillLevelService {
         return userSkillLevelRepository.save(userSkillLevel);
     }
 
-    public Iterable<UserSkillLevel> getAllByOneSkillLevel(SkillLevel skillLevel) {
-        return userSkillLevelRepository.findAllBySkillLevel(skillLevel);
+    public Iterable<UserSkillLevel> getAllByOneSkillLevelAndIsApproved(SkillLevel skillLevel, Integer isApproved) {
+        return userSkillLevelRepository.findAllBySkillLevelAndIsApproved(skillLevel, isApproved);
     }
 
-    public Set<UserSkillLevel> getAllUserSkillLevelsBySkillLevels(Iterable<SkillLevel> skillLevels) {
+    public Set<UserSkillLevel> getAllApprovedUserSkillLevelsBySkillLevels(Iterable<SkillLevel> skillLevels) {
         Set<UserSkillLevel> userSkillLevels = new HashSet<>();
         for (SkillLevel skillLevel : skillLevels) {
-            Iterable<UserSkillLevel> oneLevelSkillLevels = getAllByOneSkillLevel(skillLevel);
+            Iterable<UserSkillLevel> oneLevelSkillLevels = getAllByOneSkillLevelAndIsApproved(skillLevel, 1);
 
             oneLevelSkillLevels.forEach(userSkillLevels::add);
         }

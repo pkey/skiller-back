@@ -91,7 +91,7 @@ public class UserController {
         String authId = authService.extractAuthIdFromToken(authToken);
         Long userId = userService.getUserByAuthId(authId).getId();
         User userFromRepository = userService.getUserById(userId);
-        approvalService.createSkillLevelApprovalRequest(userId, request);
+        approvalService.addSkillLevelApprovalRequestWithNotifications(userId, request);
 
         return new UserEntityResponse(userFromRepository);
     }

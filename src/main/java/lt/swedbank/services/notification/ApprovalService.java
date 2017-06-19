@@ -71,7 +71,6 @@ public class ApprovalService {
         List<User> usersToBeNotified = new ArrayList<>();
         Long skillIdFromRequest = approvalRequest.getUserSkillLevel().getUserSkill().getSkill().getId();
         for (UserSkillLevel u : userSkillLevels) {
-
             Long skillId = u.getUserSkill().getSkill().getId();
             User user = u.getUserSkill().getUser();
             if (skillId.equals(skillIdFromRequest) && !user.getId().equals(userId)) {
@@ -96,24 +95,14 @@ public class ApprovalService {
             request.removeNotification(notification);
         }
 
-        if(request.getApproves() >= 5)
-        {
+        if(request.getApproves() >= 5) {
             request.setIsApproved(1);
-            deleteNotifications(request);
+            request.setRequestNotifications(null);
             userSkillLevelService.levelUp(approvalRequestRepository.findOne(request.getId()).getUserSkillLevel());
         }
-        approvalRequestRepository.save(request);
-        return request;
+        return approvalRequestRepository.save(request);
     }
 
-    private void deleteNotifications(ApprovalRequest request) {
-        notificationService.deleteNotifications(request);
-    }
-
-    public ApprovalRequest getApprovalRequestByRequestNotification(RequestNotification notification)
-    {
-        return approvalRequestRepository.findOne(notification.getApprovalRequest().getId());
-    }
 
     public ApprovalRequest disapprove(RequestNotification requestNotificationFromApprovalRequest, Long approverId) {
 
@@ -125,8 +114,12 @@ public class ApprovalService {
             request.setRequestNotifications(null);
             approvalRequestRepository.save(request);
         }
-
         return request;
+    }
+
+    public ApprovalRequest getApprovalRequestByRequestNotification(RequestNotification notification)
+    {
+        return approvalRequestRepository.findOne(notification.getApprovalRequest().getId());
     }
 
     public ApprovalRequest update(ApprovalRequest approvalRequest) {

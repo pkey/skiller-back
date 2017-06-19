@@ -35,8 +35,7 @@ public class ApprovalRequest {
 
     public ApprovalRequest() {}
 
-    public ApprovalRequest(List<RequestNotification> requestNotifications)
-    {
+    public ApprovalRequest(List<RequestNotification> requestNotifications) {
         this.requestNotifications = requestNotifications;
     }
 
@@ -48,9 +47,9 @@ public class ApprovalRequest {
         this.approvers = approvers;
     }
 
-    public void addApprover(User approver)
-    {
-        this.approvers.add(approver);
+    public void addApprover(User approver) {
+        approvers.add(approver);
+        approves++;
     }
 
     public Long getId() {
@@ -104,7 +103,6 @@ public class ApprovalRequest {
     public void removeNotification(RequestNotification requestNotification) {
         requestNotifications.remove(requestNotification);
     }
-
 
     public String getMotivation() {
         return motivation;

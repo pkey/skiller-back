@@ -31,8 +31,7 @@ public class NotificationService {
         return requestNotificationRepository.findByReceiver(userService.getUserById(id));
     }
 
-    public ArrayList<RequestNotificationResponse> getRequestNotificationResponse(Iterable<RequestNotification> requestNotifications)
-    {
+    public ArrayList<RequestNotificationResponse> getRequestNotificationResponse(Iterable<RequestNotification> requestNotifications) {
         ArrayList<RequestNotificationResponse> requestNotificationResponses = new ArrayList<RequestNotificationResponse>();
         for (RequestNotification requestNotification : requestNotifications ) {
             requestNotificationResponses.add(new RequestNotificationResponse(requestNotification));
@@ -40,19 +39,17 @@ public class NotificationService {
         return requestNotificationResponses;
     }
 
-    public RequestNotification approveByApprovalRequestId(NotificationAnswerRequest notificationAnswerRequest,Long approversId) {
-        RequestNotification request = getNotificationById(notificationAnswerRequest.getNotificationId());
-        approvalService.approve(notificationAnswerRequest, request.getApprovalRequest(), approversId);
-        requestNotificationRepository.delete(request);
-        return request;
-    }
-
-    public RequestNotification getNotificationById(Long id) {
-        if(requestNotificationRepository.findOne(id) == null)
-        {
-            throw new NoSuchNotificationException();
+    public RequestNotification approveByApprovalRequestId(NotificationAnswerRequest notificationAnswerRequest, Long approversId) {
+        RequestNotification requestNotification = getNotificationById(notificationAnswerRequest.getNotificationId());
+        ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(requestNotification);
+        Integer approves = approvalService.approve(notificationAnswerRequest, approvalRequest, approversId).getApproves();
+        if(approves >= 5) {
+            Iterable<RequestNotification> requestNotificationList = requestNotificationRepository.findByApprovalRequest(approvalRequest);
+            requestNotificationRepository.delete(requestNotificationList);
+        } else {
+            requestNotificationRepository.delete(requestNotification);
         }
-        return requestNotificationRepository.findOne(id);
+        return requestNotification;
     }
 
     public RequestNotification disapproveByApprovalRequestId(NotificationAnswerRequest notificationAnswerRequest, Long approversId) {
@@ -62,6 +59,13 @@ public class NotificationService {
         approvalService.disapprove(requestNotification, approversId);
         requestNotificationRepository.delete(requestNotificationList);
         return requestNotification;
+    }
+
+    public RequestNotification getNotificationById(Long id) {
+        if(requestNotificationRepository.findOne(id) == null) {
+            throw new NoSuchNotificationException();
+        }
+        return requestNotificationRepository.findOne(id);
     }
 
     public Iterable<RequestNotification> addNotifications(ApprovalRequest request) {

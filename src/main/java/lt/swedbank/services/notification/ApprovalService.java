@@ -98,7 +98,6 @@ public class ApprovalService {
         if(request.getApproves() >= 5) {
             request.setIsApproved(1);
             request.setRequestNotifications(null);
-            userSkillLevelService.levelUp(approvalRequestRepository.findOne(request.getId()).getUserSkillLevel());
         }
         return approvalRequestRepository.save(request);
     }
@@ -107,18 +106,15 @@ public class ApprovalService {
     public ApprovalRequest disapprove(RequestNotification requestNotificationFromApprovalRequest, Long approverId) {
 
         ApprovalRequest request = getApprovalRequestByRequestNotification(requestNotificationFromApprovalRequest);
-        if(request.isApproved() == 0)
-        {
+        if(request.isApproved() == 0) {
             request.setDisapprover(userService.getUserById(approverId));
             request.setIsApproved(-1);
             request.setRequestNotifications(null);
-            approvalRequestRepository.save(request);
         }
-        return request;
+        return approvalRequestRepository.save(request);
     }
 
-    public ApprovalRequest getApprovalRequestByRequestNotification(RequestNotification notification)
-    {
+    public ApprovalRequest getApprovalRequestByRequestNotification(RequestNotification notification) {
         return approvalRequestRepository.findOne(notification.getApprovalRequest().getId());
     }
 

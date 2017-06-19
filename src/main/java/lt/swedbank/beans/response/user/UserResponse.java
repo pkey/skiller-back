@@ -1,41 +1,37 @@
-package lt.swedbank.beans.response;
+package lt.swedbank.beans.response.user;
+
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.entity.User;
-import lt.swedbank.beans.entity.UserSkill;
+import lt.swedbank.beans.response.Response;
 import lt.swedbank.beans.response.serializers.UserTeamSerializer;
+import lt.swedbank.beans.response.userSkill.UserSkillResponse;
 
-import java.util.ArrayList;
 import java.util.List;
 
+abstract public class UserResponse extends Response {
 
-public class UserEntityResponse extends Response implements Comparable<UserEntityResponse> {
+    protected Long id;
 
-    private Long id;
+    protected  String name;
 
-    private String name;
+    protected  String lastName;
 
-    private String lastName;
+    protected  String email;
 
-    private String email;
-
-
-    private List<UserSkillResponse> skills;
+    protected List<UserSkillResponse> skills;
 
 
     @JsonSerialize(using = UserTeamSerializer.class)
     private Team team;
 
-    public UserEntityResponse(User user) {
+    public UserResponse(User user) {
 
         id = user.getId();
         name = user.getName();
         lastName = user.getLastName();
         email = user.getEmail();
-
-        setSkills(user.getUserSkills());
-
         team = user.getTeam();
     }
 
@@ -71,22 +67,6 @@ public class UserEntityResponse extends Response implements Comparable<UserEntit
         this.email = email;
     }
 
-    public List<UserSkillResponse> getSkills() {
-        return skills;
-    }
-
-    public void setSkills(List<UserSkill> skills) {
-
-        List<UserSkillResponse> userSkills = new ArrayList<>();
-
-        for (UserSkill userSkill : skills
-                ) {
-            userSkills.add(new UserSkillResponse(userSkill));
-        }
-
-        this.skills = userSkills;
-    }
-
 
     public Team getTeam() {
         return team;
@@ -96,13 +76,11 @@ public class UserEntityResponse extends Response implements Comparable<UserEntit
         this.team = team;
     }
 
-    private String getFullname() {
-        return this.name + this.lastName;
+    public List<UserSkillResponse> getSkills() {
+        return skills;
     }
 
-    @Override
-    public int compareTo(UserEntityResponse userEntityResponse) {
-        return userEntityResponse.getFullname().compareToIgnoreCase(userEntityResponse.getFullname());
+    public void setSkills(List<UserSkillResponse> skills) {
+        this.skills = skills;
     }
 }
-

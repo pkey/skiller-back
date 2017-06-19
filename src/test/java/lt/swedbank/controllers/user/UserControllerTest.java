@@ -6,7 +6,7 @@ import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
-import lt.swedbank.beans.response.UserEntityResponse;
+import lt.swedbank.beans.response.user.UserEntityResponse;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.services.auth.AuthenticationService;

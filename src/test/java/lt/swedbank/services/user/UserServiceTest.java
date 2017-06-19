@@ -3,7 +3,7 @@ package lt.swedbank.services.user;
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
-import lt.swedbank.beans.response.UserEntityResponse;
+import lt.swedbank.beans.response.user.UserEntityResponse;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.repositories.UserRepository;

@@ -8,7 +8,6 @@ import org.hibernate.search.annotations.Indexed;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 
 @Entity
@@ -136,6 +135,8 @@ public class User {
     public void setTeam(Team team) {
         this.team = team;
     }
+
+    public Department getDepartment() {return team.getDepartment();}
 
     private void capitalizeUserNameAndLastName() {
         this.setName(name.substring(0, 1).toUpperCase() + name.substring(1));

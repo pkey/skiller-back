@@ -6,7 +6,9 @@ import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
-import lt.swedbank.beans.response.UserEntityResponse;
+import lt.swedbank.beans.response.user.NonColleagueResponse;
+import lt.swedbank.beans.response.user.UserEntityResponse;
+import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.repositories.UserRepository;
 import lt.swedbank.repositories.search.UserSearchRepository;
@@ -54,12 +56,20 @@ public class UserService {
          return userRepository.findAllByIdIsNotOrderByNameAscLastNameAsc(userId);
     }
 
-    public List<User> searchColleagues(Long userId, String query) {
-        List<User> userList = this.searchUsers(query);
+    public List<UserResponse> searchColleagues(Long userId, String query) {
+        User currentUser = getUserById(userId);
 
-        userList.remove(getUserById(userId));
+        List<User> quariedUsers = this.searchUsers(query);
+        List<UserResponse> filteredUsers = new ArrayList<>();
 
-        return userList;
+        quariedUsers.remove(currentUser);
+
+        for (User queriedUser : quariedUsers
+             ) {
+            filteredUsers.add(getUserResponseBasedOnDepartment(currentUser, queriedUser));
+        }
+
+        return filteredUsers;
     }
 
     public List<User> searchUsers(String query) {
@@ -84,8 +94,18 @@ public class UserService {
 
 
 
-    public UserEntityResponse getUserProfile(Long id) {
-        return new UserEntityResponse(getUserById(id));
+    public UserResponse getUserProfile(Long requeredUserId, String currentUserAuthId) {
+        User currentUser = getUserByAuthId(currentUserAuthId);
+        User requeredUser = getUserById(requeredUserId);
+
+        return getUserResponseBasedOnDepartment(currentUser, requeredUser);
+    }
+
+    public UserResponse getUserResponseBasedOnDepartment(User currentUser, User requiredUser){
+        if(usersInSameDepartment(currentUser, requiredUser))
+            return new UserEntityResponse(requiredUser);
+        else
+            return new NonColleagueResponse(requiredUser);
     }
 
     public User addUserSkill(Long userId, AddSkillRequest addSkillRequest) throws UserNotFoundException {
@@ -129,6 +149,10 @@ public class UserService {
         user.setTeam(teamService.getTeamById(assignTeamRequest.getTeamId()));
         userRepository.save(user);
         return user;
+    }
+
+    private boolean usersInSameDepartment(User currentUser, User colleague){
+        return currentUser.getDepartment().getId().equals(colleague.getDepartment().getId());
     }
 
 }

@@ -2,8 +2,9 @@ package lt.swedbank.controllers.user;
 
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.*;
-import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.beans.response.VoteResponse;
+import lt.swedbank.beans.response.user.UserEntityResponse;
+import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.repositories.search.UserSearchRepository;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.notification.ApprovalService;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -41,24 +41,18 @@ public class UserController {
 
     @RequestMapping(value = "/profile/{id}", method = RequestMethod.GET)
     public @ResponseBody
-    UserEntityResponse getUserProfile(@RequestHeader(value = "Authorization") String authToken, @PathVariable("id") Long id) {
-        return userService.getUserProfile(id);
-    }
-
-    @RequestMapping(value = "/all", method = RequestMethod.GET)
-    public @ResponseBody
-    List<UserEntityResponse> getAllUsers(@RequestHeader(value = "Authorization") String authToken) {
+    UserResponse getUserProfile(@RequestHeader(value = "Authorization") String authToken,
+                                @PathVariable("id") Long id) {
         String authId = authService.extractAuthIdFromToken(authToken);
-        Long userId = userService.getUserByAuthId(authId).getId();
-        return convertToUserEntityResponseList(userService.getColleagues(userId));
+        return userService.getUserProfile(id, authId);
     }
 
     @RequestMapping("/search")
-    public List<UserEntityResponse> searchColleagues(@RequestHeader(value = "Authorization") String authToken,
+    public List<UserResponse> searchColleagues(@RequestHeader(value = "Authorization") String authToken,
                                                      String q) {
         String authId = authService.extractAuthIdFromToken(authToken);
         Long userId = userService.getUserByAuthId(authId).getId();
-        return convertToUserEntityResponseList(userService.searchColleagues(userId, q));
+        return userService.searchColleagues(userId, q);
     }
 
 
@@ -113,15 +107,6 @@ public class UserController {
         String authId = authService.extractAuthIdFromToken(authToken);
         Long userId = userService.getUserByAuthId(authId).getId();
         return new UserEntityResponse(userService.assignTeam(userId, assignTeamRequest));
-    }
-
-    private List<UserEntityResponse> convertToUserEntityResponseList(Iterable<User> users) {
-        List<UserEntityResponse> userList = new ArrayList<>();
-        for (User user : users
-                ) {
-            userList.add(new UserEntityResponse(user));
-        }
-        return userList;
     }
 
 }

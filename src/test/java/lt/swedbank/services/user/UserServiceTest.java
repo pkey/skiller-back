@@ -4,6 +4,7 @@ import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.beans.response.user.UserEntityResponse;
+import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.repositories.UserRepository;
@@ -165,8 +166,8 @@ public class UserServiceTest {
     public void getUserProfile() {
         doReturn(testUser).when(userService).getUserById(any());
 
-        UserEntityResponse resultEntity = new UserEntityResponse(testUser);
-        UserEntityResponse testEntity = userService.getUserProfile(any());
+        UserResponse resultEntity = new UserEntityResponse(testUser);
+        UserResponse testEntity = userService.getUserProfile(any(), any());
         assertEquals(resultEntity.getEmail(), testEntity.getEmail());
     }
 
@@ -221,7 +222,7 @@ public class UserServiceTest {
 
         Mockito.when(userSearchRepository.search(anyString())).thenReturn(new HashSet<>(testUserList));
 
-        List<User> resultList = userService.searchColleagues(testUser.getId(), "");
+        List<UserResponse> resultList = userService.searchColleagues(testUser.getId(), "");
 
         Assert.assertEquals(testUserList.size() - 1, resultList.size());
 

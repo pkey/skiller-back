@@ -99,7 +99,7 @@ public class UserControllerTest {
     public void get_user_profile_success() throws Exception {
         UserEntityResponse userEntityResponseTest = mock(UserEntityResponse.class);
 
-        when(userService.getUserProfile(anyLong())).thenReturn(testUserEntityResponse);
+        when(userService.getUserProfile(anyLong(), anyString())).thenReturn(testUserEntityResponse);
 
         whenNew(UserEntityResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
 
@@ -113,7 +113,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.skills", hasSize(0)));
 
 
-        verify(userService, times(1)).getUserProfile(any());
+        verify(userService, times(1)).getUserProfile(any(), any());
         verifyNoMoreInteractions(userService);
     }
 

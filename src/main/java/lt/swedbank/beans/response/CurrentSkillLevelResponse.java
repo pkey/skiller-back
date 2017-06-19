@@ -9,10 +9,10 @@ public class CurrentSkillLevelResponse {
     private String title;
     private String status;
 
-    public CurrentSkillLevelResponse(UserSkillLevel skillLevel) {
-        id = skillLevel.getSkillLevel().getId();
-        title = skillLevel.getSkillLevel().getTitle();
-        status = skillLevel.getCurrentSkillLevelStatus();
+    public CurrentSkillLevelResponse(UserSkillLevel userSkillLevel) {
+        id = userSkillLevel.getSkillLevel().getId();
+        title = userSkillLevel.getSkillLevel().getTitle();
+        status = userSkillLevel.getCurrentSkillLevelStatus();
     }
 
     public Long getId() {

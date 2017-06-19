@@ -115,13 +115,13 @@ public class ApprovalService {
         return approvalRequestRepository.findOne(notification.getApprovalRequest().getId());
     }
 
-    public ApprovalRequest disapprove(ApprovalRequest request, Long approverId) {
+    public ApprovalRequest disapprove(RequestNotification requestNotificationFromApprovalRequest, Long approverId) {
 
+        ApprovalRequest request = getApprovalRequestByRequestNotification(requestNotificationFromApprovalRequest);
         if(request.isApproved() == 0)
         {
             request.setDisapprover(userService.getUserById(approverId));
             request.setIsApproved(-1);
-            deleteNotifications(request);
             request.setRequestNotifications(null);
             approvalRequestRepository.save(request);
         }

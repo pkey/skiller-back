@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class NotificationService {
@@ -46,8 +47,7 @@ public class NotificationService {
         return request;
     }
 
-    public RequestNotification getNotificationById(Long id)
-    {
+    public RequestNotification getNotificationById(Long id) {
         if(requestNotificationRepository.findOne(id) == null)
         {
             throw new NoSuchNotificationException();
@@ -55,11 +55,13 @@ public class NotificationService {
         return requestNotificationRepository.findOne(id);
     }
 
-    public RequestNotification disapproveByApprovalRequestId(NotificationAnswerRequest notificationAnswerRequest,Long approversId) {
-        RequestNotification request = getNotificationById(notificationAnswerRequest.getNotificationId());
-        approvalService.disapprove(request.getApprovalRequest(), approversId);
-        requestNotificationRepository.delete(request);
-        return request;
+    public RequestNotification disapproveByApprovalRequestId(NotificationAnswerRequest notificationAnswerRequest, Long approversId) {
+        RequestNotification requestNotification = getNotificationById(notificationAnswerRequest.getNotificationId());
+        ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(requestNotification);
+        Iterable<RequestNotification> requestNotificationList = requestNotificationRepository.findByApprovalRequest(approvalRequest);
+        approvalService.disapprove(requestNotification, approversId);
+        requestNotificationRepository.delete(requestNotificationList);
+        return requestNotification;
     }
 
     public Iterable<RequestNotification> addNotifications(ApprovalRequest request) {

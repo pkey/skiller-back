@@ -101,10 +101,8 @@ public class ApprovalRequest {
         this.disapprover = disapprover;
     }
 
-    public boolean removeNotification(RequestNotification requestNotification)
-    {
+    public void removeNotification(RequestNotification requestNotification) {
         requestNotifications.remove(requestNotification);
-        return true;
     }
 
 

@@ -62,9 +62,8 @@ public class NotificationService {
         return request;
     }
 
-    //TODO should return something to know that notifications were saved successfully
-    public void addNotifications(ApprovalRequest request) {
-        requestNotificationRepository.save(request.getRequestNotifications());
+    public Iterable<RequestNotification> addNotifications(ApprovalRequest request) {
+        return requestNotificationRepository.save(request.getRequestNotifications());
     }
 
     public void deleteNotifications(ApprovalRequest request) {

@@ -6,7 +6,7 @@ import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
-import lt.swedbank.beans.response.UserEntityResponse;
+import lt.swedbank.beans.response.user.UserEntityResponse;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.services.auth.AuthenticationService;
@@ -99,7 +99,7 @@ public class UserControllerTest {
     public void get_user_profile_success() throws Exception {
         UserEntityResponse userEntityResponseTest = mock(UserEntityResponse.class);
 
-        when(userService.getUserProfile(anyLong())).thenReturn(testUserEntityResponse);
+        when(userService.getUserProfile(anyLong(), anyString())).thenReturn(testUserEntityResponse);
 
         whenNew(UserEntityResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
 
@@ -113,27 +113,8 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.skills", hasSize(0)));
 
 
-        verify(userService, times(1)).getUserProfile(any());
+        verify(userService, times(1)).getUserProfile(any(), any());
         verifyNoMoreInteractions(userService);
-    }
-
-    @Test
-    public void get_colleagues_success() throws Exception {
-        List<User> colleagues = testUsers;
-
-        colleagues.remove(testUser);
-
-        when(userService.getColleagues(testUser.getId())).thenReturn(colleagues);
-        when(userService.getUserByAuthId(any())).thenReturn(testUser);
-
-        mockMvc.perform(get("/user/all")
-                .header("Authorization", "Bearer")
-                .contentType(contentType))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].skills", hasSize(0)));
-
-        verify(userService, times(1)).getColleagues(testUser.getId());
     }
 
     @Test

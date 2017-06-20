@@ -8,7 +8,6 @@ import org.hibernate.search.annotations.Indexed;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 
 @Entity
@@ -135,6 +134,14 @@ public class User {
 
     public void setTeam(Team team) {
         this.team = team;
+    }
+
+    public Department getDepartment() {
+        if (team != null){
+            return team.getDepartment();
+        } else {
+            return null;
+        }
     }
 
     private void capitalizeUserNameAndLastName() {

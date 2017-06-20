@@ -3,10 +3,12 @@ package lt.swedbank.controllers.auth;
 import com.auth0.exception.APIException;
 import com.auth0.json.auth.TokenHolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.LoginUserRequest;
 import lt.swedbank.beans.request.RegisterUserRequest;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
+import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.services.auth.Auth0AuthenticationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +23,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
@@ -38,6 +41,7 @@ public class AuthControllerTest {
     private MockMvc mockMvc;
 
     private User correctUser;
+    private List<Team> teamList;
 
     @InjectMocks
     private AuthController authController;
@@ -69,6 +73,10 @@ public class AuthControllerTest {
         correctUser.setPassword("TestUserPassword");
         correctUser.setEmail("testuser@gmail.com");
         correctUser.setConnection("Username-Password-Authentication");
+
+        teamList = TestHelper.fetchTeams(1);
+
+        correctUser.setTeam(teamList.get(0));
     }
 
     @Test

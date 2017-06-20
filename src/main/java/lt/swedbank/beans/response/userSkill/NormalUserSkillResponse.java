@@ -1,24 +1,23 @@
-package lt.swedbank.beans.response;
+package lt.swedbank.beans.response.userSkill;
 
 
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.entity.Vote;
+import lt.swedbank.beans.response.CurrentSkillLevelResponse;
+import lt.swedbank.beans.response.VoteResponse;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserSkillResponse {
+public class NormalUserSkillResponse extends UserSkillResponse {
 
-    private Long id;
-    private String title;
 
-    private CurrentSkillLevelResponse level;
+    protected CurrentSkillLevelResponse level;
 
-    private List<VoteResponse> votes;
+    protected List<VoteResponse> votes;
 
-    public UserSkillResponse(UserSkill userSkill) {
-        id = userSkill.getSkill().getId();
-        title = userSkill.getSkill().getTitle();
+    public NormalUserSkillResponse(UserSkill userSkill) {
+        super(userSkill);
         level = new CurrentSkillLevelResponse(userSkill.getCurrentUserSkillLevel());
         votes = convertVoteEntityListToVoteResponseList(userSkill.getCurrentUserSkillLevel().getVotes());
     }

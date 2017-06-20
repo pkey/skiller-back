@@ -3,7 +3,6 @@ package lt.swedbank.controllers.notification;
 
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.NotificationAnswerRequest;
-import lt.swedbank.beans.response.notification.ApproverResponse;
 import lt.swedbank.beans.response.notification.RequestNotificationResponse;
 
 import lt.swedbank.services.auth.AuthenticationService;

@@ -28,7 +28,6 @@ public class ApprovalRequest {
     @OneToOne(cascade = {CascadeType.PERSIST})
     private Disapprover disapprover;
 
-
     @OneToMany(cascade = {CascadeType.ALL})
     private List<RequestNotification> requestNotifications;
 

@@ -4,13 +4,13 @@ import lt.swedbank.beans.entity.RequestNotification;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkillLevel;
 import lt.swedbank.beans.response.ApproverResponse;
+import lt.swedbank.beans.response.DisapproverResponse;
 import lt.swedbank.beans.response.SkillEntityResponse;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class RequestApprovedNotificationResponse extends NotificationResponse {
+public class RequestDisapprovedNotificationResponse extends NotificationResponse {
 
     final private Integer type = 3;
 
@@ -26,12 +26,12 @@ public class RequestApprovedNotificationResponse extends NotificationResponse {
 
     private SkillEntityResponse skill;
 
-    private List<ApproverResponse> approvals;
+    private DisapproverResponse disapprover;
 
-    public RequestApprovedNotificationResponse(){
+    public RequestDisapprovedNotificationResponse(){
     }
 
-    public RequestApprovedNotificationResponse(RequestNotification requestNotification) {
+    public RequestDisapprovedNotificationResponse(RequestNotification requestNotification) {
         User user = requestNotification.getApprovalRequest().getUserSkillLevel().getUserSkill().getUser();
         UserSkillLevel userSkillLevel = requestNotification.getApprovalRequest().getUserSkillLevel();
         this.id = requestNotification.getId();
@@ -40,7 +40,7 @@ public class RequestApprovedNotificationResponse extends NotificationResponse {
         this.senderName = user.getName();
         this.senderLastname = user.getLastName();
         this.skillLevel = userSkillLevel.getSkillLevel().getTitle();
-        this.approvals = new ArrayList<>(requestNotification.getApprovalRequest().getApproves());
+        this.disapprover = new DisapproverResponse(requestNotification.getApprovalRequest().getDisapprover());
     }
 
     public String getSenderName() {
@@ -94,11 +94,11 @@ public class RequestApprovedNotificationResponse extends NotificationResponse {
         return type;
     }
 
-    public List<ApproverResponse> getApprovals() {
-        return approvals;
+    public DisapproverResponse getDisapprover() {
+        return disapprover;
     }
 
-    public void setApprovals(List<ApproverResponse> approvals) {
-        this.approvals = approvals;
+    public void setDisapprover(DisapproverResponse disapprover) {
+        this.disapprover = disapprover;
     }
 }

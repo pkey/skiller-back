@@ -1,17 +1,18 @@
-package lt.swedbank.beans.response.notification;
+package lt.swedbank.beans.response;
 
 import lt.swedbank.beans.entity.Approver;
+import lt.swedbank.beans.entity.Disapprover;
 
-public class ApproverResponse {
+public class DisapproverResponse {
 
     private String name;
     private String message;
 
-    public ApproverResponse() {}
+    public DisapproverResponse() {}
 
-    public ApproverResponse(Approver approver) {
-        this.name = approver.getUser().getName();
-        this.message = approver.getMessage();
+    public DisapproverResponse(Disapprover disapprover) {
+        this.name = disapprover.getUser().getName();
+        this.message = disapprover.getMessage();
     }
 
     public String getName() {

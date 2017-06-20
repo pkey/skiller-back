@@ -64,6 +64,7 @@ public class RequestNotificationResponse extends NotificationResponse {
     public void setMessage(String message) {
         this.message = message;
     }
+
     public void setSkill(SkillEntityResponse skill) {
         this.skill = skill;
     }

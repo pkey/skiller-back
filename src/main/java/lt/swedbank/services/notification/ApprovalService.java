@@ -7,6 +7,8 @@ import lt.swedbank.beans.request.NotificationAnswerRequest;
 import lt.swedbank.exceptions.userSkillLevel.RequestAlreadySubmittedException;
 import lt.swedbank.exceptions.userSkillLevel.TooHighSkillLevelRequestException;
 import lt.swedbank.repositories.ApprovalRequestRepository;
+import lt.swedbank.repositories.ApproversRepository;
+import lt.swedbank.repositories.DisaproversRepository;
 import lt.swedbank.services.skill.SkillLevelService;
 import lt.swedbank.services.skill.UserSkillLevelService;
 import lt.swedbank.services.skill.UserSkillService;
@@ -24,6 +26,10 @@ public class ApprovalService {
     private ApprovalRequestRepository approvalRequestRepository;
     @Autowired
     private NotificationService notificationService;
+    @Autowired
+    private ApproversRepository approversRepository;
+    @Autowired
+    private DisaproversRepository disaproversRepository;
     @Autowired
     private UserService userService;
     @Autowired
@@ -85,11 +91,18 @@ public class ApprovalService {
 
         return notifications;
     }
+    public Approver addApprover(Approver approver)
+    {
+        return approversRepository.save(approver);
+    }
+
 
     public ApprovalRequest approve(NotificationAnswerRequest notificationAnswerRequest, ApprovalRequest request, Long approverId) {
 
         if(request.isApproved() == 0) {
-            request.addApprover(new Approver(userService.getUserById(approverId), notificationAnswerRequest.getMessage()));
+            Approver approver = new Approver(userService.getUserById(approverId), notificationAnswerRequest.getMessage());
+            addApprover(approver);
+            request.addApprover(approver);
             RequestNotification notification = notificationService.getNotificationById(notificationAnswerRequest.getNotificationId());
             notificationService.removeRequestNotification(notification);
             request.removeNotification(notification);
@@ -102,13 +115,19 @@ public class ApprovalService {
         return approvalRequestRepository.save(request);
     }
 
+    public Disapprover addDisapprover(Disapprover disapprover)
+    {
+        return disaproversRepository.save(disapprover);
+    }
 
     public ApprovalRequest disapprove(String message, RequestNotification requestNotificationFromApprovalRequest, Long disapproverId) {
 
         ApprovalRequest request = getApprovalRequestByRequestNotification(requestNotificationFromApprovalRequest);
         if(request.isApproved() == 0) {
 
-            request.setDisapprover(new Disapprover(userService.getUserById(disapproverId), message));
+            Disapprover disapprover = new Disapprover(userService.getUserById(disapproverId), message);
+            addDisapprover(disapprover);
+            request.setDisapprover(disapprover);
             request.setIsApproved(-1);
             request.setRequestNotifications(null);
         }

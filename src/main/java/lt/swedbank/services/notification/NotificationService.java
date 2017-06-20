@@ -29,14 +29,13 @@ public class NotificationService {
     @Autowired
     private ApprovalService approvalService;
 
-    public Iterable<RequestNotification> getNotificationsByUserId(Long id)
-    {
+    public Iterable<RequestNotification> getNotificationsByUserId(Long id) {
         return requestNotificationRepository.findByReceiver(userService.getUserById(id));
     }
 
     public ArrayList<NotificationResponse> getNotificationResponses(Iterable<RequestNotification> requestNotifications) {
         ArrayList<NotificationResponse> requestNotificationResponses = new ArrayList<NotificationResponse>();
-        for (RequestNotification requestNotification : requestNotifications ) {
+        for (RequestNotification requestNotification : requestNotifications) {
             ApprovalRequest approvalRequest = requestNotification.getApprovalRequest();
             if (approvalRequest.isApproved() == -1) {
                 requestNotificationResponses.add(new RequestDisapprovedNotificationResponse(requestNotification));
@@ -53,7 +52,7 @@ public class NotificationService {
         RequestNotification requestNotification = getNotificationById(notificationAnswerRequest.getNotificationId());
         ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(requestNotification);
         Integer approves = approvalService.approve(notificationAnswerRequest, approvalRequest, approversId).getApproves();
-        if(approves >= 5) {
+        if (approves >= 5) {
             Iterable<RequestNotification> requestNotificationList = requestNotificationRepository.findByApprovalRequest(approvalRequest);
             requestNotificationRepository.delete(requestNotificationList);
             User user = userService.getUserById(approvalRequest.getUserSkillLevel().getUserSkill().getUser().getId());
@@ -79,7 +78,7 @@ public class NotificationService {
     }
 
     public RequestNotification getNotificationById(Long id) {
-        if(requestNotificationRepository.findOne(id) == null) {
+        if (requestNotificationRepository.findOne(id) == null) {
             throw new NoSuchNotificationException();
         }
         return requestNotificationRepository.findOne(id);

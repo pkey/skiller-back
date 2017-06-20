@@ -3,7 +3,9 @@ package lt.swedbank.services.user;
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
-import lt.swedbank.beans.response.UserEntityResponse;
+import lt.swedbank.beans.response.user.NonColleagueResponse;
+import lt.swedbank.beans.response.user.UserEntityResponse;
+import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.repositories.UserRepository;
@@ -21,8 +23,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.HashSet;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -39,6 +41,10 @@ public class UserServiceTest {
     private List<User> testUserList;
 
     private User testUser;
+
+    private User loggedUser;
+
+    private List<Team> teams;
 
     @Spy
     @InjectMocks
@@ -67,16 +73,21 @@ public class UserServiceTest {
 
         testUserList = TestHelper.fetchUsers(10);
 
+
         testUser = testUserList.get(0);
+        loggedUser = testUserList.get(1);
+
+        teams = TestHelper.fetchTeams(3);
+
+        testUser.setTeam(teams.get(0));
+        loggedUser.setTeam(teams.get(1));
 
         testUserSkill = new UserSkill();
         testUserSkill.setId(Integer.toUnsignedLong(0));
         testUserSkill.setUser(testUser);
         testUserSkill.setSkill(new Skill("Test Skill"));
 
-        testTeam = new Team();
-        testTeam.setName("Testing Team");
-        testTeam.setId(teamID);
+
 
         testAddSkillRequest = new AddSkillRequest(testUserSkill);
 
@@ -162,12 +173,34 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getUserProfile() {
-        doReturn(testUser).when(userService).getUserById(any());
+    public void getUserNonColleagueProfile() {
 
-        UserEntityResponse resultEntity = new UserEntityResponse(testUser);
-        UserEntityResponse testEntity = userService.getUserProfile(any());
+        doReturn(testUser).when(userService).getUserById(any());
+        doReturn(loggedUser).when(userService).getUserByAuthId(any());
+
+        UserResponse testEntity = new UserEntityResponse(testUser);
+        UserResponse resultEntity = userService.getUserProfile(any(), any());
+
+
         assertEquals(resultEntity.getEmail(), testEntity.getEmail());
+        assertThat(resultEntity, instanceOf(NonColleagueResponse.class));
+    }
+
+    @Test
+    public void getUserColleagueProfile() {
+        User colleagueUser = testUser;
+        colleagueUser.setTeam(loggedUser.getTeam());
+
+        doReturn(colleagueUser).when(userService).getUserById(any());
+        doReturn(loggedUser).when(userService).getUserByAuthId(any());
+
+
+        UserResponse testEntity = new UserEntityResponse(colleagueUser);
+        UserResponse resultEntity = userService.getUserProfile(any(), any());
+
+
+        assertEquals(resultEntity.getEmail(), testEntity.getEmail());
+        assertThat(resultEntity, instanceOf(UserEntityResponse.class));
     }
 
     @Test
@@ -221,10 +254,9 @@ public class UserServiceTest {
 
         Mockito.when(userSearchRepository.search(anyString())).thenReturn(new HashSet<>(testUserList));
 
-        List<User> resultList = userService.searchColleagues(testUser.getId(), "");
+        List<UserResponse> resultList = userService.searchColleagues(testUser.getId(), "");
 
         Assert.assertEquals(testUserList.size() - 1, resultList.size());
-
 
     }
 

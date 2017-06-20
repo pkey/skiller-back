@@ -6,6 +6,7 @@ import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
 import lt.swedbank.exceptions.skill.SkillNotFoundException;
+import lt.swedbank.exceptions.userSkill.UserSkillNotFoundException;
 import lt.swedbank.repositories.UserSkillRepository;
 import org.junit.Assert;
 import org.junit.Before;
@@ -157,6 +158,22 @@ public class UserSkillServiceTest {
         Assert.assertEquals(assignSkillLevelRequest.getMotivation(), resultUserSkill.getUserSkillLevels().get(1).getMotivation());
 
         Mockito.verify(userSkillRepository, Mockito.times(1)).findByUserIdAndSkillId(any(), any());
+    }
+
+    @Test
+    public void getUserSkillByUserIdAndSkillId(){
+        Mockito.when(userSkillRepository.findByUserIdAndSkillId(user.getId(), skill.getId())).thenReturn(testUserSkill);
+
+        UserSkill resultUserSkill = userSkillService.getUserSkillByUserIdAndSkillId(user.getId(), skill.getId());
+
+        Assert.assertEquals(testUserSkill, resultUserSkill);
+    }
+
+    @Test(expected = UserSkillNotFoundException.class)
+    public void throws_exception_if_no_user_skill_exists() throws Exception {
+        Mockito.when(userSkillRepository.findByUserIdAndSkillId(user.getId(), skill.getId())).thenReturn(null);
+
+        userSkillService.getUserSkillByUserIdAndSkillId(user.getId(), skill.getId());
     }
 
 }

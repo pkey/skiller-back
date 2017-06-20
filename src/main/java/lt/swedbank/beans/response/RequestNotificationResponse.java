@@ -18,16 +18,6 @@ public class RequestNotificationResponse {
 
     private SkillEntityResponse skill;
 
-    public RequestNotificationResponse(Long id, User sender, Skill skill, String message, String skillLevel)
-    {
-        this.id = id;
-        this.skill = new SkillEntityResponse(skill);
-        this.message = message;
-        this.senderLastname = sender.getLastName();
-        this.senderName = sender.getName();
-        this.skillLevel = skillLevel;
-    }
-
     public String getSenderName() {
         return senderName;
     }

@@ -25,8 +25,8 @@ public class UserSkillLevelService {
     @Autowired
     private ApprovalService approvalService;
 
-    public UserSkillLevel getCurrentUserSkillLevelByUserIdAndSkillId(Long userId, Long skillId) throws UserSkillLevelNotFoundException {
-        UserSkill userSkill = userSkillService.getUserSkillByUserIdAndSkillId(userId, skillId);
+    public UserSkillLevel getCurrentUserSkillLevelByUserIdAndSkillId(Long userId, Long userSkillId) throws UserSkillLevelNotFoundException {
+        UserSkill userSkill = userSkillService.getUserSkillByUserIdAndSkillId(userId, userSkillId);
 
         UserSkillLevel userSkillLevel =
                 userSkillLevelRepository.findTopByUserSkillAndIsApprovedOrderByValidFromDesc(userSkill, 1);

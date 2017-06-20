@@ -1,8 +1,11 @@
 package lt.swedbank.controllers.user;
 
+import lt.swedbank.beans.entity.ApprovalRequest;
 import lt.swedbank.beans.entity.User;
+import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.*;
 import lt.swedbank.beans.response.UserEntityResponse;
+import lt.swedbank.beans.response.UserSkillResponse;
 import lt.swedbank.beans.response.VoteResponse;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.notification.ApprovalService;
@@ -86,14 +89,15 @@ public class UserController {
 
     @RequestMapping(value = "/skill/level", method = RequestMethod.POST)
     public @ResponseBody
-    UserEntityResponse assignUserSkillLevel(@Valid @RequestBody AssignSkillLevelRequest request,
-                                            @RequestHeader(value = "Authorization") String authToken) {
+    UserSkillResponse assignUserSkillLevel(@Valid @RequestBody AssignSkillLevelRequest request,
+                                           @RequestHeader(value = "Authorization") String authToken) {
         String authId = authService.extractAuthIdFromToken(authToken);
         Long userId = userService.getUserByAuthId(authId).getId();
-        User userFromRepository = userService.getUserById(userId);
-        approvalService.addSkillLevelApprovalRequestWithNotifications(userId, request);
 
-        return new UserEntityResponse(userFromRepository);
+        ApprovalRequest approvalRequest = approvalService.addSkillLevelApprovalRequestWithNotifications(userId, request);
+        UserSkill userSkill = approvalRequest.getUserSkillLevel().getUserSkill();
+
+        return new UserSkillResponse(userSkill);
     }
 
     @RequestMapping(value = "/skill/vote", method = RequestMethod.POST)

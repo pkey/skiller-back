@@ -58,12 +58,12 @@ public class ApprovalService {
         approvalRequest.setUserSkillLevel(newUserSkillLevel);
         approvalRequest.setMotivation(assignSkillLevelRequest.getMotivation());
 
-        approvalRequest.setRequestNotifications(createNotifications(userId, assignSkillLevelRequest, approvalRequest));
+        approvalRequest.setRequestNotifications(createNotificationsForUsersWithTheSameSkill(userId, assignSkillLevelRequest, approvalRequest));
         approvalRequestRepository.save(approvalRequest);
         return approvalRequest;
     }
 
-    private List<RequestNotification> createNotifications(Long userId, AssignSkillLevelRequest assignSkillLevelRequest, ApprovalRequest approvalRequest) {
+    private List<RequestNotification> createNotificationsForUsersWithTheSameSkill(Long userId, AssignSkillLevelRequest assignSkillLevelRequest, ApprovalRequest approvalRequest) {
 
         Iterable<SkillLevel> skillLevels = skillLevelService.getAllByLevelGreaterThanOrEqual(assignSkillLevelRequest.getLevelId());
         Iterable<UserSkillLevel> userSkillLevels = userSkillLevelService.getAllApprovedUserSkillLevelsBySkillLevels(skillLevels);

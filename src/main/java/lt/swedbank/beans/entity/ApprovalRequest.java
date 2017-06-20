@@ -28,6 +28,7 @@ public class ApprovalRequest {
     @OneToOne
     private User disapprover;
 
+
     @OneToMany(cascade = {CascadeType.ALL})
     private List<RequestNotification> requestNotifications;
 

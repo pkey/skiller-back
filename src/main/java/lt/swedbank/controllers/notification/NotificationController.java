@@ -1,21 +1,12 @@
 package lt.swedbank.controllers.notification;
 
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.NotificationAnswerRequest;
-import lt.swedbank.beans.response.RequestNotificationResponse;
+import lt.swedbank.beans.response.notification.RequestNotificationResponse;
 
-import lt.swedbank.repositories.ApprovalRequestRepository;
-import lt.swedbank.repositories.RequestNotificationRepository;
-import lt.swedbank.repositories.UserSkillRepository;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.notification.NotificationService;
-import lt.swedbank.services.skill.UserSkillLevelService;
-import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

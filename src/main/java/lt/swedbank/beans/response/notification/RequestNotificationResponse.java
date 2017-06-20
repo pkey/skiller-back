@@ -1,6 +1,7 @@
-package lt.swedbank.beans.response;
+package lt.swedbank.beans.response.notification;
 
 import lt.swedbank.beans.entity.*;
+import lt.swedbank.beans.response.SkillEntityResponse;
 
 public class RequestNotificationResponse {
 
@@ -17,6 +18,20 @@ public class RequestNotificationResponse {
     private String skillLevel;
 
     private SkillEntityResponse skill;
+
+    public RequestNotificationResponse(){
+    }
+
+    public RequestNotificationResponse(RequestNotification requestNotification) {
+        User user = requestNotification.getApprovalRequest().getUserSkillLevel().getUserSkill().getUser();
+        UserSkillLevel userSkillLevel = requestNotification.getApprovalRequest().getUserSkillLevel();
+        this.id = requestNotification.getId();
+        this.skill = new SkillEntityResponse(userSkillLevel.getUserSkill().getSkill());
+        this.message = requestNotification.getApprovalRequest().getMotivation();
+        this.senderName = user.getName();
+        this.senderLastname = user.getLastName();
+        this.skillLevel = userSkillLevel.getSkillLevel().getTitle();
+    }
 
     public String getSenderName() {
         return senderName;
@@ -51,19 +66,6 @@ public class RequestNotificationResponse {
     }
     public void setSkill(SkillEntityResponse skill) {
         this.skill = skill;
-    }
-
-    public RequestNotificationResponse(){}
-    public RequestNotificationResponse(RequestNotification requestNotification)
-    {
-        User user = requestNotification.getApprovalRequest().getUserSkillLevel().getUserSkill().getUser();
-        UserSkillLevel userSkillLevel = requestNotification.getApprovalRequest().getUserSkillLevel();
-        this.id = requestNotification.getId();
-        this.skill = new SkillEntityResponse(userSkillLevel.getUserSkill().getSkill());
-        this.message = requestNotification.getApprovalRequest().getMotivation();
-        this.senderName = user.getName();
-        this.senderLastname = user.getLastName();
-        this.skillLevel = userSkillLevel.getSkillLevel().getTitle();
     }
 
     public String getMessage() {

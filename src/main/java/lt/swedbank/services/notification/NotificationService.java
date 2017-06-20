@@ -3,7 +3,7 @@ package lt.swedbank.services.notification;
 import lt.swedbank.beans.entity.ApprovalRequest;
 import lt.swedbank.beans.entity.RequestNotification;
 import lt.swedbank.beans.request.NotificationAnswerRequest;
-import lt.swedbank.beans.response.RequestNotificationResponse;
+import lt.swedbank.beans.response.notification.RequestNotificationResponse;
 import lt.swedbank.exceptions.notification.NoSuchNotificationException;
 import lt.swedbank.repositories.RequestNotificationRepository;
 import lt.swedbank.services.skill.UserSkillService;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class NotificationService {

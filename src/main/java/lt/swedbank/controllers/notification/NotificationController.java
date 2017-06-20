@@ -49,12 +49,10 @@ public class NotificationController {
                                                @RequestHeader(value = "Authorization") String authToken) {
         User approver = userService.getUserByAuthId(authenticationService.extractAuthIdFromToken(authToken));
         RequestNotification requestNotification = notificationService.getNotificationById(notificationAnswerRequest.getNotificationId());
-        if(notificationAnswerRequest.getApproved() == 1)
-        {
+        if(notificationAnswerRequest.getApproved() == 1) {
             return new RequestNotificationResponse(notificationService.approveByApprovalRequestId(notificationAnswerRequest, approver.getId()));
         }
-        else if(notificationAnswerRequest.getApproved() == -1)
-        {
+        else if(notificationAnswerRequest.getApproved() == -1) {
             return new RequestNotificationResponse(notificationService.disapproveByApprovalRequestId(notificationAnswerRequest, approver.getId()));
         }
         return new RequestNotificationResponse(notificationService.removeRequestNotification(requestNotification));

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class NotificationServiceTest {
@@ -29,17 +30,20 @@ public class NotificationServiceTest {
     private RequestNotificationRepository requestNotificationRepository;
     @Mock
     private UserService userService;
+    @Mock
+    private ApprovalService approvalService;
 
     private RequestNotification requestNotification1;
     private RequestNotification requestNotification2;
     private List<RequestNotification> requestNotificationList;
     private List<RequestNotificationResponse> requestNotificationResponses;
     private User user;
+    private ApprovalRequest approvalRequestl;
+    private UserSkillLevel userSkillLevel;
 
     @Before
     public void setUp()
     {
-
         requestNotificationResponses = new ArrayList<>();
         requestNotificationResponses.add(new RequestNotificationResponse(requestNotification1));
         requestNotificationResponses.add(new RequestNotificationResponse(requestNotification2));
@@ -50,6 +54,14 @@ public class NotificationServiceTest {
         requestNotificationList = new LinkedList<>();
         requestNotificationList.add(requestNotification1);
         requestNotificationList.add(requestNotification2);
+
+        userSkillLevel = new UserSkillLevel();
+        userSkillLevel.setMotivation("test");
+        userSkillLevel.setSkillLevel(new SkillLevel());
+        approvalRequestl = new ApprovalRequest();
+        approvalRequestl.setUserSkillLevel(userSkillLevel);
+        approvalRequestl.setMotivation("test");
+
     }
 
     @Test
@@ -68,6 +80,11 @@ public class NotificationServiceTest {
 
     @Test
     public void approveByApprovalRequestIdTest(){
+        doReturn(requestNotification1).when(notificationService).getNotificationById(any());
+        Mockito.when(approvalService.approve(any(),any(),any())).thenReturn(approvalRequestl);
+        assertEquals(notificationService.approveByApprovalRequestId(any(), any()), requestNotification1);
+
+
 
     }
 

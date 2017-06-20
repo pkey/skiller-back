@@ -136,7 +136,13 @@ public class User {
         this.team = team;
     }
 
-    public Department getDepartment() {return team.getDepartment();}
+    public Department getDepartment() {
+        if (team != null){
+            return team.getDepartment();
+        } else {
+            return null;
+        }
+    }
 
     private void capitalizeUserNameAndLastName() {
         this.setName(name.substring(0, 1).toUpperCase() + name.substring(1));

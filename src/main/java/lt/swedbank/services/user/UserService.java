@@ -152,6 +152,11 @@ public class UserService {
     }
 
     private boolean usersInSameDepartment(User currentUser, User colleague){
+
+        //If users has not assigned any team, should mean they are colleagues
+        if(colleague.getDepartment() == null) {
+           return true;
+        }
         return currentUser.getDepartment().getId().equals(colleague.getDepartment().getId());
     }
 

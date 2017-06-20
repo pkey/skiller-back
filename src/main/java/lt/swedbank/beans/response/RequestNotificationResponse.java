@@ -64,6 +64,7 @@ public class RequestNotificationResponse {
     }
 
     public RequestNotificationResponse(){}
+
     public RequestNotificationResponse(RequestNotification requestNotification)
     {
         User user = requestNotification.getApprovalRequest().getUserSkillLevel().getUserSkill().getUser();

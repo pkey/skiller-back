@@ -2,6 +2,7 @@ package lt.swedbank.services.notification;
 
 import lt.swedbank.beans.entity.ApprovalRequest;
 import lt.swedbank.beans.entity.RequestNotification;
+import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.NotificationAnswerRequest;
 import lt.swedbank.beans.response.notification.NotificationResponse;
 import lt.swedbank.beans.response.notification.RequestApprovedNotificationResponse;
@@ -55,6 +56,9 @@ public class NotificationService {
         if(approves >= 5) {
             Iterable<RequestNotification> requestNotificationList = requestNotificationRepository.findByApprovalRequest(approvalRequest);
             requestNotificationRepository.delete(requestNotificationList);
+            User user = userService.getUserById(approvalRequest.getUserSkillLevel().getUserSkill().getUser().getId());
+            approvalRequest.setRequestNotification(new RequestNotification(user, approvalRequest));
+            approvalService.update(approvalRequest);
         } else {
             requestNotificationRepository.delete(requestNotification);
         }
@@ -68,6 +72,9 @@ public class NotificationService {
         String message = notificationAnswerRequest.getMessage();
         approvalService.disapprove(message, requestNotification, approversId);
         requestNotificationRepository.delete(requestNotificationList);
+        User user = userService.getUserById(approvalRequest.getUserSkillLevel().getUserSkill().getUser().getId());
+        approvalRequest.setRequestNotification(new RequestNotification(user, approvalRequest));
+        approvalService.update(approvalRequest);
         return requestNotification;
     }
 

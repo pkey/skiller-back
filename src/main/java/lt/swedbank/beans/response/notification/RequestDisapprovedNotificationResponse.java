@@ -12,7 +12,7 @@ import java.util.List;
 
 public class RequestDisapprovedNotificationResponse extends NotificationResponse {
 
-    final private Integer type = 3;
+    final private Integer type = 2;
 
     private Long id;
 

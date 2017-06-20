@@ -8,9 +8,11 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.servlet.FilterConfig;
 import javax.servlet.http.HttpServletResponse;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class SimpleCorsFilterTest {
@@ -66,6 +68,12 @@ public class SimpleCorsFilterTest {
     @Test
     public void destroy() throws Exception {
         filter.destroy();
+    }
+
+    @Test
+    public void init() throws Exception {
+        FilterConfig filterConfig = mock(FilterConfig.class);
+        filter.init(filterConfig);
     }
 
 }

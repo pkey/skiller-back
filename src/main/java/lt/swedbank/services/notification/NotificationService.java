@@ -56,7 +56,8 @@ public class NotificationService {
         RequestNotification requestNotification = getNotificationById(notificationAnswerRequest.getNotificationId());
         ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(requestNotification);
         Iterable<RequestNotification> requestNotificationList = requestNotificationRepository.findByApprovalRequest(approvalRequest);
-        approvalService.disapprove(requestNotification, approversId);
+        String message = notificationAnswerRequest.getMessage();
+        approvalService.disapprove(message, requestNotification, approversId);
         requestNotificationRepository.delete(requestNotificationList);
         return requestNotification;
     }

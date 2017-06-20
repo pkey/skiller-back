@@ -89,7 +89,7 @@ public class ApprovalService {
     public ApprovalRequest approve(NotificationAnswerRequest notificationAnswerRequest, ApprovalRequest request, Long approverId) {
 
         if(request.isApproved() == 0) {
-            request.addApprover(userService.getUserById(approverId));
+            request.addApprover(new Approver(userService.getUserById(approverId), notificationAnswerRequest.getMessage()));
             RequestNotification notification = notificationService.getNotificationById(notificationAnswerRequest.getNotificationId());
             notificationService.removeRequestNotification(notification);
             request.removeNotification(notification);
@@ -103,11 +103,12 @@ public class ApprovalService {
     }
 
 
-    public ApprovalRequest disapprove(RequestNotification requestNotificationFromApprovalRequest, Long approverId) {
+    public ApprovalRequest disapprove(String message, RequestNotification requestNotificationFromApprovalRequest, Long disapproverId) {
 
         ApprovalRequest request = getApprovalRequestByRequestNotification(requestNotificationFromApprovalRequest);
         if(request.isApproved() == 0) {
-            request.setDisapprover(userService.getUserById(approverId));
+
+            request.setDisapprover(new Disapprover(userService.getUserById(disapproverId), message));
             request.setIsApproved(-1);
             request.setRequestNotifications(null);
         }

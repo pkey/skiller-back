@@ -1,5 +1,6 @@
 package lt.swedbank.beans.response.notification;
 
+import lt.swedbank.beans.entity.Approver;
 import lt.swedbank.beans.entity.RequestNotification;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkillLevel;
@@ -40,7 +41,11 @@ public class RequestApprovedNotificationResponse extends NotificationResponse {
         this.senderName = user.getName();
         this.senderLastname = user.getLastName();
         this.skillLevel = userSkillLevel.getSkillLevel().getTitle();
-        this.approvals = new ArrayList<>(requestNotification.getApprovalRequest().getApproves());
+        this.approvals = new ArrayList<>();
+        for(Approver approver : requestNotification.getApprovalRequest().getApprovers()) {
+            System.out.println("--" + approver.getUser().getName());
+            this.approvals.add(new ApproverResponse(approver));
+        }
     }
 
     public String getSenderName() {

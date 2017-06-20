@@ -55,34 +55,6 @@ public class NotificationController {
         return new RequestNotificationResponse(notificationService.disapproveByApprovalRequestId(notificationAnswerRequest, approver.getId()));
     }
 
-    @Autowired
-    private RequestNotificationRepository requestNotificationRepository;
-    @Autowired
-    private ApprovalRequestRepository approvalRequestRepository;
-    @Autowired
-    private UserSkillRepository userSkillRepository;
-
-
-    @RequestMapping(value = "/add/{userid}/{userskillid}/{levelid}", method = RequestMethod.POST )
-    public @ResponseBody
-    String addRequest(@PathVariable Long userid, @PathVariable Long userskillid, @PathVariable Integer levelid)
-    {
-        RequestNotification requestNotification = new RequestNotification();
-        List<RequestNotification> list = new LinkedList<>();
-        list.add(requestNotification);
-
-        requestNotification.setReceiver(userService.getUserById(userid));
-        requestNotificationRepository.save(requestNotification);
-
-
-        ApprovalRequest approvalRequest= new ApprovalRequest(list);
-        approvalRequest.setUserSkillLevel(userSkillRepository.findOne(userskillid).getUserSkillLevels().get(levelid));
-        approvalRequestRepository.save(approvalRequest);
-
-        requestNotification.setApprovalRequest(approvalRequest);
-        requestNotificationRepository.save(requestNotification);
-        return "success";
-    }
 }
 
 

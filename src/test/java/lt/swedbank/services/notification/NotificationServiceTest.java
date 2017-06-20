@@ -49,8 +49,7 @@ public class NotificationServiceTest {
     private Skill skill1;
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         notificationAnswerRequestl = new NotificationAnswerRequest();
         notificationAnswerRequestl.setMessage("test");
         notificationAnswerRequestl.setNotificationId(Long.parseLong("1"));
@@ -88,37 +87,23 @@ public class NotificationServiceTest {
     }
 
     @Test
-    public void getNotificationsByUserId()
-    {
+    public void getNotificationsByUserId() {
         Mockito.when(userService.getUserById(any())).thenReturn(user);
         Mockito.when(notificationService.getNotificationsByUserId(any())).thenReturn(requestNotificationList);
         assertEquals(notificationService.getNotificationsByUserId(any()), requestNotificationList);
     }
 
-//    @Test
-//    public void getRequestNotificationResponseTest()
-//    {
-//        assertEquals(requestNotificationResponses, notificationService.getRequestNotificationResponse(requestNotificationList));
-//    }
-//
-//    @Test
-//    public void approveByApprovalRequestIdTest(){
-//        doReturn(requestNotification1).when(notificationService).getNotificationById(any());
-//        Mockito.when(approvalService.approve(any(),any(),any())).thenReturn(approvalRequestl);
-//        assertEquals(notificationService.approveByApprovalRequestId(anyObject(), any()), requestNotification1);
-//    }
 
     @Test
-    public void getNotificationByIdTest(){
+    public void getNotificationByIdTest() {
         Mockito.when(requestNotificationRepository.findOne(any())).thenReturn(requestNotification1);
         assertEquals(notificationService.getNotificationById(any()), requestNotification1);
     }
 
     @Test(expected = NoSuchNotificationException.class)
-    public void getNotificationByIdExcetionTest(){
+    public void getNotificationByIdExcetionTest() {
         Mockito.when(requestNotificationRepository.findOne(any())).thenReturn(null);
         notificationService.getNotificationById(any());
     }
-
 
 }

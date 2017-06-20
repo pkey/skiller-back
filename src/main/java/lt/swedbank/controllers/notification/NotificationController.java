@@ -3,6 +3,7 @@ package lt.swedbank.controllers.notification;
 
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.NotificationAnswerRequest;
+import lt.swedbank.beans.response.notification.ApproverResponse;
 import lt.swedbank.beans.response.notification.RequestNotificationResponse;
 
 import lt.swedbank.services.auth.AuthenticationService;
@@ -41,7 +42,9 @@ public class NotificationController {
         User approver = userService.getUserByAuthId(authenticationService.extractAuthIdFromToken(authToken));
         RequestNotification requestNotification = notificationService.getNotificationById(notificationAnswerRequest.getNotificationId());
         if(notificationAnswerRequest.getApproved() == 1) {
-            return new RequestNotificationResponse(notificationService.approveByApprovalRequestId(notificationAnswerRequest, approver.getId()));
+            RequestNotification requestNotification1 = notificationService.approveByApprovalRequestId(notificationAnswerRequest, approver.getId());
+            //System.out.println("---" + requestNotification1.getApprovalRequest().getApprovers().get(0).getUser().getName());
+            return new RequestNotificationResponse(requestNotification1);
         }
         else if(notificationAnswerRequest.getApproved() == -1) {
             return new RequestNotificationResponse(notificationService.disapproveByApprovalRequestId(notificationAnswerRequest, approver.getId()));

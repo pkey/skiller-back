@@ -1,10 +1,14 @@
 package lt.swedbank.controllers.user;
 
+import lt.swedbank.beans.entity.ApprovalRequest;
 import lt.swedbank.beans.entity.User;
+import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.*;
 import lt.swedbank.beans.response.VoteResponse;
 import lt.swedbank.beans.response.user.UserEntityResponse;
 import lt.swedbank.beans.response.user.UserResponse;
+import lt.swedbank.beans.response.userSkill.NormalUserSkillResponse;
+import lt.swedbank.beans.response.userSkill.UserSkillResponse;
 import lt.swedbank.repositories.search.UserSearchRepository;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.notification.ApprovalService;
@@ -25,8 +29,7 @@ public class UserController {
     private UserService userService;
     @Autowired
     private AuthenticationService authService;
-    @Autowired
-    private UserSearchRepository userSearchRepository;
+
     @Autowired
     private VoteService voteService;
     @Autowired
@@ -66,6 +69,7 @@ public class UserController {
 
         User userFromRepository = userService.getUserById(userId);
 
+
         return new UserEntityResponse(userFromRepository);
     }
 
@@ -81,14 +85,15 @@ public class UserController {
 
     @RequestMapping(value = "/skill/level", method = RequestMethod.POST)
     public @ResponseBody
-    UserEntityResponse assignUserSkillLevel(@Valid @RequestBody AssignSkillLevelRequest request,
-                                            @RequestHeader(value = "Authorization") String authToken) {
+    UserSkillResponse assignUserSkillLevel(@Valid @RequestBody AssignSkillLevelRequest request,
+                                           @RequestHeader(value = "Authorization") String authToken) {
         String authId = authService.extractAuthIdFromToken(authToken);
         Long userId = userService.getUserByAuthId(authId).getId();
-        User userFromRepository = userService.getUserById(userId);
-        approvalService.createSkillLevelApprovalRequest(userId, request);
 
-        return new UserEntityResponse(userFromRepository);
+        ApprovalRequest approvalRequest = approvalService.addSkillLevelApprovalRequestWithNotifications(userId, request);
+        UserSkill userSkill = approvalRequest.getUserSkillLevel().getUserSkill();
+
+        return new NormalUserSkillResponse(userSkill);
     }
 
     @RequestMapping(value = "/skill/vote", method = RequestMethod.POST)

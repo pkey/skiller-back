@@ -1,4 +1,4 @@
-package lt.swedbank.exceptions.request;
+package lt.swedbank.exceptions.userSkillLevel;
 
 import lt.swedbank.exceptions.MainException;
 import org.springframework.http.HttpStatus;

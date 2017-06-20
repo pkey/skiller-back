@@ -1,11 +1,13 @@
 package lt.swedbank.services.skill;
 
+import lt.swedbank.beans.entity.ApprovalRequest;
 import lt.swedbank.beans.entity.SkillLevel;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.entity.UserSkillLevel;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.exceptions.userSkillLevel.UserSkillLevelNotFoundException;
 import lt.swedbank.repositories.UserSkillLevelRepository;
+import lt.swedbank.services.notification.ApprovalService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -29,6 +31,8 @@ public class UserSkillLevelServiceTest {
     private SkillLevelService skillLevelService;
     @Mock
     private UserSkillService userSkillService;
+    @Mock
+    private ApprovalService approvalService;
 
     private UserSkill userSkill;
     private UserSkillLevel userSkillLevel;
@@ -40,7 +44,7 @@ public class UserSkillLevelServiceTest {
 
         userSkill = mock(UserSkill.class);
 
-        userSkillLevel = mock(UserSkillLevel.class);
+        userSkillLevel = mock(UserSkillLevel.class, Mockito.RETURNS_DEEP_STUBS);
 
         assignSkillLevelRequest = mock(AssignSkillLevelRequest.class);
 
@@ -53,7 +57,7 @@ public class UserSkillLevelServiceTest {
                 .thenReturn(userSkill);
 
         Mockito.when
-                (userSkillLevelRepository.findTopByUserSkillOrderByValidFromDesc(any()))
+                (userSkillLevelRepository.findTopByUserSkillAndIsApprovedOrderByValidFromDesc(any(), any()))
                 .thenReturn(userSkillLevel);
 
         UserSkillLevel resultUserSkillLevel = userSkillLevelService.getCurrentUserSkillLevelByUserIdAndSkillId(any(), any());
@@ -69,7 +73,7 @@ public class UserSkillLevelServiceTest {
                 .thenReturn(userSkill);
 
         Mockito.when
-                (userSkillLevelRepository.findTopByUserSkillOrderByValidFromDesc(any()))
+                (userSkillLevelRepository.findTopByUserSkillAndIsApprovedOrderByValidFromDesc(any(), any()))
                 .thenReturn(null);
 
         userSkillLevelService.getCurrentUserSkillLevelByUserIdAndSkillId(any(), any());
@@ -78,10 +82,20 @@ public class UserSkillLevelServiceTest {
 
     @Test
     public void addDefaultUserSkillLevel() throws Exception {
+        ApprovalRequest approvalRequest = mock(ApprovalRequest.class);
+        UserSkillLevel userSkillLevel = new UserSkillLevel();
+
+
         whenNew(UserSkillLevel.class).withArguments(any(UserSkill.class), any(SkillLevel.class)).thenReturn(userSkillLevel);
+
         Mockito.when(userSkillLevelRepository.save(any(UserSkillLevel.class))).thenReturn(userSkillLevel);
+
+        Mockito.when(approvalService.addDefaultApprovalRequest(any(UserSkillLevel.class))).thenReturn(approvalRequest);
+
+
         UserSkillLevel resultUserSkillLevel = userSkillLevelService.addDefaultUserSkillLevel(userSkill);
-        assertEquals(userSkillLevel, resultUserSkillLevel);
+
+        assertEquals(userSkillLevel.getId(), resultUserSkillLevel.getId());
     }
 
     @Test

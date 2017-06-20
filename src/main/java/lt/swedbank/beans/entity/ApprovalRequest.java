@@ -1,11 +1,16 @@
 package lt.swedbank.beans.entity;
 
-import java.util.List;
+import lt.swedbank.exceptions.request.FalseRequestStatusException;
+
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class ApprovalRequest {
 
+    private static final String APPROVED = "approved";
+    private static final String DISAPPROVED = "disapproved";
+    private static final String PENDING = "pending";
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -14,14 +19,15 @@ public class ApprovalRequest {
 
     private Integer isApproved = 0;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.ALL})
     private UserSkillLevel userSkillLevel;
 
     @OneToMany(cascade = {CascadeType.PERSIST})
-    private List<User> approvers;
+    private List<Approver> approvers;
 
-    @OneToOne
-    private User disapprover;
+    @OneToOne(cascade = {CascadeType.PERSIST})
+    private Disapprover disapprover;
+
 
     @OneToMany(cascade = {CascadeType.ALL})
     private List<RequestNotification> requestNotifications;
@@ -30,22 +36,21 @@ public class ApprovalRequest {
 
     public ApprovalRequest() {}
 
-    public ApprovalRequest(List<RequestNotification> requestNotifications)
-    {
+    public ApprovalRequest(List<RequestNotification> requestNotifications) {
         this.requestNotifications = requestNotifications;
     }
 
-    public List<User> getApprovers() {
+    public List<Approver> getApprovers() {
         return approvers;
     }
 
-    public void setApprovers(List<User> approvers) {
+    public void setApprovers(List<Approver> approvers) {
         this.approvers = approvers;
     }
 
-    public void addApprover(User approver)
-    {
-        this.approvers.add(approver);
+    public void addApprover(Approver approver) {
+        approvers.add(approver);
+        approves++;
     }
 
     public Long getId() {
@@ -76,31 +81,29 @@ public class ApprovalRequest {
         return requestNotifications;
     }
 
+    public void setRequestNotifications(List<RequestNotification> requestNotifications) {
+        this.requestNotifications = requestNotifications;
+    }
+
     public Integer getApproves() {
         return approves;
-    }
-
-    public User getDisapprover() {
-        return disapprover;
-    }
-
-    public void setDisapprover(User disapprover) {
-        this.disapprover = disapprover;
     }
 
     public void setApproves(Integer approves) {
         this.approves = approves;
     }
 
-    public void setRequestNotifications(List<RequestNotification> requestNotifications) {
-        this.requestNotifications = requestNotifications;
-    }
-    public boolean removeNotification(RequestNotification requestNotification)
-    {
-        requestNotifications.remove(requestNotification);
-        return true;
+    public Disapprover getDisapprover() {
+        return disapprover;
     }
 
+    public void setDisapprover(Disapprover disapprover) {
+        this.disapprover = disapprover;
+    }
+
+    public void removeNotification(RequestNotification requestNotification) {
+        requestNotifications.remove(requestNotification);
+    }
 
     public String getMotivation() {
         return motivation;
@@ -116,6 +119,22 @@ public class ApprovalRequest {
 
     public void setIsApproved(Integer isApproved) {
         this.isApproved = isApproved;
+        userSkillLevel.setIsApproved(isApproved);
+    }
+
+    public String getCurrentRequestStatus() {
+
+        switch (isApproved) {
+            case -1:
+                return DISAPPROVED;
+            case 0:
+                return PENDING;
+            case 1:
+                return APPROVED;
+            default:
+                throw new FalseRequestStatusException();
+        }
+
     }
 
 }

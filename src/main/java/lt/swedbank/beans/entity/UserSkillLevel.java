@@ -1,5 +1,6 @@
 package lt.swedbank.beans.entity;
 
+import lt.swedbank.exceptions.request.FalseRequestStatusException;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -10,6 +11,9 @@ import java.util.List;
 @Entity
 public class UserSkillLevel {
 
+    private static final String APPROVED = "approved";
+    private static final String DISAPPROVED = "disapproved";
+    private static final String PENDING = "pending";
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -21,6 +25,8 @@ public class UserSkillLevel {
     private SkillLevel skillLevel;
 
     private String motivation;
+
+    private Integer isApproved = 0;
 
     @CreationTimestamp
     private Date validFrom;
@@ -94,4 +100,26 @@ public class UserSkillLevel {
         this.votes = votes;
     }
 
+    public Integer getIsApproved() {
+        return isApproved;
+    }
+
+    public void setIsApproved(Integer isApproved) {
+        this.isApproved = isApproved;
+    }
+
+    public String getCurrentSkillLevelStatus() {
+
+        switch (isApproved) {
+            case -1:
+                return DISAPPROVED;
+            case 0:
+                return PENDING;
+            case 1:
+                return APPROVED;
+            default:
+                throw new FalseRequestStatusException();
+        }
+
+    }
 }

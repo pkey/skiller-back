@@ -7,11 +7,12 @@ public class CurrentSkillLevelResponse {
 
     private Long id;
     private String title;
+    private String status;
 
-
-    public CurrentSkillLevelResponse(UserSkillLevel skillLevel) {
-        id = skillLevel.getSkillLevel().getId();
-        title = skillLevel.getSkillLevel().getTitle();
+    public CurrentSkillLevelResponse(UserSkillLevel userSkillLevel) {
+        id = userSkillLevel.getSkillLevel().getId();
+        title = userSkillLevel.getSkillLevel().getTitle();
+        status = userSkillLevel.getCurrentSkillLevelStatus();
     }
 
     public Long getId() {
@@ -28,5 +29,13 @@ public class CurrentSkillLevelResponse {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

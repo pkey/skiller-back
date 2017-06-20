@@ -4,7 +4,6 @@ import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.*;
 import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.beans.response.VoteResponse;
-import lt.swedbank.repositories.search.UserSearchRepository;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.notification.ApprovalService;
 import lt.swedbank.services.user.UserService;
@@ -25,8 +24,7 @@ public class UserController {
     private UserService userService;
     @Autowired
     private AuthenticationService authService;
-    @Autowired
-    private UserSearchRepository userSearchRepository;
+
     @Autowired
     private VoteService voteService;
     @Autowired
@@ -72,6 +70,7 @@ public class UserController {
 
         User userFromRepository = userService.getUserById(userId);
 
+
         return new UserEntityResponse(userFromRepository);
     }
 
@@ -92,7 +91,7 @@ public class UserController {
         String authId = authService.extractAuthIdFromToken(authToken);
         Long userId = userService.getUserByAuthId(authId).getId();
         User userFromRepository = userService.getUserById(userId);
-        approvalService.createSkillLevelApprovalRequest(userId, request);
+        approvalService.addSkillLevelApprovalRequestWithNotifications(userId, request);
 
         return new UserEntityResponse(userFromRepository);
     }

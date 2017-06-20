@@ -4,6 +4,15 @@
   "scripts": {
   },
   "env": {
+    "DB_URL": {
+      "required": true
+    },
+    "DB_PASSWORD": {
+      "required": true
+    },
+    "DB_USERNAME": {
+      "required": true
+    },
     "CLIENT_DOMAIN": {
       "required": true
     },
@@ -22,9 +31,6 @@
   },
   "formation": {
   },
-  "addons": [
-    "cleardb"
-  ],
   "buildpacks": [
     {
       "url": "heroku/gradle"

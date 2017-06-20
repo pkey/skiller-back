@@ -10,6 +10,7 @@ import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
 import lt.swedbank.exceptions.skill.SkillNotFoundException;
 import lt.swedbank.exceptions.userSkill.UserSkillNotFoundException;
+import lt.swedbank.exceptions.userSkillLevel.UserSkillLevelIsPendingException;
 import lt.swedbank.repositories.UserSkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -62,7 +63,7 @@ public class UserSkillService {
         return userSkill;
     }
 
-    public UserSkill removeUserSkill(Long userId, RemoveSkillRequest removeSkillRequest) throws SkillNotFoundException {
+    public UserSkill removeUserSkill(Long userId, RemoveSkillRequest removeSkillRequest) throws SkillNotFoundException, UserSkillLevelIsPendingException {
 
         Skill skill = skillService.findByTitle(removeSkillRequest.getTitle());
 
@@ -72,8 +73,11 @@ public class UserSkillService {
             throw new SkillNotFoundException();
         }
 
-        userSkillRepository.delete(userSkill);
-
+        if (!userSkillLevelService.isLatestUserSkillLevelPending(userId, userSkill.getSkill().getId())) {
+            userSkillRepository.delete(userSkill);
+        } else {
+            throw new UserSkillLevelIsPendingException();
+        }
         return userSkill;
     }
 

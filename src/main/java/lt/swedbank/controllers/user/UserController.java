@@ -1,10 +1,12 @@
 package lt.swedbank.controllers.user;
 
+import lt.swedbank.beans.entity.ApprovalRequest;
 import lt.swedbank.beans.entity.User;
+import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.*;
 import lt.swedbank.beans.response.UserEntityResponse;
+import lt.swedbank.beans.response.UserSkillResponse;
 import lt.swedbank.beans.response.VoteResponse;
-import lt.swedbank.repositories.search.UserSearch;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.notification.ApprovalService;
 import lt.swedbank.services.user.UserService;
@@ -14,9 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -27,8 +27,7 @@ public class UserController {
     private UserService userService;
     @Autowired
     private AuthenticationService authService;
-    @Autowired
-    private UserSearch userSearch;
+
     @Autowired
     private VoteService voteService;
     @Autowired
@@ -50,13 +49,17 @@ public class UserController {
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public @ResponseBody
     List<UserEntityResponse> getAllUsers(@RequestHeader(value = "Authorization") String authToken) {
-        return (List<UserEntityResponse>) userService.getUserEntityResponseList();
+        String authId = authService.extractAuthIdFromToken(authToken);
+        Long userId = userService.getUserByAuthId(authId).getId();
+        return convertToUserEntityResponseList(userService.getColleagues(userId));
     }
 
     @RequestMapping("/search")
-    public List<UserEntityResponse> searchUsers(String q) {
-
-        return sortUserEntityResponse(convertUserSetToUserResponseList(userSearch.search(q)));
+    public List<UserEntityResponse> searchColleagues(@RequestHeader(value = "Authorization") String authToken,
+                                                     String q) {
+        String authId = authService.extractAuthIdFromToken(authToken);
+        Long userId = userService.getUserByAuthId(authId).getId();
+        return convertToUserEntityResponseList(userService.searchColleagues(userId, q));
     }
 
 
@@ -69,6 +72,7 @@ public class UserController {
         userService.addUserSkill(userId, addSkillRequest);
 
         User userFromRepository = userService.getUserById(userId);
+
 
         return new UserEntityResponse(userFromRepository);
     }
@@ -85,14 +89,15 @@ public class UserController {
 
     @RequestMapping(value = "/skill/level", method = RequestMethod.POST)
     public @ResponseBody
-    UserEntityResponse assignUserSkillLevel(@Valid @RequestBody AssignSkillLevelRequest request,
-                                            @RequestHeader(value = "Authorization") String authToken) {
+    UserSkillResponse assignUserSkillLevel(@Valid @RequestBody AssignSkillLevelRequest request,
+                                           @RequestHeader(value = "Authorization") String authToken) {
         String authId = authService.extractAuthIdFromToken(authToken);
         Long userId = userService.getUserByAuthId(authId).getId();
-        User userFromRepository = userService.getUserById(userId);
-        approvalService.createSkillLevelApprovalRequest(userId, request);
 
-        return new UserEntityResponse(userFromRepository);
+        ApprovalRequest approvalRequest = approvalService.addSkillLevelApprovalRequestWithNotifications(userId, request);
+        UserSkill userSkill = approvalRequest.getUserSkillLevel().getUserSkill();
+
+        return new UserSkillResponse(userSkill);
     }
 
     @RequestMapping(value = "/skill/vote", method = RequestMethod.POST)
@@ -113,18 +118,13 @@ public class UserController {
         return new UserEntityResponse(userService.assignTeam(userId, assignTeamRequest));
     }
 
-
-    private List<UserEntityResponse> convertUserSetToUserResponseList(Set<User> userList) {
-        List<UserEntityResponse> responseList = new ArrayList<>();
-        for (User user : userList) {
-            responseList.add(new UserEntityResponse(user));
+    private List<UserEntityResponse> convertToUserEntityResponseList(Iterable<User> users) {
+        List<UserEntityResponse> userList = new ArrayList<>();
+        for (User user : users
+                ) {
+            userList.add(new UserEntityResponse(user));
         }
-        return responseList;
-    }
-
-    private List sortUserEntityResponse(List userEntityResponseList) {
-        Collections.sort(userEntityResponseList);
-        return userEntityResponseList;
+        return userList;
     }
 
 }

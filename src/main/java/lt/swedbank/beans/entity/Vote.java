@@ -1,6 +1,7 @@
 package lt.swedbank.beans.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(
@@ -21,6 +22,7 @@ public class Vote {
     @ManyToOne
     private UserSkillLevel userSkillLevel;
 
+    @Size(max=500)
     private String message;
 
     public Vote() {

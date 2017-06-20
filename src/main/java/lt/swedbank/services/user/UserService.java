@@ -9,12 +9,14 @@ import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.UserEntityResponse;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.repositories.UserRepository;
+import lt.swedbank.repositories.search.UserSearchRepository;
 import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.team.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -27,6 +29,8 @@ public class UserService {
     private UserSkillService userSkillService;
     @Autowired
     private TeamService teamService;
+    @Autowired
+    private UserSearchRepository userSearchRepository;
 
 
     public User getUserById(Long id) throws UserNotFoundException {
@@ -35,16 +39,6 @@ public class UserService {
             throw new UserNotFoundException();
         }
         return user;
-    }
-
-    public User getUserByEmail(String email) throws UserNotFoundException {
-        User user = userRepository.findByEmail(email);
-
-        if (user == null) {
-            throw new UserNotFoundException();
-        }
-
-        return userRepository.findByEmail(email);
     }
 
     public User getUserByAuthId(String authId) throws UserNotFoundException {
@@ -56,25 +50,42 @@ public class UserService {
         return user;
     }
 
-    public Iterable<User> getAllUsers() {
-        return userRepository.findAll();
+    public Iterable<User> getColleagues(Long userId){
+         return userRepository.findAllByIdIsNotOrderByNameAscLastNameAsc(userId);
     }
 
-    public Iterable<User> getSortedUsers() {
-        return userRepository.findAllByOrderByNameAscLastNameAsc();
+    public List<User> searchColleagues(Long userId, String query) {
+        List<User> userList = this.searchUsers(query);
+
+        userList.remove(getUserById(userId));
+
+        return userList;
     }
+
+    public List<User> searchUsers(String query) {
+
+        List<User> userList = new ArrayList<>(userSearchRepository.search(query));
+
+
+        userList.sort(new Comparator<User>() {
+            @Override
+            public int compare(User o1, User o2) {
+                if (o1.getName().compareTo(o2.getName()) == 0){
+                    return o1.getLastName().compareTo(o2.getLastName());
+                } else {
+                    return o1.getName().compareTo(o2.getName());
+                }
+            }
+        });
+
+       return userList;
+    }
+
+
+
 
     public UserEntityResponse getUserProfile(Long id) {
         return new UserEntityResponse(getUserById(id));
-    }
-
-    public Iterable<UserEntityResponse> getUserEntityResponseList() {
-        List<UserEntityResponse> userList = new ArrayList<>();
-        for (User user : getSortedUsers()
-                ) {
-            userList.add(new UserEntityResponse(user));
-        }
-        return userList;
     }
 
     public User addUserSkill(Long userId, AddSkillRequest addSkillRequest) throws UserNotFoundException {

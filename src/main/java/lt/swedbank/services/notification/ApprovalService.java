@@ -1,15 +1,15 @@
 package lt.swedbank.services.notification;
 
 
-import lt.swedbank.beans.entity.ApprovalRequest;
-import lt.swedbank.beans.entity.RequestNotification;
-import lt.swedbank.beans.request.NotificationAnswerRequest;
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
-import lt.swedbank.exceptions.request.RequestAlreadySubmittedException;
+import lt.swedbank.beans.request.NotificationAnswerRequest;
+import lt.swedbank.exceptions.userSkillLevel.RequestAlreadySubmittedException;
+import lt.swedbank.exceptions.userSkillLevel.TooHighSkillLevelRequestException;
 import lt.swedbank.repositories.ApprovalRequestRepository;
 import lt.swedbank.services.skill.SkillLevelService;
 import lt.swedbank.services.skill.UserSkillLevelService;
+import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,33 +27,54 @@ public class ApprovalService {
     @Autowired
     private UserService userService;
     @Autowired
+    private UserSkillService userSkillService;
+    @Autowired
     private SkillLevelService skillLevelService;
     @Autowired
     private UserSkillLevelService userSkillLevelService;
 
-    public ApprovalRequest createSkillLevelApprovalRequest(Long userId, AssignSkillLevelRequest assignSkillLevelRequest) throws RequestAlreadySubmittedException {
+    public ApprovalRequest addDefaultApprovalRequest(UserSkillLevel userSkillLevel) {
+        ApprovalRequest defaultApprovalRequest = new ApprovalRequest();
+        defaultApprovalRequest.setUserSkillLevel(userSkillLevel);
+        defaultApprovalRequest.setIsApproved(1);
+        return approvalRequestRepository.save(defaultApprovalRequest);
+    }
 
-        UserSkillLevel userSkillLevel = userSkillLevelService.getCurrentUserSkillLevelByUserIdAndSkillId(userId, assignSkillLevelRequest.getSkillId());
+    public ApprovalRequest addSkillLevelApprovalRequestWithNotifications(Long userId, AssignSkillLevelRequest assignSkillLevelRequest) throws RequestAlreadySubmittedException, TooHighSkillLevelRequestException {
 
-        if (approvalRequestRepository.findByUserSkillLevel(userSkillLevel) != null) {
+        if (userSkillLevelService.isLatestUserSkillLevelPending(userId, assignSkillLevelRequest.getSkillId())) {
             throw new RequestAlreadySubmittedException();
         }
+        if(assignSkillLevelRequest.getLevelId() -
+                userSkillLevelService.getCurrentUserSkillLevelByUserIdAndSkillId(userId, assignSkillLevelRequest.getSkillId())
+                .getSkillLevel().getLevel() > 1) {
+            throw new TooHighSkillLevelRequestException();
+        }
+
+        UserSkill userSkill = userSkillService.getUserSkillByUserIdAndSkillId(userId, assignSkillLevelRequest.getSkillId());
+        UserSkillLevel newUserSkillLevel = userSkillLevelService.addUserSkillLevel(userSkill, assignSkillLevelRequest);
 
         ApprovalRequest approvalRequest = new ApprovalRequest();
-
-        approvalRequest.setUserSkillLevel(userSkillLevel);
+        approvalRequest.setUserSkillLevel(newUserSkillLevel);
         approvalRequest.setMotivation(assignSkillLevelRequest.getMotivation());
 
-        Iterable<SkillLevel> skillLevels = skillLevelService.getAllByLevelGreaterThan(assignSkillLevelRequest.getLevelId());
-        Iterable<UserSkillLevel> userSkillLevels = userSkillLevelService.getAllUserSkillLevelsSetBySkillLevels(skillLevels);
+        approvalRequest.setRequestNotifications(createNotificationsForUsersWithTheSameSkill(userId, assignSkillLevelRequest, approvalRequest));
+        approvalRequestRepository.save(approvalRequest);
+        return approvalRequest;
+    }
+
+    private List<RequestNotification> createNotificationsForUsersWithTheSameSkill(Long userId, AssignSkillLevelRequest assignSkillLevelRequest, ApprovalRequest approvalRequest) {
+
+        Iterable<SkillLevel> skillLevels = skillLevelService.getAllByLevelGreaterThanOrEqual(assignSkillLevelRequest.getLevelId());
+        Iterable<UserSkillLevel> userSkillLevels = userSkillLevelService.getAllApprovedUserSkillLevelsBySkillLevels(skillLevels);
 
         List<User> usersToBeNotified = new ArrayList<>();
         Long skillIdFromRequest = approvalRequest.getUserSkillLevel().getUserSkill().getSkill().getId();
         for (UserSkillLevel u : userSkillLevels) {
-
             Long skillId = u.getUserSkill().getSkill().getId();
-            if (skillId.equals(skillIdFromRequest)) {
-                usersToBeNotified.add(u.getUserSkill().getUser());
+            User user = u.getUserSkill().getUser();
+            if (skillId.equals(skillIdFromRequest) && !user.getId().equals(userId)) {
+                usersToBeNotified.add(user);
             }
         }
 
@@ -62,42 +83,43 @@ public class ApprovalService {
             notifications.add(new RequestNotification(user, approvalRequest));
         }
 
-        approvalRequest.setRequestNotifications(notifications);
-        approvalRequestRepository.save(approvalRequest);
-        /* TODO ask about a way how to persist notifications since the approvalRequest has "cascade type all" strategy for notifications that this request stores
-            notificationService.addNotifications(approvalRequest);*/
-        return approvalRequest;
+        return notifications;
     }
 
-    public ApprovalRequest approve(NotificationAnswerRequest notificationAnswerRequest, Long approvalRequestId, Long approverId) {
-        ApprovalRequest request = approvalRequestRepository.findOne(approvalRequestId);
-        request.approve();
-        request.addApprover(userService.getUserById(approverId));
+    public ApprovalRequest approve(NotificationAnswerRequest notificationAnswerRequest, ApprovalRequest request, Long approverId) {
 
-        RequestNotification notification = notificationService.getNotificationById(notificationAnswerRequest.getNotificationId());
-        request.getRequestNotifications().remove(notification);
-
-        if(request.getApproves() >= 5)
-        {
-            deleteNotifications(request);
-            userSkillLevelService.levelUp(approvalRequestRepository.findOne(approvalRequestId).getUserSkillLevel());
+        if(request.isApproved() == 0) {
+            request.addApprover(new Approver(userService.getUserById(approverId), notificationAnswerRequest.getMessage()));
+            RequestNotification notification = notificationService.getNotificationById(notificationAnswerRequest.getNotificationId());
+            notificationService.removeRequestNotification(notification);
+            request.removeNotification(notification);
         }
-        approvalRequestRepository.save(request);
-        return request;
+
+        if(request.getApproves() >= 5) {
+            request.setIsApproved(1);
+            request.setRequestNotifications(null);
+        }
+        return approvalRequestRepository.save(request);
     }
 
-    private void deleteNotifications(ApprovalRequest request) {
-        notificationService.deleteNotifications(request);
+
+    public ApprovalRequest disapprove(String message, RequestNotification requestNotificationFromApprovalRequest, Long disapproverId) {
+
+        ApprovalRequest request = getApprovalRequestByRequestNotification(requestNotificationFromApprovalRequest);
+        if(request.isApproved() == 0) {
+
+            request.setDisapprover(new Disapprover(userService.getUserById(disapproverId), message));
+            request.setIsApproved(-1);
+            request.setRequestNotifications(null);
+        }
+        return approvalRequestRepository.save(request);
     }
 
-    public ApprovalRequest disapprove(Long approvalRequestId, Long approverId) {
-
-        ApprovalRequest request = approvalRequestRepository.findOne(approvalRequestId);
-        request.disapprove();
-        request.setRequestNotifications(null);
-        request.setDisapprover(userService.getUserById(approverId));
-        approvalRequestRepository.save(request);
-        return request;
+    public ApprovalRequest getApprovalRequestByRequestNotification(RequestNotification notification) {
+        return approvalRequestRepository.findOne(notification.getApprovalRequest().getId());
     }
 
+    public ApprovalRequest update(ApprovalRequest approvalRequest) {
+        return approvalRequestRepository.save(approvalRequest);
+    }
 }

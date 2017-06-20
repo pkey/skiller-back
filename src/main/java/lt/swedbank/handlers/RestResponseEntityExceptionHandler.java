@@ -32,7 +32,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler({Auth0Exception.class})
     public ResponseEntity<Object> handleAuth0Exception(final Auth0Exception ex, final WebRequest request) {
-        ErrorResponse er = new ErrorResponse(ex.getMessage());
+        ErrorResponse er = new ErrorResponse(Auth0ErrorWithoutPrefix(ex.getMessage()));
         return handleExceptionInternal(ex, er, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
@@ -54,5 +54,9 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     public ResponseEntity<ErrorResponse> handleMainException(MainException ex) {
         ErrorResponse errorResponse = new ErrorResponse(messageSource.getMessage(ex.getMessageCode(), null, Locale.getDefault()));
         return new ResponseEntity<>(errorResponse, ex.getStatusCode());
+    }
+
+    private String Auth0ErrorWithoutPrefix(String message){
+        return message.substring(message.indexOf(":") + 2);
     }
 }

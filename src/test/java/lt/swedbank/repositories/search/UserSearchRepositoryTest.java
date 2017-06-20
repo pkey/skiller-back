@@ -22,10 +22,10 @@ import java.util.Set;
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
 @SpringBootTest
-public class UserSearchTest {
+public class UserSearchRepositoryTest {
 
     @Autowired
-    private UserSearch userSearch;
+    private UserSearchRepository userSearchRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -75,7 +75,7 @@ public class UserSearchTest {
     @Test
     public void searchUsersByName() throws Exception {
 
-        Set<User> resultUserList = userSearch.search("Name");
+        Set<User> resultUserList = userSearchRepository.search("Name");
 
         Assert.assertEquals(testUserList.size(), resultUserList.size());
     }

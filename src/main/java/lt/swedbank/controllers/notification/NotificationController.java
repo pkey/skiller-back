@@ -3,6 +3,7 @@ package lt.swedbank.controllers.notification;
 
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.NotificationAnswerRequest;
+import lt.swedbank.beans.response.notification.NotificationResponse;
 import lt.swedbank.beans.response.notification.RequestNotificationResponse;
 
 import lt.swedbank.services.auth.AuthenticationService;
@@ -27,11 +28,11 @@ public class NotificationController {
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public @ResponseBody
-    Iterable<RequestNotificationResponse> getNotificationByAuthId(@RequestHeader(value = "Authorization") String authToken) {
+    Iterable<NotificationResponse> getNotificationByAuthId(@RequestHeader(value = "Authorization") String authToken) {
         String authId = authenticationService.extractAuthIdFromToken(authToken);
         User user = userService.getUserByAuthId(authId);
 
-        return notificationService.getRequestNotificationResponse(notificationService.getNotificationsByUserId(user.getId()));
+        return notificationService.getNotificationResponses(notificationService.getNotificationsByUserId(user.getId()));
     }
 
     @RequestMapping(value = "/post", method = RequestMethod.POST)
@@ -41,9 +42,7 @@ public class NotificationController {
         User approver = userService.getUserByAuthId(authenticationService.extractAuthIdFromToken(authToken));
         RequestNotification requestNotification = notificationService.getNotificationById(notificationAnswerRequest.getNotificationId());
         if(notificationAnswerRequest.getApproved() == 1) {
-            RequestNotification requestNotification1 = notificationService.approveByApprovalRequestId(notificationAnswerRequest, approver.getId());
-            //System.out.println("---" + requestNotification1.getApprovalRequest().getApprovers().get(0).getUser().getName());
-            return new RequestNotificationResponse(requestNotification1);
+            return new RequestNotificationResponse(notificationService.approveByApprovalRequestId(notificationAnswerRequest, approver.getId()));
         }
         else if(notificationAnswerRequest.getApproved() == -1) {
             return new RequestNotificationResponse(notificationService.disapproveByApprovalRequestId(notificationAnswerRequest, approver.getId()));

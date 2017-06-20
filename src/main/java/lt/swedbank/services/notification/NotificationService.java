@@ -3,6 +3,9 @@ package lt.swedbank.services.notification;
 import lt.swedbank.beans.entity.ApprovalRequest;
 import lt.swedbank.beans.entity.RequestNotification;
 import lt.swedbank.beans.request.NotificationAnswerRequest;
+import lt.swedbank.beans.response.notification.NotificationResponse;
+import lt.swedbank.beans.response.notification.RequestApprovedNotificationResponse;
+import lt.swedbank.beans.response.notification.RequestDisapprovedNotificationResponse;
 import lt.swedbank.beans.response.notification.RequestNotificationResponse;
 import lt.swedbank.exceptions.notification.NoSuchNotificationException;
 import lt.swedbank.repositories.RequestNotificationRepository;
@@ -30,10 +33,17 @@ public class NotificationService {
         return requestNotificationRepository.findByReceiver(userService.getUserById(id));
     }
 
-    public ArrayList<RequestNotificationResponse> getRequestNotificationResponse(Iterable<RequestNotification> requestNotifications) {
-        ArrayList<RequestNotificationResponse> requestNotificationResponses = new ArrayList<RequestNotificationResponse>();
+    public ArrayList<NotificationResponse> getNotificationResponses(Iterable<RequestNotification> requestNotifications) {
+        ArrayList<NotificationResponse> requestNotificationResponses = new ArrayList<NotificationResponse>();
         for (RequestNotification requestNotification : requestNotifications ) {
-            requestNotificationResponses.add(new RequestNotificationResponse(requestNotification));
+            ApprovalRequest approvalRequest = requestNotification.getApprovalRequest();
+            if (approvalRequest.isApproved() == -1) {
+                requestNotificationResponses.add(new RequestDisapprovedNotificationResponse(requestNotification));
+            } else if (approvalRequest.isApproved() == 0) {
+                requestNotificationResponses.add(new RequestNotificationResponse(requestNotification));
+            } else if (approvalRequest.isApproved() == 1) {
+                requestNotificationResponses.add(new RequestApprovedNotificationResponse(requestNotification));
+            }
         }
         return requestNotificationResponses;
     }

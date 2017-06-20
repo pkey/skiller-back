@@ -31,7 +31,9 @@ public class NotificationService {
         return requestNotificationRepository.findByReceiver(userService.getUserById(id));
     }
 
-    public ArrayList<RequestNotificationResponse> getRequestNotificationResponse(Iterable<RequestNotification> requestNotifications) {
+
+    public Iterable<RequestNotificationResponse> getRequestNotificationResponse(Iterable<RequestNotification> requestNotifications)
+    {
         ArrayList<RequestNotificationResponse> requestNotificationResponses = new ArrayList<RequestNotificationResponse>();
         for (RequestNotification requestNotification : requestNotifications ) {
             requestNotificationResponses.add(new RequestNotificationResponse(requestNotification));

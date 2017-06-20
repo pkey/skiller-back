@@ -101,7 +101,7 @@ public class UserService {
         return getUserResponseBasedOnDepartment(currentUser, requeredUser);
     }
 
-    public UserResponse getUserResponseBasedOnDepartment(User currentUser, User requiredUser){
+    private UserResponse getUserResponseBasedOnDepartment(User currentUser, User requiredUser) {
         if(usersInSameDepartment(currentUser, requiredUser))
             return new UserEntityResponse(requiredUser);
         else

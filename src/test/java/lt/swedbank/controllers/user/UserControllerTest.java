@@ -118,25 +118,6 @@ public class UserControllerTest {
     }
 
     @Test
-    public void get_colleagues_success() throws Exception {
-        List<User> colleagues = testUsers;
-
-        colleagues.remove(testUser);
-
-        when(userService.getColleagues(testUser.getId())).thenReturn(colleagues);
-        when(userService.getUserByAuthId(any())).thenReturn(testUser);
-
-        mockMvc.perform(get("/user/all")
-                .header("Authorization", "Bearer")
-                .contentType(contentType))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].skills", hasSize(0)));
-
-        verify(userService, times(1)).getColleagues(testUser.getId());
-    }
-
-    @Test
     public void get_user_success() throws Exception {
 
 

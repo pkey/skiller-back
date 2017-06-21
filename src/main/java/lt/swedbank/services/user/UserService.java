@@ -92,8 +92,6 @@ public class UserService {
     }
 
 
-
-
     public UserResponse getUserProfile(Long requeredUserId, String currentUserAuthId) {
         User currentUser = getUserByAuthId(currentUserAuthId);
         User requeredUser = getUserById(requeredUserId);
@@ -102,7 +100,8 @@ public class UserService {
     }
 
     private UserResponse getUserResponseBasedOnDepartment(User currentUser, User requiredUser) {
-        if(usersInSameDepartment(currentUser, requiredUser))
+        if(usersInSameDepartment(currentUser, requiredUser) && currentUser.getDepartment() != null
+                && requiredUser.getDepartment() != null)
             return new UserEntityResponse(requiredUser);
         else
             return new NonColleagueResponse(requiredUser);
@@ -152,9 +151,8 @@ public class UserService {
     }
 
     private boolean usersInSameDepartment(User currentUser, User colleague){
-
         //If users has not assigned any team, should mean they are colleagues
-        if(colleague.getDepartment() == null) {
+        if(colleague.getDepartment() == null || currentUser.getDepartment() == null) {
            return true;
         }
         return currentUser.getDepartment().getId().equals(colleague.getDepartment().getId());

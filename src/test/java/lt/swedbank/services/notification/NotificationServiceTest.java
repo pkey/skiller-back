@@ -5,7 +5,7 @@ import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.beans.request.NotificationAnswerRequest;
-import lt.swedbank.beans.response.RequestNotificationResponse;
+import lt.swedbank.beans.response.notification.RequestNotificationResponse;
 import lt.swedbank.exceptions.notification.NoSuchNotificationException;
 import lt.swedbank.repositories.RequestNotificationRepository;
 import lt.swedbank.services.user.UserService;

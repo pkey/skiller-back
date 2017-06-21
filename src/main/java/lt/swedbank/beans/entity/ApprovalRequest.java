@@ -3,6 +3,7 @@ package lt.swedbank.beans.entity;
 import lt.swedbank.exceptions.request.FalseRequestStatusException;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -27,7 +28,6 @@ public class ApprovalRequest {
 
     @OneToOne(cascade = {CascadeType.PERSIST})
     private Disapprover disapprover;
-
 
     @OneToMany(cascade = {CascadeType.ALL})
     private List<RequestNotification> requestNotifications;
@@ -79,6 +79,11 @@ public class ApprovalRequest {
 
     public List<RequestNotification> getRequestNotifications() {
         return requestNotifications;
+    }
+
+    public void setRequestNotification(RequestNotification requestNotification) {
+        this.requestNotifications = new ArrayList<RequestNotification>();
+        this.requestNotifications.add(requestNotification);
     }
 
     public void setRequestNotifications(List<RequestNotification> requestNotifications) {

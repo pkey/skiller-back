@@ -151,7 +151,7 @@ public class UserService {
         return user;
     }
 
-    private boolean usersInSameDepartment(User currentUser, User colleague){
+    public boolean usersInSameDepartment(User currentUser, User colleague){
 
         //If users has not assigned any team, should mean they are colleagues
         if(colleague.getDepartment() == null) {

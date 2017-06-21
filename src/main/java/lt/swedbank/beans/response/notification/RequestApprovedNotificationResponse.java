@@ -43,7 +43,6 @@ public class RequestApprovedNotificationResponse extends NotificationResponse {
         this.skillLevel = userSkillLevel.getSkillLevel().getTitle();
         this.approvals = new ArrayList<>();
         for(Approver approver : requestNotification.getApprovalRequest().getApprovers()) {
-            System.out.println("--" + approver.getUser().getName());
             this.approvals.add(new ApproverResponse(approver));
         }
     }

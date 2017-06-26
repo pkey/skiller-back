@@ -1,6 +1,7 @@
 package lt.swedbank.beans.entity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Team {
@@ -11,6 +12,8 @@ public class Team {
 
     protected String name;
 
+    @OneToMany(mappedBy = "team")
+    protected List<User> users;
 
     @ManyToOne
     private Department department;
@@ -38,5 +41,13 @@ public class Team {
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
 }

@@ -1,13 +1,16 @@
-package lt.swedbank.beans.response;
+package lt.swedbank.beans.response.team;
 
 
 import lt.swedbank.beans.entity.Team;
 
-public class TeamEntityResponse {
-    private Long id;
-    private String name;
+public class TeamResponse {
+    protected Long id;
+    protected String name;
 
-    public TeamEntityResponse(Team team) {
+    public TeamResponse() {
+    }
+
+    public TeamResponse(Team team) {
         this.id = team.getId();
         this.name = team.getName();
     }

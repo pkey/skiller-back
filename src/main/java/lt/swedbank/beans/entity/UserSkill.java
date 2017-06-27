@@ -85,11 +85,11 @@ public class UserSkill {
         });
 
 
-        currentUserSkillLevel = userSkillLevels.get(0);
-//        int i = 0;
-//        do {
-//            currentUserSkillLevel = userSkillLevels.get(i);
-//        } while(userSkillLevels.get(i++).getIsApproved() == -1);
+        //currentUserSkillLevel = userSkillLevels.get(0);
+        int i = 0;
+        do {
+            currentUserSkillLevel = userSkillLevels.get(i);
+        } while(userSkillLevels.get(i++).getIsApproved() == -1);
 
         return currentUserSkillLevel;
     }

@@ -28,4 +28,14 @@ public class TeamController {
         return teamService.getTeamOverview(id, userId);
     }
 
+    @RequestMapping(value = "/my", method = RequestMethod.GET)
+    public @ResponseBody
+    TeamOverviewResponse getMyTeam(@RequestHeader(value = "Authorization") String authToken) {
+        String authId = authenticationService.extractAuthIdFromToken(authToken);
+        Long userId = userService.getUserByAuthId(authId).getId();
+        return teamService.getMyTeam(userId);
+    }
+
+
+
 }

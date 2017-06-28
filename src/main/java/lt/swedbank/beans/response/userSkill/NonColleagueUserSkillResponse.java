@@ -8,6 +8,7 @@ public class NonColleagueUserSkillResponse extends UserSkillResponse {
 
     public NonColleagueUserSkillResponse(UserSkill userSkill) {
         super(userSkill);
+        votes = convertVoteEntityListToVoteResponseList(userSkill.getCurrentUserSkillLevel().getVotes());
     }
 
 }

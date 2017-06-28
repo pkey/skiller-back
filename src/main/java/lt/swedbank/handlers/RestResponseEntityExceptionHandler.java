@@ -57,6 +57,6 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     }
 
     private String Auth0ErrorWithoutPrefix(String message){
-        return message.substring(message.indexOf(":") + 2);
+        return message.substring(message.indexOf(":") + 1);
     }
 }

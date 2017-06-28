@@ -158,4 +158,11 @@ public class UserService {
         return currentUser.getDepartment().getId().equals(colleague.getDepartment().getId());
     }
 
+    public List<User> getAllUsers() {
+        List<User> allUsers = new ArrayList<>();
+        for (User user : userRepository.findAll()) {
+            allUsers.add(user);
+        }
+        return allUsers;
+    }
 }

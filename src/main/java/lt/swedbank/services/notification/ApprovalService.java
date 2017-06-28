@@ -51,8 +51,8 @@ public class ApprovalService {
         if (userSkillLevelService.isLatestUserSkillLevelPending(userId, assignSkillLevelRequest.getSkillId())) {
             throw new RequestAlreadySubmittedException();
         }
-        if(assignSkillLevelRequest.getLevelId() -
-                userSkillLevelService.getCurrentUserSkillLevelByUserIdAndSkillId(userId, assignSkillLevelRequest.getSkillId())
+        if (assignSkillLevelRequest.getLevelId() - userSkillLevelService
+                .getCurrentUserSkillLevelByUserIdAndSkillId(userId, assignSkillLevelRequest.getSkillId())
                 .getSkillLevel().getLevel() > 1) {
             throw new TooHighSkillLevelRequestException();
         }
@@ -84,22 +84,27 @@ public class ApprovalService {
             }
         }
 
+        if (usersToBeNotified.size() < 5) {
+            usersToBeNotified = userService.getAllUsers();
+        }
+
         List<RequestNotification> notifications = new ArrayList<>();
         for (User user : usersToBeNotified) {
             notifications.add(new RequestNotification(user, approvalRequest));
         }
 
+
         return notifications;
     }
-    public Approver addApprover(Approver approver)
-    {
+
+    public Approver addApprover(Approver approver) {
         return approversRepository.save(approver);
     }
 
 
     public ApprovalRequest approve(NotificationAnswerRequest notificationAnswerRequest, ApprovalRequest request, Long approverId) {
 
-        if(request.isApproved() == 0) {
+        if (request.isApproved() == 0) {
             Approver approver = new Approver(userService.getUserById(approverId), notificationAnswerRequest.getMessage());
             addApprover(approver);
             request.addApprover(approver);
@@ -108,22 +113,21 @@ public class ApprovalService {
             request.removeNotification(notification);
         }
 
-        if(request.getApproves() >= 5) {
+        if (request.getApproves() >= 5) {
             request.setIsApproved(1);
             request.setRequestNotifications(null);
         }
         return approvalRequestRepository.save(request);
     }
 
-    public Disapprover addDisapprover(Disapprover disapprover)
-    {
+    public Disapprover addDisapprover(Disapprover disapprover) {
         return disaproversRepository.save(disapprover);
     }
 
     public ApprovalRequest disapprove(String message, RequestNotification requestNotificationFromApprovalRequest, Long disapproverId) {
 
         ApprovalRequest request = getApprovalRequestByRequestNotification(requestNotificationFromApprovalRequest);
-        if(request.isApproved() == 0) {
+        if (request.isApproved() == 0) {
 
             Disapprover disapprover = new Disapprover(userService.getUserById(disapproverId), message);
             addDisapprover(disapprover);

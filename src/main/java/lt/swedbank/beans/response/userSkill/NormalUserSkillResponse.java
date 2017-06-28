@@ -14,7 +14,6 @@ public class NormalUserSkillResponse extends UserSkillResponse {
 
     protected CurrentSkillLevelResponse level;
 
-    protected List<VoteResponse> votes;
 
     public NormalUserSkillResponse(UserSkill userSkill) {
         super(userSkill);
@@ -54,14 +53,4 @@ public class NormalUserSkillResponse extends UserSkillResponse {
         this.votes = votes;
     }
 
-    public List<VoteResponse> convertVoteEntityListToVoteResponseList(List<Vote> votes) {
-        List<VoteResponse> voteResponses = new ArrayList<>();
-
-        for (Vote vote : votes
-                ) {
-            voteResponses.add(new VoteResponse(vote));
-        }
-
-        return voteResponses;
-    }
 }

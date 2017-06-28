@@ -12,6 +12,8 @@ abstract public class UserSkillResponse {
     protected Long id;
     protected String title;
 
+    protected List<VoteResponse> votes;
+
     public UserSkillResponse(UserSkill userSkill) {
         id = userSkill.getSkill().getId();
         title = userSkill.getSkill().getTitle();
@@ -43,4 +45,14 @@ abstract public class UserSkillResponse {
 
         return voteResponses;
     }
+
+    public List<VoteResponse> getVotes() {
+        return votes;
+    }
+
+    public void setVotes(List<VoteResponse> votes) {
+        this.votes = votes;
+    }
+
+
 }

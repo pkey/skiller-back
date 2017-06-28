@@ -90,7 +90,9 @@ public class ApprovalService {
 
         List<RequestNotification> notifications = new ArrayList<>();
         for (User user : usersToBeNotified) {
-            notifications.add(new RequestNotification(user, approvalRequest));
+            if (!user.getId().equals(userId)) {
+                notifications.add(new RequestNotification(user, approvalRequest));
+            }
         }
 
 

@@ -77,7 +77,7 @@ public class ApprovalService {
         Iterable<SkillLevel> skillLevels = skillLevelService.getAllByLevelGreaterThanOrEqual(assignSkillLevelRequest.getLevelId());
         Iterable<UserSkillLevel> userSkillLevels = userSkillLevelService.getAllApprovedUserSkillLevelsBySkillLevels(skillLevels);
 
-        List<User> usersToBeNotified = new ArrayList<>();
+        Set<User> usersToBeNotified = new HashSet<>();
         Long skillIdFromRequest = approvalRequest.getUserSkillLevel().getUserSkill().getSkill().getId();
         for (UserSkillLevel u : userSkillLevels) {
             Long skillId = u.getUserSkill().getSkill().getId();
@@ -90,15 +90,13 @@ public class ApprovalService {
         }
 
         if (usersToBeNotified.size() < 5) {
-            usersToBeNotified = userService.getAllUsers();
-
+            usersToBeNotified.addAll(userService.getAllUsers());
         }
 
         List<RequestNotification> notifications = new ArrayList<>();
         for (User user : usersToBeNotified) {
             if (!user.getId().equals(userId)
                     && areUsersFromTheSameDepartment(userId, user.getId())) {
-                System.out.println("siunciam " + user.getName());
                 notifications.add(new RequestNotification(user, approvalRequest));
             }
         }

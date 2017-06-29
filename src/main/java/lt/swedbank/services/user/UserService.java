@@ -1,5 +1,6 @@
 package lt.swedbank.services.user;
 
+import lt.swedbank.beans.entity.Department;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
@@ -164,5 +165,9 @@ public class UserService {
             allUsers.add(user);
         }
         return allUsers;
+    }
+
+    public Department getUserDepartment(Long userId) {
+        return getUserById(userId).getDepartment();
     }
 }

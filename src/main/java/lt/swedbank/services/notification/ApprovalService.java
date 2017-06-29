@@ -16,8 +16,11 @@ import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.Null;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ApprovalService {
@@ -74,29 +77,42 @@ public class ApprovalService {
         Iterable<SkillLevel> skillLevels = skillLevelService.getAllByLevelGreaterThanOrEqual(assignSkillLevelRequest.getLevelId());
         Iterable<UserSkillLevel> userSkillLevels = userSkillLevelService.getAllApprovedUserSkillLevelsBySkillLevels(skillLevels);
 
-        List<User> usersToBeNotified = new ArrayList<>();
+        Set<User> usersToBeNotified = new HashSet<>();
         Long skillIdFromRequest = approvalRequest.getUserSkillLevel().getUserSkill().getSkill().getId();
         for (UserSkillLevel u : userSkillLevels) {
             Long skillId = u.getUserSkill().getSkill().getId();
             User user = u.getUserSkill().getUser();
-            if (skillId.equals(skillIdFromRequest) && !user.getId().equals(userId)) {
+            if (skillId.equals(skillIdFromRequest)
+                    && !user.getId().equals(userId)
+                    && areUsersFromTheSameDepartment(userId, user.getId())) {
                 usersToBeNotified.add(user);
             }
         }
 
         if (usersToBeNotified.size() < 5) {
-            usersToBeNotified = userService.getAllUsers();
+            usersToBeNotified.addAll(userService.getAllUsers());
         }
 
         List<RequestNotification> notifications = new ArrayList<>();
         for (User user : usersToBeNotified) {
-            if (!user.getId().equals(userId)) {
+            if (!user.getId().equals(userId)
+                    && areUsersFromTheSameDepartment(userId, user.getId())) {
                 notifications.add(new RequestNotification(user, approvalRequest));
             }
         }
-
-
         return notifications;
+    }
+
+    public boolean areUsersFromTheSameDepartment(Long user1Id, Long user2Id) {
+        Long user1DepartmentId;
+        Long user2DepartmentId;
+        try {
+            user1DepartmentId = userService.getUserDepartment(user1Id).getId();
+            user2DepartmentId = userService.getUserDepartment(user1Id).getId();
+        } catch (NullPointerException e) {
+            return false;
+        }
+        return user1DepartmentId.equals(user2DepartmentId);
     }
 
     public Approver addApprover(Approver approver) {

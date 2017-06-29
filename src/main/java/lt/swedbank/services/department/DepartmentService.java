@@ -3,6 +3,7 @@ package lt.swedbank.services.department;
 import lt.swedbank.beans.entity.Department;
 import lt.swedbank.beans.response.DepartmentEntityResponse;
 import lt.swedbank.repositories.DepartmentRepository;
+import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

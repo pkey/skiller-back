@@ -76,10 +76,13 @@ public class ApprovalService {
 
         List<User> usersToBeNotified = new ArrayList<>();
         Long skillIdFromRequest = approvalRequest.getUserSkillLevel().getUserSkill().getSkill().getId();
+        Long userDepartmentId = userService.getUserDepartment(userId).getId();
         for (UserSkillLevel u : userSkillLevels) {
             Long skillId = u.getUserSkill().getSkill().getId();
             User user = u.getUserSkill().getUser();
-            if (skillId.equals(skillIdFromRequest) && !user.getId().equals(userId)) {
+            if (skillId.equals(skillIdFromRequest)
+                    && !user.getId().equals(userId)
+                    && user.getDepartment().getId().equals(userDepartmentId)) {
                 usersToBeNotified.add(user);
             }
         }
@@ -90,7 +93,8 @@ public class ApprovalService {
 
         List<RequestNotification> notifications = new ArrayList<>();
         for (User user : usersToBeNotified) {
-            if (!user.getId().equals(userId)) {
+            if (!user.getId().equals(userId)
+                    && user.getDepartment().getId().equals(userDepartmentId)) {
                 notifications.add(new RequestNotification(user, approvalRequest));
             }
         }

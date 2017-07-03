@@ -92,6 +92,18 @@ public class NotificationService {
         requestNotificationRepository.delete(request.getRequestNotifications());
     }
 
+    public RequestNotification processNotificationAnswerRequest(NotificationAnswerRequest notificationAnswerRequest,Long approversId){
+
+        RequestNotification requestNotification = getNotificationById(notificationAnswerRequest.getNotificationId());
+        if(notificationAnswerRequest.getApproved() == 1) {
+            return approveByApprovalRequestId(notificationAnswerRequest, approversId);
+        }
+        else if(notificationAnswerRequest.getApproved() == -1) {
+            return disapproveByApprovalRequestId(notificationAnswerRequest, approversId);
+        }
+        return requestNotification;
+    }
+
     public RequestNotification removeRequestNotification(RequestNotification notification) {
         ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(notification);
         approvalRequest.removeNotification(notification);

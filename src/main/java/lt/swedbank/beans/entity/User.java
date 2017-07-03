@@ -2,8 +2,10 @@ package lt.swedbank.beans.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lt.swedbank.beans.request.RegisterUserRequest;
+import org.hibernate.search.annotations.ContainedIn;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import java.util.List;
 
 @Entity
 @Indexed
+@Embeddable
 public class User {
 
     @Id
@@ -36,6 +39,7 @@ public class User {
 
     private String authId;
 
+    @IndexedEmbedded
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true)
     private List<UserSkill> userSkills;
 

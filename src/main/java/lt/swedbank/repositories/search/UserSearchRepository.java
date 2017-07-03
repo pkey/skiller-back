@@ -41,8 +41,7 @@ public class UserSearchRepository {
     }
 
     public Set<User> search(String searchText) {
-
-
+        
         Set<User> userResults = new HashSet<>();
 
         String[] keywords = processQuery(searchText);
@@ -53,12 +52,8 @@ public class UserSearchRepository {
 
             Set<User> userTempResults = new HashSet<>();
 
-            Set<User> userNameResults = resultsByUserName(keyword);
-            Set<User> userLastNameResults = resultsByUserLastName(keyword);
-            Set<User> skillResults = resultsBySkillProperties(keyword);
+            Set<User> skillResults = resultsByKeyword(keyword);
 
-            userTempResults.addAll(userNameResults);
-            userTempResults.addAll(userLastNameResults);
             userTempResults.addAll(skillResults);
 
             if (isResultEmpty) {
@@ -70,10 +65,11 @@ public class UserSearchRepository {
         }
 
         return userResults;//sortUserEntityResponse(convertUserSetToUserResponseList(userResults));
+
     }
 
+    private Set<User> resultsByKeyword(String keyword) {
 
-    private Set<User> resultsByUserName(String keyword) {
         //Initialises full text entity manager
         FullTextEntityManager fullTextEntityManager =
                 org.hibernate.search.jpa.Search.
@@ -85,59 +81,13 @@ public class UserSearchRepository {
                         .buildQueryBuilder().forEntity(User.class)
                         .get();
 
-        Query query = queryBuilder.keyword().wildcard().onField("name").matching("*" + keyword + "*").createQuery();
+        Query query = queryBuilder.keyword().wildcard().onFields("name", "lastName", "userSkills.skill.title").matching("*" + keyword + "*").createQuery();
 
         //Converts into full text query
         FullTextQuery jpaQuery = fullTextEntityManager.createFullTextQuery(query, User.class);
 
         //Return results
         return new HashSet<User>(jpaQuery.getResultList());
-
-    }
-
-
-    private Set<User> resultsByUserLastName(String keyword) {
-        //Initialises full text entity manager
-        FullTextEntityManager fullTextEntityManager =
-                org.hibernate.search.jpa.Search.
-                        getFullTextEntityManager(entityManager);
-
-        //Forms user class query builder
-        QueryBuilder queryBuilder =
-                fullTextEntityManager.getSearchFactory()
-                        .buildQueryBuilder().forEntity(User.class)
-                        .get();
-
-        Query query = queryBuilder.keyword().wildcard().onField("lastName").matching("*" + keyword + "*").createQuery();
-
-        //Converts into full text query
-        FullTextQuery jpaQuery = fullTextEntityManager.createFullTextQuery(query, User.class);
-
-        //Return results
-        return new HashSet<User>(jpaQuery.getResultList());
-
-
-    }
-
-    private Set<User> resultsBySkillProperties(String keyword) {
-        //Initialises full text entity manager
-        FullTextEntityManager fullTextEntityManager =
-                org.hibernate.search.jpa.Search.
-                        getFullTextEntityManager(entityManager);
-
-        //Forms user class query builder
-        QueryBuilder queryBuilder =
-                fullTextEntityManager.getSearchFactory()
-                        .buildQueryBuilder().forEntity(Skill.class)
-                        .get();
-
-        Query query = queryBuilder.keyword().wildcard().onField("title").matching("*" + keyword + "*").createQuery();
-
-        //Converts into full text query
-        FullTextQuery jpaQuery = fullTextEntityManager.createFullTextQuery(query, Skill.class);
-
-        //Return results
-        return getUsersFromSkills(jpaQuery.getResultList());
 
     }
 

@@ -53,13 +53,15 @@ public class UserSearchRepository {
 
             Set<User> userTempResults = new HashSet<>();
 
-            Set<User> userNameResults = resultsByUserName(keyword);
-            Set<User> userLastNameResults = resultsByUserLastName(keyword);
-            Set<User> skillResults = resultsBySkillProperties(keyword);
+            Set<User> skillResults = resultsByKeyword(keyword);
+            //Set<User> userNameResults = resultsByUserName(keyword);
+            //Set<User> userLastNameResults = resultsByUserLastName(keyword);
+            //Set<User> skillResults = resultsBySkillProperties(keyword);
 
-            userTempResults.addAll(userNameResults);
-            userTempResults.addAll(userLastNameResults);
             userTempResults.addAll(skillResults);
+            //userTempResults.addAll(userNameResults);
+            //userTempResults.addAll(userLastNameResults);
+            //userTempResults.addAll(skillResults);
 
             if (isResultEmpty) {
                 userResults.addAll(userTempResults);
@@ -70,6 +72,31 @@ public class UserSearchRepository {
         }
 
         return userResults;//sortUserEntityResponse(convertUserSetToUserResponseList(userResults));
+
+    }
+
+    private Set<User> resultsByKeyword(String keyword) {
+
+
+        //Initialises full text entity manager
+        FullTextEntityManager fullTextEntityManager =
+                org.hibernate.search.jpa.Search.
+                        getFullTextEntityManager(entityManager);
+
+        //Forms user class query builder
+        QueryBuilder queryBuilder =
+                fullTextEntityManager.getSearchFactory()
+                        .buildQueryBuilder().forEntity(User.class)
+                        .get();
+
+        Query query = queryBuilder.keyword().wildcard().onFields("name", "lastName", "userSkills.skill.title").matching("*" + keyword + "*").createQuery();
+
+        //Converts into full text query
+        FullTextQuery jpaQuery = fullTextEntityManager.createFullTextQuery(query, User.class);
+
+        //Return results
+        return new HashSet<User>(jpaQuery.getResultList());
+
     }
 
 

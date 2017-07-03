@@ -1,6 +1,9 @@
 package lt.swedbank.beans.entity;
 
+import org.hibernate.search.annotations.ContainedIn;
+import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
 
 import javax.persistence.*;
 import java.util.Comparator;
@@ -14,9 +17,12 @@ public class UserSkill {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @ContainedIn
     @ManyToOne
     private User user;
 
+
+    @IndexedEmbedded
     @ManyToOne(fetch = FetchType.EAGER)
     private Skill skill;
 

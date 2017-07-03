@@ -1,5 +1,6 @@
 package lt.swedbank.beans.entity;
 
+import org.hibernate.search.annotations.ContainedIn;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
@@ -18,6 +19,7 @@ public class Skill {
     @Field
     private String title;
 
+    @ContainedIn
     @OneToMany(mappedBy = "skill")
     private List<UserSkill> userSkills;
 

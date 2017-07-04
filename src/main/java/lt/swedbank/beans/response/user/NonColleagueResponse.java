@@ -16,6 +16,8 @@ public class NonColleagueResponse extends UserResponse {
         skills = convertToUserSkillResponse(user.getUserSkills());
     }
 
+    public NonColleagueResponse() {}
+
     private List<UserSkillResponse> convertToUserSkillResponse(List<UserSkill> userSkillList){
         List<UserSkillResponse> userSkillResponseList = new ArrayList<>();
 

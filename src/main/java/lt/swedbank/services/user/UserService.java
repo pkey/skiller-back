@@ -7,6 +7,7 @@ import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.user.NonColleagueResponse;
+import lt.swedbank.beans.response.user.SearchUserResponse;
 import lt.swedbank.beans.response.user.UserEntityResponse;
 import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.exceptions.user.UserNotFoundException;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -56,32 +58,41 @@ public class UserService {
          return userRepository.findAllByIdIsNotOrderByNameAscLastNameAsc(userId);
     }
 
-    public List<UserResponse> searchColleagues(Long userId, String query) {
+    public List<SearchUserResponse> searchColleagues(Long userId, String query) {
         User currentUser = getUserById(userId);
 
-        List<User> quariedUsers = this.searchUsers(query);
-        List<UserResponse> filteredUsers = new ArrayList<>();
+        List<SearchUserResponse> quariedUsers = this.searchUsers(query);
+        List<SearchUserResponse> filteredUsers = new ArrayList<>();
 
         quariedUsers.remove(currentUser);
 
-        for (User queriedUser : quariedUsers
-             ) {
-            filteredUsers.add(getUserResponseBasedOnDepartment(currentUser, queriedUser));
-        }
-
-        return filteredUsers;
+//        for (User queriedUser : quariedUsers
+//             ) {
+//            filteredUsers.add(getUserResponseBasedOnDepartment(currentUser, queriedUser));
+//        }
+        return quariedUsers;
     }
 
-    public List<User> searchUsers(String query) {
+    public List<UserResponse> getNonColleagueUserResponse(List<User> users)
+    {
+        List userResponse = new LinkedList();
+        for (User user: users
+             ) {
+            userResponse.add(new NonColleagueResponse(user));
+        }
+        return userResponse;
+    }
 
-        List<User> userList = new ArrayList<>(userSearchRepository.search(query));
 
+    public List<SearchUserResponse> searchUsers(String query) {
 
-        userList.sort(new Comparator<User>() {
+        List<SearchUserResponse> userList = userSearchRepository.search(query);
+
+        userList.sort(new Comparator<SearchUserResponse>() {
             @Override
-            public int compare(User o1, User o2) {
+            public int compare(SearchUserResponse o1, SearchUserResponse o2) {
                 if (o1.getName().compareTo(o2.getName()) == 0){
-                    return o1.getLastName().compareTo(o2.getLastName());
+                    return o1.getLastname().compareTo(o2.getLastname());
                 } else {
                     return o1.getName().compareTo(o2.getName());
                 }

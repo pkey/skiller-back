@@ -1,16 +1,23 @@
 package lt.swedbank.beans.entity;
 
+import org.hibernate.search.annotations.ContainedIn;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@Indexed
 public class Department {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     protected Long id;
 
+    @Field
     protected String name;
 
+    @ContainedIn
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
     private List<Team> teams;
 

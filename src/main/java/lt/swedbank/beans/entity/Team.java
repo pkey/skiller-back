@@ -1,9 +1,14 @@
 package lt.swedbank.beans.entity;
 
+import org.hibernate.search.annotations.ContainedIn;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@Indexed
 public class Team {
 
     @Id
@@ -12,9 +17,11 @@ public class Team {
 
     protected String name;
 
+    @ContainedIn
     @OneToMany(mappedBy = "team")
     protected List<User> users;
 
+    @IndexedEmbedded
     @ManyToOne
     private Department department;
 

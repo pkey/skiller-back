@@ -2,10 +2,7 @@ package lt.swedbank.beans.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lt.swedbank.beans.request.RegisterUserRequest;
-import org.hibernate.search.annotations.ContainedIn;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -15,16 +12,18 @@ import java.util.List;
 @Entity
 @Indexed
 @Embeddable
+@Analyzer
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @DocumentId
     private Long id;
 
-    @Field
+    @Field(store = Store.YES)
     private String name;
 
-    @Field
+    @Field(store = Store.YES)
     private String lastName;
 
     @Transient
@@ -43,6 +42,7 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true)
     private List<UserSkill> userSkills;
 
+    @IndexedEmbedded
     @ManyToOne
     private Team team;
 

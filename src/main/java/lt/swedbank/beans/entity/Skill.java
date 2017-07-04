@@ -1,22 +1,22 @@
 package lt.swedbank.beans.entity;
 
-import org.hibernate.search.annotations.ContainedIn;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.*;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Indexed
+@Analyzer
 public class Skill {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @DocumentId
     private Long id;
 
     @Column(unique = true)
-    @Field
+    @Field(store = Store.YES)
     private String title;
 
     @ContainedIn

@@ -4,18 +4,33 @@ package lt.swedbank.repositories.search;
 import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
+import lt.swedbank.beans.response.SkillEntityResponse;
+import lt.swedbank.beans.response.user.NonColleagueResponse;
+import lt.swedbank.beans.response.user.SearchUserResponse;
+import lt.swedbank.beans.response.user.UserResponse;
+import lt.swedbank.beans.response.userSkill.SearchSkillResponse;
+import org.apache.lucene.analysis.core.StopAnalyzer;
+import org.apache.lucene.*;
 import org.apache.lucene.search.Query;
+import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
+import org.hibernate.Session;
+
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.search.FullTextSession;
+import org.hibernate.search.Search;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.query.dsl.QueryBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -40,9 +55,9 @@ public class UserSearchRepository {
         }
     }
 
-    public Set<User> search(String searchText) {
-        
-        Set<User> userResults = new HashSet<>();
+    public List<SearchUserResponse> search(String searchText) {
+
+        List<SearchUserResponse> userResults = new LinkedList<>();
 
         String[] keywords = processQuery(searchText);
 
@@ -50,9 +65,9 @@ public class UserSearchRepository {
 
         for (String keyword : keywords) {
 
-            Set<User> userTempResults = new HashSet<>();
+            List<SearchUserResponse> userTempResults = new LinkedList<>();
 
-            Set<User> skillResults = resultsByKeyword(keyword);
+            List<SearchUserResponse> skillResults = resultsByKeyword(keyword);
 
             userTempResults.addAll(skillResults);
 
@@ -68,7 +83,7 @@ public class UserSearchRepository {
 
     }
 
-    private Set<User> resultsByKeyword(String keyword) {
+    private List<SearchUserResponse> resultsByKeyword(String keyword) {
 
         //Initialises full text entity manager
         FullTextEntityManager fullTextEntityManager =
@@ -81,15 +96,37 @@ public class UserSearchRepository {
                         .buildQueryBuilder().forEntity(User.class)
                         .get();
 
-        Query query = queryBuilder.keyword().wildcard().onFields("name", "lastName", "userSkills.skill.title").matching("*" + keyword + "*").createQuery();
 
-        //Converts into full text query
-        FullTextQuery jpaQuery = fullTextEntityManager.createFullTextQuery(query, User.class);
+        Query query = queryBuilder.keyword().wildcard().onFields("name", "lastName", "userSkills.skill.title").
+                matching("*" + keyword + "*").createQuery();
 
+        
+        FullTextQuery jpaQuery = fullTextEntityManager.createFullTextQuery(query, User.class).setProjection("name","lastName", "userSkills.skills.title");
+
+
+        List<SearchUserResponse> userResponses = new LinkedList<>();
+        List<Object> result = (List<Object>) jpaQuery.getResultList();
+
+      Iterator itr = result.iterator();
+        while(itr.hasNext()){
+            Object[] obj = (Object[]) itr.next();
+            //now you have one array of Object for each row
+            String name = String.valueOf(obj[0]); // don't know the type of column CLIENT assuming String
+            String lastname = String.valueOf(obj[1]); //SERVICE assumed as int
+            String title = String.valueOf(obj[2]);
+            System.out.println(title);
+
+
+            SearchUserResponse userResponse = new SearchUserResponse();
+            userResponse.setLastname(lastname);
+            userResponse.setName(name);
+            userResponses.add(userResponse);
+        }
         //Return results
-        return new HashSet<User>(jpaQuery.getResultList());
+        return userResponses;
 
     }
+
 
     private Set<User> getUsersFromSkills(List<Skill> skills) {
         Set<User> users = new HashSet<>();

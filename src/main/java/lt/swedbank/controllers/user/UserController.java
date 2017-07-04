@@ -5,6 +5,7 @@ import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.*;
 import lt.swedbank.beans.response.VoteResponse;
+import lt.swedbank.beans.response.user.SearchUserResponse;
 import lt.swedbank.beans.response.user.UserEntityResponse;
 import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.beans.response.userSkill.NormalUserSkillResponse;
@@ -51,7 +52,7 @@ public class UserController {
     }
 
     @RequestMapping("/search")
-    public List<UserResponse> searchColleagues(@RequestHeader(value = "Authorization") String authToken,
+    public List<SearchUserResponse> searchColleagues(@RequestHeader(value = "Authorization") String authToken,
                                                      String q) {
         String authId = authService.extractAuthIdFromToken(authToken);
         Long userId = userService.getUserByAuthId(authId).getId();

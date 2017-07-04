@@ -4,10 +4,13 @@ package lt.swedbank.beans.response.user;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.entity.User;
+import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.response.Response;
 import lt.swedbank.beans.response.serializers.UserTeamSerializer;
+import lt.swedbank.beans.response.userSkill.NonColleagueUserSkillResponse;
 import lt.swedbank.beans.response.userSkill.UserSkillResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 abstract public class UserResponse extends Response {
@@ -25,6 +28,8 @@ abstract public class UserResponse extends Response {
 
     @JsonSerialize(using = UserTeamSerializer.class)
     private Team team;
+
+    public UserResponse() {}
 
     public UserResponse(User user) {
 

@@ -1,5 +1,6 @@
 package lt.swedbank.services.user;
 
+import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
@@ -89,6 +90,10 @@ public class UserService {
         });
 
        return userList;
+    }
+
+    public Iterable<User> getAllByTeam(Team team){
+        return userRepository.findAllByTeam(team);
     }
 
 

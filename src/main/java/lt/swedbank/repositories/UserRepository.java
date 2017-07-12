@@ -1,5 +1,6 @@
 package lt.swedbank.repositories;
 
+import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.entity.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -14,4 +15,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
     Iterable<User> findAllByOrderByNameAscLastNameAsc();
 
     Iterable<User> findAllByIdIsNotOrderByNameAscLastNameAsc(Long id);
+
+    Iterable<User> findAllByTeam(Team team);
 }

@@ -6,6 +6,7 @@ import lt.swedbank.beans.entity.Team;
 public class TeamResponse {
     protected Long id;
     protected String name;
+    protected String departmentName;
 
     public TeamResponse() {
     }
@@ -13,6 +14,7 @@ public class TeamResponse {
     public TeamResponse(Team team) {
         this.id = team.getId();
         this.name = team.getName();
+        this.departmentName = team.getDepartment().getName();
     }
 
     public Long getId() {
@@ -29,5 +31,13 @@ public class TeamResponse {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
 }

@@ -6,15 +6,12 @@ import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewRespons
 import lt.swedbank.beans.response.team.teamOverview.NonColleagueTeamOverviewResponse;
 import lt.swedbank.beans.response.team.teamOverview.TeamOverviewResponse;
 import lt.swedbank.beans.response.user.UserResponse;
-import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
 import lt.swedbank.exceptions.skillTemplate.NoSkillTemplateFoundException;
 import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.repositories.SkillTemplateRepository;
 import lt.swedbank.repositories.TeamRepository;
-import lt.swedbank.services.skill.SkillService;
 import lt.swedbank.services.user.UserService;
-import org.bouncycastle.jcajce.provider.symmetric.TEA;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +24,6 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
 
 
@@ -81,7 +77,7 @@ public class TeamServiceTest {
         testSkillTemplate.setSkills(testSkills);
 
         teamSkillTeamplateResponses = new LinkedList<>();
-        teamSkillTeamplateResponses.add(new TeamSkillTeamplateResponse(new Skill("test"), 2));
+        teamSkillTeamplateResponses.add(new TeamSkillTeamplateResponse(new Skill("test"), 2, 2));
 
     }
 
@@ -115,6 +111,7 @@ public class TeamServiceTest {
     @Test
     public void getTeamSkillTemplateResponseList() throws Exception {
         doReturn(2).when(teamService).getSkillCountInTeam(any(Team.class), any(Skill.class));
+        doReturn(2.0).when(teamService).getAverageSkillLevelInTeam(any(Team.class), any(Skill.class));
         Mockito.when(teamService.getTeamSkillTemplate(any())).thenReturn(testSkillTemplate);
         Mockito.when(teamService.getTeamSkillTemplateResponseList(any())).thenReturn(teamSkillTeamplateResponses);
 
@@ -125,14 +122,12 @@ public class TeamServiceTest {
 
     @Test(expected = NoSkillTemplateFoundException.class)
     public void getTeamSkillTemplateResponseListException(){
-
         teamService.getTeamSkillTemplateResponseList(any());
     }
 
     @Test(expected = TeamNotFoundException.class)
     public void getTeamByIdException() throws Exception {
         Mockito.when(teamRepository.findOne(testTeam.getId())).thenReturn(null);
-
         teamService.getTeamById(testTeam.getId());
     }
 

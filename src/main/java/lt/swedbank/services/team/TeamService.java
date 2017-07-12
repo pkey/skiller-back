@@ -69,10 +69,29 @@ public class TeamService {
 
         for (Skill skill: getTeamSkillTemplate(team).getSkills()
              ) {
-            TeamSkillTeamplateResponse teamSkillTeamplateResponse = new TeamSkillTeamplateResponse(skill, getSkillCountInTeam(team, skill));
+            TeamSkillTeamplateResponse teamSkillTeamplateResponse =
+                    new TeamSkillTeamplateResponse(skill, getSkillCountInTeam(team, skill), getAverageSkillLevelInTeam(team, skill));
             teamSkillTeamplateResponseList.add(teamSkillTeamplateResponse);
         }
         return teamSkillTeamplateResponseList;
+    }
+
+    public double getAverageSkillLevelInTeam(Team team, Skill skill)
+    {
+        List<User> users = (List<User>) userService.getAllByTeam(team);
+        int counter = 0;
+        double sum = 0;
+        for (User user: users
+                ) {
+            for (UserSkill userSkill: user.getUserSkills()
+                    ) {
+                if(userSkill.getSkill().equals(skill)) {
+                    counter++;
+                    sum+=userSkill.getCurrentUserSkillLevel().getSkillLevel().getLevel();
+                }
+            }
+        }
+        return sum/counter;
     }
 
     public int getSkillCountInTeam(Team team, Skill skill)
@@ -83,8 +102,7 @@ public class TeamService {
              ) {
             for (UserSkill userSkill: user.getUserSkills()
                  ) {
-                if(userSkill.getSkill().equals(skill))
-                {
+                if(userSkill.getSkill().equals(skill)) {
                     counter++;
                 }
             }

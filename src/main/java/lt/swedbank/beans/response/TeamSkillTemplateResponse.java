@@ -2,7 +2,7 @@ package lt.swedbank.beans.response;
 
 import lt.swedbank.beans.entity.Skill;
 
-public class TeamSkillTeamplateResponse {
+public class TeamSkillTemplateResponse {
 
     private SkillEntityResponse skill;
 
@@ -10,9 +10,9 @@ public class TeamSkillTeamplateResponse {
 
     private Double averageLevel;
 
-    public TeamSkillTeamplateResponse() {}
+    public TeamSkillTemplateResponse() {}
 
-    public TeamSkillTeamplateResponse(Skill skill, int userCounter, double averageLevel) {
+    public TeamSkillTemplateResponse(Skill skill, int userCounter, double averageLevel) {
         this.skill = new SkillEntityResponse(skill);
         this.userCounter = userCounter;
         this.averageLevel = averageLevel;

@@ -1,7 +1,7 @@
 package lt.swedbank.controllers.team;
 
 import lt.swedbank.beans.entity.Team;
-import lt.swedbank.beans.response.TeamSkillTeamplateResponse;
+import lt.swedbank.beans.response.TeamSkillTemplateResponse;
 import lt.swedbank.beans.response.team.teamOverview.TeamOverviewResponse;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.team.TeamService;
@@ -41,7 +41,7 @@ public class TeamController {
 
     @RequestMapping(value = "/template/{teamId}", method = RequestMethod.GET)
     public @ResponseBody
-    List<TeamSkillTeamplateResponse > getTeamTemplate(@PathVariable("teamId") Long teamId)
+    List<TeamSkillTemplateResponse> getTeamTemplate(@PathVariable("teamId") Long teamId)
     {
         Team team = teamService.getTeamById(teamId);
         return teamService.getTeamSkillTemplateResponseList(team);

@@ -1,7 +1,7 @@
 package lt.swedbank.services.team;
 
 import lt.swedbank.beans.entity.*;
-import lt.swedbank.beans.response.TeamSkillTeamplateResponse;
+import lt.swedbank.beans.response.TeamSkillTemplateResponse;
 import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewResponse;
 import lt.swedbank.beans.response.team.teamOverview.NonColleagueTeamOverviewResponse;
 import lt.swedbank.beans.response.team.teamOverview.TeamOverviewResponse;
@@ -52,7 +52,7 @@ public class TeamServiceTest {
 
     private List<Skill> testSkills;
 
-    private List<TeamSkillTeamplateResponse> teamSkillTeamplateResponses;
+    private List<TeamSkillTemplateResponse> teamSkillTemplateRespons;
 
     @Before
     public void setUp() throws Exception {
@@ -76,8 +76,8 @@ public class TeamServiceTest {
         testSkillTemplate.setTeam(testTeam);
         testSkillTemplate.setSkills(testSkills);
 
-        teamSkillTeamplateResponses = new LinkedList<>();
-        teamSkillTeamplateResponses.add(new TeamSkillTeamplateResponse(new Skill("test"), 2, 2));
+        teamSkillTemplateRespons = new LinkedList<>();
+        teamSkillTemplateRespons.add(new TeamSkillTemplateResponse(new Skill("test"), 2, 2));
 
     }
 
@@ -113,10 +113,10 @@ public class TeamServiceTest {
         doReturn(2).when(teamService).getSkillCountInTeam(any(Team.class), any(Skill.class));
         doReturn(2.0).when(teamService).getAverageSkillLevelInTeam(any(Team.class), any(Skill.class));
         Mockito.when(teamService.getTeamSkillTemplate(any())).thenReturn(testSkillTemplate);
-        Mockito.when(teamService.getTeamSkillTemplateResponseList(any())).thenReturn(teamSkillTeamplateResponses);
+        Mockito.when(teamService.getTeamSkillTemplateResponseList(any())).thenReturn(teamSkillTemplateRespons);
 
-        Assert.assertEquals(teamSkillTeamplateResponses, teamService.getTeamSkillTemplateResponseList(any()));
-        Assert.assertEquals(teamSkillTeamplateResponses.get(0).getSkill().getTitle(),
+        Assert.assertEquals(teamSkillTemplateRespons, teamService.getTeamSkillTemplateResponseList(any()));
+        Assert.assertEquals(teamSkillTemplateRespons.get(0).getSkill().getTitle(),
                 teamService.getTeamSkillTemplateResponseList(any()).get(0).getSkill().getTitle() );
     }
 

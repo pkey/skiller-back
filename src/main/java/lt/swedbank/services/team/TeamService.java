@@ -1,7 +1,7 @@
 package lt.swedbank.services.team;
 
 import lt.swedbank.beans.entity.*;
-import lt.swedbank.beans.response.TeamSkillTeamplateResponse;
+import lt.swedbank.beans.response.TeamSkillTemplateResponse;
 import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewResponse;
 import lt.swedbank.beans.response.team.teamOverview.NonColleagueTeamOverviewResponse;
 import lt.swedbank.beans.response.team.teamOverview.TeamOverviewResponse;
@@ -60,8 +60,8 @@ public class TeamService {
         return skillTemplateRepository.findOneByTeam(team);
     }
 
-    public List<TeamSkillTeamplateResponse> getTeamSkillTemplateResponseList(Team team){
-        List<TeamSkillTeamplateResponse> teamSkillTeamplateResponseList = new ArrayList<>();
+    public List<TeamSkillTemplateResponse> getTeamSkillTemplateResponseList(Team team){
+        List<TeamSkillTemplateResponse> teamSkillTemplateResponseList = new ArrayList<>();
         if(getTeamSkillTemplate(team)== null)
         {
             throw new NoSkillTemplateFoundException();
@@ -69,11 +69,11 @@ public class TeamService {
 
         for (Skill skill: getTeamSkillTemplate(team).getSkills()
              ) {
-            TeamSkillTeamplateResponse teamSkillTeamplateResponse =
-                    new TeamSkillTeamplateResponse(skill, getSkillCountInTeam(team, skill), getAverageSkillLevelInTeam(team, skill));
-            teamSkillTeamplateResponseList.add(teamSkillTeamplateResponse);
+            TeamSkillTemplateResponse teamSkillTemplateResponse =
+                    new TeamSkillTemplateResponse(skill, getSkillCountInTeam(team, skill), getAverageSkillLevelInTeam(team, skill));
+            teamSkillTemplateResponseList.add(teamSkillTemplateResponse);
         }
-        return teamSkillTeamplateResponseList;
+        return teamSkillTemplateResponseList;
     }
 
     public double getAverageSkillLevelInTeam(Team team, Skill skill)

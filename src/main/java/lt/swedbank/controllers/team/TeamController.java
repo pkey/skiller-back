@@ -44,10 +44,6 @@ public class TeamController {
     List<TeamSkillTeamplateResponse > getTeamTemplate(@PathVariable("teamId") Long teamId)
     {
         Team team = teamService.getTeamById(teamId);
-        for (TeamSkillTeamplateResponse temp : teamService.getTeamSkillTemplateResponseList(team)
-             ) {
-            System.out.println(temp.getSkill().getTitle());
-        }
         return teamService.getTeamSkillTemplateResponseList(team);
     }
 

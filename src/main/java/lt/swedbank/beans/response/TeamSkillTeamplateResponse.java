@@ -6,13 +6,13 @@ public class TeamSkillTeamplateResponse {
 
     private SkillEntityResponse skill;
 
-    private Integer counter;
+    private Integer userCounter;
 
     public TeamSkillTeamplateResponse() {}
 
-    public TeamSkillTeamplateResponse(Skill skill, int counter) {
+    public TeamSkillTeamplateResponse(Skill skill, int userCounter) {
         this.skill = new SkillEntityResponse(skill);
-        this.counter = counter;
+        this.userCounter = userCounter;
     }
 
     public SkillEntityResponse getSkill() {
@@ -23,11 +23,11 @@ public class TeamSkillTeamplateResponse {
         this.skill = skill;
     }
 
-    public Integer getCounter() {
-        return counter;
+    public Integer getUserCounter() {
+        return userCounter;
     }
 
-    public void setCounter(Integer counter) {
-        this.counter = counter;
+    public void setUserCounter(Integer userCounter) {
+        this.userCounter = userCounter;
     }
 }

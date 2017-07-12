@@ -1,9 +1,6 @@
 package lt.swedbank.services.skill;
 
-import lt.swedbank.beans.entity.Skill;
-import lt.swedbank.beans.entity.User;
-import lt.swedbank.beans.entity.UserSkill;
-import lt.swedbank.beans.entity.UserSkillLevel;
+import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
@@ -37,6 +34,7 @@ public class UserSkillService {
         }
         return userSkill;
     }
+
 
     public UserSkill addUserSkill(User user, AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
 

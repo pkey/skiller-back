@@ -6,6 +6,7 @@ import lt.swedbank.beans.response.SkillEntityResponse;
 import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
 import lt.swedbank.exceptions.skill.SkillNotFoundException;
 import lt.swedbank.repositories.SkillRepository;
+import lt.swedbank.repositories.SkillTemplateRepository;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

@@ -54,8 +54,8 @@ public class TeamServiceTest {
 
     private SkillTemplate testSkillTemplate;
 
-    private Iterable<Skill> testSkills;
-    
+    private List<Skill> testSkills;
+
     private List<TeamSkillTeamplateResponse> teamSkillTeamplateResponses;
 
     @Before
@@ -159,30 +159,6 @@ public class TeamServiceTest {
         Assert.assertThat(resultResponse, instanceOf(TeamOverviewResponse.class));
         Assert.assertThat(resultResponse, instanceOf(ColleagueTeamOverviewResponse.class));
 
-    }
-
-    public int getSkillCountInTeam(Team team, Skill skill)
-    {
-        List<User> users = (List<User>) userService.getAllByTeam(team);
-        int counter = 0;
-        for (User user: users
-                ) {
-            for (UserSkill userSkill: user.getUserSkills()
-                    ) {
-                if(userSkill.getSkill().equals(skill))
-                {
-                    counter++;
-                }
-            }
-        }
-        return counter;
-    }
-
-
-
-    @Test
-    public void getSkillCountInTeam() {
-        Mockito.when(userService.getAllByTeam(any())).thenReturn();
     }
 
     @Test

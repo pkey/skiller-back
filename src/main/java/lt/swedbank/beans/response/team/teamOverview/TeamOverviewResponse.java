@@ -23,7 +23,4 @@ public abstract class TeamOverviewResponse extends TeamResponse {
         this.users = users;
     }
 
-
-
-
 }

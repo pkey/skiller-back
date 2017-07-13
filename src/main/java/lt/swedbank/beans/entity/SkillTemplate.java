@@ -11,9 +11,10 @@ public class SkillTemplate {
     private Long id;
 
     @OneToOne
+    @JoinColumn(name="team_id", unique=true)
     private Team team;
 
-    @OneToMany
+    @ManyToMany
     private List<Skill> skills;
 
     public SkillTemplate() {}

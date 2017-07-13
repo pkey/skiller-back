@@ -14,6 +14,7 @@ import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.ArrayList;
 
@@ -49,15 +50,14 @@ public class NotificationService {
     }
 
     public RequestNotification approveByApprovalRequestId(NotificationAnswerRequest notificationAnswerRequest, Long approversId) {
+
         RequestNotification requestNotification = getNotificationById(notificationAnswerRequest.getNotificationId());
         ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(requestNotification);
+
         Integer approves = approvalService.approve(notificationAnswerRequest, approvalRequest, approversId).getApproves();
         if (approves >= 5) {
-            Iterable<RequestNotification> requestNotificationList = requestNotificationRepository.findByApprovalRequest(approvalRequest);
-            requestNotificationRepository.delete(requestNotificationList);
-            User user = userService.getUserById(approvalRequest.getUserSkillLevel().getUserSkill().getUser().getId());
-            approvalRequest.setRequestNotification(new RequestNotification(user, approvalRequest));
-            approvalService.update(approvalRequest);
+            deleteRequestNotificationsFromApprovalRequest(approvalRequest);
+            sendRequestNotifications(approvalRequest);
         } else {
             requestNotificationRepository.delete(requestNotification);
         }
@@ -67,14 +67,28 @@ public class NotificationService {
     public RequestNotification disapproveByApprovalRequestId(NotificationAnswerRequest notificationAnswerRequest, Long approversId) {
         RequestNotification requestNotification = getNotificationById(notificationAnswerRequest.getNotificationId());
         ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(requestNotification);
-        Iterable<RequestNotification> requestNotificationList = requestNotificationRepository.findByApprovalRequest(approvalRequest);
-        String message = notificationAnswerRequest.getMessage();
-        approvalService.disapprove(message, requestNotification, approversId);
-        requestNotificationRepository.delete(requestNotificationList);
-        User user = userService.getUserById(approvalRequest.getUserSkillLevel().getUserSkill().getUser().getId());
-        approvalRequest.setRequestNotification(new RequestNotification(user, approvalRequest));
-        approvalService.update(approvalRequest);
+        approvalService.disapprove(notificationAnswerRequest.getMessage(), requestNotification, approversId);
+        deleteRequestNotificationsFromApprovalRequest(approvalRequest);
+        sendRequestNotifications(approvalRequest);
         return requestNotification;
+    }
+
+    public void deleteRequestNotificationsFromApprovalRequest(ApprovalRequest approvalRequest)
+    {
+        Iterable<RequestNotification> requestNotificationList = requestNotificationRepository.findByApprovalRequest(approvalRequest);
+        requestNotificationRepository.delete(requestNotificationList);
+    }
+
+
+    public void sendRequestNotifications(ApprovalRequest approvalRequest)
+    {
+        approvalRequest.setRequestNotification(new RequestNotification(getUserFromApprovalRequest(approvalRequest), approvalRequest));
+        approvalService.update(approvalRequest);
+    }
+
+    public User getUserFromApprovalRequest(ApprovalRequest approvalRequest)
+    {
+        return userService.getUserById(approvalRequest.getUserSkillLevel().getUserSkill().getUser().getId());
     }
 
     public RequestNotification getNotificationById(Long id) {

@@ -83,7 +83,7 @@ public class UserSkillService {
 
         UserSkill userSkill = userSkillRepository.findByUserIdAndSkillId(user.getId(), request.getSkillId());
 
-        userSkill.setUserSkillLevel(userSkillLevelService.addUserSkillLevel(userSkill, request));
+        userSkill.addUserSkillLevel(userSkillLevelService.addUserSkillLevel(userSkill, request));
 
         return userSkill;
     }

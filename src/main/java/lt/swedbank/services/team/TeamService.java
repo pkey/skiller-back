@@ -91,6 +91,10 @@ public class TeamService {
                 }
             }
         }
+        if(counter == 0)
+        {
+            return 0;
+        }
         return sum/counter;
     }
 

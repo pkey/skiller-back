@@ -8,7 +8,7 @@ public class TeamSkillTemplateResponse {
 
     private Integer userCounter;
 
-    private Double averageLevel;
+    private Double averageLevel = 0.0;
 
     public TeamSkillTemplateResponse() {}
 

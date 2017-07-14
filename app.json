@@ -4,7 +4,13 @@
   "scripts": {
   },
   "env": {
-    "CLEARDB_DATABASE_URL": {
+    "DB_URL": {
+      "required": true
+    },
+    "DB_PASSWORD": {
+      "required": true
+    },
+    "DB_USERNAME": {
       "required": true
     },
     "CLIENT_DOMAIN": {
@@ -16,18 +22,15 @@
     "CLIENT_SECRET": {
       "required": true
     },
-    "HIBERNATE_BEHAVIOR": {
+    "CLIENT_AUDIENCE": {
       "required": true
     },
-    "MANAGEMENT_API_AUDIENCE": {
+    "HIBERNATE_BEHAVIOR": {
       "required": true
     }
   },
   "formation": {
   },
-  "addons": [
-    "cleardb"
-  ],
   "buildpacks": [
     {
       "url": "heroku/gradle"

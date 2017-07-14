@@ -1,0 +1,62 @@
+package lt.swedbank.handlers;
+
+import com.auth0.exception.Auth0Exception;
+import lt.swedbank.beans.response.AuthenticationError;
+import lt.swedbank.beans.response.AuthenticationErrorsWrapper;
+import lt.swedbank.beans.response.ErrorResponse;
+import lt.swedbank.exceptions.MainException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
+@ControllerAdvice
+public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @Autowired
+    private MessageSource messageSource;
+
+
+    @ExceptionHandler({Auth0Exception.class})
+    public ResponseEntity<Object> handleAuth0Exception(final Auth0Exception ex, final WebRequest request) {
+        ErrorResponse er = new ErrorResponse(Auth0ErrorWithoutPrefix(ex.getMessage()));
+        return handleExceptionInternal(ex, er, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        List<ObjectError> fieldSErrors = ex.getBindingResult().getAllErrors();
+        AuthenticationErrorsWrapper fieldErrorList = new AuthenticationErrorsWrapper();
+
+        for (Iterator iterator = fieldSErrors.iterator(); iterator.hasNext(); ) {
+            FieldError fieldError = (FieldError) iterator.next();
+            fieldErrorList.addError(new AuthenticationError(fieldError.getField(), fieldError.getDefaultMessage()));
+        }
+
+        return new ResponseEntity<Object>(fieldErrorList, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({MainException.class})
+    @ResponseBody
+    public ResponseEntity<ErrorResponse> handleMainException(MainException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(messageSource.getMessage(ex.getMessageCode(), null, Locale.getDefault()));
+        return new ResponseEntity<>(errorResponse, ex.getStatusCode());
+    }
+
+    private String Auth0ErrorWithoutPrefix(String message){
+        return message.substring(message.indexOf(":") + 1);
+    }
+}

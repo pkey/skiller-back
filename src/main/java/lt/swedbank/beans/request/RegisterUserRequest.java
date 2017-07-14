@@ -1,41 +1,40 @@
-package lt.swedbank.beans;
+package lt.swedbank.beans.request;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lt.swedbank.beans.entity.User;
+import org.hibernate.validator.constraints.Email;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
-/**
- * Created by paulius on 4/24/17.
- */
-@Entity
-public class User {
+public class RegisterUserRequest {
 
-    @Id
-    @JsonIgnore
-    private Long id;
-
-    @Transient
+    @NotNull(message = "Name is required!")
     private String name;
-    @Transient
+
+    @NotNull(message = "Last name is required!")
     private String lastName;
-    @Transient
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+
+    @NotNull(message = "Password is required!")
+    @Size(min = 8, max = 45, message = "Password is too short or too long.")
     private String password;
-    @Transient
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+
+    @NotNull(message = "Connection is required!")
     private String connection;
 
+    @NotNull(message = "Email is required!")
+    @Email(message = "Not an email")
     private String email;
 
-    public Long getId() {
-        return id;
+    public RegisterUserRequest() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public RegisterUserRequest(User user) {
+
+        setName(user.getName());
+        setLastName(user.getLastName());
+        setPassword(user.getPassword());
+        setConnection(user.getConnection());
+        setEmail(user.getEmail());
     }
 
     public String getName() {

@@ -1,5 +1,7 @@
 package lt.swedbank.beans.entity;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
@@ -21,8 +23,9 @@ public class UserSkill {
     private Skill skill;
 
     @OneToMany(mappedBy = "userSkill", orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<UserSkillLevel> userSkillLevels;
-    
+
     public UserSkill() {
     }
 

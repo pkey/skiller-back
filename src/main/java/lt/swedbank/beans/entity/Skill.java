@@ -1,5 +1,7 @@
 package lt.swedbank.beans.entity;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
@@ -18,7 +20,9 @@ public class Skill {
     @Field
     private String title;
 
+
     @OneToMany(mappedBy = "skill")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<UserSkill> userSkills;
 
     public Skill() {

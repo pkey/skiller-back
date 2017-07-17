@@ -8,6 +8,8 @@ import lt.swedbank.services.team.TeamService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -44,7 +46,10 @@ public class TeamController {
     List<TeamSkillTemplateResponse> getTeamTemplate(@PathVariable("teamId") Long teamId)
     {
         Team team = teamService.getTeamById(teamId);
-        return teamService.getTeamSkillTemplateResponseList(team);
+        List<TeamSkillTemplateResponse> templateResponse = teamService.getTeamSkillTemplateResponseList(team);
+        Collections.sort(templateResponse);
+        Collections.reverse(templateResponse);
+        return templateResponse;
     }
 
 

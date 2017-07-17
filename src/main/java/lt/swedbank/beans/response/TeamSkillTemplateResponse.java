@@ -2,7 +2,9 @@ package lt.swedbank.beans.response;
 
 import lt.swedbank.beans.entity.Skill;
 
-public class TeamSkillTemplateResponse {
+import java.util.Comparator;
+
+public class TeamSkillTemplateResponse implements Comparator<TeamSkillTemplateResponse>, Comparable<TeamSkillTemplateResponse>{
 
     private SkillEntityResponse skill;
 
@@ -38,7 +40,13 @@ public class TeamSkillTemplateResponse {
         return averageLevel;
     }
 
-    public void setAverageLevel(Double averageLevel) {
-        this.averageLevel = averageLevel;
+    @Override
+    public int compareTo(TeamSkillTemplateResponse teamSkillTemplateResponse) {
+        return this.userCounter.compareTo(teamSkillTemplateResponse.getUserCounter());
+    }
+
+    @Override
+    public int compare(TeamSkillTemplateResponse teamSkillTemplateResponse, TeamSkillTemplateResponse t1) {
+        return teamSkillTemplateResponse.getUserCounter().compareTo(t1.getUserCounter());
     }
 }

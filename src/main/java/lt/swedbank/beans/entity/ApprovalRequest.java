@@ -1,6 +1,8 @@
 package lt.swedbank.beans.entity;
 
 import lt.swedbank.exceptions.request.FalseRequestStatusException;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -21,15 +23,19 @@ public class ApprovalRequest {
     private Integer isApproved = 0;
 
     @OneToOne(cascade = {CascadeType.ALL})
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private UserSkillLevel userSkillLevel;
 
     @OneToMany(cascade = {CascadeType.PERSIST})
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Approver> approvers;
 
     @OneToOne(cascade = {CascadeType.PERSIST})
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Disapprover disapprover;
 
     @OneToMany(cascade = {CascadeType.ALL})
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<RequestNotification> requestNotifications;
 
     private String motivation;

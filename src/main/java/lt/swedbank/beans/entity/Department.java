@@ -1,5 +1,8 @@
 package lt.swedbank.beans.entity;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -12,6 +15,7 @@ public class Department {
     protected String name;
 
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Team> teams;
 
     public Long getId() {

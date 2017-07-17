@@ -1,9 +1,11 @@
 package lt.swedbank.beans.entity;
 
 import lt.swedbank.exceptions.request.FalseRequestStatusException;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -31,6 +33,9 @@ public class ApprovalRequest {
 
     @OneToMany(cascade = {CascadeType.ALL})
     private List<RequestNotification> requestNotifications;
+
+    @CreationTimestamp
+    private Date creationTime;
 
     private String motivation;
 
@@ -125,6 +130,14 @@ public class ApprovalRequest {
     public void setIsApproved(Integer isApproved) {
         this.isApproved = isApproved;
         userSkillLevel.setIsApproved(isApproved);
+    }
+
+    public Date getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(Date creationTime) {
+        this.creationTime = creationTime;
     }
 
     public String getCurrentRequestStatus() {

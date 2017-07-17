@@ -86,8 +86,9 @@ public class UserSkill {
 
         int i = 0;
 
-        while(userSkillLevels.get(i++).getIsApproved() == -1);{
+        while(userSkillLevels.get(i).getIsApproved() == 1);{
             currentUserSkillLevel = userSkillLevels.get(i);
+            i++;
         }
 
 

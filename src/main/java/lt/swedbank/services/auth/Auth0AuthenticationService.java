@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 
+
 @Service
 public class Auth0AuthenticationService implements AuthenticationService {
 
@@ -136,6 +137,8 @@ public class Auth0AuthenticationService implements AuthenticationService {
     public String extractAuthIdFromToken(String token) {
         return JWT.decode(removeTokenHead(token)).getSubject().replaceFirst(subjectPrefix, "");
     }
+
+
 
 
     private String removeTokenHead(String token) {

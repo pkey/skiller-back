@@ -63,7 +63,7 @@ public class NotificationService {
         else if(notificationAnswerRequest.getApproved() == -1) {
             return new RequestNotificationResponse(disapprove(approvalRequest, requestNotification, user.getId(), notificationAnswerRequest.getMessage()));
         }
-        return new RequestNotificationResponse(removeRequestNotification(requestNotification));
+        return new RequestNotificationResponse(removeRequestNotification(approvalRequest, requestNotification));
     }
 
     public RequestNotification approve(ApprovalRequest approvalRequest, RequestNotification requestNotification,Long approversId, String message) {
@@ -71,7 +71,7 @@ public class NotificationService {
         Integer approves = approvalService.approve(message, approvalRequest, approversId).getApproves();
         if (approves >= 5) {
             requestNotification.setApproved();
-            sendRequestNotifications(approvalRequest);
+       // ???     sendRequestNotifications(approvalRequest);
         }
         return requestNotification;
     }
@@ -80,7 +80,7 @@ public class NotificationService {
 
         approvalService.disapprove(message, requestNotification, approversId);
         requestNotification.setDisapproved();
-        sendRequestNotifications(approvalRequest);
+       // ??? sendRequestNotifications(approvalRequest);
         return requestNotification;
     }
 
@@ -117,12 +117,10 @@ public class NotificationService {
         requestNotificationRepository.delete(request.getRequestNotifications());
     }
 
-    public RequestNotification removeRequestNotification(RequestNotification notification) {
-        ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(notification);
+    public RequestNotification removeRequestNotification(ApprovalRequest approvalRequest, RequestNotification notification) {
         notification.setNewRequest(false);
 
         approvalService.update(approvalRequest);
-        requestNotificationRepository.delete(notification.getId());
         return notification;
     }
 

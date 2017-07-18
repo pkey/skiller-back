@@ -1,5 +1,7 @@
 package lt.swedbank.beans.entity;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
 
 @Entity

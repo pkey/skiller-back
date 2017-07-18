@@ -81,7 +81,16 @@ public class UserSkill {
                 return o2.getValidFrom().compareTo(o1.getValidFrom());
             }
         });
+    }
 
+    public UserSkillLevel getCurentSkillLevelStatus() {
+        sortUserSkillLevels();
+        int i = 0;
+        UserSkillLevel currentUserSkillLevel;
+        do {
+            currentUserSkillLevel = userSkillLevels.get(i);
+        } while(userSkillLevels.get(i++).getIsApproved() == -1);
+        return currentUserSkillLevel;
     }
 
     public UserSkillLevel getCurrentSkillLevel() {

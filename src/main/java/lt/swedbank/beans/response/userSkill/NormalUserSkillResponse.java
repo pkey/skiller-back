@@ -17,7 +17,7 @@ public class NormalUserSkillResponse extends UserSkillResponse {
 
     public NormalUserSkillResponse(UserSkill userSkill) {
         super(userSkill);
-        level = new CurrentSkillLevelResponse(userSkill.getCurrentSkillLevel());
+        level = new CurrentSkillLevelResponse(userSkill.getCurentSkillLevelStatus());
         votes = convertVoteEntityListToVoteResponseList(userSkill.getCurrentSkillLevel().getVotes());
     }
 

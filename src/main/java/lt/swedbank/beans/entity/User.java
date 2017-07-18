@@ -7,6 +7,7 @@ import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -143,6 +144,17 @@ public class User {
             return null;
         }
     }
+
+    public void sortSkillsBySkillLevel()
+    {
+        userSkills.sort(new Comparator<UserSkill>() {
+            @Override
+            public int compare(UserSkill o1, UserSkill o2) {
+                return o1.getCurrentSkillLevel().getSkillLevel().compareTo(o2.getCurrentSkillLevel().getSkillLevel());
+            }
+        });
+    }
+
 
     private void capitalizeUserNameAndLastName() {
         this.setName(name.substring(0, 1).toUpperCase() + name.substring(1));

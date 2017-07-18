@@ -22,12 +22,10 @@ abstract public class UserResponse extends Response {
 
     protected List<UserSkillResponse> skills;
 
-
     @JsonSerialize(using = UserTeamSerializer.class)
     private Team team;
 
     public UserResponse(User user) {
-
         id = user.getId();
         name = user.getName();
         lastName = user.getLastName();

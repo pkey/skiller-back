@@ -38,4 +38,5 @@ public class CurrentSkillLevelResponse {
     public void setStatus(String status) {
         this.status = status;
     }
+
 }

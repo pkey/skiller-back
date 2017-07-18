@@ -1,5 +1,6 @@
 package lt.swedbank.services.notification;
 
+import com.sun.org.apache.regexp.internal.RE;
 import lt.swedbank.beans.entity.ApprovalRequest;
 import lt.swedbank.beans.entity.RequestNotification;
 import lt.swedbank.beans.entity.User;
@@ -49,14 +50,25 @@ public class NotificationService {
         return requestNotificationResponses;
     }
 
-    public RequestNotification approveByApprovalRequestId(NotificationAnswerRequest notificationAnswerRequest, Long approversId) {
+    public NotificationResponse handleRequest(NotificationAnswerRequest notificationAnswerRequest , User user) {
 
         RequestNotification requestNotification = getNotificationById(notificationAnswerRequest.getNotificationId());
         ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(requestNotification);
 
-        Integer approves = approvalService.approve(notificationAnswerRequest, approvalRequest, approversId).getApproves();
+        if(notificationAnswerRequest.getApproved() == 1) {
+            return new RequestNotificationResponse(approveByApprovalRequestId(approvalRequest, requestNotification, user.getId(), notificationAnswerRequest.getMessage()));
+        }
+        else if(notificationAnswerRequest.getApproved() == -1) {
+            return new RequestNotificationResponse(disapproveByApprovalRequestId(approvalRequest, requestNotification, user.getId(), notificationAnswerRequest.getMessage()));
+        }
+        return new RequestNotificationResponse(removeRequestNotification(requestNotification));
+    }
+
+    public RequestNotification approveByApprovalRequestId(ApprovalRequest approvalRequest, RequestNotification requestNotification,Long approversId, String message) {
+
+        Integer approves = approvalService.approve(message, approvalRequest, approversId).getApproves();
         if (approves >= 5) {
-            deleteRequestNotificationsFromApprovalRequest(approvalRequest);
+            requestNotification.setApproved();
             sendRequestNotifications(approvalRequest);
         } else {
             requestNotificationRepository.delete(requestNotification);
@@ -64,11 +76,10 @@ public class NotificationService {
         return requestNotification;
     }
 
-    public RequestNotification disapproveByApprovalRequestId(NotificationAnswerRequest notificationAnswerRequest, Long approversId) {
-        RequestNotification requestNotification = getNotificationById(notificationAnswerRequest.getNotificationId());
-        ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(requestNotification);
-        approvalService.disapprove(notificationAnswerRequest.getMessage(), requestNotification, approversId);
-        deleteRequestNotificationsFromApprovalRequest(approvalRequest);
+    public RequestNotification disapproveByApprovalRequestId(ApprovalRequest approvalRequest, RequestNotification requestNotification, Long approversId, String message) {
+
+        approvalService.disapprove(message, requestNotification, approversId);
+        requestNotification.setDisapproved();
         sendRequestNotifications(approvalRequest);
         return requestNotification;
     }
@@ -108,9 +119,11 @@ public class NotificationService {
 
     public RequestNotification removeRequestNotification(RequestNotification notification) {
         ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(notification);
-        approvalRequest.removeNotification(notification);
+        notification.setNewRequest(false);
+
         approvalService.update(approvalRequest);
         requestNotificationRepository.delete(notification.getId());
         return notification;
     }
+
 }

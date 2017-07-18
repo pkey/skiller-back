@@ -104,15 +104,12 @@ public class ApprovalService {
     }
 
 
-    public ApprovalRequest approve(NotificationAnswerRequest notificationAnswerRequest, ApprovalRequest request, Long approverId) {
+    public ApprovalRequest approve(String message, ApprovalRequest request, Long approverId) {
 
         if (request.isApproved() == 0) {
-            Approver approver = new Approver(userService.getUserById(approverId), notificationAnswerRequest.getMessage());
+            Approver approver = new Approver(userService.getUserById(approverId), message);
             addApprover(approver);
             request.addApprover(approver);
-            RequestNotification notification = notificationService.getNotificationById(notificationAnswerRequest.getNotificationId());
-            notificationService.removeRequestNotification(notification);
-            request.removeNotification(notification);
         }
 
         if (request.getApproves() >= 5) {

@@ -1,7 +1,11 @@
 package lt.swedbank.beans.entity;
 
 import lt.swedbank.exceptions.request.FalseRequestStatusException;
+
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -32,6 +36,7 @@ public class ApprovalRequest {
     private Disapprover disapprover;
 
     @OneToMany(cascade = {CascadeType.ALL})
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<RequestNotification> requestNotifications;
 
     @CreationTimestamp

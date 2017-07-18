@@ -87,7 +87,7 @@ public class TeamService {
                     ) {
                 if(userSkill.getSkill().equals(skill)) {
                     counter++;
-                    sum+=userSkill.getCurrentUserSkillLevel().getSkillLevel().getLevel();
+                    sum+=userSkill.getCurrentSkillLevel().getSkillLevel().getLevel();
                 }
             }
         }

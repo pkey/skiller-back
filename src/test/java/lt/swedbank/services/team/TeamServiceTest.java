@@ -68,6 +68,7 @@ public class TeamServiceTest {
         UserSkill userSkill = new UserSkill();
         userSkill.setSkill(testSkill);
         UserSkillLevel userSkillLevel = new UserSkillLevel();
+        userSkillLevel.setIsApproved(1);
 
         List<UserSkillLevel> userSkillLevels = new LinkedList<UserSkillLevel>();
         SkillLevel skillLevel = new SkillLevel("Pro", "pro");

@@ -74,9 +74,7 @@ public class UserSkill {
         this.userSkillLevels.add(userSkillLevel);
     }
 
-    public UserSkillLevel getCurrentUserSkillLevel() {
-        UserSkillLevel currentUserSkillLevel;
-
+    public void sortUserSkillLevels() {
         userSkillLevels.sort(new Comparator<UserSkillLevel>() {
             @Override
             public int compare(UserSkillLevel o1, UserSkillLevel o2) {
@@ -84,11 +82,19 @@ public class UserSkill {
             }
         });
 
+    }
+
+    public UserSkillLevel getCurrentSkillLevel() {
+        sortUserSkillLevels();
+        UserSkillLevel currentUserSkillLevel = null;
         int i = 0;
-        do{
-            currentUserSkillLevel = userSkillLevels.get(i);
-            i++;
-        } while (userSkillLevels.get(i).getIsApproved() == 1 );
+        for (UserSkillLevel level: userSkillLevels
+             ) {
+            if(level.getIsApproved() == 1)
+            {
+                currentUserSkillLevel = level;
+            }
+        }
 
         return currentUserSkillLevel;
     }

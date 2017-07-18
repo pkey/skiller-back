@@ -5,14 +5,15 @@ import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.NotificationAnswerRequest;
 import lt.swedbank.beans.response.notification.NotificationResponse;
 import lt.swedbank.beans.response.notification.RequestNotificationResponse;
-
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.notification.NotificationService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import java.util.*;
 
 import javax.validation.Valid;
+
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -31,7 +32,6 @@ public class NotificationController {
     Iterable<NotificationResponse> getNotificationByAuthId(@RequestHeader(value = "Authorization") String authToken) {
         String authId = authenticationService.extractAuthIdFromToken(authToken);
         User user = userService.getUserByAuthId(authId);
-
         return notificationService.getNotificationResponses(notificationService.getNotificationsByUserId(user.getId()));
     }
 

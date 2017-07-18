@@ -99,7 +99,7 @@ public class ApprovalService {
         return notifications;
     }
 
-    public Approver addApprover(Approver approver) {
+    public Approver saveApprover(Approver approver) {
         return approversRepository.save(approver);
     }
 
@@ -108,18 +108,18 @@ public class ApprovalService {
 
         if (request.isApproved() == 0) {
             Approver approver = new Approver(userService.getUserById(approverId), message);
-            addApprover(approver);
+            saveApprover(approver);
             request.addApprover(approver);
         }
 
         if (request.getApproves() >= 5) {
             request.setIsApproved(1);
-            request.setRequestNotifications(null);
+          //@todo  request.setRequestNotifications(null);
         }
         return approvalRequestRepository.save(request);
     }
 
-    public Disapprover addDisapprover(Disapprover disapprover) {
+    public Disapprover saveDisapprover(Disapprover disapprover) {
         return disaproversRepository.save(disapprover);
     }
 
@@ -129,10 +129,10 @@ public class ApprovalService {
         if (request.isApproved() == 0) {
 
             Disapprover disapprover = new Disapprover(userService.getUserById(disapproverId), message);
-            addDisapprover(disapprover);
+            saveDisapprover(disapprover);
             request.setDisapprover(disapprover);
             request.setIsApproved(-1);
-            request.setRequestNotifications(null);
+        //@todo     request.setRequestNotifications(null);
         }
         return approvalRequestRepository.save(request);
     }

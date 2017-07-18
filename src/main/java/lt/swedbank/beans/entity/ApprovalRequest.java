@@ -36,7 +36,6 @@ public class ApprovalRequest {
     private Disapprover disapprover;
 
     @OneToMany(cascade = {CascadeType.ALL})
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<RequestNotification> requestNotifications;
 
     @CreationTimestamp

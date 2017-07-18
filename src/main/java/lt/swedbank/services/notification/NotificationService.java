@@ -55,28 +55,28 @@ public class NotificationService {
         RequestNotification requestNotification = getNotificationById(notificationAnswerRequest.getNotificationId());
         ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(requestNotification);
 
+        requestNotification.setNewRequest(false);
+
         if(notificationAnswerRequest.getApproved() == 1) {
-            return new RequestNotificationResponse(approveByApprovalRequestId(approvalRequest, requestNotification, user.getId(), notificationAnswerRequest.getMessage()));
+            return new RequestNotificationResponse(approve(approvalRequest, requestNotification, user.getId(), notificationAnswerRequest.getMessage()));
         }
         else if(notificationAnswerRequest.getApproved() == -1) {
-            return new RequestNotificationResponse(disapproveByApprovalRequestId(approvalRequest, requestNotification, user.getId(), notificationAnswerRequest.getMessage()));
+            return new RequestNotificationResponse(disapprove(approvalRequest, requestNotification, user.getId(), notificationAnswerRequest.getMessage()));
         }
         return new RequestNotificationResponse(removeRequestNotification(requestNotification));
     }
 
-    public RequestNotification approveByApprovalRequestId(ApprovalRequest approvalRequest, RequestNotification requestNotification,Long approversId, String message) {
+    public RequestNotification approve(ApprovalRequest approvalRequest, RequestNotification requestNotification,Long approversId, String message) {
 
         Integer approves = approvalService.approve(message, approvalRequest, approversId).getApproves();
         if (approves >= 5) {
             requestNotification.setApproved();
             sendRequestNotifications(approvalRequest);
-        } else {
-            requestNotificationRepository.delete(requestNotification);
         }
         return requestNotification;
     }
 
-    public RequestNotification disapproveByApprovalRequestId(ApprovalRequest approvalRequest, RequestNotification requestNotification, Long approversId, String message) {
+    public RequestNotification disapprove(ApprovalRequest approvalRequest, RequestNotification requestNotification, Long approversId, String message) {
 
         approvalService.disapprove(message, requestNotification, approversId);
         requestNotification.setDisapproved();

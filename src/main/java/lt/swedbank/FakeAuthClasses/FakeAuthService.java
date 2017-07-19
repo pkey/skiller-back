@@ -2,6 +2,7 @@ package lt.swedbank.FakeAuthClasses;
 
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.TokenHolder;
+import com.auth0.jwt.JWT;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.LoginUserRequest;
 import lt.swedbank.beans.request.RegisterUserRequest;
@@ -37,6 +38,12 @@ public class FakeAuthService implements AuthenticationService {
         return null;
     }
 
+    @Override
+    public String extractAuthIdFromToken(String token) {
+        return token.substring(7);
+    }
+
+
     public FakeTokenHolder loginFakeUser(LoginUserRequest loginUserRequest) throws Auth0Exception {
         User user;
         if(userRepository.findByEmail(loginUserRequest.getEmail()) != null)
@@ -47,10 +54,5 @@ public class FakeAuthService implements AuthenticationService {
             throw new UserNotFoundException();
         }
         return new FakeTokenHolder(user.getAuthId());
-    }
-
-    @Override
-    public String extractAuthIdFromToken(String token) {
-        return token;
     }
 }

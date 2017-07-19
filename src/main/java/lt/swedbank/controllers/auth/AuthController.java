@@ -2,6 +2,7 @@ package lt.swedbank.controllers.auth;
 
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.TokenHolder;
+import lt.swedbank.FakeAuthClasses.FakeAuthService;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.LoginUserRequest;
 import lt.swedbank.beans.request.RegisterUserRequest;
@@ -22,8 +23,11 @@ public class AuthController {
 
     private AuthenticationService authService;
 
+
+
+    // changed to fake
     @Autowired
-    public void setAuthenticationService(Auth0AuthenticationService authService) {
+    public void setAuthenticationService(FakeAuthService authService) {
         this.authService = authService;
     }
 
@@ -34,7 +38,6 @@ public class AuthController {
         TokenHolder token = authService.loginUser(user);
         return new LoginTokenResponse(token);
     }
-
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public @ResponseBody

@@ -33,7 +33,11 @@ public class FakeAuthService implements AuthenticationService {
     }
 
     @Override
-    public TokenHolder loginUser(LoginUserRequest loginUserRequest) throws Auth0Exception {
+    public TokenHolder loginUser(LoginUserRequest user) throws Auth0Exception {
+        return null;
+    }
+
+    public FakeTokenHolder loginFakeUser(LoginUserRequest loginUserRequest) throws Auth0Exception {
         User user;
         if(userRepository.findByEmail(loginUserRequest.getEmail()) != null)
         {

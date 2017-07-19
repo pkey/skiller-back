@@ -3,6 +3,7 @@ package lt.swedbank.controllers.auth;
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.TokenHolder;
 import lt.swedbank.FakeAuthClasses.FakeAuthService;
+import lt.swedbank.FakeAuthClasses.FakeTokenHolder;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.LoginUserRequest;
 import lt.swedbank.beans.request.RegisterUserRequest;
@@ -21,7 +22,7 @@ import javax.validation.Valid;
 @CrossOrigin(origins = "*")
 public class AuthController {
 
-    private AuthenticationService authService;
+    private FakeAuthService authService;
 
 
 
@@ -35,7 +36,7 @@ public class AuthController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public @ResponseBody
     LoginTokenResponse login(@Valid @RequestBody LoginUserRequest user) throws Auth0Exception {
-        TokenHolder token = authService.loginUser(user);
+        FakeTokenHolder token = authService.loginFakeUser(user);
         return new LoginTokenResponse(token);
     }
 

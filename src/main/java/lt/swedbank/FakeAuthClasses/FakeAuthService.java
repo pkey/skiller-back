@@ -9,9 +9,10 @@ import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.repositories.UserRepository;
 import lt.swedbank.services.auth.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-
+@Primary
 @Service
 public class FakeAuthService implements AuthenticationService {
 

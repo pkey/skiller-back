@@ -32,15 +32,9 @@ public class NotificationController {
     Iterable<NotificationResponse> getNotificationByAuthId(@RequestHeader(value = "Authorization") String authToken) {
         String authId = authenticationService.extractAuthIdFromToken(authToken);
         User user = userService.getUserByAuthId(authId);
-        return notificationService.getNotificationResponses(notificationService.getNotificationsByUser(user));
-    }
-
-    @RequestMapping(value = "/new", method = RequestMethod.GET)
-    public @ResponseBody
-    Iterable<NotificationResponse> getNewNotificationByAuthId(@RequestHeader(value = "Authorization") String authToken) {
-        String authId = authenticationService.extractAuthIdFromToken(authToken);
-        User user = userService.getUserByAuthId(authId);
-        return notificationService.getNotificationResponses(notificationService.getNewNotificationsByUser(user));
+        List<NotificationResponse> NotificationResponse = notificationService.getNotificationResponses(notificationService.getNotificationsByUser(user));
+        Collections.reverse(NotificationResponse);
+        return NotificationResponse;
     }
 
     @RequestMapping(value = "/post", method = RequestMethod.POST)

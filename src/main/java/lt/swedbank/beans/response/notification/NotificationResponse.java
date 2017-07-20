@@ -125,4 +125,6 @@ abstract public class NotificationResponse {
     public void setStatus(String status) {
         this.status = status;
     }
+
+
 }

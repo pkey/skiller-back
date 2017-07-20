@@ -53,7 +53,7 @@ public class NotificationService {
         RequestNotification requestNotification = getNotificationById(notificationAnswerRequest.getNotificationId());
         ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(requestNotification);
 
-        requestNotification.setNewRequest(false);
+        requestNotification.setNewNotification(false);
 
         if(notificationAnswerRequest.getApproved() == 1) {
             return new RequestNotificationResponse(approve(approvalRequest, requestNotification, user.getId(), notificationAnswerRequest.getMessage()));
@@ -116,13 +116,10 @@ public class NotificationService {
     }
 
     public RequestNotification removeRequestNotification(ApprovalRequest approvalRequest, RequestNotification notification) {
-        notification.setNewRequest(false);
+        notification.setNewNotification(false);
 
         approvalService.update(approvalRequest);
         return notification;
     }
 
-    public Iterable<RequestNotification> getNewNotificationsByUser(User user) {
-        return requestNotificationRepository.findAllByReceiverAndIsNewRequestTrue(user);
-    }
 }

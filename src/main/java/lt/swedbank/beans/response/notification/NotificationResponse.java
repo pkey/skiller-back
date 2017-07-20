@@ -10,6 +10,8 @@ import java.util.Date;
 
 abstract public class NotificationResponse {
 
+    private Integer type;
+
     private Date date;
 
     private Long id;
@@ -94,5 +96,11 @@ abstract public class NotificationResponse {
         this.date = date;
     }
 
+    public Integer getType() {
+        return type;
+    }
 
+    public void setType(Integer type) {
+        this.type = type;
+    }
 }

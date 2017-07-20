@@ -13,7 +13,7 @@ import java.util.List;
 
 public class RequestDisapprovedNotificationResponse extends NotificationResponse {
 
-    final private Integer type = 2;
+    final private Integer TYPE = 2;
 
     private DisapproverResponse disapprover;
 
@@ -22,11 +22,12 @@ public class RequestDisapprovedNotificationResponse extends NotificationResponse
 
     public RequestDisapprovedNotificationResponse(RequestNotification requestNotification) {
         super(requestNotification);
+        super.setType(TYPE);
         this.disapprover = new DisapproverResponse(requestNotification.getApprovalRequest().getDisapprover());
     }
 
     public Integer getType() {
-        return type;
+        return TYPE;
     }
 
     public DisapproverResponse getDisapprover() {

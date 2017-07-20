@@ -1,6 +1,5 @@
 package lt.swedbank.services.notification;
 
-import com.sun.org.apache.regexp.internal.RE;
 import lt.swedbank.beans.entity.ApprovalRequest;
 import lt.swedbank.beans.entity.RequestNotification;
 import lt.swedbank.beans.entity.User;
@@ -15,7 +14,6 @@ import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.ArrayList;
 
@@ -31,8 +29,8 @@ public class NotificationService {
     @Autowired
     private ApprovalService approvalService;
 
-    public Iterable<RequestNotification> getNotificationsByUserId(Long id) {
-        return requestNotificationRepository.findByReceiver(userService.getUserById(id));
+    public Iterable<RequestNotification> getNotificationsByUser(User user) {
+        return requestNotificationRepository.findByReceiver(user);
     }
 
     public ArrayList<NotificationResponse> getNotificationResponses(Iterable<RequestNotification> requestNotifications) {
@@ -124,4 +122,7 @@ public class NotificationService {
         return notification;
     }
 
+    public Iterable<RequestNotification> getNewNotificationsByUser(User user) {
+        return requestNotificationRepository.findAllByReceiverAndIsNewRequestTrue(user);
+    }
 }

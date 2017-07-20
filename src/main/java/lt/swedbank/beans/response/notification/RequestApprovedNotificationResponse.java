@@ -11,7 +11,7 @@ import java.util.List;
 
 public class RequestApprovedNotificationResponse extends NotificationResponse {
 
-    final private Integer type = 3;
+    final private Integer TYPE = 3;
 
     private List<ApproverResponse> approvals;
 
@@ -21,6 +21,7 @@ public class RequestApprovedNotificationResponse extends NotificationResponse {
     public RequestApprovedNotificationResponse(RequestNotification requestNotification) {
 
         super(requestNotification);
+        super.setType(TYPE);
         this.approvals = new ArrayList<>();
         for(Approver approver : requestNotification.getApprovalRequest().getApprovers()) {
             this.approvals.add(new ApproverResponse(approver));
@@ -29,7 +30,7 @@ public class RequestApprovedNotificationResponse extends NotificationResponse {
 
 
     public Integer getType() {
-        return type;
+        return TYPE;
     }
 
     public List<ApproverResponse> getApprovals() {

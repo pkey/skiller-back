@@ -4,77 +4,174 @@ package lt.swedbank.helpers;
 import io.codearte.jfairy.Fairy;
 import io.codearte.jfairy.producer.person.Person;
 import io.codearte.jfairy.producer.text.TextProducer;
-import lt.swedbank.beans.entity.Department;
-import lt.swedbank.beans.entity.Team;
-import lt.swedbank.beans.entity.User;
+import lt.swedbank.beans.entity.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
+/*
+Class to generate test data
+ */
 public class TestHelper {
 
-    public static List<User> fetchUsers(int amount) {
+    private static final int NUMBER_OF_DIVISIONS = 2;
+    private static final int NUMBER_OF_DEPARTMENTS = 5;
+    private static final int NUMBER_OF_TEAMS = 10;
+    private static final int NUMBER_OF_USERS = 50;
+    private static final int NUMBER_OF_SKILLS = 10;
+    private static final int NUMBER_OF_SKILLS_USER_HAS = 5;
 
+    private static int currentUserSkillId = 0;
+
+
+    private static List<User> userList;
+    private static List<Team> teams;
+    private static List<Department> departments;
+    private static List<Division> divisions;
+    private static List<Skill> skills;
+
+
+    static {
+        createDivisions();
+        createDepartments();
+        createTeams();
+        createSkills();
+        createUsers();
+    }
+
+    private static void createUsers(){
         Fairy fairy = Fairy.create();
 
-        String[] names = {"John", "Jane", "Jane", "Sam"};
-        String[] lastNames = {"Lifter", "Uber", "Vuber", "Smith"};
+        userList = new ArrayList<>();
 
-
-        List<User> userList = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < NUMBER_OF_USERS; i++) {
             Person person = fairy.person();
 
             User user = new User();
             user.setId(Integer.toUnsignedLong(i));
-            user.setName(names[i]);
-            user.setLastName(lastNames[i]);
+            user.setName(person.getFirstName());
+            user.setLastName(person.getLastName());
             user.setPassword("password");
             user.setEmail(person.getEmail());
-            user.setUserSkills(new ArrayList<>());
-            user.setTeam(fetchTeams(1).get(0));
+
+            user.setUserSkills(createUserSkills());
+
+            user.setConnection("connection");
+            user.setTeam(teams.get(i%NUMBER_OF_TEAMS));
             userList.add(user);
         }
-
-        return userList;
     }
 
-    public static List<Team> fetchTeams(int amount) {
+    private static void createSkills(){
         Fairy fairy = Fairy.create();
 
-        List<Department> departments = fetchDepartment(amount);
-        List<Team> teams = new ArrayList<>();
+        skills = new ArrayList<>();
 
-        for (int i = 0; i < amount; i++) {
+        for (int i = 0; i < NUMBER_OF_SKILLS; i++) {
+            TextProducer textProducer = fairy.textProducer();
+
+            Skill skill = new Skill();
+            skill.setId(Integer.toUnsignedLong(i));
+            skill.setTitle(textProducer.word());
+
+            skills.add(skill);
+        }
+    }
+
+    private static List<UserSkill> createUserSkills() {
+
+        List<UserSkill> userSkills = new ArrayList<>();
+
+        Set<Integer> alreadyAddedSkills = new HashSet<>();
+
+        for (int i = 0; i < NUMBER_OF_SKILLS_USER_HAS; i++) {
+
+            int randomSkillId = ThreadLocalRandom.current().nextInt(NUMBER_OF_SKILLS - 1);
+
+            //There is a small chance this won't be invoked
+            if(!alreadyAddedSkills.contains(randomSkillId)) {
+                UserSkill userSkill = new UserSkill();
+                userSkill.setId(Integer.toUnsignedLong(currentUserSkillId++));
+                userSkill.setSkill(skills.get(randomSkillId));
+
+                userSkills.add(userSkill);
+            }
+
+            alreadyAddedSkills.add(randomSkillId);
+
+        }
+
+        return userSkills;
+    }
+
+    private static void createTeams(){
+        Fairy fairy = Fairy.create();
+
+        teams = new ArrayList<>();
+
+        for (int i = 0; i < NUMBER_OF_TEAMS; i++) {
             TextProducer textProducer = fairy.textProducer();
 
             Team team = new Team("Team " + textProducer.word());
             team.setId(Integer.toUnsignedLong(i));
-            team.setDepartment(departments.get(i));
+            team.setName("Team" + textProducer.word());
+            team.setDepartment(departments.get(i%NUMBER_OF_DEPARTMENTS));
 
             teams.add(team);
         }
 
-        return teams;
-
     }
 
-    public static List<Department> fetchDepartment(int amount) {
+
+    private static void createDepartments(){
         Fairy fairy = Fairy.create();
 
+        departments = new ArrayList<>();
 
-        List<Department> departments = new ArrayList<>();
-        for (int i = 0; i < amount; i++) {
+        for (int i = 0; i < NUMBER_OF_DEPARTMENTS; i++) {
             TextProducer textProducer = fairy.textProducer();
 
             Department department = new Department();
             department.setId(Integer.toUnsignedLong(i));
-            department.setName("Team" + textProducer.word());
+            department.setName("Department" + textProducer.word());
+            department.setDivision(divisions.get(i%NUMBER_OF_DIVISIONS));
+
             departments.add(department);
         }
+    }
 
-        return departments;
+    private static void createDivisions(){
+        Fairy fairy = Fairy.create();
 
+        divisions = new ArrayList<>();
+
+        for (int i = 0; i < NUMBER_OF_DIVISIONS; i++) {
+            TextProducer textProducer = fairy.textProducer();
+
+            Division division = new Division();
+            division.setId(Integer.toUnsignedLong(i));
+            division.setName("Division" + textProducer.word());
+
+            divisions.add(division);
+        }
+    }
+
+    public static List<User> fetchUsers(int amount) {
+       return userList.subList(0, amount - 1);
+    }
+
+
+
+    public static List<Team> fetchTeams(int amount) {
+        return teams.subList(0, amount);
+    }
+
+    public static List<Department> fetchDepartments(int amount) {
+        return departments.subList(0, amount - 1);
+    }
+
+    public static List<Division> fetchDivisions(int amount) {
+        return divisions.subList(0, amount - 1);
     }
 
 }

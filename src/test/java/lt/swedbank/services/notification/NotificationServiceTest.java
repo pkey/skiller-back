@@ -89,8 +89,8 @@ public class NotificationServiceTest {
     @Test
     public void getNotificationsByUserId() {
         Mockito.when(userService.getUserById(any())).thenReturn(user);
-        Mockito.when(notificationService.getNotificationsByUserId(any())).thenReturn(requestNotificationList);
-        assertEquals(notificationService.getNotificationsByUserId(any()), requestNotificationList);
+        Mockito.when(notificationService.getNotificationsByUser(any())).thenReturn(requestNotificationList);
+        assertEquals(notificationService.getNotificationsByUser(any()), requestNotificationList);
     }
 
 

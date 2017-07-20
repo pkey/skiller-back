@@ -40,20 +40,22 @@ public class AuthControllerTest {
 
     private MockMvc mockMvc;
 
-    private User correctUser;
-    private List<Team> teamList;
+
 
     @InjectMocks
     private AuthController authController;
-
     @Mock
     private Auth0AuthenticationService auth0AuthenticationService;
-
     @Mock
     private org.springframework.validation.Validator mockValidator;
-
     @Autowired
     private ObjectMapper mapper;
+
+
+    //Test Data
+    private User testUser;
+    private List<Team> teamList;
+    private List<User> userList;
 
     @Before
     public void setup() throws Exception {
@@ -67,22 +69,15 @@ public class AuthControllerTest {
 
         mapper = new ObjectMapper();
 
-        correctUser = new User();
-        correctUser.setName("TestUserName");
-        correctUser.setLastName("TestUserLastName");
-        correctUser.setPassword("TestUserPassword");
-        correctUser.setEmail("testuser@gmail.com");
-        correctUser.setConnection("Username-Password-Authentication");
+        userList = TestHelper.fetchUsers(5);
+        testUser = userList.get(0);
 
-        teamList = TestHelper.fetchTeams(1);
-
-        correctUser.setTeam(teamList.get(0));
     }
 
     @Test
     public void login_good_user_json() throws Exception {
 
-        String bookmarkJson = mapper.writeValueAsString(new LoginUserRequest(correctUser));
+        String bookmarkJson = mapper.writeValueAsString(new LoginUserRequest(testUser));
 
         Mockito.when(auth0AuthenticationService.loginUser(any())).thenReturn(new TokenHolder());
 
@@ -98,9 +93,9 @@ public class AuthControllerTest {
     @Test
     public void register_user_good_json() throws Exception {
 
-        String bookmarkJson = mapper.writeValueAsString(new RegisterUserRequest(correctUser));
+        String bookmarkJson = mapper.writeValueAsString(new RegisterUserRequest(testUser));
 
-        when(auth0AuthenticationService.registerUser(any())).thenReturn(correctUser);
+        when(auth0AuthenticationService.registerUser(any())).thenReturn(testUser);
         mockMvc.perform(post("/register")
                 .contentType(contentType)
                 .content(bookmarkJson))
@@ -121,7 +116,7 @@ public class AuthControllerTest {
         Mockito.when(auth0AuthenticationService.loginUser(any()))
                 .thenThrow(new APIException(getErrorMap(errorMessage), statusCode));
 
-        String bookmarkJson = mapper.writeValueAsString(correctUser);
+        String bookmarkJson = mapper.writeValueAsString(testUser);
 
         Mockito.verify(this.auth0AuthenticationService, Mockito.times(0)).loginUser(any());
 
@@ -140,7 +135,7 @@ public class AuthControllerTest {
         Mockito.when(auth0AuthenticationService.registerUser(any()))
                 .thenThrow(new APIException(getErrorMap(errorMessage), statusCode));
 
-        String bookmarkJson = mapper.writeValueAsString(correctUser);
+        String bookmarkJson = mapper.writeValueAsString(testUser);
 
         Mockito.verify(this.auth0AuthenticationService, Mockito.times(0)).loginUser(any());
 

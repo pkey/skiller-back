@@ -19,6 +19,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
 
+import org.mockito.Mockito;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,19 +48,14 @@ public class TeamServiceTest {
     @Mock
     private DepartmentService departmentService;
 
+    //Test DAta
+
     private List<Team> teams;
-
     private Team testTeam;
-
     private SkillTemplate testSkillTemplate;
-
     private List<Skill> testSkills;
-
-    private List<TeamSkillTemplateResponse> teamSkillTemplateRespons;
-
+    private List<TeamSkillTemplateResponse> teamSkillTemplateResponse;
     private List<User> users;
-
-    private Skill testSkill = new Skill("testing");
 
     @Before
     public void setUp() throws Exception {
@@ -69,26 +66,7 @@ public class TeamServiceTest {
         testTeam.getDepartment().setDivision(new Division());
 
         users = TestHelper.fetchUsers(3);
-
-        UserSkill userSkill = new UserSkill();
-        userSkill.setSkill(testSkill);
-        UserSkillLevel userSkillLevel = new UserSkillLevel();
-        userSkillLevel.setIsApproved(1);
-
-        List<UserSkillLevel> userSkillLevels = new LinkedList<UserSkillLevel>();
-        SkillLevel skillLevel = new SkillLevel("Pro", "pro");
-        skillLevel.setLevel(1L);
-        userSkillLevel.setSkillLevel(skillLevel);
-        userSkillLevels.add(userSkillLevel);
-        userSkill.setUserSkillLevels(userSkillLevels);
-
-
-        //Assign all users same team;
-        for (User user : users
-             ) {
-            user.setTeam(testTeam);
-            user.setUserSkill(userSkill);
-        }
+        
         testSkills = new LinkedList<>();
         testSkills.add(new Skill("test"));
         testSkills.add(new Skill("test2"));
@@ -97,8 +75,8 @@ public class TeamServiceTest {
         testSkillTemplate.setTeam(testTeam);
         testSkillTemplate.setSkills(testSkills);
 
-        teamSkillTemplateRespons = new LinkedList<>();
-        teamSkillTemplateRespons.add(new TeamSkillTemplateResponse(new Skill("test"), 2, 2));
+        teamSkillTemplateResponse = new LinkedList<>();
+        teamSkillTemplateResponse.add(new TeamSkillTemplateResponse(new Skill("test"), 2, 2));
 
     }
 
@@ -133,11 +111,12 @@ public class TeamServiceTest {
     public void getTeamSkillTemplateResponseList() throws Exception {
         doReturn(2).when(teamService).getSkillCountInTeam(any(Team.class), any(Skill.class));
         doReturn(2.0).when(teamService).getAverageSkillLevelInTeam(any(Team.class), any(Skill.class));
-        Mockito.when(teamService.getTeamSkillTemplate(any())).thenReturn(testSkillTemplate);
-        Mockito.when(teamService.getTeamSkillTemplateResponseList(any())).thenReturn(teamSkillTemplateRespons);
 
-        Assert.assertEquals(teamSkillTemplateRespons, teamService.getTeamSkillTemplateResponseList(any()));
-        Assert.assertEquals(teamSkillTemplateRespons.get(0).getSkill().getTitle(),
+        Mockito.when(teamService.getTeamSkillTemplate(any())).thenReturn(testSkillTemplate);
+        Mockito.when(teamService.getTeamSkillTemplateResponseList(any())).thenReturn(teamSkillTemplateResponse);
+
+        Assert.assertEquals(teamSkillTemplateResponse, teamService.getTeamSkillTemplateResponseList(any()));
+        Assert.assertEquals(teamSkillTemplateResponse.get(0).getSkill().getTitle(),
                 teamService.getTeamSkillTemplateResponseList(any()).get(0).getSkill().getTitle() );
     }
 
@@ -195,13 +174,19 @@ public class TeamServiceTest {
     @Test
     public void getAverageSkillLevelInTeam() {
         Mockito.when(userService.getAllByTeam(any())).thenReturn(users);
+
+        Skill testSkill = new Skill("Testing");
+
         Assert.assertEquals(teamService.getAverageSkillLevelInTeam(testTeam, testSkill), 1L, 0.0002);
     }
 
     @Test
     public void getSkillCountInTeam() {
         Mockito.when(userService.getAllByTeam(any())).thenReturn(users);
-        Assert.assertEquals(teamService.getSkillCountInTeam(testTeam, testSkill), 4);
+
+        Skill testSkill = users.get(0).getUserSkills().get(0).getSkill();
+
+        Assert.assertEquals((teamService.getSkillCountInTeam(testTeam, testSkill) > 0 ), true);
     }
 
     @Test

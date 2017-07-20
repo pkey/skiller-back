@@ -14,7 +14,7 @@ public class Team {
     protected String name;
 
     @OneToMany(mappedBy = "team")
-    protected List<User> users = new ArrayList<>();
+    protected List<User> users;
 
     @ManyToOne
     private Department department;

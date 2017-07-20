@@ -6,6 +6,7 @@ import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewRespons
 import lt.swedbank.beans.response.team.teamOverview.NonColleagueTeamOverviewResponse;
 import lt.swedbank.beans.response.team.teamOverview.TeamOverviewResponse;
 import lt.swedbank.exceptions.skillTemplate.NoSkillTemplateFoundException;
+import lt.swedbank.exceptions.team.NoMembersInTeamException;
 import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.repositories.SkillTemplateRepository;
 import lt.swedbank.repositories.TeamRepository;
@@ -42,6 +43,11 @@ public class TeamService {
     public TeamOverviewResponse getTeamOverview(Long teamId, Long currentUserId){
         User user = userService.getUserById(currentUserId);
         Team team = teamRepository.findOne(teamId);
+
+        if(team.getUsers() == null)
+        {
+            throw new NoMembersInTeamException();
+        }
 
         if(user.getTeam().getDepartment().getId().equals(team.getDepartment().getId()))
             return new ColleagueTeamOverviewResponse(team);

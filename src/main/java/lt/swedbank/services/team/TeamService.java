@@ -38,9 +38,15 @@ public class TeamService {
         return team;
     }
 
+
     public TeamOverviewResponse getTeamOverview(Long teamId, Long currentUserId){
         User user = userService.getUserById(currentUserId);
-        Team team = teamRepository.findOne(teamId);
+        Team team = getTeamById(teamId);
+
+        if(user.getTeam() == null)
+        {
+            return new NonColleagueTeamOverviewResponse(team);
+        }
 
         if(user.getTeam().getDepartment().getId().equals(team.getDepartment().getId()))
             return new ColleagueTeamOverviewResponse(team);

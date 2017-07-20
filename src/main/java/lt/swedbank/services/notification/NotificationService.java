@@ -53,6 +53,8 @@ public class NotificationService {
         RequestNotification requestNotification = getNotificationById(notificationAnswerRequest.getNotificationId());
         ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(requestNotification);
 
+        changeNotificationRequestStatus(requestNotification, notificationAnswerRequest.getApproved());
+
         requestNotification.setNewNotification(false);
 
         if(notificationAnswerRequest.getApproved() == 1) {
@@ -62,6 +64,17 @@ public class NotificationService {
             return new RequestNotificationResponse(disapprove(approvalRequest, requestNotification, user.getId(), notificationAnswerRequest.getMessage()));
         }
         return new RequestNotificationResponse(removeRequestNotification(approvalRequest, requestNotification));
+    }
+
+    private void changeNotificationRequestStatus(RequestNotification requestNotification, Integer status) {
+
+        if(status == 1) {
+            requestNotification.setApproved();
+        }
+        else if( status == -1) {
+            requestNotification.setDisapproved();
+        }
+        requestNotificationRepository.save(requestNotification);
     }
 
     public RequestNotification approve(ApprovalRequest approvalRequest, RequestNotification requestNotification,Long approversId, String message) {

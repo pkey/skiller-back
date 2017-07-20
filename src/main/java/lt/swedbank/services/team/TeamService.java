@@ -49,11 +49,10 @@ public class TeamService {
             return new NonColleagueTeamOverviewResponse(team);
     }
 
+
     public TeamOverviewResponse getMyTeam(Long currentUserId) {
         User user = userService.getUserById(currentUserId);
-        Team team = teamRepository.findOne(user.getTeam().getId());
-
-        return new ColleagueTeamOverviewResponse(team);
+        return new ColleagueTeamOverviewResponse(getTeamById(user.getTeam().getId()));
     }
 
     public SkillTemplate getTeamSkillTemplate(Team team)

@@ -2,13 +2,14 @@ package lt.swedbank.beans.response;
 
 
 import com.auth0.json.auth.TokenHolder;
+import lt.swedbank.FakeAuthClasses.FakeTokenHolder;
 
 public class LoginTokenResponse extends Response {
 
     private String access_token;
     private String id_token;
 
-    public LoginTokenResponse(TokenHolder tokenHolder) {
+    public LoginTokenResponse(FakeTokenHolder tokenHolder) {
         this.access_token = tokenHolder.getAccessToken();
         this.id_token = tokenHolder.getIdToken();
     }

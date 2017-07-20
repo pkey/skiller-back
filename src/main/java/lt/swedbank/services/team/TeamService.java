@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -39,9 +38,15 @@ public class TeamService {
         return team;
     }
 
+
     public TeamOverviewResponse getTeamOverview(Long teamId, Long currentUserId){
         User user = userService.getUserById(currentUserId);
-        Team team = teamRepository.findOne(teamId);
+        Team team = getTeamById(teamId);
+
+        if(user.getTeam() == null)
+        {
+            return new NonColleagueTeamOverviewResponse(team);
+        }
 
         if(user.getTeam().getDepartment().getId().equals(team.getDepartment().getId()))
             return new ColleagueTeamOverviewResponse(team);
@@ -49,11 +54,10 @@ public class TeamService {
             return new NonColleagueTeamOverviewResponse(team);
     }
 
+
     public TeamOverviewResponse getMyTeam(Long currentUserId) {
         User user = userService.getUserById(currentUserId);
-        Team team = teamRepository.findOne(user.getTeam().getId());
-
-        return new ColleagueTeamOverviewResponse(team);
+        return new ColleagueTeamOverviewResponse(getTeamById(user.getTeam().getId()));
     }
 
     public SkillTemplate getTeamSkillTemplate(Team team)

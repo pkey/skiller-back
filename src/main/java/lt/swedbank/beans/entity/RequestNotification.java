@@ -17,7 +17,7 @@ public class RequestNotification  {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private boolean isNewRequest = true;
+    private boolean isNewNotification = true;
 
     private Integer status = 0;
 
@@ -75,12 +75,12 @@ public class RequestNotification  {
         this.status = 0;
     }
 
-    public boolean isNewRequest() {
-        return isNewRequest;
+    public boolean isNewNotification() {
+        return isNewNotification;
     }
 
-    public void setNewRequest(boolean newRequest) {
-        isNewRequest = newRequest;
+    public void setNewNotification (boolean newNotification) {
+        isNewNotification = newNotification;
     }
 
     public String getStatusAsString() {

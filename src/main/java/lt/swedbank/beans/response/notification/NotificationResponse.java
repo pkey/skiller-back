@@ -14,6 +14,10 @@ abstract public class NotificationResponse {
 
     private Date date;
 
+    private Boolean isNewNotification;
+
+    private String status;
+
     private Long id;
 
     private String message;
@@ -39,6 +43,8 @@ abstract public class NotificationResponse {
         this.senderLastname = user.getLastName();
         this.skillLevel = userSkillLevel.getSkillLevel().getTitle();
         this.date = requestNotification.getApprovalRequest().getCreationTime();
+        this.status = requestNotification.getStatusAsString();
+        this.isNewNotification = requestNotification.isNewNotification();
     }
 
     public String getSenderName() {
@@ -102,5 +108,21 @@ abstract public class NotificationResponse {
 
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    public Boolean getNewNotification() {
+        return isNewNotification;
+    }
+
+    public void setNewNotification(Boolean newNotification) {
+        isNewNotification = newNotification;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

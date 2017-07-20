@@ -69,7 +69,7 @@ public class NotificationService {
         Integer approves = approvalService.approve(message, approvalRequest, approversId).getApproves();
         if (approves >= 5) {
             requestNotification.setApproved();
-       // ???     sendRequestNotifications(approvalRequest);
+            sendRequestNotifications(approvalRequest);
         }
         return requestNotification;
     }
@@ -78,7 +78,7 @@ public class NotificationService {
 
         approvalService.disapprove(message, requestNotification, approversId);
         requestNotification.setDisapproved();
-       // ??? sendRequestNotifications(approvalRequest);
+        sendRequestNotifications(approvalRequest);
         return requestNotification;
     }
 

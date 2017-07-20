@@ -1,6 +1,7 @@
 package lt.swedbank.beans.entity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -13,7 +14,7 @@ public class Team {
     protected String name;
 
     @OneToMany(mappedBy = "team")
-    protected List<User> users;
+    protected List<User> users = new ArrayList<>();
 
     @ManyToOne
     private Department department;

@@ -36,8 +36,7 @@ public class AuthController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public @ResponseBody
     LoginTokenResponse login(@Valid @RequestBody LoginUserRequest user) throws Auth0Exception {
-        FakeTokenHolder token = authService.loginFakeUser(user);
-        return new LoginTokenResponse(token);
+        return new LoginTokenResponse(authService.loginFakeUser(user));
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)

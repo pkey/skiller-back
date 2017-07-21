@@ -2,11 +2,17 @@ package lt.swedbank.beans.response.team;
 
 
 import lt.swedbank.beans.entity.Team;
+import lt.swedbank.beans.response.department.DepartmentResponse;
+import lt.swedbank.beans.response.division.DivisionResponse;
 
 public class TeamResponse {
     protected Long id;
     protected String name;
-    protected String departmentName;
+
+    protected DepartmentResponse department;
+
+    protected DivisionResponse division;
+
 
     public TeamResponse() {
     }
@@ -14,7 +20,8 @@ public class TeamResponse {
     public TeamResponse(Team team) {
         this.id = team.getId();
         this.name = team.getName();
-        this.departmentName = team.getDepartment().getName();
+        this.department = new DepartmentResponse(team.getDepartment());
+        this.division = new DivisionResponse(team.getDepartment().getDivision());
     }
 
     public Long getId() {
@@ -33,11 +40,19 @@ public class TeamResponse {
         this.name = name;
     }
 
-    public String getDepartmentName() {
-        return departmentName;
+    public DepartmentResponse getDepartment() {
+        return department;
     }
 
-    public void setDepartmentName(String departmentName) {
-        this.departmentName = departmentName;
+    public void setDepartment(DepartmentResponse department) {
+        this.department = department;
+    }
+
+    public DivisionResponse getDivision() {
+        return division;
+    }
+
+    public void setDivision(DivisionResponse division) {
+        this.division = division;
     }
 }

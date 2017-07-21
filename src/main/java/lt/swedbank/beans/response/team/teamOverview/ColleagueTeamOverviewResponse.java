@@ -13,8 +13,6 @@ public class ColleagueTeamOverviewResponse extends TeamOverviewResponse {
 
     public ColleagueTeamOverviewResponse(Team team) {
         super(team);
-
-
         users = convertToUserSkillResponse(team.getUsers());
     }
 

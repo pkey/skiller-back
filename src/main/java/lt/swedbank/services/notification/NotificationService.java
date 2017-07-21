@@ -34,17 +34,25 @@ public class NotificationService {
     }
 
     public ArrayList<NotificationResponse> getNotificationResponses(Iterable<RequestNotification> requestNotifications) {
+
+
+
         ArrayList<NotificationResponse> requestNotificationResponses = new ArrayList<NotificationResponse>();
         for (RequestNotification requestNotification : requestNotifications) {
+
             ApprovalRequest approvalRequest = requestNotification.getApprovalRequest();
-            if (approvalRequest.isApproved() == -1) {
-                requestNotificationResponses.add(new RequestDisapprovedNotificationResponse(requestNotification));
-            } else if (approvalRequest.isApproved() == 0) {
-                requestNotificationResponses.add(new RequestNotificationResponse(requestNotification));
-            } else if (approvalRequest.isApproved() == 1) {
-                requestNotificationResponses.add(new RequestApprovedNotificationResponse(requestNotification));
+            if(approvalRequest.getUserSkillLevel().getUserSkill().getUser() == requestNotification.getReceiver()) {
+                if (approvalRequest.isApproved() == -1) {
+                    requestNotificationResponses.add(new RequestDisapprovedNotificationResponse(requestNotification));
+                }
+                else if (approvalRequest.isApproved() == 1) {
+                    requestNotificationResponses.add(new RequestApprovedNotificationResponse(requestNotification));
+                }
             }
+            else requestNotificationResponses.add(new RequestNotificationResponse(requestNotification));
         }
+
+
         return requestNotificationResponses;
     }
 
@@ -53,17 +61,24 @@ public class NotificationService {
         RequestNotification requestNotification = getNotificationById(notificationAnswerRequest.getNotificationId());
         ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(requestNotification);
 
-        changeNotificationRequestStatus(requestNotification, notificationAnswerRequest.getApproved());
+        if (approvalRequest.isApproved() == 0) {
 
-        requestNotification.setNewNotification(false);
+            changeNotificationRequestStatus(requestNotification, notificationAnswerRequest.getApproved());
+            requestNotification.setNewNotification(false);
 
+            if (notificationAnswerRequest.getApproved() == 1) {
+                approve(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
+            } else if (notificationAnswerRequest.getApproved() == -1) {
+                disapprove(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
+            }
+            removeRequestNotification(approvalRequest, requestNotification);
+        }
         if(notificationAnswerRequest.getApproved() == 1) {
-            return new RequestNotificationResponse(approve(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage()));
+            return new RequestApprovedNotificationResponse(requestNotification);
+        } else  if(notificationAnswerRequest.getApproved() == -1) {
+            return new RequestDisapprovedNotificationResponse(requestNotification);
         }
-        else if(notificationAnswerRequest.getApproved() == -1) {
-            return new RequestNotificationResponse(disapprove(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage()));
-        }
-        return new RequestNotificationResponse(removeRequestNotification(approvalRequest, requestNotification));
+        return new RequestNotificationResponse(requestNotification);
     }
 
     private void changeNotificationRequestStatus(RequestNotification requestNotification, Integer status) {

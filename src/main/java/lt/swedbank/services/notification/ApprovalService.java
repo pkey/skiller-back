@@ -181,6 +181,7 @@ public class ApprovalService {
             saveDisapprover(disapprover);
             approvalRequest.addDisapprover(disapprover);
             approvalRequest.setIsApproved(-1);
+
         //@todo     request.setRequestNotifications(null);
         }
         return approvalRequestRepository.save(approvalRequest);

@@ -14,17 +14,17 @@ Class to generate test data
  */
 public class TestHelper {
 
-    private static final int NUMBER_OF_DIVISIONS = 2;
-    private static final int NUMBER_OF_DEPARTMENTS = 5;
-    private static final int NUMBER_OF_TEAMS = 10;
-    private static final int NUMBER_OF_USERS = 50;
-    private static final int NUMBER_OF_SKILLS = 10;
-    private static final int NUMBER_OF_SKILLS_USER_HAS = 5;
-    private static final int NUMBER_OF_SKILL_LEVELS = 3;
+    public static final int NUMBER_OF_DIVISIONS = 2;
+    public static final int NUMBER_OF_DEPARTMENTS = 5;
+    public static final int NUMBER_OF_TEAMS = 10;
+    public static final int NUMBER_OF_USERS = 50;
+    public static final int NUMBER_OF_SKILLS = 10;
+    public static final int NUMBER_OF_SKILLS_USER_HAS = 5;
+    public static final int NUMBER_OF_SKILL_LEVELS = 3;
 
 
-    private static int currentUserSkillId = 0;
-
+    public static int currentUserSkillId = 0;
+    public static int currentSkillLevelId = 0;
 
     private static List<User> userList;
     private static List<Team> teams;
@@ -89,6 +89,11 @@ public class TestHelper {
     private static void createSkills(){
         Fairy fairy = Fairy.create();
 
+
+        //TODO toliau daryti test helperi, lol
+        String[] skillNames = new String[NUMBER_OF_SKILLS];
+
+
         skills = new ArrayList<>();
 
         for (int i = 0; i < NUMBER_OF_SKILLS; i++) {
@@ -117,8 +122,12 @@ public class TestHelper {
                 UserSkill userSkill = new UserSkill();
                 userSkill.setId(Integer.toUnsignedLong(currentUserSkillId++));
                 userSkill.setSkill(skills.get(randomSkillId));
-                userSkill.addUserSkillLevel(new UserSkillLevel(userSkill, defaultSkillLevel));
+
+
+                userSkill.addUserSkillLevel(createUserSkillLevel(userSkill, defaultSkillLevel));
                 userSkills.add(userSkill);
+            } else {
+                i--;
             }
 
             alreadyAddedSkills.add(randomSkillId);
@@ -126,6 +135,17 @@ public class TestHelper {
         }
 
         return userSkills;
+    }
+
+    private static UserSkillLevel createUserSkillLevel(UserSkill userSkill, SkillLevel skillLevel){
+        UserSkillLevel userSkillLevel = new UserSkillLevel();
+        userSkillLevel.setId(Integer.toUnsignedLong(currentSkillLevelId++));
+        userSkillLevel.setUserSkill(userSkill);
+        userSkillLevel.setSkillLevel(skillLevel);
+        userSkillLevel.setVotes(new ArrayList<>());
+        userSkillLevel.setIsApproved(1);
+
+        return userSkillLevel;
     }
 
     private static void createTeams(){

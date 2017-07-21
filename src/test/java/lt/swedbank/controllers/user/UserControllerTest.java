@@ -110,7 +110,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name", is(testUser.getName())))
                 .andExpect(jsonPath("$.lastName", is(testUser.getLastName())))
                 .andExpect(jsonPath("$.email", is(testUser.getEmail())))
-                .andExpect(jsonPath("$.skills", hasSize(0)));
+                .andExpect(jsonPath("$.skills", hasSize(TestHelper.NUMBER_OF_SKILLS_USER_HAS)));
 
         verify(userService, times(1)).getUserProfile(any(), any());
         verifyNoMoreInteractions(userService);
@@ -133,7 +133,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name", is(testUser.getName())))
                 .andExpect(jsonPath("$.lastName", is(testUser.getLastName())))
                 .andExpect(jsonPath("$.email", is(testUser.getEmail())))
-                .andExpect(jsonPath("$.skills", hasSize(0)));
+                .andExpect(jsonPath("$.skills", hasSize(TestHelper.NUMBER_OF_SKILLS_USER_HAS)));
 
         verify(userService, times(1)).getUserByAuthId(any());
         verifyNoMoreInteractions(userService);
@@ -159,7 +159,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name", is(testUser.getName())))
                 .andExpect(jsonPath("$.lastName", is(testUser.getLastName())))
                 .andExpect(jsonPath("$.email", is(testUser.getEmail())))
-                .andExpect(jsonPath("$.skills", hasSize(0)));
+                .andExpect(jsonPath("$.skills", hasSize(TestHelper.NUMBER_OF_SKILLS_USER_HAS)));
 
         verify(userService, times(1)).getUserByAuthId(any());
         verify(userService, times(1)).addUserSkill(any(), any());
@@ -186,7 +186,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name", is(testUser.getName())))
                 .andExpect(jsonPath("$.lastName", is(testUser.getLastName())))
                 .andExpect(jsonPath("$.email", is(testUser.getEmail())))
-                .andExpect(jsonPath("$.skills", hasSize(0)));
+                .andExpect(jsonPath("$.skills", hasSize(TestHelper.NUMBER_OF_SKILLS_USER_HAS)));
 
         verify(userService, times(1)).getUserByAuthId(any());
         verify(userService, times(1)).removeUserSkill(any(), any());

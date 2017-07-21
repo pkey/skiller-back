@@ -175,7 +175,6 @@ public class TeamServiceTest {
     public void getAverageSkillLevelInTeam() {
         Mockito.when(userService.getAllByTeam(any())).thenReturn(users);
 
-        Skill testSkill = new Skill("Testing");
 
         Assert.assertEquals(teamService.getAverageSkillLevelInTeam(testTeam, testSkill), 1L, 0.0002);
     }

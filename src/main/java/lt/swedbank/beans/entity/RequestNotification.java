@@ -12,6 +12,7 @@ public class RequestNotification  {
     private static final String APPROVED = "approved";
     private static final String DISAPPROVED = "disapproved";
     private static final String PENDING = "pending";
+    private static final String EXPIRED = "expired";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -63,17 +64,19 @@ public class RequestNotification  {
         return status;
     }
 
-    public void setApproved() {
+    public final void setApproved() {
         this.status = 1;
     }
 
-    public void setDisapproved() {
+    public final void setDisapproved() {
         this.status = -1;
     }
 
-    public void setPending() {
+    public final void setPending() {
         this.status = 0;
     }
+
+    public final void setExpired() { this.status = 2; }
 
     public boolean isNewNotification() {
         return isNewNotification;
@@ -83,7 +86,7 @@ public class RequestNotification  {
         isNewNotification = newNotification;
     }
 
-    public String getStatusAsString() {
+    public final String getStatusAsString() {
         switch (status) {
             case -1:
                 return DISAPPROVED;
@@ -91,6 +94,8 @@ public class RequestNotification  {
                 return PENDING;
             case 1:
                 return APPROVED;
+            case 2:
+                return EXPIRED;
             default:
                 throw new FalseRequestStatusException();
         }

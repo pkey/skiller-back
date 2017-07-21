@@ -164,7 +164,7 @@ public class ApprovalService {
 
         if (approvalRequest.getApproves() >= 5) {
             approvalRequest.setIsApproved(1);
-          //@todo  request.setRequestNotifications(null);
+            notificationService.setNotificationsAsExpired(approvalRequest.getRequestNotifications());
         }
         return approvalRequestRepository.save(approvalRequest);
     }
@@ -181,8 +181,7 @@ public class ApprovalService {
             saveDisapprover(disapprover);
             approvalRequest.addDisapprover(disapprover);
             approvalRequest.setIsApproved(-1);
-
-        //@todo     request.setRequestNotifications(null);
+            notificationService.setNotificationsAsExpired(approvalRequest.getRequestNotifications());
         }
         return approvalRequestRepository.save(approvalRequest);
     }

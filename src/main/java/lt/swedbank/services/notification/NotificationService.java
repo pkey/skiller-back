@@ -33,6 +33,14 @@ public class NotificationService {
         return requestNotificationRepository.findByReceiver(user);
     }
 
+    public Iterable<RequestNotification> setNotificationsAsExpired(Iterable<RequestNotification> requestNotifications){
+        for (RequestNotification requestNotification: requestNotifications) {
+            requestNotification.setExpired();
+        }
+        requestNotificationRepository.save(requestNotifications);
+        return requestNotifications;
+    }
+
     public ArrayList<NotificationResponse> getNotificationResponses(Iterable<RequestNotification> requestNotifications) {
 
 

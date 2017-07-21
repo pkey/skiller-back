@@ -1,5 +1,6 @@
 package lt.swedbank.beans.response.notification;
 
+import lt.swedbank.beans.entity.Disapprover;
 import lt.swedbank.beans.entity.RequestNotification;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkillLevel;
@@ -15,7 +16,7 @@ public class RequestDisapprovedNotificationResponse extends NotificationResponse
 
     final private Integer TYPE = 2;
 
-    private DisapproverResponse disapprover;
+    private List<DisapproverResponse> disapprovers;
 
     public RequestDisapprovedNotificationResponse(){
     }
@@ -23,18 +24,27 @@ public class RequestDisapprovedNotificationResponse extends NotificationResponse
     public RequestDisapprovedNotificationResponse(RequestNotification requestNotification) {
         super(requestNotification);
         super.setType(TYPE);
-        this.disapprover = new DisapproverResponse(requestNotification.getApprovalRequest().getDisapprover());
+        setDisapproversResponseList(requestNotification.getApprovalRequest().getDisapprovers());
     }
+
+    private void setDisapproversResponseList(List<Disapprover> disapproversList)
+    {
+        disapprovers = new ArrayList<>();
+        for (Disapprover disapprover: disapproversList) {
+            disapprovers.add(new DisapproverResponse(disapprover));
+        }
+    }
+
 
     public Integer getType() {
         return TYPE;
     }
 
-    public DisapproverResponse getDisapprover() {
-        return disapprover;
+    public List<DisapproverResponse> getDisapprovers() {
+        return disapprovers;
     }
 
-    public void setDisapprover(DisapproverResponse disapprover) {
-        this.disapprover = disapprover;
+    public void setDisapprovers(List<DisapproverResponse> disapprovers) {
+        this.disapprovers = disapprovers;
     }
 }

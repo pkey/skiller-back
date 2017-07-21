@@ -95,7 +95,6 @@ public class ApprovalService {
             }
         }
 
-
         return notifications;
     }
 
@@ -104,37 +103,87 @@ public class ApprovalService {
     }
 
 
-    public ApprovalRequest approve(String message, ApprovalRequest request, Long approverId) {
+    public boolean isUserAlreadyApprovedReqest(User user, ApprovalRequest approvalRequest)
+    {
+        for (Approver approver: approvalRequest.getApprovers()
+             ) {
+            if(approver.getUser() == user)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
-        if (request.isApproved() == 0) {
-            Approver approver = new Approver(userService.getUserById(approverId), message);
-            saveApprover(approver);
-            request.addApprover(approver);
+    public boolean isUserAlreadyDissapprovedRequest(User user, ApprovalRequest approvalRequest)
+    {
+        for (Disapprover disapprover: approvalRequest.getDisapprovers()
+                ) {
+            if(disapprover.getUser() == user)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void removeDissapproverFromApprovalRequest(User user, ApprovalRequest approvalRequest)
+    {
+        for (Disapprover disapprover: approvalRequest.getDisapprovers()
+             ) {
+            if(disapprover.getUser() == user)
+            {
+                disaproversRepository.delete(disapprover.getId());
+            }
+        }
+    }
+
+    public void removeApproverFromApprovalRequest(User user, ApprovalRequest approvalRequest)
+    {
+        for (Approver approver: approvalRequest.getApprovers()
+                ) {
+            if(approver.getUser() == user)
+            {
+                disaproversRepository.delete(approver.getId());
+            }
+        }
+    }
+
+
+    public ApprovalRequest approve(String message, ApprovalRequest approvalRequest, User user) {
+
+        if(isUserAlreadyDissapprovedRequest(user, approvalRequest)) {
+            removeDissapproverFromApprovalRequest(user, approvalRequest);
         }
 
-        if (request.getApproves() >= 5) {
-            request.setIsApproved(1);
+        if (approvalRequest.isApproved() == 0 && !isUserAlreadyApprovedReqest(user, approvalRequest)) {
+            Approver approver = new Approver(user, message);
+            saveApprover(approver);
+            approvalRequest.addApprover(approver);
+        }
+
+        if (approvalRequest.getApproves() >= 5) {
+            approvalRequest.setIsApproved(1);
           //@todo  request.setRequestNotifications(null);
         }
-        return approvalRequestRepository.save(request);
+        return approvalRequestRepository.save(approvalRequest);
     }
 
     public Disapprover saveDisapprover(Disapprover disapprover) {
         return disaproversRepository.save(disapprover);
     }
 
-    public ApprovalRequest disapprove(String message, RequestNotification requestNotificationFromApprovalRequest, Long disapproverId) {
+    public ApprovalRequest disapprove(String message, ApprovalRequest approvalRequest, User user) {
 
-        ApprovalRequest request = getApprovalRequestByRequestNotification(requestNotificationFromApprovalRequest);
-        if (request.isApproved() == 0) {
+        if (approvalRequest.isApproved() == 0) {
 
-            Disapprover disapprover = new Disapprover(userService.getUserById(disapproverId), message);
+            Disapprover disapprover = new Disapprover(user, message);
             saveDisapprover(disapprover);
-            request.setDisapprover(disapprover);
-            request.setIsApproved(-1);
+            approvalRequest.addDisapprover(disapprover);
+            approvalRequest.setIsApproved(-1);
         //@todo     request.setRequestNotifications(null);
         }
-        return approvalRequestRepository.save(request);
+        return approvalRequestRepository.save(approvalRequest);
     }
 
     public ApprovalRequest getApprovalRequestByRequestNotification(RequestNotification notification) {

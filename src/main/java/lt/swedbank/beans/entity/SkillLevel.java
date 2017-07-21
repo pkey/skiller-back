@@ -7,7 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class SkillLevel {
+public class SkillLevel implements  Comparable<SkillLevel> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -58,6 +58,11 @@ public class SkillLevel {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public int compareTo(SkillLevel o) {
+        return this.getLevel().compareTo(o.getLevel());
     }
 
 

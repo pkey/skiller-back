@@ -11,9 +11,7 @@ import java.util.List;
 
 public class NormalUserSkillResponse extends UserSkillResponse {
 
-
     protected CurrentSkillLevelResponse level;
-
 
     public NormalUserSkillResponse(UserSkill userSkill) {
         super(userSkill);
@@ -52,5 +50,7 @@ public class NormalUserSkillResponse extends UserSkillResponse {
     public void setVotes(List<VoteResponse> votes) {
         this.votes = votes;
     }
+
+
 
 }

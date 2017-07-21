@@ -23,7 +23,6 @@ abstract public class UserResponse extends Response {
     private TeamResponse team;
 
     public UserResponse(User user) {
-
         id = user.getId();
         name = user.getName();
         lastName = user.getLastName();

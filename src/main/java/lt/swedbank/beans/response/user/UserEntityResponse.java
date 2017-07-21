@@ -6,6 +6,8 @@ import lt.swedbank.beans.response.userSkill.NormalUserSkillResponse;
 import lt.swedbank.beans.response.userSkill.UserSkillResponse;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -21,6 +23,9 @@ public class UserEntityResponse extends UserResponse {
     private List<UserSkillResponse> convertToUserSkillResponse(List<UserSkill> userSkillList){
         List<UserSkillResponse> userSkillResponseList = new ArrayList<>();
 
+        Collections.sort(userSkillList);
+        Collections.reverse(userSkillList);
+        
         for (UserSkill userSkill:userSkillList
              ) {
             userSkillResponseList.add(new NormalUserSkillResponse(userSkill));

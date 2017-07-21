@@ -8,7 +8,7 @@ import java.util.List;
 
 @Entity
 @Indexed
-public class UserSkill {
+public class UserSkill implements Comparable<UserSkill> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -108,5 +108,8 @@ public class UserSkill {
         return currentUserSkillLevel;
     }
 
-
+    @Override
+    public int compareTo(UserSkill o) {
+        return this.getCurrentSkillLevel().getSkillLevel().compareTo(o.getCurrentSkillLevel().getSkillLevel());
+    }
 }

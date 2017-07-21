@@ -53,6 +53,13 @@ public class TeamController {
     }
 
 
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    public @ResponseBody
+    List<TeamOverviewResponse> getAllTeams() {
+        return teamService.getAllTeamOverviewResponses();
+    }
+
+
 
 
 }

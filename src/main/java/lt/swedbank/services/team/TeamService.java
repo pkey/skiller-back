@@ -30,6 +30,17 @@ public class TeamService {
         return teamRepository.findAll();
     }
 
+    public List<TeamOverviewResponse> getAllTeamOverviewResponses() {
+
+        List<TeamOverviewResponse> teamOverviewResponses = new ArrayList<>();
+
+        for (Team team : teamRepository.findAll()) {
+            teamOverviewResponses.add(new ColleagueTeamOverviewResponse(team));
+        }
+
+        return teamOverviewResponses;
+    }
+
     public Team getTeamById(Long id) {
         Team team = teamRepository.findOne(id);
         if(team == null) {

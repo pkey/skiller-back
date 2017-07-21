@@ -112,7 +112,6 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.email", is(testUser.getEmail())))
                 .andExpect(jsonPath("$.skills", hasSize(0)));
 
-
         verify(userService, times(1)).getUserProfile(any(), any());
         verifyNoMoreInteractions(userService);
     }

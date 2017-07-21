@@ -5,6 +5,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class UserSkillLevel {
     public UserSkillLevel(UserSkill userSkill, SkillLevel skillLevel) {
         this.userSkill = userSkill;
         this.skillLevel = skillLevel;
+        this.votes = Collections.EMPTY_LIST;
     }
 
     public Long getId() {

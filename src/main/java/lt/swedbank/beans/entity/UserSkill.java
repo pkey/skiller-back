@@ -3,6 +3,7 @@ package lt.swedbank.beans.entity;
 import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -71,6 +72,9 @@ public class UserSkill implements Comparable<UserSkill> {
     }
 
     public void addUserSkillLevel(UserSkillLevel userSkillLevel) {
+        if (userSkillLevels == null || userSkillLevels.isEmpty())
+            userSkillLevels = new ArrayList<>();
+
         this.userSkillLevels.add(userSkillLevel);
     }
 

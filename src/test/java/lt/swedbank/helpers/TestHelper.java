@@ -20,6 +20,8 @@ public class TestHelper {
     private static final int NUMBER_OF_USERS = 50;
     private static final int NUMBER_OF_SKILLS = 10;
     private static final int NUMBER_OF_SKILLS_USER_HAS = 5;
+    private static final int NUMBER_OF_SKILL_LEVELS = 3;
+
 
     private static int currentUserSkillId = 0;
 
@@ -29,14 +31,36 @@ public class TestHelper {
     private static List<Department> departments;
     private static List<Division> divisions;
     private static List<Skill> skills;
+    private static List<SkillLevel> skillLevels;
+    private static SkillLevel defaultSkillLevel;
 
 
     static {
         createDivisions();
         createDepartments();
         createTeams();
+        createLevels();
         createSkills();
         createUsers();
+    }
+
+    private static void createLevels() {
+
+        String[] levelNames = {"Novice", "Amateur", "Pro"};
+        String[] levelDescriptions = {"Novice Desc", "Amateur Desc", "Pro Desc"};
+
+        skillLevels = new ArrayList<>();
+
+        for (int i = 0; i < NUMBER_OF_SKILL_LEVELS; i++) {
+            SkillLevel skillLevel = new SkillLevel(levelNames[i], levelDescriptions[i]);
+            skillLevel.setId(Integer.toUnsignedLong(i));
+            skillLevel.setLevel(Integer.toUnsignedLong(i) + 1);
+
+            skillLevels.add(skillLevel);
+        }
+
+        defaultSkillLevel = skillLevels.get(0);
+
     }
 
     private static void createUsers(){
@@ -88,12 +112,12 @@ public class TestHelper {
 
             int randomSkillId = ThreadLocalRandom.current().nextInt(NUMBER_OF_SKILLS - 1);
 
-            //There is a small chance this won't be invoked
+
             if(!alreadyAddedSkills.contains(randomSkillId)) {
                 UserSkill userSkill = new UserSkill();
                 userSkill.setId(Integer.toUnsignedLong(currentUserSkillId++));
                 userSkill.setSkill(skills.get(randomSkillId));
-
+                userSkill.addUserSkillLevel(new UserSkillLevel(userSkill, defaultSkillLevel));
                 userSkills.add(userSkill);
             }
 

@@ -4,6 +4,7 @@ package lt.swedbank.beans.response.team;
 import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.response.department.DepartmentResponse;
 import lt.swedbank.beans.response.division.DivisionResponse;
+import lt.swedbank.beans.response.valueStream.ValueStreamResponse;
 
 public class TeamResponse {
     protected Long id;
@@ -13,6 +14,7 @@ public class TeamResponse {
 
     protected DivisionResponse division;
 
+    protected ValueStreamResponse valueStream;
 
     public TeamResponse() {
     }
@@ -22,6 +24,7 @@ public class TeamResponse {
         this.name = team.getName();
         this.department = new DepartmentResponse(team.getDepartment());
         this.division = new DivisionResponse(team.getDepartment().getDivision());
+        this.valueStream = new ValueStreamResponse(team.getValueStream());
     }
 
     public Long getId() {
@@ -54,5 +57,13 @@ public class TeamResponse {
 
     public void setDivision(DivisionResponse division) {
         this.division = division;
+    }
+
+    public ValueStreamResponse getValueStream() {
+        return valueStream;
+    }
+
+    public void setValueStream(ValueStreamResponse valueStream) {
+        this.valueStream = valueStream;
     }
 }

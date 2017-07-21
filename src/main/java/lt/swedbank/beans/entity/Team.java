@@ -1,7 +1,6 @@
 package lt.swedbank.beans.entity;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,6 +17,9 @@ public class Team {
 
     @ManyToOne
     private Department department;
+
+    @ManyToOne
+    private ValueStream valueStream;
 
     public Long getId() {
         return id;
@@ -50,5 +52,13 @@ public class Team {
 
     public void setUsers(List<User> users) {
         this.users = users;
+    }
+
+    public ValueStream getValueStream() {
+        return valueStream;
+    }
+
+    public void setValueStream(ValueStream valueStream) {
+        this.valueStream = valueStream;
     }
 }

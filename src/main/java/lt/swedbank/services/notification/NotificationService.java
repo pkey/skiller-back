@@ -74,10 +74,10 @@ public class NotificationService {
             changeNotificationRequestStatus(requestNotification, notificationAnswerRequest.getApproved());
             requestNotification.setNewNotification(false);
 
-            if (notificationAnswerRequest.getApproved() == 1) {
-                approve(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
+            if (notificationAnswerRequest.getApproved() == 0) {
+                requestNotification =  approve(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
             } else if (notificationAnswerRequest.getApproved() == -1) {
-                disapprove(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
+                requestNotification = disapprove(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
             }
             removeRequestNotification(approvalRequest, requestNotification);
         }
@@ -86,6 +86,7 @@ public class NotificationService {
         } else  if(notificationAnswerRequest.getApproved() == -1) {
             return new RequestDisapprovedNotificationResponse(requestNotification);
         }
+
         return new RequestNotificationResponse(requestNotification);
     }
 
@@ -113,7 +114,6 @@ public class NotificationService {
     public RequestNotification disapprove(ApprovalRequest approvalRequest, RequestNotification requestNotification, User user, String message) {
 
         approvalService.disapprove(message, approvalRequest, user);
-        requestNotification.setDisapproved();
         sendNotificationAboutSkillLevelStatusChanges(approvalRequest);
         return requestNotification;
     }

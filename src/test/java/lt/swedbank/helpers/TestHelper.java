@@ -30,9 +30,10 @@ public class TestHelper {
     private static List<Team> teams;
     private static List<Department> departments;
     private static List<Division> divisions;
-    private static List<Skill> skills;
-    private static List<SkillLevel> skillLevels;
+    public static List<Skill> skills;
+    public static List<SkillLevel> skillLevels; //Change to enumeration
     private static SkillLevel defaultSkillLevel;
+
 
 
     static {
@@ -81,7 +82,10 @@ public class TestHelper {
             user.setUserSkills(createUserSkills());
 
             user.setConnection("connection");
+
+
             user.setTeam(teams.get(i%NUMBER_OF_TEAMS));
+
             userList.add(user);
         }
     }
@@ -89,14 +93,11 @@ public class TestHelper {
     private static void createSkills(){
         Fairy fairy = Fairy.create();
 
-
-        //TODO toliau daryti test helperi, lol
-        String[] skillNames = new String[NUMBER_OF_SKILLS];
-
+        String[] skillNames = {"Angular", "Java", "Testing", "TDE", "Javascript", "Typescript", "Football", "Basketball", "Mochito", "Dancing"};
 
         skills = new ArrayList<>();
 
-        for (int i = 0; i < NUMBER_OF_SKILLS; i++) {
+        for (int i = 0; i < skillNames.length; i++) {
             TextProducer textProducer = fairy.textProducer();
 
             Skill skill = new Skill();
@@ -137,11 +138,12 @@ public class TestHelper {
         return userSkills;
     }
 
-    private static UserSkillLevel createUserSkillLevel(UserSkill userSkill, SkillLevel skillLevel){
+    public static UserSkillLevel createUserSkillLevel(UserSkill userSkill, SkillLevel skillLevel) {
         UserSkillLevel userSkillLevel = new UserSkillLevel();
         userSkillLevel.setId(Integer.toUnsignedLong(currentSkillLevelId++));
         userSkillLevel.setUserSkill(userSkill);
         userSkillLevel.setSkillLevel(skillLevel);
+        userSkillLevel.setValidFrom(new Date());
         userSkillLevel.setVotes(new ArrayList<>());
         userSkillLevel.setIsApproved(1);
 
@@ -201,7 +203,7 @@ public class TestHelper {
     }
 
     public static List<User> fetchUsers(int amount) {
-       return userList.subList(0, amount - 1);
+        return userList.subList(0, amount);
     }
 
 
@@ -211,11 +213,11 @@ public class TestHelper {
     }
 
     public static List<Department> fetchDepartments(int amount) {
-        return departments.subList(0, amount - 1);
+        return departments.subList(0, amount);
     }
 
     public static List<Division> fetchDivisions(int amount) {
-        return divisions.subList(0, amount - 1);
+        return divisions.subList(0, amount);
     }
 
 }

@@ -66,7 +66,8 @@ public class TeamServiceTest {
         testTeam.getDepartment().setDivision(new Division());
 
         users = TestHelper.fetchUsers(3);
-        
+
+
         testSkills = new LinkedList<>();
         testSkills.add(new Skill("test"));
         testSkills.add(new Skill("test2"));
@@ -173,10 +174,31 @@ public class TeamServiceTest {
     
     @Test
     public void getAverageSkillLevelInTeam() {
-        Mockito.when(userService.getAllByTeam(any())).thenReturn(users);
+        List<User> testUsers = TestHelper.fetchUsers(2);
+        for (User testUser : testUsers) {
+            testUser.setTeam(testTeam);
+        }
+
+        Skill testSkill = new Skill("Test Skill");
+
+        //Change user skill levels from default to test better
+        for (User user : testUsers) {
+            List<UserSkill> userSkills;
+
+            UserSkill testUserSkill = new UserSkill(user, testSkill);
+            testUserSkill.addUserSkillLevel(TestHelper.createUserSkillLevel(testUserSkill, TestHelper.skillLevels.get(1)));
+
+            user.setUserSkill(testUserSkill);
+        }
+
+        Mockito.when(userService.getAllByTeam(testTeam)).thenReturn(testUsers);
 
 
-        Assert.assertEquals(teamService.getAverageSkillLevelInTeam(testTeam, testSkill), 1L, 0.0002);
+        Team testTeam = TestHelper.fetchTeams(1).get(0);
+
+        testTeam.setUsers(testUsers);
+
+        Assert.assertEquals(2L, teamService.getAverageSkillLevelInTeam(testTeam, testSkill), 0.0002);
     }
 
     @Test

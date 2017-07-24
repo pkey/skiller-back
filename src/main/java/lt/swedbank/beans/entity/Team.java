@@ -21,6 +21,9 @@ public class Team {
     @ManyToOne
     private ValueStream valueStream;
 
+    @OneToOne
+    private SkillTemplate skillTemplate;
+
     public Team() {
     }
 
@@ -69,5 +72,13 @@ public class Team {
 
     public void setValueStream(ValueStream valueStream) {
         this.valueStream = valueStream;
+    }
+
+    public SkillTemplate getSkillTemplate() {
+        return skillTemplate;
+    }
+
+    public void setSkillTemplate(SkillTemplate skillTemplate) {
+        this.skillTemplate = skillTemplate;
     }
 }

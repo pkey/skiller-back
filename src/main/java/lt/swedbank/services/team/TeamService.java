@@ -42,6 +42,7 @@ public class TeamService {
 
         for (Team team : teamRepository.findAll()) {
             TeamResponses.add(new ColleagueTeamOverviewResponse(team));
+            teamOverviewResponses.add(new ColleagueTeamOverviewResponse(team, getTeamSkillTemplateResponseList(team)));
         }
 
         return TeamResponses;
@@ -62,19 +63,20 @@ public class TeamService {
 
         if(user.getTeam() == null)
         {
-            return new NonColleagueTeamOverviewResponse(team);
+            return new NonColleagueTeamOverviewResponse(team, getTeamSkillTemplateResponseList(team));
         }
 
         if(user.getTeam().getDepartment().getId().equals(team.getDepartment().getId()))
-            return new ColleagueTeamOverviewResponse(team);
+            return new ColleagueTeamOverviewResponse(team, getTeamSkillTemplateResponseList(team));
         else
-            return new NonColleagueTeamOverviewResponse(team);
+            return new NonColleagueTeamOverviewResponse(team, getTeamSkillTemplateResponseList(team));
     }
 
 
     public TeamResponse getMyTeam(Long currentUserId) {
         User user = userService.getUserById(currentUserId);
-        return new ColleagueTeamOverviewResponse(getTeamById(user.getTeam().getId()));
+        Team team = getTeamById(user.getTeam().getId());
+        return new ColleagueTeamOverviewResponse(team, getTeamSkillTemplateResponseList(team));
     }
 
     public SkillTemplate getTeamSkillTemplate(Team team)

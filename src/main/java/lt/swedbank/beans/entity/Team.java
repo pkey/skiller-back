@@ -58,6 +58,9 @@ public class Team {
 
     public void setUsers(List<User> users) {
         this.users = users;
+        for (User user : users) {
+            user.setTeam(this);
+        }
     }
 
     public ValueStream getValueStream() {

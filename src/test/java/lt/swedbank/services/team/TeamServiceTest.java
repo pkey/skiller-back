@@ -1,12 +1,11 @@
 package lt.swedbank.services.team;
 
 import lt.swedbank.beans.entity.*;
-import lt.swedbank.beans.request.AddTeamRequest;
+import lt.swedbank.beans.request.team.AddTeamRequest;
 import lt.swedbank.beans.response.TeamSkillTemplateResponse;
 import lt.swedbank.beans.response.team.TeamResponse;
 import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewResponse;
 import lt.swedbank.beans.response.team.teamOverview.NonColleagueTeamOverviewResponse;
-import lt.swedbank.beans.response.team.teamOverview.TeamOverviewResponse;
 import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.exceptions.skillTemplate.NoSkillTemplateFoundException;
 import lt.swedbank.exceptions.team.TeamNotFoundException;
@@ -161,7 +160,7 @@ public class TeamServiceTest {
         Mockito.when(teamRepository.findOne(testTeam.getId())).thenReturn(testTeam);
         Mockito.when(userService.getUserById(userFromSameTeam.getId())).thenReturn(userFromSameTeam);
 
-        TeamOverviewResponse resultResponse = teamService.getTeamOverview(testTeam.getId(), userFromSameTeam.getId());
+        TeamResponse resultResponse = teamService.getTeamOverview(testTeam.getId(), userFromSameTeam.getId());
 
         Assert.assertNotEquals(resultResponse, null);
         Assert.assertNotEquals(resultResponse.getUsers(), null);
@@ -173,7 +172,7 @@ public class TeamServiceTest {
             i++;
         }
 
-        Assert.assertThat(resultResponse, instanceOf(TeamOverviewResponse.class));
+        Assert.assertThat(resultResponse, instanceOf(TeamResponse.class));
         Assert.assertThat(resultResponse, instanceOf(ColleagueTeamOverviewResponse.class));
 
     }
@@ -187,7 +186,7 @@ public class TeamServiceTest {
         Mockito.when(teamRepository.findOne(testTeam.getId())).thenReturn(testTeam);
         Mockito.when(userService.getUserById(userFromAnotherDepartment.getId())).thenReturn(userFromAnotherDepartment);
 
-        TeamOverviewResponse resultResponse = teamService.getTeamOverview(testTeam.getId(), userFromAnotherDepartment.getId());
+        TeamResponse resultResponse = teamService.getTeamOverview(testTeam.getId(), userFromAnotherDepartment.getId());
 
         Assert.assertThat(resultResponse, instanceOf(NonColleagueTeamOverviewResponse.class));
 

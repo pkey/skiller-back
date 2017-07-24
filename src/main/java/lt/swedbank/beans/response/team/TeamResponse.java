@@ -4,7 +4,12 @@ package lt.swedbank.beans.response.team;
 import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.response.department.DepartmentResponse;
 import lt.swedbank.beans.response.division.DivisionResponse;
+import lt.swedbank.beans.response.user.UserEntityResponse;
+import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.beans.response.valueStream.ValueStreamResponse;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class TeamResponse {
     protected Long id;
@@ -16,6 +21,8 @@ public class TeamResponse {
 
     protected ValueStreamResponse valueStream;
 
+    protected List<UserResponse> users;
+
     public TeamResponse() {
     }
 
@@ -26,6 +33,7 @@ public class TeamResponse {
         this.division = new DivisionResponse(team.getDepartment().getDivision());
         this.valueStream = ((valueStream == null) || (team.getValueStream()) == null) ? null
                 : new ValueStreamResponse(team.getValueStream());
+        this.users = team.getUsers().stream().map(UserEntityResponse::new).collect(Collectors.toList());
     }
 
     public Long getId() {
@@ -66,5 +74,13 @@ public class TeamResponse {
 
     public void setValueStream(ValueStreamResponse valueStream) {
         this.valueStream = valueStream;
+    }
+
+    public List<UserResponse> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<UserResponse> users) {
+        this.users = users;
     }
 }

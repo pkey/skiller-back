@@ -19,9 +19,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
 
-import org.mockito.Mockito;
-
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -67,7 +64,6 @@ public class TeamServiceTest {
 
         users = TestHelper.fetchUsers(3);
 
-
         testSkills = new LinkedList<>();
         testSkills.add(new Skill("test"));
         testSkills.add(new Skill("test2"));
@@ -85,8 +81,7 @@ public class TeamServiceTest {
     public void getAllTeams() throws Exception {
         Mockito.when(teamRepository.findAll()).thenReturn(teams);
 
-        List<Team> resultTeams = new ArrayList<>();
-        resultTeams = (ArrayList<Team>) teamService.getAllTeams();
+        List<Team> resultTeams = (List<Team>) teamService.getAllTeams();
 
         Assert.assertEquals(teams, resultTeams);
     }
@@ -220,7 +215,7 @@ public class TeamServiceTest {
         addTeamRequest.setName(testTeam.getName());
         addTeamRequest.setDepartmentId(testTeam.getDepartment().getId());
 
-        Assert.assertEquals(teamService.addTeam(addTeamRequest), new TeamResponse(testTeam));
+        Assert.assertEquals(teamService.addTeam(addTeamRequest).getId(), new TeamResponse(testTeam).getId());
     }
 
 

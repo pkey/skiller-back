@@ -15,7 +15,8 @@ public class NonColleagueTeamOverviewResponse extends TeamResponse {
 
     public NonColleagueTeamOverviewResponse(Team team) {
         super(team);
-        users = team.getUsers().stream().map(NonColleagueResponse::new).collect(Collectors.toList());
+        users = ((null == team.getUsers()) ? new ArrayList<>() :
+                team.getUsers().stream().map(NonColleagueResponse::new).collect(Collectors.toList()));
     }
 
     private List<UserResponse> convertToUserSkillResponse(List<User> userList){

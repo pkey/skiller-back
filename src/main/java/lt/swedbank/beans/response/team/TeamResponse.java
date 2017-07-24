@@ -8,6 +8,7 @@ import lt.swedbank.beans.response.user.UserEntityResponse;
 import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.beans.response.valueStream.ValueStreamResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,7 +34,8 @@ public class TeamResponse {
         this.division = new DivisionResponse(team.getDepartment().getDivision());
         this.valueStream = ((valueStream == null) || (team.getValueStream()) == null) ? null
                 : new ValueStreamResponse(team.getValueStream());
-        this.users = team.getUsers().stream().map(UserEntityResponse::new).collect(Collectors.toList());
+        this.users = ((null == users) || (team.getUsers() == null)) ? new ArrayList<>() :
+                team.getUsers().stream().map(UserEntityResponse::new).collect(Collectors.toList());
     }
 
     public Long getId() {

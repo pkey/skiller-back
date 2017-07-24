@@ -1,7 +1,9 @@
 package lt.swedbank.controllers.team;
 
 import lt.swedbank.beans.entity.Team;
+import lt.swedbank.beans.request.AddTeamRequest;
 import lt.swedbank.beans.response.TeamSkillTemplateResponse;
+import lt.swedbank.beans.response.team.TeamResponse;
 import lt.swedbank.beans.response.team.teamOverview.TeamOverviewResponse;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.team.TeamService;
@@ -52,6 +54,10 @@ public class TeamController {
         return templateResponse;
     }
 
+    @RequestMapping(method = RequestMethod.POST)
+    public TeamResponse addTeam(@RequestBody AddTeamRequest addTeamRequest) {
+        return teamService.addTeam(addTeamRequest);
+    }
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public @ResponseBody

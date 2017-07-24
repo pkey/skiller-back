@@ -8,18 +8,25 @@ public class Team {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    protected Long id;
+    private Long id;
 
-    protected String name;
+    private String name;
 
     @OneToMany(mappedBy = "team")
-    protected List<User> users;
+    private List<User> users;
 
     @ManyToOne
     private Department department;
 
     @ManyToOne
     private ValueStream valueStream;
+
+    public Team() {
+    }
+
+    public Team(String name) {
+        this.name = name;
+    }
 
     public Long getId() {
         return id;
@@ -36,7 +43,6 @@ public class Team {
     public void setName(String name) {
         this.name = name;
     }
-
 
     public Department getDepartment() {
         return department;

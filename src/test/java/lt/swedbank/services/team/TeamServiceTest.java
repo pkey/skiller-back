@@ -1,7 +1,9 @@
 package lt.swedbank.services.team;
 
 import lt.swedbank.beans.entity.*;
+import lt.swedbank.beans.request.AddTeamRequest;
 import lt.swedbank.beans.response.TeamSkillTemplateResponse;
+import lt.swedbank.beans.response.team.TeamResponse;
 import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewResponse;
 import lt.swedbank.beans.response.team.teamOverview.NonColleagueTeamOverviewResponse;
 import lt.swedbank.beans.response.team.teamOverview.TeamOverviewResponse;
@@ -11,13 +13,13 @@ import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.repositories.SkillTemplateRepository;
 import lt.swedbank.repositories.TeamRepository;
+import lt.swedbank.services.department.DepartmentService;
 import lt.swedbank.services.user.UserService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
 
-import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,6 +44,9 @@ public class TeamServiceTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private DepartmentService departmentService;
+
     private List<Team> teams;
 
     private Team testTeam;
@@ -62,6 +67,7 @@ public class TeamServiceTest {
 
         teams = TestHelper.fetchTeams(2);
         testTeam = teams.get(0);
+        testTeam.getDepartment().setDivision(new Division());
 
         users = TestHelper.fetchUsers(3);
 
@@ -198,5 +204,19 @@ public class TeamServiceTest {
         Mockito.when(userService.getAllByTeam(any())).thenReturn(users);
         Assert.assertEquals(teamService.getSkillCountInTeam(testTeam, testSkill), 4);
     }
+
+    @Test
+    public void addNewTeam() throws Exception {
+        Mockito.when(teamRepository.save(any(Team.class))).thenReturn(testTeam);
+        Mockito.when(departmentService.getDepartmentById(testTeam.getDepartment().getId())).thenReturn(testTeam.getDepartment());
+
+
+        AddTeamRequest addTeamRequest = new AddTeamRequest();
+        addTeamRequest.setName(testTeam.getName());
+        addTeamRequest.setDepartmentId(testTeam.getDepartment().getId());
+
+        Assert.assertEquals(teamService.addTeam(addTeamRequest), new TeamResponse(testTeam));
+    }
+
 
 }

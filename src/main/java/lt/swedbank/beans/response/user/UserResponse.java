@@ -27,7 +27,9 @@ abstract public class UserResponse extends Response {
         name = user.getName();
         lastName = user.getLastName();
         email = user.getEmail();
-        team = new TeamResponse(user.getTeam());
+
+
+        team = ((team == null) || (user.getTeam() == null) ? null : new TeamResponse(user.getTeam()));
     }
 
     public Long getId() {

@@ -69,24 +69,23 @@ public class NotificationService {
         RequestNotification requestNotification = getNotificationById(notificationAnswerRequest.getNotificationId());
         ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(requestNotification);
 
-        if (approvalRequest.isApproved() == 0) {
+        switch (notificationAnswerRequest.getApproved()) {
+            case 0:
+                changeNotificationRequestStatus(requestNotification, notificationAnswerRequest.getApproved());
+                requestNotification.setNewNotification(false);
 
-            changeNotificationRequestStatus(requestNotification, notificationAnswerRequest.getApproved());
-            requestNotification.setNewNotification(false);
-
-            if (notificationAnswerRequest.getApproved() == 0) {
-                requestNotification =  approve(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
-            } else if (notificationAnswerRequest.getApproved() == -1) {
-                requestNotification = disapprove(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
-            }
-            removeRequestNotification(approvalRequest, requestNotification);
+                switch (notificationAnswerRequest.getApproved()) {
+                    case 1:
+                        requestNotification = approve(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
+                    case -1:
+                        requestNotification = disapprove(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
+                }
+                removeRequestNotification(approvalRequest, requestNotification);
+            case 1:
+                return new RequestApprovedNotificationResponse(requestNotification);
+            case -1:
+                return new RequestDisapprovedNotificationResponse(requestNotification);
         }
-        if(notificationAnswerRequest.getApproved() == 1) {
-            return new RequestApprovedNotificationResponse(requestNotification);
-        } else  if(notificationAnswerRequest.getApproved() == -1) {
-            return new RequestDisapprovedNotificationResponse(requestNotification);
-        }
-
         return new RequestNotificationResponse(requestNotification);
     }
 

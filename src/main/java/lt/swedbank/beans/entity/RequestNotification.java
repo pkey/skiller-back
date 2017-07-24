@@ -1,6 +1,7 @@
 package lt.swedbank.beans.entity;
 
 
+import lt.swedbank.beans.enums.Status;
 import lt.swedbank.exceptions.request.FalseRequestStatusException;
 
 
@@ -9,18 +10,13 @@ import javax.persistence.*;
 @Entity
 public class RequestNotification  {
 
-    private static final String APPROVED = "approved";
-    private static final String DISAPPROVED = "disapproved";
-    private static final String PENDING = "pending";
-    private static final String EXPIRED = "expired";
+    private Status status = Status.pending;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private boolean isNewNotification = true;
-
-    private Integer status = 0;
 
     @ManyToOne
     private User receiver;
@@ -60,23 +56,23 @@ public class RequestNotification  {
         this.id = id;
     }
 
-    public Integer getStatus() {
+    public Status getStatus() {
         return status;
     }
 
     public final void setApproved() {
-        this.status = 1;
+        this.status = Status.approved;
     }
 
     public final void setDisapproved() {
-        this.status = -1;
+        this.status = Status.disapproved;
     }
 
     public final void setPending() {
-        this.status = 0;
+        this.status = Status.pending;
     }
 
-    public final void setExpired() { this.status = 2; }
+    public final void setExpired() { this.status = Status.expired; }
 
     public boolean isNewNotification() {
         return isNewNotification;
@@ -87,17 +83,7 @@ public class RequestNotification  {
     }
 
     public final String getStatusAsString() {
-        switch (status) {
-            case -1:
-                return DISAPPROVED;
-            case 0:
-                return PENDING;
-            case 1:
-                return APPROVED;
-            case 2:
-                return EXPIRED;
-            default:
-                throw new FalseRequestStatusException();
-        }
+        return status.toString();
     }
 }
+

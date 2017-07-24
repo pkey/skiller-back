@@ -105,10 +105,8 @@ public class ApprovalService {
 
     public boolean isUserAlreadyApprovedReqest(User user, ApprovalRequest approvalRequest)
     {
-        for (Approver approver: approvalRequest.getApprovers()
-             ) {
-            if(approver.getUser() == user)
-            {
+        for (Approver approver: approvalRequest.getApprovers()) {
+            if(approver.getUser() == user) {
                 return true;
             }
         }
@@ -117,10 +115,8 @@ public class ApprovalService {
 
     public boolean isUserAlreadyDissapprovedRequest(User user, ApprovalRequest approvalRequest)
     {
-        for (Disapprover disapprover: approvalRequest.getDisapprovers()
-                ) {
-            if(disapprover.getUser() == user)
-            {
+        for (Disapprover disapprover: approvalRequest.getDisapprovers()) {
+            if(disapprover.getUser() == user) {
                 return true;
             }
         }
@@ -140,8 +136,7 @@ public class ApprovalService {
 
     public void removeApproverFromApprovalRequest(User user, ApprovalRequest approvalRequest)
     {
-        for (Approver approver: approvalRequest.getApprovers()
-                ) {
+        for (Approver approver: approvalRequest.getApprovers()) {
             if(approver.getUser() == user)
             {
                 disaproversRepository.delete(approver.getId());

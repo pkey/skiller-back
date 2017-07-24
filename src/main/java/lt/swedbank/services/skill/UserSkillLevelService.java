@@ -3,6 +3,7 @@ package lt.swedbank.services.skill;
 import lt.swedbank.beans.entity.SkillLevel;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.entity.UserSkillLevel;
+import lt.swedbank.beans.enums.Status;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.exceptions.userSkillLevel.UserSkillLevelNotFoundException;
 import lt.swedbank.repositories.UserSkillLevelRepository;
@@ -29,7 +30,7 @@ public class UserSkillLevelService {
         UserSkill userSkill = userSkillService.getUserSkillByUserIdAndSkillId(userId, userSkillId);
 
         UserSkillLevel userSkillLevel =
-                userSkillLevelRepository.findTopByUserSkillAndIsApprovedOrderByValidFromDesc(userSkill, 1);
+                userSkillLevelRepository.findTopByUserSkillAndStatusOrderByValidFromDesc(userSkill, Status.APPROVED);
 
         if (userSkillLevel == null) {
             throw new UserSkillLevelNotFoundException();
@@ -42,7 +43,7 @@ public class UserSkillLevelService {
         UserSkill userSkill = userSkillService.getUserSkillByUserIdAndSkillId(userId, skillId);
 
         UserSkillLevel lastPendingUserSkillLevel =
-                userSkillLevelRepository.findTopByUserSkillAndIsApprovedOrderByValidFromDesc(userSkill, 0);
+                userSkillLevelRepository.findTopByUserSkillAndStatusOrderByValidFromDesc(userSkill, Status.PENDING);
 
         if (lastPendingUserSkillLevel == null) {
             return false;
@@ -76,14 +77,14 @@ public class UserSkillLevelService {
         return userSkillLevelRepository.save(userSkillLevel);
     }
 
-    public Iterable<UserSkillLevel> getAllByOneSkillLevelAndIsApproved(SkillLevel skillLevel, Integer isApproved) {
-        return userSkillLevelRepository.findAllBySkillLevelAndIsApproved(skillLevel, isApproved);
+    public Iterable<UserSkillLevel> getAllByOneSkillLevelAndStatus(SkillLevel skillLevel, Status status) {
+        return userSkillLevelRepository.findAllBySkillLevelAndStatus(skillLevel, status);
     }
 
     public Set<UserSkillLevel> getAllApprovedUserSkillLevelsBySkillLevels(Iterable<SkillLevel> skillLevels) {
         Set<UserSkillLevel> userSkillLevels = new HashSet<>();
         for (SkillLevel skillLevel : skillLevels) {
-            Iterable<UserSkillLevel> oneLevelSkillLevels = getAllByOneSkillLevelAndIsApproved(skillLevel, 1);
+            Iterable<UserSkillLevel> oneLevelSkillLevels = getAllByOneSkillLevelAndStatus(skillLevel, Status.APPROVED);
 
             oneLevelSkillLevels.forEach(userSkillLevels::add);
         }

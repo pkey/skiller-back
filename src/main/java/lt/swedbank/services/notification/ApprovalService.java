@@ -2,6 +2,7 @@ package lt.swedbank.services.notification;
 
 
 import lt.swedbank.beans.entity.*;
+import lt.swedbank.beans.enums.Status;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.request.NotificationAnswerRequest;
 import lt.swedbank.exceptions.userSkillLevel.RequestAlreadySubmittedException;
@@ -42,7 +43,7 @@ public class ApprovalService {
     public ApprovalRequest addDefaultApprovalRequest(UserSkillLevel userSkillLevel) {
         ApprovalRequest defaultApprovalRequest = new ApprovalRequest();
         defaultApprovalRequest.setUserSkillLevel(userSkillLevel);
-        defaultApprovalRequest.setIsApproved(1);
+        defaultApprovalRequest.setStatus(Status.APPROVED);
         return approvalRequestRepository.save(defaultApprovalRequest);
     }
 
@@ -151,14 +152,14 @@ public class ApprovalService {
             removeDissapproverFromApprovalRequest(user, approvalRequest);
         }
 
-        if (approvalRequest.isApproved() == 0 && !isUserAlreadyApprovedReqest(user, approvalRequest)) {
+        if (approvalRequest.getStatus() == Status.PENDING && !isUserAlreadyApprovedReqest(user, approvalRequest)) {
             Approver approver = new Approver(user, message);
             saveApprover(approver);
             approvalRequest.addApprover(approver);
         }
 
         if (approvalRequest.getApproves() >= 5) {
-            approvalRequest.setIsApproved(1);
+            approvalRequest.setApproved();
             notificationService.setNotificationsAsExpired(approvalRequest.getRequestNotifications());
         }
         return approvalRequestRepository.save(approvalRequest);
@@ -170,12 +171,12 @@ public class ApprovalService {
 
     public ApprovalRequest disapprove(String message, ApprovalRequest approvalRequest, User user) {
 
-        if (approvalRequest.isApproved() == 0) {
+        if (approvalRequest.getStatus() == Status.PENDING) {
 
             Disapprover disapprover = new Disapprover(user, message);
             saveDisapprover(disapprover);
             approvalRequest.addDisapprover(disapprover);
-            approvalRequest.setIsApproved(-1);
+            approvalRequest.setStatus(Status.DISAPPROVED);
             notificationService.setNotificationsAsExpired(approvalRequest.getRequestNotifications());
         }
         return approvalRequestRepository.save(approvalRequest);

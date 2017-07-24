@@ -3,6 +3,7 @@ package lt.swedbank.services.notification;
 import lt.swedbank.beans.entity.ApprovalRequest;
 import lt.swedbank.beans.entity.RequestNotification;
 import lt.swedbank.beans.entity.User;
+import lt.swedbank.beans.enums.Status;
 import lt.swedbank.beans.request.NotificationAnswerRequest;
 import lt.swedbank.beans.response.notification.NotificationResponse;
 import lt.swedbank.beans.response.notification.RequestApprovedNotificationResponse;
@@ -42,38 +43,32 @@ public class NotificationService {
     }
 
     public ArrayList<NotificationResponse> getNotificationResponses(Iterable<RequestNotification> requestNotifications) {
-
-
-
         ArrayList<NotificationResponse> requestNotificationResponses = new ArrayList<NotificationResponse>();
         for (RequestNotification requestNotification : requestNotifications) {
 
             ApprovalRequest approvalRequest = requestNotification.getApprovalRequest();
             if(approvalRequest.getUserSkillLevel().getUserSkill().getUser() == requestNotification.getReceiver()) {
-                if (approvalRequest.isApproved() == -1) {
+                if (approvalRequest.getStatus() == Status.DISAPPROVED) {
                     requestNotificationResponses.add(new RequestDisapprovedNotificationResponse(requestNotification));
                 }
-                else if (approvalRequest.isApproved() == 1) {
+                else if (approvalRequest.getStatus() == Status.APPROVED) {
                     requestNotificationResponses.add(new RequestApprovedNotificationResponse(requestNotification));
                 }
             }
             else requestNotificationResponses.add(new RequestNotificationResponse(requestNotification));
         }
-
-
         return requestNotificationResponses;
     }
 
     public NotificationResponse handleRequest(NotificationAnswerRequest notificationAnswerRequest , User user) {
 
+
         RequestNotification requestNotification = getNotificationById(notificationAnswerRequest.getNotificationId());
         ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(requestNotification);
 
-        switch (notificationAnswerRequest.getApproved()) {
-            case 0:
-                changeNotificationRequestStatus(requestNotification, notificationAnswerRequest.getApproved());
-                requestNotification.setNewNotification(false);
-
+        changeNotificationRequestStatus(requestNotification, notificationAnswerRequest.getApproved());
+        switch (approvalRequest.getStatus()) {
+            case PENDING:
                 switch (notificationAnswerRequest.getApproved()) {
                     case 1:
                         requestNotification = approve(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
@@ -81,21 +76,24 @@ public class NotificationService {
                         requestNotification = disapprove(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
                 }
                 removeRequestNotification(approvalRequest, requestNotification);
-            case 1:
+            case APPROVED:
                 return new RequestApprovedNotificationResponse(requestNotification);
-            case -1:
+            case DISAPPROVED:
                 return new RequestDisapprovedNotificationResponse(requestNotification);
         }
         return new RequestNotificationResponse(requestNotification);
     }
 
     private void changeNotificationRequestStatus(RequestNotification requestNotification, Integer status) {
-
-        if(status == 1) {
-            requestNotification.setApproved();
-        }
-        else if( status == -1) {
-            requestNotification.setDisapproved();
+        requestNotification.setNewNotification(false);
+        switch (status)
+        {
+            case 1:
+                requestNotification.setApproved();
+            case -1:
+                requestNotification.setDisapproved();
+            default:
+                requestNotification.setPending();
         }
         requestNotificationRepository.save(requestNotification);
     }

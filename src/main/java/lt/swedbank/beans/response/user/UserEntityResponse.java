@@ -26,7 +26,7 @@ public class UserEntityResponse extends UserResponse {
         Collections.sort(userSkillList);
         Collections.reverse(userSkillList);
         
-        for (UserSkill userSkill:userSkillList
+        for (UserSkill userSkill: userSkillList
              ) {
             userSkillResponseList.add(new NormalUserSkillResponse(userSkill));
         }

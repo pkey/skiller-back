@@ -1,8 +1,6 @@
 package lt.swedbank.beans.entity;
-
-
 import lt.swedbank.beans.enums.Status;
-import lt.swedbank.exceptions.request.FalseRequestStatusException;
+
 
 
 import javax.persistence.*;
@@ -10,7 +8,7 @@ import javax.persistence.*;
 @Entity
 public class RequestNotification  {
 
-    private Status status = Status.pending;
+    private Status status = Status.NEW;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -61,18 +59,18 @@ public class RequestNotification  {
     }
 
     public final void setApproved() {
-        this.status = Status.approved;
+        this.status = Status.APPROVED;
     }
 
     public final void setDisapproved() {
-        this.status = Status.disapproved;
+        this.status = Status.DISAPPROVED;
     }
 
     public final void setPending() {
-        this.status = Status.pending;
+        this.status = Status.PENDING;
     }
 
-    public final void setExpired() { this.status = Status.expired; }
+    public final void setExpired() { this.status = Status.EXPIRED; }
 
     public boolean isNewNotification() {
         return isNewNotification;

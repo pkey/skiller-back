@@ -1,5 +1,6 @@
 package lt.swedbank.beans.entity;
 
+import lt.swedbank.beans.enums.Status;
 import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
@@ -93,7 +94,7 @@ public class UserSkill implements Comparable<UserSkill> {
         UserSkillLevel currentUserSkillLevel;
         do {
             currentUserSkillLevel = userSkillLevels.get(i);
-        } while(userSkillLevels.get(i++).getIsApproved() == -1);
+        } while (userSkillLevels.get(i++).getStatus() == Status.DISAPPROVED);
         return currentUserSkillLevel;
     }
 
@@ -101,14 +102,12 @@ public class UserSkill implements Comparable<UserSkill> {
         sortUserSkillLevels();
         UserSkillLevel currentUserSkillLevel = null;
         int i = 0;
-        for (UserSkillLevel level: userSkillLevels
-             ) {
-            if(level.getIsApproved() == 1)
-            {
+        for (UserSkillLevel level : userSkillLevels
+                ) {
+            if (level.getStatus() == Status.APPROVED) {
                 currentUserSkillLevel = level;
             }
         }
-
         return currentUserSkillLevel;
     }
 

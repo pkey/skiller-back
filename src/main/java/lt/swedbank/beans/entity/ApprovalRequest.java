@@ -1,5 +1,6 @@
 package lt.swedbank.beans.entity;
 
+import lt.swedbank.beans.enums.Status;
 import lt.swedbank.exceptions.request.FalseRequestStatusException;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -15,16 +16,13 @@ import java.util.List;
 @Entity
 public class ApprovalRequest {
 
-    private static final String APPROVED = "approved";
-    private static final String DISAPPROVED = "disapproved";
-    private static final String PENDING = "pending";
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private Integer approves = 0;
 
-    private Integer isApproved = 0;
+    private Status status = Status.PENDING;
 
     @OneToOne(cascade = {CascadeType.ALL})
     private UserSkillLevel userSkillLevel;
@@ -43,7 +41,8 @@ public class ApprovalRequest {
 
     private String motivation;
 
-    public ApprovalRequest() {}
+    public ApprovalRequest() {
+    }
 
     public ApprovalRequest(List<RequestNotification> requestNotifications) {
         this.requestNotifications = requestNotifications;
@@ -74,13 +73,6 @@ public class ApprovalRequest {
         this.id = id;
     }
 
-    public Integer isApproved() {
-        return isApproved;
-    }
-
-    public void setApproved(Integer approved) {
-        isApproved = approved;
-    }
 
     public UserSkillLevel getUserSkillLevel() {
         return userSkillLevel;
@@ -123,13 +115,8 @@ public class ApprovalRequest {
         this.motivation = motivation;
     }
 
-    public Integer getIsApproved() {
-        return isApproved;
-    }
-
-    public void setIsApproved(Integer isApproved) {
-        this.isApproved = isApproved;
-        userSkillLevel.setIsApproved(isApproved);
+    public Status getStatus() {
+        return status;
     }
 
     public List<Disapprover> getDisapprovers() {
@@ -148,19 +135,18 @@ public class ApprovalRequest {
         this.creationTime = creationTime;
     }
 
-    public String getCurrentRequestStatus() {
-
-        switch (isApproved) {
-            case -1:
-                return DISAPPROVED;
-            case 0:
-                return PENDING;
-            case 1:
-                return APPROVED;
-            default:
-                throw new FalseRequestStatusException();
-        }
-
+    public void setApproved() {
+        this.status = Status.APPROVED;
+        userSkillLevel.setApproved();
     }
 
+    public void setPending() {
+        this.status = Status.PENDING;
+        userSkillLevel.setPending();
+    }
+
+    public void setDisapproved() {
+        this.status = Status.DISAPPROVED;
+        userSkillLevel.setDisapproved();
+    }
 }

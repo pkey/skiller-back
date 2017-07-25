@@ -7,6 +7,7 @@ import lt.swedbank.beans.response.TeamSkillTemplateResponse;
 import lt.swedbank.beans.response.team.TeamResponse;
 import lt.swedbank.beans.response.user.NonColleagueResponse;
 import lt.swedbank.beans.response.user.UserResponse;
+import lt.swedbank.beans.response.user.UserWithoutTeamResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ public class NonColleagueTeamOverviewResponse extends TeamResponse {
     public NonColleagueTeamOverviewResponse(Team team, List<TeamSkillTemplateResponse> teamSkillTemplateResponses) {
         super(team, teamSkillTemplateResponses);
         users = ((null == team.getUsers()) ? new ArrayList<>() :
-                team.getUsers().stream().map(NonColleagueResponse::new).collect(Collectors.toList()));
+                team.getUsers().stream().map(UserWithoutTeamResponse::new).collect(Collectors.toList()));
     }
 
     private List<UserResponse> convertToUserSkillResponse(List<User> userList){

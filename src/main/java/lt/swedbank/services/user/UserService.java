@@ -53,6 +53,17 @@ public class UserService {
         return user;
     }
 
+    public List<User> getUsersByIds(List<Long> ids) {
+        assert ids != null;
+
+        List<User> users = new ArrayList<>();
+        for (Long id : ids) {
+            users.add(getUserById(id));
+        }
+
+        return users;
+    }
+
     public Iterable<User> getColleagues(Long userId){
          return userRepository.findAllByIdIsNotOrderByNameAscLastNameAsc(userId);
     }

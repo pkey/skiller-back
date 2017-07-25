@@ -3,12 +3,13 @@ package lt.swedbank.beans.entity;
 import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 @Entity
 @Indexed
-public class UserSkill {
+public class UserSkill implements Comparable<UserSkill> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -71,6 +72,9 @@ public class UserSkill {
     }
 
     public void addUserSkillLevel(UserSkillLevel userSkillLevel) {
+        if (userSkillLevels == null || userSkillLevels.isEmpty())
+            userSkillLevels = new ArrayList<>();
+
         this.userSkillLevels.add(userSkillLevel);
     }
 
@@ -108,5 +112,8 @@ public class UserSkill {
         return currentUserSkillLevel;
     }
 
-
+    @Override
+    public int compareTo(UserSkill o) {
+        return this.getCurrentSkillLevel().getSkillLevel().compareTo(o.getCurrentSkillLevel().getSkillLevel());
+    }
 }

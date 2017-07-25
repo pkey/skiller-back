@@ -2,11 +2,27 @@ package lt.swedbank.beans.response.team;
 
 
 import lt.swedbank.beans.entity.Team;
+import lt.swedbank.beans.response.department.DepartmentResponse;
+import lt.swedbank.beans.response.division.DivisionResponse;
+import lt.swedbank.beans.response.user.UserEntityResponse;
+import lt.swedbank.beans.response.user.UserResponse;
+import lt.swedbank.beans.response.valueStream.ValueStreamResponse;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class TeamResponse {
     protected Long id;
     protected String name;
-    protected String departmentName;
+
+    protected DepartmentResponse department;
+
+    protected DivisionResponse division;
+
+    protected ValueStreamResponse valueStream;
+
+    protected List<UserResponse> users;
 
     public TeamResponse() {
     }
@@ -14,7 +30,12 @@ public class TeamResponse {
     public TeamResponse(Team team) {
         this.id = team.getId();
         this.name = team.getName();
-        this.departmentName = team.getDepartment().getName();
+        this.department = new DepartmentResponse(team.getDepartment());
+        this.division = new DivisionResponse(team.getDepartment().getDivision());
+        this.valueStream = ((valueStream == null) || (team.getValueStream()) == null) ? null
+                : new ValueStreamResponse(team.getValueStream());
+        this.users = ((null == users) || (team.getUsers() == null)) ? new ArrayList<>() :
+                team.getUsers().stream().map(UserEntityResponse::new).collect(Collectors.toList());
     }
 
     public Long getId() {
@@ -33,11 +54,35 @@ public class TeamResponse {
         this.name = name;
     }
 
-    public String getDepartmentName() {
-        return departmentName;
+    public DepartmentResponse getDepartment() {
+        return department;
     }
 
-    public void setDepartmentName(String departmentName) {
-        this.departmentName = departmentName;
+    public void setDepartment(DepartmentResponse department) {
+        this.department = department;
+    }
+
+    public DivisionResponse getDivision() {
+        return division;
+    }
+
+    public void setDivision(DivisionResponse division) {
+        this.division = division;
+    }
+
+    public ValueStreamResponse getValueStream() {
+        return valueStream;
+    }
+
+    public void setValueStream(ValueStreamResponse valueStream) {
+        this.valueStream = valueStream;
+    }
+
+    public List<UserResponse> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<UserResponse> users) {
+        this.users = users;
     }
 }

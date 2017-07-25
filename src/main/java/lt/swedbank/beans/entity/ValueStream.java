@@ -2,21 +2,21 @@ package lt.swedbank.beans.entity;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Set;
 
 @Entity
-public class Department {
+public class ValueStream {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    protected Long id;
+    private Long id;
 
-    protected String name;
+    private String name;
 
-    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "valueStream")
     private List<Team> teams;
 
-    @ManyToOne
-    private Division division;
+    public ValueStream() {
+    }
 
     public Long getId() {
         return id;
@@ -40,13 +40,5 @@ public class Department {
 
     public void setTeams(List<Team> teams) {
         this.teams = teams;
-    }
-
-    public Division getDivision() {
-        return division;
-    }
-
-    public void setDivision(Division division) {
-        this.division = division;
     }
 }

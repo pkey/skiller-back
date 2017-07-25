@@ -1,7 +1,11 @@
 package lt.swedbank.beans.entity;
 
 import lt.swedbank.exceptions.request.FalseRequestStatusException;
+
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -28,8 +32,8 @@ public class ApprovalRequest {
     @OneToMany(cascade = {CascadeType.PERSIST})
     private List<Approver> approvers;
 
-    @OneToOne(cascade = {CascadeType.PERSIST})
-    private Disapprover disapprover;
+    @OneToMany(cascade = {CascadeType.PERSIST})
+    private List<Disapprover> disapprovers;
 
     @OneToMany(cascade = {CascadeType.ALL})
     private List<RequestNotification> requestNotifications;
@@ -56,6 +60,10 @@ public class ApprovalRequest {
     public void addApprover(Approver approver) {
         approvers.add(approver);
         approves++;
+    }
+
+    public void addDisapprover(Disapprover disapprover) {
+        disapprovers.add(disapprover);
     }
 
     public Long getId() {
@@ -103,14 +111,6 @@ public class ApprovalRequest {
         this.approves = approves;
     }
 
-    public Disapprover getDisapprover() {
-        return disapprover;
-    }
-
-    public void setDisapprover(Disapprover disapprover) {
-        this.disapprover = disapprover;
-    }
-
     public void removeNotification(RequestNotification requestNotification) {
         requestNotifications.remove(requestNotification);
     }
@@ -130,6 +130,14 @@ public class ApprovalRequest {
     public void setIsApproved(Integer isApproved) {
         this.isApproved = isApproved;
         userSkillLevel.setIsApproved(isApproved);
+    }
+
+    public List<Disapprover> getDisapprovers() {
+        return disapprovers;
+    }
+
+    public void setDisapprovers(List<Disapprover> disapprovers) {
+        this.disapprovers = disapprovers;
     }
 
     public Date getCreationTime() {

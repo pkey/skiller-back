@@ -1,7 +1,6 @@
 package lt.swedbank.beans.entity;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -9,15 +8,25 @@ public class Team {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    protected Long id;
+    private Long id;
 
-    protected String name;
+    private String name;
 
     @OneToMany(mappedBy = "team")
-    protected List<User> users;
+    private List<User> users;
 
     @ManyToOne
     private Department department;
+
+    @ManyToOne
+    private ValueStream valueStream;
+
+    public Team() {
+    }
+
+    public Team(String name) {
+        this.name = name;
+    }
 
     public Long getId() {
         return id;
@@ -35,7 +44,6 @@ public class Team {
         this.name = name;
     }
 
-
     public Department getDepartment() {
         return department;
     }
@@ -50,5 +58,16 @@ public class Team {
 
     public void setUsers(List<User> users) {
         this.users = users;
+        for (User user : users) {
+            user.setTeam(this);
+        }
+    }
+
+    public ValueStream getValueStream() {
+        return valueStream;
+    }
+
+    public void setValueStream(ValueStream valueStream) {
+        this.valueStream = valueStream;
     }
 }

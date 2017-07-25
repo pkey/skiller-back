@@ -1,14 +1,17 @@
 package lt.swedbank.services.team;
 
 import lt.swedbank.beans.entity.*;
+import lt.swedbank.beans.request.team.AddTeamRequest;
 import lt.swedbank.beans.response.TeamSkillTemplateResponse;
+import lt.swedbank.beans.response.team.TeamResponse;
 import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewResponse;
 import lt.swedbank.beans.response.team.teamOverview.NonColleagueTeamOverviewResponse;
-import lt.swedbank.beans.response.team.teamOverview.TeamOverviewResponse;
 import lt.swedbank.exceptions.skillTemplate.NoSkillTemplateFoundException;
+import lt.swedbank.exceptions.team.TeamNameAlreadyExistsException;
 import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.repositories.SkillTemplateRepository;
 import lt.swedbank.repositories.TeamRepository;
+import lt.swedbank.services.department.DepartmentService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,9 +28,23 @@ public class TeamService {
     private UserService userService;
     @Autowired
     private SkillTemplateRepository skillTemplateRepository;
+    @Autowired
+    private DepartmentService departmentService;
+
 
     public Iterable<Team> getAllTeams() {
         return teamRepository.findAll();
+    }
+
+    public List<TeamResponse> getAllTeamOverviewResponses() {
+
+        List<TeamResponse> TeamResponses = new ArrayList<>();
+
+        for (Team team : teamRepository.findAll()) {
+            TeamResponses.add(new ColleagueTeamOverviewResponse(team));
+        }
+
+        return TeamResponses;
     }
 
     public Team getTeamById(Long id) {
@@ -39,7 +56,7 @@ public class TeamService {
     }
 
 
-    public TeamOverviewResponse getTeamOverview(Long teamId, Long currentUserId){
+    public TeamResponse getTeamOverview(Long teamId, Long currentUserId) {
         User user = userService.getUserById(currentUserId);
         Team team = getTeamById(teamId);
 
@@ -55,7 +72,7 @@ public class TeamService {
     }
 
 
-    public TeamOverviewResponse getMyTeam(Long currentUserId) {
+    public TeamResponse getMyTeam(Long currentUserId) {
         User user = userService.getUserById(currentUserId);
         return new ColleagueTeamOverviewResponse(getTeamById(user.getTeam().getId()));
     }
@@ -116,6 +133,19 @@ public class TeamService {
             }
         }
         return counter;
+    }
+
+    public TeamResponse addTeam(AddTeamRequest addTeamRequest) {
+        assert addTeamRequest != null;
+
+        Team team = new Team(addTeamRequest.getName());
+        team.setDepartment(departmentService.getDepartmentById(addTeamRequest.getDepartmentId()));
+        team.setUsers(userService.getUsersByIds(addTeamRequest.getUserIds()));
+
+        if (teamRepository.findByName(addTeamRequest.getName()) != null)
+            throw new TeamNameAlreadyExistsException();
+
+        return new TeamResponse(teamRepository.save(team));
     }
 
 }

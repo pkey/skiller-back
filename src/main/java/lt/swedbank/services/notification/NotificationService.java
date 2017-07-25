@@ -14,7 +14,6 @@ import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.ArrayList;
 
@@ -30,46 +29,91 @@ public class NotificationService {
     @Autowired
     private ApprovalService approvalService;
 
-    public Iterable<RequestNotification> getNotificationsByUserId(Long id) {
-        return requestNotificationRepository.findByReceiver(userService.getUserById(id));
+    public Iterable<RequestNotification> getNotificationsByUser(User user) {
+        return requestNotificationRepository.findByReceiver(user);
+    }
+
+    public Iterable<RequestNotification> setNotificationsAsExpired(Iterable<RequestNotification> requestNotifications){
+        for (RequestNotification requestNotification: requestNotifications) {
+            requestNotification.setExpired();
+        }
+        requestNotificationRepository.save(requestNotifications);
+        return requestNotifications;
     }
 
     public ArrayList<NotificationResponse> getNotificationResponses(Iterable<RequestNotification> requestNotifications) {
+
+
+
         ArrayList<NotificationResponse> requestNotificationResponses = new ArrayList<NotificationResponse>();
         for (RequestNotification requestNotification : requestNotifications) {
+
             ApprovalRequest approvalRequest = requestNotification.getApprovalRequest();
-            if (approvalRequest.isApproved() == -1) {
-                requestNotificationResponses.add(new RequestDisapprovedNotificationResponse(requestNotification));
-            } else if (approvalRequest.isApproved() == 0) {
-                requestNotificationResponses.add(new RequestNotificationResponse(requestNotification));
-            } else if (approvalRequest.isApproved() == 1) {
-                requestNotificationResponses.add(new RequestApprovedNotificationResponse(requestNotification));
+            if(approvalRequest.getUserSkillLevel().getUserSkill().getUser() == requestNotification.getReceiver()) {
+                if (approvalRequest.isApproved() == -1) {
+                    requestNotificationResponses.add(new RequestDisapprovedNotificationResponse(requestNotification));
+                }
+                else if (approvalRequest.isApproved() == 1) {
+                    requestNotificationResponses.add(new RequestApprovedNotificationResponse(requestNotification));
+                }
             }
+            else requestNotificationResponses.add(new RequestNotificationResponse(requestNotification));
         }
+
+
         return requestNotificationResponses;
     }
 
-    public RequestNotification approveByApprovalRequestId(NotificationAnswerRequest notificationAnswerRequest, Long approversId) {
+    public NotificationResponse handleRequest(NotificationAnswerRequest notificationAnswerRequest , User user) {
 
         RequestNotification requestNotification = getNotificationById(notificationAnswerRequest.getNotificationId());
         ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(requestNotification);
 
-        Integer approves = approvalService.approve(notificationAnswerRequest, approvalRequest, approversId).getApproves();
+        switch (notificationAnswerRequest.getApproved()) {
+            case 0:
+                changeNotificationRequestStatus(requestNotification, notificationAnswerRequest.getApproved());
+                requestNotification.setNewNotification(false);
+
+                switch (notificationAnswerRequest.getApproved()) {
+                    case 1:
+                        requestNotification = approve(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
+                    case -1:
+                        requestNotification = disapprove(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
+                }
+                removeRequestNotification(approvalRequest, requestNotification);
+            case 1:
+                return new RequestApprovedNotificationResponse(requestNotification);
+            case -1:
+                return new RequestDisapprovedNotificationResponse(requestNotification);
+        }
+        return new RequestNotificationResponse(requestNotification);
+    }
+
+    private void changeNotificationRequestStatus(RequestNotification requestNotification, Integer status) {
+
+        if(status == 1) {
+            requestNotification.setApproved();
+        }
+        else if( status == -1) {
+            requestNotification.setDisapproved();
+        }
+        requestNotificationRepository.save(requestNotification);
+    }
+
+    public RequestNotification approve(ApprovalRequest approvalRequest, RequestNotification requestNotification, User user, String message) {
+
+        Integer approves = approvalService.approve(message, approvalRequest, user).getApproves();
         if (approves >= 5) {
-            deleteRequestNotificationsFromApprovalRequest(approvalRequest);
-            sendRequestNotifications(approvalRequest);
-        } else {
-            requestNotificationRepository.delete(requestNotification);
+            requestNotification.setApproved();
+            sendNotificationAboutSkillLevelStatusChanges(approvalRequest);
         }
         return requestNotification;
     }
 
-    public RequestNotification disapproveByApprovalRequestId(NotificationAnswerRequest notificationAnswerRequest, Long approversId) {
-        RequestNotification requestNotification = getNotificationById(notificationAnswerRequest.getNotificationId());
-        ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(requestNotification);
-        approvalService.disapprove(notificationAnswerRequest.getMessage(), requestNotification, approversId);
-        deleteRequestNotificationsFromApprovalRequest(approvalRequest);
-        sendRequestNotifications(approvalRequest);
+    public RequestNotification disapprove(ApprovalRequest approvalRequest, RequestNotification requestNotification, User user, String message) {
+
+        approvalService.disapprove(message, approvalRequest, user);
+        sendNotificationAboutSkillLevelStatusChanges(approvalRequest);
         return requestNotification;
     }
 
@@ -80,7 +124,7 @@ public class NotificationService {
     }
 
 
-    public void sendRequestNotifications(ApprovalRequest approvalRequest)
+    public void sendNotificationAboutSkillLevelStatusChanges(ApprovalRequest approvalRequest)
     {
         approvalRequest.setRequestNotification(new RequestNotification(getUserFromApprovalRequest(approvalRequest), approvalRequest));
         approvalService.update(approvalRequest);
@@ -106,11 +150,10 @@ public class NotificationService {
         requestNotificationRepository.delete(request.getRequestNotifications());
     }
 
-    public RequestNotification removeRequestNotification(RequestNotification notification) {
-        ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(notification);
-        approvalRequest.removeNotification(notification);
+    public RequestNotification removeRequestNotification(ApprovalRequest approvalRequest, RequestNotification notification) {
+
         approvalService.update(approvalRequest);
-        requestNotificationRepository.delete(notification.getId());
         return notification;
     }
+
 }

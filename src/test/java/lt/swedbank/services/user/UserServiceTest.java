@@ -3,6 +3,7 @@ package lt.swedbank.services.user;
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
+import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.user.NonColleagueResponse;
 import lt.swedbank.beans.response.user.UserEntityResponse;
 import lt.swedbank.beans.response.user.UserResponse;
@@ -23,7 +24,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.HashSet;
 import java.util.List;
 
-import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -85,7 +86,8 @@ public class UserServiceTest {
         testUserSkill = new UserSkill();
         testUserSkill.setId(Integer.toUnsignedLong(0));
         testUserSkill.setUser(testUser);
-        testUserSkill.setSkill(new Skill("Test Skill"));
+        testUserSkill.setSkill(TestHelper.skills.get(6));
+        testUserSkill.addUserSkillLevel(TestHelper.createUserSkillLevel(testUserSkill, TestHelper.skillLevels.get(0)));
 
 
 
@@ -125,13 +127,15 @@ public class UserServiceTest {
 
     @Test
     public void add_skill_to_user_success() {
-        UserSkill testUserSkill = mock(UserSkill.class);
+        User testAddSkillUser = testUserList.get(3);
+
         Mockito.when(userSkillService.addUserSkill(any(), any())).thenReturn(testUserSkill);
-        Mockito.when(userRepository.findOne(testUser.getId())).thenReturn(testUser);
+        Mockito.when(userRepository.findOne(testUser.getId())).thenReturn(testAddSkillUser);
 
 
         User user = userService.addUserSkill(testUser.getId(), testAddSkillRequest);
-        assertEquals(user, testUser);
+        assertEquals(user, testAddSkillUser);
+        assertEquals(user.getUserSkills().get(user.getUserSkills().size() - 1), testUserSkill);
 
         verify(userService, times(1)).getUserById(testUser.getId());
         verify(userSkillService, times(1)).addUserSkill(any(), any());
@@ -146,13 +150,18 @@ public class UserServiceTest {
 
     @Test
     public void remove_skill_from_user() {
+        User testRemoveSkillUser = testUserList.get(3);
+
         Mockito.when(userSkillService.removeUserSkill(any(), any())).thenReturn(testUserSkill);
-        doReturn(testUser).when(userService).getUserById(any());
+        doReturn(testRemoveSkillUser).when(userService).getUserById(any());
 
-        User resultUser = userService.removeUserSkill(anyLong(), any());
-        assertEquals(testUser, resultUser);
+        RemoveSkillRequest removeSkillRequest = new RemoveSkillRequest(testUserSkill);
 
-        verify(userService, times(1)).getUserById(testUser.getId());
+        User resultUser = userService.removeUserSkill(testRemoveSkillUser.getId(), removeSkillRequest);
+        assertEquals(testRemoveSkillUser, resultUser);
+        Assert.assertThat(resultUser.getUserSkills(), not(hasItem(testUserSkill)));
+
+        verify(userService, times(1)).getUserById(testRemoveSkillUser.getId());
         verify(userSkillService, times(1)).removeUserSkill(any(), any());
     }
 
@@ -194,10 +203,8 @@ public class UserServiceTest {
         doReturn(colleagueUser).when(userService).getUserById(any());
         doReturn(loggedUser).when(userService).getUserByAuthId(any());
 
-
         UserResponse testEntity = new UserEntityResponse(colleagueUser);
         UserResponse resultEntity = userService.getUserProfile(any(), any());
-
 
         assertEquals(resultEntity.getEmail(), testEntity.getEmail());
         assertThat(resultEntity, instanceOf(UserEntityResponse.class));

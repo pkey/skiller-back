@@ -1,15 +1,22 @@
 package lt.swedbank.beans.entity;
 
-import org.hibernate.annotations.CreationTimestamp;
+
+import lt.swedbank.beans.enums.Status;
+import lt.swedbank.exceptions.request.FalseRequestStatusException;
+
 
 import javax.persistence.*;
 
 @Entity
 public class RequestNotification  {
 
+    private Status status = Status.pending;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    private boolean isNewNotification = true;
 
     @ManyToOne
     private User receiver;
@@ -49,4 +56,34 @@ public class RequestNotification  {
         this.id = id;
     }
 
+    public Status getStatus() {
+        return status;
+    }
+
+    public final void setApproved() {
+        this.status = Status.approved;
+    }
+
+    public final void setDisapproved() {
+        this.status = Status.disapproved;
+    }
+
+    public final void setPending() {
+        this.status = Status.pending;
+    }
+
+    public final void setExpired() { this.status = Status.expired; }
+
+    public boolean isNewNotification() {
+        return isNewNotification;
+    }
+
+    public void setNewNotification (boolean newNotification) {
+        isNewNotification = newNotification;
+    }
+
+    public final String getStatusAsString() {
+        return status.toString();
+    }
 }
+

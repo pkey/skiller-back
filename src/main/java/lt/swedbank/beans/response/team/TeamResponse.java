@@ -100,4 +100,12 @@ public class TeamResponse {
     public void setUsers(List<UserWithoutTeamResponse> users) {
         this.users = users;
     }
+
+    public List<TeamSkillTemplateResponse> getSkillTemplate() {
+        return skillTemplate;
+    }
+
+    public void setSkillTemplate(List<TeamSkillTemplateResponse> skillTemplate) {
+        this.skillTemplate = skillTemplate;
+    }
 }

@@ -6,7 +6,6 @@ import lt.swedbank.beans.response.TeamSkillTemplateResponse;
 import lt.swedbank.beans.response.team.TeamResponse;
 import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewResponse;
 import lt.swedbank.beans.response.team.teamOverview.NonColleagueTeamOverviewResponse;
-import lt.swedbank.exceptions.skillTemplate.NoSkillTemplateFoundException;
 import lt.swedbank.exceptions.team.TeamNameAlreadyExistsException;
 import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.repositories.SkillTemplateRepository;
@@ -41,8 +40,7 @@ public class TeamService {
         List<TeamResponse> TeamResponses = new ArrayList<>();
 
         for (Team team : teamRepository.findAll()) {
-            TeamResponses.add(new ColleagueTeamOverviewResponse(team));
-            teamOverviewResponses.add(new ColleagueTeamOverviewResponse(team, getTeamSkillTemplateResponseList(team)));
+            TeamResponses.add(new ColleagueTeamOverviewResponse(team, getTeamSkillTemplateResponseList(team)));
         }
 
         return TeamResponses;
@@ -86,10 +84,12 @@ public class TeamService {
 
     public List<TeamSkillTemplateResponse> getTeamSkillTemplateResponseList(Team team){
         List<TeamSkillTemplateResponse> teamSkillTemplateResponseList = new ArrayList<>();
+
         if(getTeamSkillTemplate(team)== null)
         {
-            throw new NoSkillTemplateFoundException();
+            return new ArrayList<>();
         }
+
         for (Skill skill: getTeamSkillTemplate(team).getSkills()
              ) {
             TeamSkillTemplateResponse teamSkillTemplateResponse =

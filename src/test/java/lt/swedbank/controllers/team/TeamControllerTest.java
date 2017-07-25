@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
@@ -49,9 +50,9 @@ public class TeamControllerTest {
     private AuthenticationService authenticationService;
 
     //Test Data
-    List<User> testUsers;
-    User testUser;
-    TeamResponse testTeamOverviewResponse;
+    private List<User> testUsers;
+    private User testUser;
+    private TeamResponse testTeamOverviewResponse;
 
     @Before
     public void setUp() throws Exception {
@@ -67,7 +68,7 @@ public class TeamControllerTest {
 
     @Test
     public void getMyTeam() throws Exception {
-        testTeamOverviewResponse = new ColleagueTeamOverviewResponse(testUser.getTeam());
+        testTeamOverviewResponse = new ColleagueTeamOverviewResponse(testUser.getTeam(), new ArrayList<>());
 
         Mockito.when(userService.getUserByAuthId(any())).thenReturn(testUser);
         Mockito.when(teamService.getMyTeam(testUser.getId())).thenReturn(testTeamOverviewResponse);
@@ -87,7 +88,7 @@ public class TeamControllerTest {
 
     @Test
     public void getTeamOverviewOfColleaguesTeam() throws Exception {
-        testTeamOverviewResponse = new ColleagueTeamOverviewResponse(testUser.getTeam());
+        testTeamOverviewResponse = new ColleagueTeamOverviewResponse(testUser.getTeam(), new ArrayList<>());
 
         Mockito.when(userService.getUserByAuthId(any())).thenReturn(testUser);
         Mockito.when(teamService.getTeamOverview(testUser.getTeam().getId(), testUser.getId())).thenReturn(testTeamOverviewResponse);

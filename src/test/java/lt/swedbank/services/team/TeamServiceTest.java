@@ -7,7 +7,6 @@ import lt.swedbank.beans.response.team.TeamResponse;
 import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewResponse;
 import lt.swedbank.beans.response.team.teamOverview.NonColleagueTeamOverviewResponse;
 import lt.swedbank.beans.response.user.UserResponse;
-import lt.swedbank.exceptions.skillTemplate.NoSkillTemplateFoundException;
 import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.repositories.SkillTemplateRepository;
@@ -116,9 +115,10 @@ public class TeamServiceTest {
                 teamService.getTeamSkillTemplateResponseList(any()).get(0).getSkill().getTitle() );
     }
 
-    @Test(expected = NoSkillTemplateFoundException.class)
-    public void getTeamSkillTemplateResponseListException(){
-        teamService.getTeamSkillTemplateResponseList(any());
+    @Test
+    public void getTeamSkillTemplateResponseListException() throws Exception {
+        List<TeamSkillTemplateResponse> teamSkillTemplateResponses = teamService.getTeamSkillTemplateResponseList(any());
+        Assert.assertEquals(teamSkillTemplateResponses.isEmpty(), true);
     }
 
     @Test(expected = TeamNotFoundException.class)

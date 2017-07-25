@@ -2,6 +2,7 @@ package lt.swedbank.beans.response.team;
 
 
 import lt.swedbank.beans.entity.Team;
+import lt.swedbank.beans.response.TeamSkillTemplateResponse;
 import lt.swedbank.beans.response.department.DepartmentResponse;
 import lt.swedbank.beans.response.division.DivisionResponse;
 import lt.swedbank.beans.response.user.UserEntityResponse;
@@ -24,7 +25,22 @@ public class TeamResponse {
 
     protected List<UserResponse> users;
 
+    protected List<TeamSkillTemplateResponse> skillTemplate;
+
     public TeamResponse() {
+    }
+
+    public TeamResponse(Team team, List<TeamSkillTemplateResponse> teamSkillTemplateResponses) {
+        this.id = team.getId();
+        this.name = team.getName();
+        this.department = new DepartmentResponse(team.getDepartment());
+        this.division = new DivisionResponse(team.getDepartment().getDivision());
+        this.valueStream = ((valueStream == null) || (team.getValueStream()) == null) ? null
+                : new ValueStreamResponse(team.getValueStream());
+        this.users = ((null == users) || (team.getUsers() == null)) ? new ArrayList<>() :
+                team.getUsers().stream().map(UserEntityResponse::new).collect(Collectors.toList());
+        this.skillTemplate = ((null == users) || (team.getSkillTemplate() == null)) ? null :
+                teamSkillTemplateResponses;
     }
 
     public TeamResponse(Team team) {
@@ -36,6 +52,7 @@ public class TeamResponse {
                 : new ValueStreamResponse(team.getValueStream());
         this.users = ((null == users) || (team.getUsers() == null)) ? new ArrayList<>() :
                 team.getUsers().stream().map(UserEntityResponse::new).collect(Collectors.toList());
+        this.skillTemplate = new ArrayList<>();
     }
 
     public Long getId() {

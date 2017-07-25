@@ -43,7 +43,7 @@ public class ApprovalService {
     public ApprovalRequest addDefaultApprovalRequest(UserSkillLevel userSkillLevel) {
         ApprovalRequest defaultApprovalRequest = new ApprovalRequest();
         defaultApprovalRequest.setUserSkillLevel(userSkillLevel);
-        defaultApprovalRequest.setStatus(Status.APPROVED);
+        defaultApprovalRequest.setApproved();
         return approvalRequestRepository.save(defaultApprovalRequest);
     }
 
@@ -176,7 +176,7 @@ public class ApprovalService {
             Disapprover disapprover = new Disapprover(user, message);
             saveDisapprover(disapprover);
             approvalRequest.addDisapprover(disapprover);
-            approvalRequest.setStatus(Status.DISAPPROVED);
+            approvalRequest.setDisapproved();
             notificationService.setNotificationsAsExpired(approvalRequest.getRequestNotifications());
         }
         return approvalRequestRepository.save(approvalRequest);

@@ -25,7 +25,7 @@ public class UserSkillLevel {
 
     private String motivation;
 
-    private Status status = Status.APPROVED;
+    private Status status = Status.PENDING;
 
     @CreationTimestamp
     private Date validFrom;

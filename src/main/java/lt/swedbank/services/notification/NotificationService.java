@@ -61,21 +61,24 @@ public class NotificationService {
     }
 
     public NotificationResponse handleRequest(NotificationAnswerRequest notificationAnswerRequest , User user) {
-
-
+        
         RequestNotification requestNotification = getNotificationById(notificationAnswerRequest.getNotificationId());
         ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(requestNotification);
-
-        changeNotificationRequestStatus(requestNotification, notificationAnswerRequest.getApproved());
         switch (approvalRequest.getStatus()) {
             case PENDING:
+                changeNotificationRequestStatus(requestNotification, notificationAnswerRequest.getApproved());
                 switch (notificationAnswerRequest.getApproved()) {
                     case 1:
                         requestNotification = approve(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
+                        break;
                     case -1:
                         requestNotification = disapprove(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
+                        break;
+                    default:
+                        break;
                 }
                 removeRequestNotification(approvalRequest, requestNotification);
+                break;
             case APPROVED:
                 return new RequestApprovedNotificationResponse(requestNotification);
             case DISAPPROVED:
@@ -90,10 +93,13 @@ public class NotificationService {
         {
             case 1:
                 requestNotification.setApproved();
+                break;
             case -1:
                 requestNotification.setDisapproved();
+                break;
             default:
                 requestNotification.setPending();
+                break;
         }
         requestNotificationRepository.save(requestNotification);
     }
@@ -107,6 +113,7 @@ public class NotificationService {
         }
         return requestNotification;
     }
+
 
     public RequestNotification disapprove(ApprovalRequest approvalRequest, RequestNotification requestNotification, User user, String message) {
 

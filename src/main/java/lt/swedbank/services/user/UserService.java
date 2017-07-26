@@ -89,7 +89,7 @@ public class UserService {
 
         List<User> userList = new ArrayList<>(userSearchRepository.search(query));
 
-        Collections.sort(userList, Comparator.comparing(User::getFullName));
+        userList.sort(Comparator.comparing(User::toString));
 
         return userList;
     }

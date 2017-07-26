@@ -62,7 +62,7 @@ public class TeamService {
         Team team = getTeamById(teamId);
         List<User> userList = team.getUsers();
 
-        Collections.sort(userList, Comparator.comparing(User::getFullName));
+        userList.sort(Comparator.comparing(User::toString));
 
         team.setUsers(userList);
 
@@ -83,7 +83,7 @@ public class TeamService {
         Team team = getTeamById(user.getTeam().getId());
         List<User> userList = team.getUsers();
 
-        Collections.sort(userList, Comparator.comparing(User::getFullName));
+        userList.sort(Comparator.comparing(User::toString));
 
         team.setUsers(userList);
 

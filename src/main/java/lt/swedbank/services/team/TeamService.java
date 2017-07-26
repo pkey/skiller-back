@@ -6,6 +6,7 @@ import lt.swedbank.beans.response.TeamSkillTemplateResponse;
 import lt.swedbank.beans.response.team.TeamResponse;
 import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewResponse;
 import lt.swedbank.beans.response.team.teamOverview.NonColleagueTeamOverviewResponse;
+import lt.swedbank.comparators.UserByFullNameComparator;
 import lt.swedbank.exceptions.team.TeamNameAlreadyExistsException;
 import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.repositories.SkillTemplateRepository;
@@ -74,6 +75,11 @@ public class TeamService {
     public TeamResponse getMyTeam(Long currentUserId) {
         User user = userService.getUserById(currentUserId);
         Team team = getTeamById(user.getTeam().getId());
+        List<User> userList = team.getUsers();
+
+        userList.sort(new UserByFullNameComparator());
+        team.setUsers(userList);
+
         return new ColleagueTeamOverviewResponse(team, getTeamSkillTemplateResponseList(team));
     }
 

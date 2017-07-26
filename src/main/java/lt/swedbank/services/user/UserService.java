@@ -10,6 +10,7 @@ import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.user.NonColleagueResponse;
 import lt.swedbank.beans.response.user.UserEntityResponse;
 import lt.swedbank.beans.response.user.UserResponse;
+import lt.swedbank.comparators.UserByFullNameComparator;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.repositories.UserRepository;
 import lt.swedbank.repositories.search.UserSearchRepository;
@@ -19,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 
@@ -88,17 +88,7 @@ public class UserService {
 
         List<User> userList = new ArrayList<>(userSearchRepository.search(query));
 
-
-        userList.sort(new Comparator<User>() {
-            @Override
-            public int compare(User o1, User o2) {
-                if (o1.getName().compareTo(o2.getName()) == 0){
-                    return o1.getLastName().compareTo(o2.getLastName());
-                } else {
-                    return o1.getName().compareTo(o2.getName());
-                }
-            }
-        });
+        userList.sort(new UserByFullNameComparator());
 
        return userList;
     }

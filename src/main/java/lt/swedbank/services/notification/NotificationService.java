@@ -66,18 +66,7 @@ public class NotificationService {
         ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(requestNotification);
         switch (approvalRequest.getStatus()) {
             case PENDING:
-                changeNotificationRequestStatus(requestNotification, notificationAnswerRequest.getApproved());
-                switch (notificationAnswerRequest.getApproved()) {
-                    case 1:
-                        requestNotification = approve(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
-                        break;
-                    case -1:
-                        requestNotification = disapprove(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
-                        break;
-                    default:
-                        break;
-                }
-                removeRequestNotification(approvalRequest, requestNotification);
+                requestNotification = changeNotificationRequestStatus(approvalRequest, requestNotification, user, notificationAnswerRequest);
                 break;
             case APPROVED:
                 return new RequestApprovedNotificationResponse(requestNotification);
@@ -87,28 +76,25 @@ public class NotificationService {
         return new RequestNotificationResponse(requestNotification);
     }
 
-    private void changeNotificationRequestStatus(RequestNotification requestNotification, Integer status) {
-        requestNotification.setNewNotification(false);
-        switch (status)
-        {
+    private RequestNotification changeNotificationRequestStatus(ApprovalRequest approvalRequest, RequestNotification requestNotification, User user, NotificationAnswerRequest notificationAnswerRequest) {
+        requestNotification.setPending();
+        switch (notificationAnswerRequest.getApproved()) {
             case 1:
-                requestNotification.setApproved();
+                requestNotification = approve(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
                 break;
             case -1:
-                requestNotification.setDisapproved();
+                requestNotification = disapprove(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
                 break;
             default:
-                requestNotification.setPending();
                 break;
         }
-        requestNotificationRepository.save(requestNotification);
+        return requestNotificationRepository.save(requestNotification);
     }
 
     public RequestNotification approve(ApprovalRequest approvalRequest, RequestNotification requestNotification, User user, String message) {
-
+        requestNotification.setApproved();
         Integer approves = approvalService.approve(message, approvalRequest, user).getApproves();
         if (approves >= 5) {
-            requestNotification.setApproved();
             sendNotificationAboutSkillLevelStatusChanges(approvalRequest);
         }
         return requestNotification;
@@ -116,7 +102,7 @@ public class NotificationService {
 
 
     public RequestNotification disapprove(ApprovalRequest approvalRequest, RequestNotification requestNotification, User user, String message) {
-
+        requestNotification.setDisapproved();
         approvalService.disapprove(message, approvalRequest, user);
         sendNotificationAboutSkillLevelStatusChanges(approvalRequest);
         return requestNotification;
@@ -153,12 +139,6 @@ public class NotificationService {
 
     public void deleteNotifications(ApprovalRequest request) {
         requestNotificationRepository.delete(request.getRequestNotifications());
-    }
-
-    public RequestNotification removeRequestNotification(ApprovalRequest approvalRequest, RequestNotification notification) {
-
-        approvalService.update(approvalRequest);
-        return notification;
     }
 
 }

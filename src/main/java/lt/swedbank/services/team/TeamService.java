@@ -59,6 +59,11 @@ public class TeamService {
     public TeamResponse getTeamOverview(Long teamId, Long currentUserId) {
         User user = userService.getUserById(currentUserId);
         Team team = getTeamById(teamId);
+        List<User> userList = team.getUsers();
+
+        userList.sort(new UserByFullNameComparator());
+        team.setUsers(userList);
+
 
         if(user.getTeam() == null)
         {

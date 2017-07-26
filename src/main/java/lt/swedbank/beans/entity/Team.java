@@ -21,7 +21,7 @@ public class Team {
     @ManyToOne
     private ValueStream valueStream;
 
-    @OneToOne
+    @OneToOne(mappedBy = "team")
     private SkillTemplate skillTemplate;
 
     public Team() {

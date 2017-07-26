@@ -161,4 +161,8 @@ public class User {
         this.setLastName(lastName.substring(0, 1).toUpperCase() + lastName.substring(1));
     }
 
+    public String getFullName() {
+        return getName() + " " + getLastName();
+    }
+
 }

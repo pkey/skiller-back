@@ -6,7 +6,6 @@ import lt.swedbank.beans.response.TeamSkillTemplateResponse;
 import lt.swedbank.beans.response.team.TeamResponse;
 import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewResponse;
 import lt.swedbank.beans.response.team.teamOverview.NonColleagueTeamOverviewResponse;
-import lt.swedbank.comparators.UserByFullNameComparator;
 import lt.swedbank.exceptions.team.TeamNameAlreadyExistsException;
 import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.repositories.SkillTemplateRepository;
@@ -17,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -61,9 +62,9 @@ public class TeamService {
         Team team = getTeamById(teamId);
         List<User> userList = team.getUsers();
 
-        userList.sort(new UserByFullNameComparator());
-        team.setUsers(userList);
+        Collections.sort(userList, Comparator.comparing(User::getFullName));
 
+        team.setUsers(userList);
 
         if(user.getTeam() == null)
         {
@@ -82,7 +83,8 @@ public class TeamService {
         Team team = getTeamById(user.getTeam().getId());
         List<User> userList = team.getUsers();
 
-        userList.sort(new UserByFullNameComparator());
+        Collections.sort(userList, Comparator.comparing(User::getFullName));
+
         team.setUsers(userList);
 
         return new ColleagueTeamOverviewResponse(team, getTeamSkillTemplateResponseList(team));

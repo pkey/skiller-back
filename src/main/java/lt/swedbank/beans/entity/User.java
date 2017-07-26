@@ -123,7 +123,7 @@ public class User {
     }
 
     public void setUserSkill(UserSkill userSkill) {
-        if(userSkills == null){
+        if (userSkills == null) {
             this.userSkills = new ArrayList<>();
         }
         this.userSkills.add(userSkill);
@@ -138,15 +138,14 @@ public class User {
     }
 
     public Department getDepartment() {
-        if (team != null){
+        if (team != null) {
             return team.getDepartment();
         } else {
             return null;
         }
     }
 
-    public void sortSkillsBySkillLevel()
-    {
+    public void sortSkillsBySkillLevel() {
         userSkills.sort(new Comparator<UserSkill>() {
             @Override
             public int compare(UserSkill o1, UserSkill o2) {
@@ -161,7 +160,8 @@ public class User {
         this.setLastName(lastName.substring(0, 1).toUpperCase() + lastName.substring(1));
     }
 
-    public String getFullName() {
+    @Override
+    public String toString() {
         return getName() + " " + getLastName();
     }
 

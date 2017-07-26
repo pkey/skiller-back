@@ -6,17 +6,21 @@ import lt.swedbank.beans.response.TeamSkillTemplateResponse;
 import lt.swedbank.beans.response.team.TeamResponse;
 import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewResponse;
 import lt.swedbank.beans.response.team.teamOverview.NonColleagueTeamOverviewResponse;
+import lt.swedbank.beans.response.user.UserWithSkillsResponse;
 import lt.swedbank.exceptions.team.TeamNameAlreadyExistsException;
 import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.repositories.SkillTemplateRepository;
 import lt.swedbank.repositories.TeamRepository;
 import lt.swedbank.services.department.DepartmentService;
+import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Service
 public class TeamService {
@@ -29,6 +33,8 @@ public class TeamService {
     private SkillTemplateRepository skillTemplateRepository;
     @Autowired
     private DepartmentService departmentService;
+    @Autowired
+    private UserSkillService userSkillService;
 
 
     public Iterable<Team> getAllTeams() {
@@ -40,7 +46,7 @@ public class TeamService {
         List<TeamResponse> TeamResponses = new ArrayList<>();
 
         for (Team team : teamRepository.findAll()) {
-            TeamResponses.add(new ColleagueTeamOverviewResponse(team, getTeamSkillTemplateResponseList(team)));
+            TeamResponses.add(new ColleagueTeamOverviewResponse(team,getUserWithSkillResponseList(team.getUsers()), getTeamSkillTemplateResponseList(team)));
         }
 
         return TeamResponses;
@@ -61,20 +67,25 @@ public class TeamService {
 
         if(user.getTeam() == null)
         {
-            return new NonColleagueTeamOverviewResponse(team, getTeamSkillTemplateResponseList(team));
+            return new NonColleagueTeamOverviewResponse(team,getUserWithSkillResponseList(team.getUsers()), getTeamSkillTemplateResponseList(team));
         }
 
         if(user.getTeam().getDepartment().getId().equals(team.getDepartment().getId()))
-            return new ColleagueTeamOverviewResponse(team, getTeamSkillTemplateResponseList(team));
+            return new ColleagueTeamOverviewResponse(team,getUserWithSkillResponseList(team.getUsers()), getTeamSkillTemplateResponseList(team));
         else
-            return new NonColleagueTeamOverviewResponse(team, getTeamSkillTemplateResponseList(team));
+            return new NonColleagueTeamOverviewResponse(team,getUserWithSkillResponseList(team.getUsers()), getTeamSkillTemplateResponseList(team));
+    }
+
+    public List<UserWithSkillsResponse> getUserWithSkillResponseList(List<User> users)
+    {
+        return users.stream().map(user -> new UserWithSkillsResponse(user, userSkillService.getNormalUserSkillResponseList(user.getUserSkills()))).collect(Collectors.toList());
     }
 
 
     public TeamResponse getMyTeam(Long currentUserId) {
         User user = userService.getUserById(currentUserId);
         Team team = getTeamById(user.getTeam().getId());
-        return new ColleagueTeamOverviewResponse(team, getTeamSkillTemplateResponseList(team));
+        return new ColleagueTeamOverviewResponse(team,getUserWithSkillResponseList(team.getUsers()), getTeamSkillTemplateResponseList(team));
     }
 
     public SkillTemplate getTeamSkillTemplate(Team team)
@@ -110,7 +121,7 @@ public class TeamService {
                     ) {
                 if(userSkill.getSkill().equals(skill)) {
                     counter++;
-                    sum+=userSkill.getCurrentSkillLevel().getSkillLevel().getLevel();
+                    sum+=userSkillService.getCurrentSkillLevel(userSkill).getSkillLevel().getLevel();
                 }
             }
         }
@@ -147,7 +158,7 @@ public class TeamService {
         if (teamRepository.findByName(addTeamRequest.getName()) != null)
             throw new TeamNameAlreadyExistsException();
 
-        return new TeamResponse(teamRepository.save(team));
+        return new TeamResponse(teamRepository.save(team), getUserWithSkillResponseList(team.getUsers()), getTeamSkillTemplateResponseList(team));
     }
 
 }

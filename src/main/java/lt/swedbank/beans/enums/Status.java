@@ -1,9 +1,10 @@
 package lt.swedbank.beans.enums;
 
 public enum Status {
-    NEW,
-    PENDING,
     DISAPPROVED,
+    PENDING,
     APPROVED,
-    EXPIRED,
+    NEW,
+    EXPIRED;
+
 }

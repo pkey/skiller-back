@@ -8,7 +8,8 @@ import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.user.NonColleagueResponse;
-import lt.swedbank.beans.response.user.UserEntityResponse;
+import lt.swedbank.beans.response.user.NonColleagueWithTeamResponse;
+import lt.swedbank.beans.response.user.UserWithSkillsResponse;
 import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.repositories.UserRepository;
@@ -120,10 +121,10 @@ public class UserService {
         if(requiredUser.getDepartment() != null && currentUser.getDepartment() != null) {
             if(usersInSameDepartment(currentUser, requiredUser))
             {
-                return new UserEntityResponse(requiredUser);
+                return new UserWithSkillsResponse(requiredUser, userSkillService.getNormalUserSkillResponseList(requiredUser.getUserSkills()));
             }
         }
-        return new NonColleagueResponse(requiredUser);
+        return new NonColleagueWithTeamResponse(requiredUser, userSkillService.getNonColleagueUserSkillResponseList(requiredUser.getUserSkills()));
     }
 
     public User addUserSkill(Long userId, AddSkillRequest addSkillRequest) throws UserNotFoundException {
@@ -181,4 +182,5 @@ public class UserService {
         }
         return allUsers;
     }
+
 }

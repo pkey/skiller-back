@@ -48,14 +48,11 @@ public class User {
     }
 
     public User(RegisterUserRequest registerUserRequest) {
-
         setName(registerUserRequest.getName());
         setLastName(registerUserRequest.getLastName());
         setConnection(registerUserRequest.getConnection());
         setEmail(registerUserRequest.getEmail());
         setPassword(registerUserRequest.getPassword());
-        capitalizeUserNameAndLastName();
-
     }
 
     public Long getId() {
@@ -144,21 +141,4 @@ public class User {
             return null;
         }
     }
-
-    public void sortSkillsBySkillLevel()
-    {
-        userSkills.sort(new Comparator<UserSkill>() {
-            @Override
-            public int compare(UserSkill o1, UserSkill o2) {
-                return o1.getCurrentSkillLevel().getSkillLevel().compareTo(o2.getCurrentSkillLevel().getSkillLevel());
-            }
-        });
-    }
-
-
-    private void capitalizeUserNameAndLastName() {
-        this.setName(name.substring(0, 1).toUpperCase() + name.substring(1));
-        this.setLastName(lastName.substring(0, 1).toUpperCase() + lastName.substring(1));
-    }
-
 }

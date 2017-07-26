@@ -67,6 +67,7 @@ public class UserSkillLevelService {
                 skillLevelService.getByLevel(assignSkillLevelRequest.getLevelId()));
 
         userSkillLevel.setMotivation(assignSkillLevelRequest.getMotivation());
+        userSkillLevel.setPending();
 
         return userSkillLevelRepository.save(userSkillLevel);
     }

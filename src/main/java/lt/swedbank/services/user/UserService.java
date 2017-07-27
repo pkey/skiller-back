@@ -156,8 +156,7 @@ public class UserService {
     public User assignTeam(final Long userId, final AssignTeamRequest assignTeamRequest) {
         User user = getUserById(userId);
         user.setTeam(teamService.getTeamById(assignTeamRequest.getTeamId()));
-        userRepository.save(user);
-        return user;
+        return userRepository.save(user);
     }
 
     private boolean usersInSameDepartment(User currentUser, User colleague){

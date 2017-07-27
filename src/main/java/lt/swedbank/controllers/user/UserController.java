@@ -108,6 +108,7 @@ public class UserController {
                                           @RequestBody AssignTeamRequest assignTeamRequest) {
         String authId = authService.extractAuthIdFromToken(authToken);
         User user = userService.getUserByAuthId(authId);
+        userService.assignTeam(user.getId(), assignTeamRequest);
         return new UserWithSkillsResponse(user, userSkillService.getNormalUserSkillResponseList(user.getUserSkills()));
     }
 

@@ -11,12 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-abstract public class UserSkillResponse  {
-    protected Long id;
-    protected String title;
+ public class UserSkillResponse  {
+     private Long id;
+     private String title;
 
-    protected List<VoteResponse> votes;
-    protected CurrentSkillLevelResponse level;
+     private List<VoteResponse> votes;
+     private CurrentSkillLevelResponse level;
 
     public UserSkillResponse(Skill skill) {
         id = skill.getId();

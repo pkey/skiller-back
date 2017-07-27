@@ -1,16 +1,13 @@
 package lt.swedbank.beans.response.team;
 
-
 import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.response.TeamSkillTemplateResponse;
 import lt.swedbank.beans.response.department.DepartmentResponse;
 import lt.swedbank.beans.response.division.DivisionResponse;
-import lt.swedbank.beans.response.user.UserWithSkillsResponse;
 import lt.swedbank.beans.response.valueStream.ValueStreamResponse;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class TeamResponse {
     protected Long id;
@@ -22,22 +19,19 @@ public class TeamResponse {
 
     protected ValueStreamResponse valueStream;
 
-    protected List<UserWithSkillsResponse> users;
-
     protected List<TeamSkillTemplateResponse> skillTemplate;
 
-    public TeamResponse(Team team, List<UserWithSkillsResponse> usersWithSkills, List<TeamSkillTemplateResponse> teamSkillTemplateResponses) {
+    public TeamResponse(Team team, List<TeamSkillTemplateResponse> teamSkillTemplateResponses) {
         this.id = team.getId();
         this.name = team.getName();
         this.department = new DepartmentResponse(team.getDepartment());
         this.division = new DivisionResponse(team.getDepartment().getDivision());
         this.valueStream = team.getValueStream() == null ? null : new ValueStreamResponse(team.getValueStream());
-        this.users =  usersWithSkills;
         this.skillTemplate =  teamSkillTemplateResponses;
     }
 
-    public TeamResponse(Team team, List<UserWithSkillsResponse> usersWithSkills) {
-        this(team, usersWithSkills, new ArrayList<>());
+    public TeamResponse(Team team) {
+        this(team, new ArrayList<>());
     }
 
     public Long getId() {
@@ -78,14 +72,6 @@ public class TeamResponse {
 
     public void setValueStream(ValueStreamResponse valueStream) {
         this.valueStream = valueStream;
-    }
-
-    public List<UserWithSkillsResponse> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<UserWithSkillsResponse> users) {
-        this.users = users;
     }
 
     public List<TeamSkillTemplateResponse> getSkillTemplate() {

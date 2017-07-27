@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 
 @Configuration
-@EnableWebSecurity
 @PropertySources({
         @PropertySource("classpath:application.properties"),
         @PropertySource("classpath:auth0.properties")
@@ -31,7 +30,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .forRS256(audience, issuer)
                 .configure(http)
                 .authorizeRequests()
-                .antMatchers("/login", "/register", "user/search").permitAll();
+                .antMatchers("/*", "/login", "/register", "user/search").permitAll();
        //         .antMatchers("/notification/post", "/notification/all" , "/user/get", "/user/skill/add", "/user/skill/remove", "/user/all", "/user/team", "user/profile/{id}").authenticated();
     }
 }

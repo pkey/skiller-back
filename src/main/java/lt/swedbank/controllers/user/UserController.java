@@ -5,7 +5,6 @@ import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.*;
 import lt.swedbank.beans.response.VoteResponse;
-import lt.swedbank.beans.response.user.UserWithSkillsAndTeamResponse;
 import lt.swedbank.beans.response.user.UserWithSkillsResponse;
 import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.beans.response.userSkill.NormalUserSkillResponse;
@@ -41,7 +40,7 @@ public class UserController {
     public @ResponseBody
     UserWithSkillsResponse getUser(@RequestHeader(value = "Authorization") String authToken) {
         String authId = authService.extractAuthIdFromToken(authToken);
-        return new UserWithSkillsAndTeamResponse(userService.getUserByAuthId(authId), userSkillService.getProfileUserSkills(userService.getUserByAuthId(authId).getUserSkills()));
+        return new UserWithSkillsResponse(userService.getUserByAuthId(authId), userSkillService.getProfileUserSkills(userService.getUserByAuthId(authId).getUserSkills()));
     }
 
     @RequestMapping(value = "/profile/{id}", method = RequestMethod.GET)

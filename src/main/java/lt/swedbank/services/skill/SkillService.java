@@ -82,10 +82,11 @@ public class SkillService {
     public List<Skill> getSkillsByIds(List<Long> skillsId) {
         assert skillsId != null;
 
-        List<Skill> skills = skillsId.stream().map(
-                skill -> {
+        List<Skill> skills = skillsId.stream()
+                .map(skill -> {
                     return getSkillById(skill);
-                }).collect(Collectors.toList());
+                })
+                .collect(Collectors.toList());
 
 
         return skills;

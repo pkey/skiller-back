@@ -1,8 +1,10 @@
 package lt.swedbank.services.department;
 
 import lt.swedbank.beans.entity.Department;
+import lt.swedbank.beans.entity.ValueStream;
 import lt.swedbank.beans.response.DepartmentEntityResponse;
 import lt.swedbank.repositories.DepartmentRepository;
+import lt.swedbank.repositories.ValueStreamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ public class DepartmentService {
 
     @Autowired
     private DepartmentRepository departmentRepository;
+    @Autowired
+    private ValueStreamRepository valueStreamRepository;
 
     public Department getDepartmentById(Long id) {
         return departmentRepository.findOne(id);
@@ -30,5 +34,9 @@ public class DepartmentService {
             departmentList.add(new DepartmentEntityResponse(department));
         }
         return departmentList;
+    }
+
+    public ValueStream getValueStreamById(Long id) {
+        return valueStreamRepository.findOne(id);
     }
 }

@@ -19,6 +19,11 @@ public class SkillTemplate {
 
     public SkillTemplate() {}
 
+    public SkillTemplate(Team team, List<Skill> skills) {
+        this.team = team;
+        this.skills = skills;
+    }
+
     public Long getId() {
         return id;
     }

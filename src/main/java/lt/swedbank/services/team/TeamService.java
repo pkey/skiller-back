@@ -12,6 +12,7 @@ import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.repositories.SkillTemplateRepository;
 import lt.swedbank.repositories.TeamRepository;
 import lt.swedbank.services.department.DepartmentService;
+import lt.swedbank.services.skill.SkillService;
 import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,8 @@ public class TeamService {
     private DepartmentService departmentService;
     @Autowired
     private UserSkillService userSkillService;
+    @Autowired
+    private SkillService skillService;
 
 
     public Iterable<Team> getAllTeams() {
@@ -162,12 +165,19 @@ public class TeamService {
     public TeamResponse addTeam(AddTeamRequest addTeamRequest) {
         assert addTeamRequest != null;
 
+        if (teamRepository.findByName(addTeamRequest.getName()) != null) {
+            throw new TeamNameAlreadyExistsException();
+        }
+
         Team team = new Team(addTeamRequest.getName());
         team.setDepartment(departmentService.getDepartmentById(addTeamRequest.getDepartmentId()));
         team.setUsers(userService.getUsersByIds(addTeamRequest.getUserIds()));
+        team.setValueStream(departmentService.getValueStreamById(addTeamRequest.getStreamId()));
 
-        if (teamRepository.findByName(addTeamRequest.getName()) != null)
-            throw new TeamNameAlreadyExistsException();
+        teamRepository.save(team);
+
+        team.setSkillTemplate(skillService.createSkillTemplate(team, skillService.getSkillsByIds(addTeamRequest.getSkillsId())));
+
 
         return new TeamResponse(teamRepository.save(team), getUserWithSkillResponseList(team.getUsers()), getTeamSkillTemplateResponseList(team));
     }

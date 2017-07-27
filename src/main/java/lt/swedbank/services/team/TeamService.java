@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -86,6 +87,9 @@ public class TeamService {
 
     public List<UserWithSkillsResponse> getUserWithSkillResponseList(List<User> users)
     {
+        if (users == null ) {
+            return Collections.emptyList();
+        }
         return users.stream().map(user -> new UserWithSkillsResponse(user, userSkillService.getNormalUserSkillResponseList(user.getUserSkills()))).collect(Collectors.toList());
     }
 
@@ -171,15 +175,21 @@ public class TeamService {
 
         Team team = new Team(addTeamRequest.getName());
         team.setDepartment(departmentService.getDepartmentById(addTeamRequest.getDepartmentId()));
-        team.setUsers(userService.getUsersByIds(addTeamRequest.getUserIds()));
-        team.setValueStream(departmentService.getValueStreamById(addTeamRequest.getStreamId()));
+
+        if (addTeamRequest.getUserIds() != null) {
+            team.setUsers(userService.getUsersByIds(addTeamRequest.getUserIds()));
+        }
+        if (addTeamRequest.getStreamId() != null) {
+            team.setValueStream(departmentService.getValueStreamById(addTeamRequest.getStreamId()));
+        }
 
         teamRepository.save(team);
 
-        team.setSkillTemplate(skillService.createSkillTemplate(team, skillService.getSkillsByIds(addTeamRequest.getSkillsId())));
+        if (addTeamRequest.getSkillsId() != null) {
+            team.setSkillTemplate(skillService.createSkillTemplate(team, skillService.getSkillsByIds(addTeamRequest.getSkillsId())));
+        }
 
-
-        return new TeamResponse(teamRepository.save(team), getUserWithSkillResponseList(team.getUsers()), getTeamSkillTemplateResponseList(team));
+        return new TeamResponse(team, getUserWithSkillResponseList(team.getUsers()), getTeamSkillTemplateResponseList(team));
     }
 
 }

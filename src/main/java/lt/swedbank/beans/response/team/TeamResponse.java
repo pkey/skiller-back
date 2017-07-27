@@ -10,6 +10,7 @@ import lt.swedbank.beans.response.valueStream.ValueStreamResponse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class TeamResponse {
     protected Long id;
@@ -30,9 +31,7 @@ public class TeamResponse {
         this.name = team.getName();
         this.department = new DepartmentResponse(team.getDepartment());
         this.division = new DivisionResponse(team.getDepartment().getDivision());
-        assert team.getValueStream() == null : "Value stream is null";
-        this.valueStream =  new ValueStreamResponse(team.getValueStream());
-        assert usersWithSkills == null : "Users is null";
+        this.valueStream = team.getValueStream() == null ? null : new ValueStreamResponse(team.getValueStream());
         this.users =  usersWithSkills;
         this.skillTemplate =  teamSkillTemplateResponses;
     }

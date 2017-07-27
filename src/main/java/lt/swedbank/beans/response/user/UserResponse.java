@@ -8,7 +8,7 @@ import lt.swedbank.beans.response.userSkill.UserSkillResponse;
 
 import java.util.List;
 
-abstract public class UserResponse extends Response{
+public class UserResponse extends Response{
 
     protected Long id;
 
@@ -18,7 +18,7 @@ abstract public class UserResponse extends Response{
 
     protected  String email;
 
-    protected List<UserSkillResponse> skills;
+    protected List<? extends UserSkillResponse> skills;
 
 
     public UserResponse(User user) {
@@ -26,7 +26,6 @@ abstract public class UserResponse extends Response{
         name = user.getName();
         lastName = user.getLastName();
         email = user.getEmail();
-
     }
 
     public Long getId() {
@@ -62,11 +61,11 @@ abstract public class UserResponse extends Response{
     }
 
 
-    public List<UserSkillResponse> getSkills() {
+    public List<? extends UserSkillResponse> getSkills() {
         return skills;
     }
 
-    public void setSkills(List<UserSkillResponse> skills) {
+    public void setSkills(List<? extends UserSkillResponse> skills) {
         this.skills = skills;
     }
 

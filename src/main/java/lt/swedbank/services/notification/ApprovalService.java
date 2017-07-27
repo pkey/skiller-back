@@ -152,7 +152,7 @@ public class ApprovalService {
             removeDissapproverFromApprovalRequest(user, approvalRequest);
         }
 
-        if (approvalRequest.getStatus() == Status.PENDING && !isUserAlreadyApprovedReqest(user, approvalRequest)) {
+        if (!isUserAlreadyApprovedReqest(user, approvalRequest)) {
             Approver approver = new Approver(user, message);
             saveApprover(approver);
             approvalRequest.addApprover(approver);

@@ -14,8 +14,6 @@ public class RequestNotification  {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private boolean isNewNotification = true;
-
     @ManyToOne
     private User receiver;
 
@@ -71,14 +69,6 @@ public class RequestNotification  {
     }
 
     public final void setExpired() { this.status = Status.EXPIRED; }
-
-    public boolean isNewNotification() {
-        return isNewNotification;
-    }
-
-    public void setNewNotification (boolean newNotification) {
-        isNewNotification = newNotification;
-    }
 
     public final String getStatusAsString() {
         return status.toString();

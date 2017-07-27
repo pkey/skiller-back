@@ -10,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Indexed
-public class UserSkill implements Comparable<UserSkill> {
+public class UserSkill {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,9 +24,6 @@ public class UserSkill implements Comparable<UserSkill> {
 
     @OneToMany(mappedBy = "userSkill", orphanRemoval = true)
     private List<UserSkillLevel> userSkillLevels;
-
-    @OneToOne
-    private ApprovalRequest approvalRequest;
 
     public UserSkill() {
     }
@@ -75,44 +72,6 @@ public class UserSkill implements Comparable<UserSkill> {
     public void addUserSkillLevel(UserSkillLevel userSkillLevel) {
         if (userSkillLevels == null || userSkillLevels.isEmpty())
             userSkillLevels = new ArrayList<>();
-
         this.userSkillLevels.add(userSkillLevel);
-    }
-
-    public void sortUserSkillLevels() {
-        userSkillLevels.sort(new Comparator<UserSkillLevel>() {
-            @Override
-            public int compare(UserSkillLevel o1, UserSkillLevel o2) {
-                return o2.getValidFrom().compareTo(o1.getValidFrom());
-            }
-        });
-    }
-
-    public UserSkillLevel getCurentSkillLevelStatus() {
-        sortUserSkillLevels();
-        int i = 0;
-        UserSkillLevel currentUserSkillLevel;
-        do {
-            currentUserSkillLevel = userSkillLevels.get(i);
-        } while (userSkillLevels.get(i++).getStatus() == Status.DISAPPROVED);
-        return currentUserSkillLevel;
-    }
-
-    public UserSkillLevel getCurrentSkillLevel() {
-        sortUserSkillLevels();
-        UserSkillLevel currentUserSkillLevel = null;
-        int i = 0;
-        for (UserSkillLevel level : userSkillLevels
-                ) {
-            if (level.getStatus() == Status.APPROVED) {
-                currentUserSkillLevel = level;
-            }
-        }
-        return currentUserSkillLevel;
-    }
-
-    @Override
-    public int compareTo(UserSkill o) {
-        return this.getCurrentSkillLevel().getSkillLevel().compareTo(o.getCurrentSkillLevel().getSkillLevel());
     }
 }

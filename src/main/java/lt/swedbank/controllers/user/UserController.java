@@ -5,13 +5,14 @@ import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.*;
 import lt.swedbank.beans.response.VoteResponse;
-import lt.swedbank.beans.response.user.UserEntityResponse;
+import lt.swedbank.beans.response.user.UserWithSkillsAndTeamResponse;
+import lt.swedbank.beans.response.user.UserWithSkillsResponse;
 import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.beans.response.userSkill.NormalUserSkillResponse;
 import lt.swedbank.beans.response.userSkill.UserSkillResponse;
-import lt.swedbank.repositories.search.UserSearchRepository;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.notification.ApprovalService;
+import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.user.UserService;
 import lt.swedbank.services.vote.VoteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private AuthenticationService authService;
-
+    @Autowired
+    private UserSkillService userSkillService;
     @Autowired
     private VoteService voteService;
     @Autowired
@@ -37,9 +39,9 @@ public class UserController {
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public @ResponseBody
-    UserEntityResponse getUser(@RequestHeader(value = "Authorization") String authToken) {
+    UserWithSkillsResponse getUser(@RequestHeader(value = "Authorization") String authToken) {
         String authId = authService.extractAuthIdFromToken(authToken);
-        return new UserEntityResponse(userService.getUserByAuthId(authId));
+        return new UserWithSkillsAndTeamResponse(userService.getUserByAuthId(authId), userSkillService.getProfileUserSkills(userService.getUserByAuthId(authId).getUserSkills()));
     }
 
     @RequestMapping(value = "/profile/{id}", method = RequestMethod.GET)
@@ -61,26 +63,21 @@ public class UserController {
 
     @RequestMapping(value = "/skill/add", method = RequestMethod.POST)
     public @ResponseBody
-    UserEntityResponse addUserSkill(@Valid @RequestBody AddSkillRequest addSkillRequest,
-                                    @RequestHeader(value = "Authorization") String authToken) {
-        String authId = authService.extractAuthIdFromToken(authToken);
-        Long userId = userService.getUserByAuthId(authId).getId();
+    UserWithSkillsResponse addUserSkill(@Valid @RequestBody AddSkillRequest addSkillRequest,
+                                        @RequestHeader(value = "Authorization") String authToken) {
+        Long userId = userService.getUserByAuthId(authService.extractAuthIdFromToken(authToken)).getId();
         userService.addUserSkill(userId, addSkillRequest);
-
-        User userFromRepository = userService.getUserById(userId);
-
-
-        return new UserEntityResponse(userFromRepository);
+        return new UserWithSkillsResponse(userService.getUserById(userId), userSkillService.getNormalUserSkillResponseList(userService.getUserById(userId).getUserSkills()));
     }
 
     @RequestMapping(value = "/skill/remove", method = RequestMethod.POST)
     public @ResponseBody
-    UserEntityResponse assignUserSkillLevel(@Valid @RequestBody RemoveSkillRequest removeSkillRequest,
-                                            @RequestHeader(value = "Authorization") String authToken) {
+    UserWithSkillsResponse assignUserSkillLevel(@Valid @RequestBody RemoveSkillRequest removeSkillRequest,
+                                                @RequestHeader(value = "Authorization") String authToken) {
         String authId = authService.extractAuthIdFromToken(authToken);
-        Long userId = userService.getUserByAuthId(authId).getId();
+       User user = userService.getUserByAuthId(authId);
 
-        return new UserEntityResponse(userService.removeUserSkill(userId, removeSkillRequest));
+        return new UserWithSkillsResponse(user, userSkillService.getNormalUserSkillResponseList(user.getUserSkills()));
     }
 
     @RequestMapping(value = "/skill/level", method = RequestMethod.POST)
@@ -93,7 +90,7 @@ public class UserController {
         ApprovalRequest approvalRequest = approvalService.addSkillLevelApprovalRequestWithNotifications(userId, request);
         UserSkill userSkill = approvalRequest.getUserSkillLevel().getUserSkill();
 
-        return new NormalUserSkillResponse(userSkill);
+        return new NormalUserSkillResponse(userSkill.getSkill(), userSkillService.getCurrentSkillLevelStatus(userSkill));
     }
 
     @RequestMapping(value = "/skill/vote", method = RequestMethod.POST)
@@ -107,11 +104,11 @@ public class UserController {
 
     @RequestMapping(value = "/team", method = RequestMethod.PUT)
     public @ResponseBody
-    UserEntityResponse assignUserTeam(@RequestHeader(value = "Authorization") String authToken,
-                                      @RequestBody AssignTeamRequest assignTeamRequest) {
+    UserWithSkillsResponse assignUserTeam(@RequestHeader(value = "Authorization") String authToken,
+                                          @RequestBody AssignTeamRequest assignTeamRequest) {
         String authId = authService.extractAuthIdFromToken(authToken);
-        Long userId = userService.getUserByAuthId(authId).getId();
-        return new UserEntityResponse(userService.assignTeam(userId, assignTeamRequest));
+        User user = userService.getUserByAuthId(authId);
+        return new UserWithSkillsResponse(user, userSkillService.getNormalUserSkillResponseList(user.getUserSkills()));
     }
 
 }

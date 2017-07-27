@@ -89,7 +89,7 @@ public class TeamService {
     public List<UserWithSkillsResponse> getUserWithSkillResponseList(List<User> users)
     {
         if (users == null ) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
         return users.stream().map(user -> new UserWithSkillsResponse(user, userSkillService.getNormalUserSkillResponseList(user.getUserSkills()))).collect(Collectors.toList());
     }

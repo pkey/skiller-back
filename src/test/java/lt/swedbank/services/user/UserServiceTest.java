@@ -5,7 +5,6 @@ import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.user.NonColleagueResponse;
-import lt.swedbank.beans.response.user.UserEntityResponse;
 import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.helpers.TestHelper;

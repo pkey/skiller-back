@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SkillService {
@@ -81,10 +82,11 @@ public class SkillService {
     public List<Skill> getSkillsByIds(List<Long> skillsId) {
         assert skillsId != null;
 
-        List<Skill> skills = new ArrayList<>();
-        for (Long id : skillsId) {
-            skills.add(getSkillById(id));
-        }
+        List<Skill> skills = skillsId.stream().map(
+                skill -> {
+                    return getSkillById(skill);
+                }).collect(Collectors.toList());
+
 
         return skills;
     }

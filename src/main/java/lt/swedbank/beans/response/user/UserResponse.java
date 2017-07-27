@@ -23,16 +23,14 @@ public class UserResponse extends Response{
 
     protected List<? extends UserSkillResponse> skills;
 
-    protected Optional<TeamResponse> teamResponse;
+    protected TeamResponse team;
 
     public UserResponse(User user) {
         this.id = user.getId();
         this.name = user.getName();
         this.lastName = user.getLastName();
         this.email = user.getEmail();
-        if(Optional.ofNullable(user.getTeam()).isPresent()) {
-            this.teamResponse = Optional.of(new TeamResponse(user.getTeam()));
-        }
+        this.team = user.getTeam() == null ? null : new TeamResponse(user.getTeam());
     }
 
     public Long getId() {
@@ -76,11 +74,7 @@ public class UserResponse extends Response{
         this.skills = skills;
     }
 
-    public Optional<TeamResponse> getTeamResponse() {
-        return teamResponse;
-    }
-
-    public void setTeamResponse(Optional<TeamResponse> teamResponse) {
-        this.teamResponse = teamResponse;
+    public TeamResponse getTeam() {
+        return team;
     }
 }

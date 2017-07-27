@@ -35,4 +35,52 @@ public class TeamResponse {
     public TeamResponse(Team team) {
         this(team, new ArrayList<>());
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public DepartmentResponse getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(DepartmentResponse department) {
+        this.department = department;
+    }
+
+    public DivisionResponse getDivision() {
+        return division;
+    }
+
+    public void setDivision(DivisionResponse division) {
+        this.division = division;
+    }
+
+    public ValueStreamResponse getValueStream() {
+        return valueStream;
+    }
+
+    public void setValueStream(ValueStreamResponse valueStream) {
+        this.valueStream = valueStream;
+    }
+
+    public List<TeamSkillTemplateResponse> getSkillTemplate() {
+        return skillTemplate;
+    }
+
+    public void setSkillTemplate(List<TeamSkillTemplateResponse> skillTemplate) {
+        this.skillTemplate = skillTemplate;
+    }
 }

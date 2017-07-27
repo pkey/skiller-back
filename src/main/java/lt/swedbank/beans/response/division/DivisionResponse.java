@@ -7,8 +7,8 @@ import javax.validation.constraints.NotNull;
 
 public class DivisionResponse {
 
-    protected Long id;
-    protected String name;
+    private Long id;
+    private String name;
 
     public DivisionResponse() {
     }

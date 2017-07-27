@@ -19,9 +19,11 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         registry.addRedirectViewController("/", "/swagger-ui.html");
     }
 
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/**").addResourceLocations("classpath:/META-INF/resources/");
     }
+
 
 }

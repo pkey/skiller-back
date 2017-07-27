@@ -1,12 +1,15 @@
 package lt.swedbank.beans.response.user;
 
 
+import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.response.Response;
 import lt.swedbank.beans.response.team.TeamResponse;
+import lt.swedbank.beans.response.team.TeamWithUsersResponse;
 import lt.swedbank.beans.response.userSkill.UserSkillResponse;
 
 import java.util.List;
+import java.util.Optional;
 
 public class UserResponse extends Response{
 
@@ -20,12 +23,16 @@ public class UserResponse extends Response{
 
     protected List<? extends UserSkillResponse> skills;
 
+    protected Optional<TeamResponse> teamResponse;
 
     public UserResponse(User user) {
-        id = user.getId();
-        name = user.getName();
-        lastName = user.getLastName();
-        email = user.getEmail();
+        this.id = user.getId();
+        this.name = user.getName();
+        this.lastName = user.getLastName();
+        this.email = user.getEmail();
+        if(Optional.ofNullable(user.getTeam()).isPresent()) {
+            this.teamResponse = Optional.of(new TeamResponse(user.getTeam()));
+        }
     }
 
     public Long getId() {
@@ -69,5 +76,11 @@ public class UserResponse extends Response{
         this.skills = skills;
     }
 
+    public Optional<TeamResponse> getTeamResponse() {
+        return teamResponse;
+    }
 
+    public void setTeamResponse(Optional<TeamResponse> teamResponse) {
+        this.teamResponse = teamResponse;
+    }
 }

@@ -186,7 +186,7 @@ public class UserServiceTest {
         doReturn(testUser).when(userService).getUserById(any());
         doReturn(loggedUser).when(userService).getUserByAuthId(any());
 
-        UserResponse testEntity = new UserEntityResponse(testUser);
+        UserResponse testEntity = new UserResponse(testUser);
         UserResponse resultEntity = userService.getUserProfile(any(), any());
 
 
@@ -202,11 +202,11 @@ public class UserServiceTest {
         doReturn(colleagueUser).when(userService).getUserById(any());
         doReturn(loggedUser).when(userService).getUserByAuthId(any());
 
-        UserResponse testEntity = new UserEntityResponse(colleagueUser);
+        UserResponse testEntity = new UserResponse(colleagueUser);
         UserResponse resultEntity = userService.getUserProfile(any(), any());
 
         assertEquals(resultEntity.getEmail(), testEntity.getEmail());
-        assertThat(resultEntity, instanceOf(UserEntityResponse.class));
+        assertThat(resultEntity, instanceOf(UserResponse.class));
     }
 
     @Test

@@ -145,7 +145,7 @@ public class TestHelper {
         userSkillLevel.setSkillLevel(skillLevel);
         userSkillLevel.setValidFrom(new Date());
         userSkillLevel.setVotes(new ArrayList<>());
-        userSkillLevel.setIsApproved(1);
+        userSkillLevel.setApproved();
 
         return userSkillLevel;
     }

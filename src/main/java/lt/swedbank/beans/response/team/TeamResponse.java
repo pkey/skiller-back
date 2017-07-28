@@ -10,9 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TeamResponse {
-
     protected Long id;
-
     protected String name;
 
     protected DepartmentResponse department;

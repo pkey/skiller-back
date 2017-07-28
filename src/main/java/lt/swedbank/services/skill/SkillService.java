@@ -2,22 +2,28 @@ package lt.swedbank.services.skill;
 
 
 import lt.swedbank.beans.entity.Skill;
+import lt.swedbank.beans.entity.SkillTemplate;
+import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.response.SkillEntityResponse;
 import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
 import lt.swedbank.exceptions.skill.SkillNotFoundException;
 import lt.swedbank.repositories.SkillRepository;
+import lt.swedbank.repositories.SkillTemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SkillService {
 
     @Autowired
     private SkillRepository skillRepository;
+    @Autowired
+    private SkillTemplateRepository skillTemplateRepository;
 
     public Skill addSkill(AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
 
@@ -51,7 +57,6 @@ public class SkillService {
         return skill;
     }
 
-
     public Iterable<Skill> getAllSkills() {
         return skillRepository.findAll();
     }
@@ -64,4 +69,29 @@ public class SkillService {
         return skillList;
     }
 
+    public SkillTemplate createSkillTemplate (Team team, List<Skill> skills) {
+        SkillTemplate skillTemplate = new SkillTemplate(team, skills);
+        return skillTemplateRepository.save(skillTemplate);
+    }
+
+    public List<Skill> getSkillsByIds(List<Long> skillsId) {
+        assert skillsId != null;
+
+        List<Skill> skills = skillsId.stream()
+                .map(skill -> {
+                    return getSkillById(skill);
+                })
+                .collect(Collectors.toList());
+
+
+        return skills;
+    }
+
+    private Skill getSkillById(Long id) {
+        Skill skill = skillRepository.findOne(id);
+        if (skill == null) {
+            throw new SkillNotFoundException();
+        }
+        return skill;
+    }
 }

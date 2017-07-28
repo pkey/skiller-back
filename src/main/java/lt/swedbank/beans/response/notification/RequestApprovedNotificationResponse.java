@@ -4,7 +4,6 @@ import lt.swedbank.beans.entity.Approver;
 import lt.swedbank.beans.entity.RequestNotification;
 import lt.swedbank.beans.response.ApproverResponse;
 
-
 import java.util.ArrayList;
 import java.util.List;
 

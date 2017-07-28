@@ -2,7 +2,6 @@ package lt.swedbank.beans.response.department;
 
 
 import lt.swedbank.beans.entity.Department;
-import lt.swedbank.beans.entity.Division;
 
 import javax.validation.constraints.NotNull;
 

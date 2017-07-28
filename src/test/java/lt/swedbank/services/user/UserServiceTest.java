@@ -202,6 +202,7 @@ public class UserServiceTest {
 
         assertEquals(resultEntity.getEmail(), testEntity.getEmail());
         assertThat(resultEntity, instanceOf(UserWithSkillsResponse.class));
+
     }
 
     @Test

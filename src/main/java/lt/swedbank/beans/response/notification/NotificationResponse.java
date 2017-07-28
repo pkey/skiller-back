@@ -1,6 +1,5 @@
 package lt.swedbank.beans.response.notification;
 
-import lt.swedbank.beans.entity.ApprovalRequest;
 import lt.swedbank.beans.entity.RequestNotification;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkillLevel;

@@ -4,7 +4,6 @@ package lt.swedbank.services.notification;
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.enums.Status;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
-import lt.swedbank.beans.request.NotificationAnswerRequest;
 import lt.swedbank.exceptions.userSkillLevel.RequestAlreadySubmittedException;
 import lt.swedbank.exceptions.userSkillLevel.TooHighSkillLevelRequestException;
 import lt.swedbank.repositories.ApprovalRequestRepository;

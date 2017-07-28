@@ -1,15 +1,12 @@
 package lt.swedbank.beans.response.user;
 
 
-import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.response.Response;
 import lt.swedbank.beans.response.team.TeamResponse;
-import lt.swedbank.beans.response.team.TeamWithUsersResponse;
 import lt.swedbank.beans.response.userSkill.UserSkillResponse;
 
 import java.util.List;
-import java.util.Optional;
 
 public class UserResponse extends Response{
 

@@ -8,7 +8,6 @@ import lt.swedbank.beans.response.team.TeamWithUsersResponse;
 import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewWithUsersResponse;
 import lt.swedbank.beans.response.team.teamOverview.NonColleagueTeamOverviewWithUsersResponse;
 import lt.swedbank.beans.response.user.NonColleagueResponse;
-import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.repositories.SkillTemplateRepository;
@@ -20,14 +19,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
-
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.refEq;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
 
 
@@ -157,6 +153,7 @@ public class TeamServiceTest {
 
         Assert.assertThat(resultResponse, instanceOf(TeamResponse.class));
         Assert.assertThat(resultResponse, instanceOf(ColleagueTeamOverviewWithUsersResponse.class));
+
     }
 
     @Test
@@ -169,7 +166,7 @@ public class TeamServiceTest {
 
         Mockito.when(teamRepository.findOne(testTeam.getId())).thenReturn(testTeam);
         Mockito.when(userService.getUserById(any())).thenReturn(userFromAnotherDepartment);
-
+        
         testTeam.setUsers(TestHelper.fetchUsers(5));
         team.setDepartment(department);
 

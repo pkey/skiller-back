@@ -12,6 +12,7 @@ import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.repositories.SkillTemplateRepository;
 import lt.swedbank.repositories.TeamRepository;
 import lt.swedbank.services.department.DepartmentService;
+import lt.swedbank.services.skill.SkillService;
 import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,8 @@ public class TeamService {
     private DepartmentService departmentService;
     @Autowired
     private UserSkillService userSkillService;
+    @Autowired
+    private SkillService skillService;
 
 
     public Iterable<Team> getAllTeams() {
@@ -81,9 +84,8 @@ public class TeamService {
 
     public List<UserWithSkillsResponse> getUserWithSkillResponseList(List<User> users)
     {
-        if(users == null)
-        {
-          return new ArrayList<>();
+       if(users == null) {
+            return new ArrayList<>();
         }
         return users.stream().map(user -> new UserWithSkillsResponse(user, userSkillService.getNormalUserSkillResponseList(user.getUserSkills()))).collect(Collectors.toList());
     }
@@ -164,14 +166,27 @@ public class TeamService {
     public TeamWithUsersResponse addTeam(AddTeamRequest addTeamRequest) {
         assert addTeamRequest != null;
 
+        if (teamRepository.findByName(addTeamRequest.getName()) != null) {
+            throw new TeamNameAlreadyExistsException();
+        }
+
         Team team = new Team(addTeamRequest.getName());
         team.setDepartment(departmentService.getDepartmentById(addTeamRequest.getDepartmentId()));
-        team.setUsers(userService.getUsersByIds(addTeamRequest.getUserIds()));
 
-        if (teamRepository.findByName(addTeamRequest.getName()) != null)
-            throw new TeamNameAlreadyExistsException();
+        if (addTeamRequest.getUserIds() != null) {
+            team.setUsers(userService.getUsersByIds(addTeamRequest.getUserIds()));
+        }
+        if (addTeamRequest.getStreamId() != null) {
+            team.setValueStream(departmentService.getValueStreamById(addTeamRequest.getStreamId()));
+        }
 
-        return new TeamWithUsersResponse(teamRepository.save(team), getUserWithSkillResponseList(team.getUsers()), getTeamSkillTemplateResponseList(team));
+        teamRepository.save(team);
+
+        if (addTeamRequest.getSkillIds() != null) {
+            team.setSkillTemplate(skillService.createSkillTemplate(team, skillService.getSkillsByIds(addTeamRequest.getSkillIds())));
+        }
+
+        return new TeamWithUsersResponse(team, getUserWithSkillResponseList(userService.getUsersByIds(addTeamRequest.getUserIds())), getTeamSkillTemplateResponseList(team));
     }
 
 }

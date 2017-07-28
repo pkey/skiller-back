@@ -2,7 +2,6 @@ package lt.swedbank.FakeAuthClasses;
 
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.TokenHolder;
-import com.auth0.jwt.JWT;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.LoginUserRequest;
 import lt.swedbank.beans.request.RegisterUserRequest;

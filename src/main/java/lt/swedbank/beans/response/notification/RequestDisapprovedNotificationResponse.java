@@ -2,14 +2,9 @@ package lt.swedbank.beans.response.notification;
 
 import lt.swedbank.beans.entity.Disapprover;
 import lt.swedbank.beans.entity.RequestNotification;
-import lt.swedbank.beans.entity.User;
-import lt.swedbank.beans.entity.UserSkillLevel;
-import lt.swedbank.beans.response.ApproverResponse;
 import lt.swedbank.beans.response.DisapproverResponse;
-import lt.swedbank.beans.response.SkillEntityResponse;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class RequestDisapprovedNotificationResponse extends NotificationResponse {

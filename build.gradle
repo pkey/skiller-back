@@ -17,12 +17,12 @@ apply plugin: 'org.springframework.boot'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
-springBoot {
-	executable = true
-}
-
 repositories {
 	mavenCentral()
+}
+
+springBoot {
+	executable = true
 }
 
 

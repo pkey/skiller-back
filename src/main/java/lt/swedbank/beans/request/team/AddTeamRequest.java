@@ -10,8 +10,12 @@ public class AddTeamRequest {
     @NotNull(message = "Department id is required")
     private Long departmentId;
 
-    @NotNull(message = "User ids must be sent")
     private List<Long> userIds;
+
+    private List<Long> skillIds;
+
+    private Long streamId;
+
     public AddTeamRequest() {
     }
 
@@ -37,5 +41,21 @@ public class AddTeamRequest {
 
     public void setUserIds(List<Long> userIds) {
         this.userIds = userIds;
+    }
+
+    public List<Long> getSkillIds() {
+        return skillIds;
+    }
+
+    public void setSkillIds(List<Long> skillIds) {
+        this.skillIds = skillIds;
+    }
+
+    public Long getStreamId() {
+        return streamId;
+    }
+
+    public void setStreamId(Long streamId) {
+        this.streamId = streamId;
     }
 }

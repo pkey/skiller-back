@@ -12,7 +12,7 @@ public class AddTeamRequest {
 
     private List<Long> userIds;
 
-    private List<Long> skillsId;
+    private List<Long> skillIds;
 
     private Long streamId;
 
@@ -43,12 +43,12 @@ public class AddTeamRequest {
         this.userIds = userIds;
     }
 
-    public List<Long> getSkillsId() {
-        return skillsId;
+    public List<Long> getSkillIds() {
+        return skillIds;
     }
 
-    public void setSkillsId(List<Long> skillsId) {
-        this.skillsId = skillsId;
+    public void setSkillIds(List<Long> skillIds) {
+        this.skillIds = skillIds;
     }
 
     public Long getStreamId() {

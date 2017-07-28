@@ -3,7 +3,6 @@ package lt.swedbank.services.team;
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.team.AddTeamRequest;
 import lt.swedbank.beans.response.TeamSkillTemplateResponse;
-import lt.swedbank.beans.response.team.TeamResponse;
 import lt.swedbank.beans.response.team.TeamWithUsersResponse;
 import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewWithUsersResponse;
 import lt.swedbank.beans.response.team.teamOverview.NonColleagueTeamOverviewWithUsersResponse;
@@ -20,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -186,8 +184,8 @@ public class TeamService {
 
         teamRepository.save(team);
 
-        if (addTeamRequest.getSkillsId() != null) {
-            team.setSkillTemplate(skillService.createSkillTemplate(team, skillService.getSkillsByIds(addTeamRequest.getSkillsId())));
+        if (addTeamRequest.getSkillIds() != null) {
+            team.setSkillTemplate(skillService.createSkillTemplate(team, skillService.getSkillsByIds(addTeamRequest.getSkillIds())));
         }
 
         return new TeamWithUsersResponse(team, getUserWithSkillResponseList(userService.getUsersByIds(addTeamRequest.getUserIds())), getTeamSkillTemplateResponseList(team));

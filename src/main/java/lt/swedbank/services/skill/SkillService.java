@@ -57,11 +57,6 @@ public class SkillService {
         return skill;
     }
 
-    public Iterable<Skill> findALlById(List<Long> ids){
-        return skillRepository.findSkillsById(ids);
-    }
-
-
     public Iterable<Skill> getAllSkills() {
         return skillRepository.findAll();
     }

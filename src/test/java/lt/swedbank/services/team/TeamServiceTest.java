@@ -4,8 +4,8 @@ import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.team.AddTeamRequest;
 import lt.swedbank.beans.response.TeamSkillTemplateResponse;
 import lt.swedbank.beans.response.team.TeamResponse;
-import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewResponse;
-import lt.swedbank.beans.response.team.teamOverview.NonColleagueTeamOverviewResponse;
+import lt.swedbank.beans.response.team.TeamWithUsersResponse;
+import lt.swedbank.beans.response.user.NonColleagueResponse;
 import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.helpers.TestHelper;
@@ -135,7 +135,7 @@ public class TeamServiceTest {
         Mockito.when(teamRepository.findOne(testTeam.getId())).thenReturn(testTeam);
         Mockito.when(userService.getUserById(userFromSameTeam.getId())).thenReturn(userFromSameTeam);
 
-        TeamResponse resultResponse = teamService.getTeamOverview(testTeam.getId(), userFromSameTeam.getId());
+        TeamWithUsersResponse resultResponse = teamService.getTeamOverview(testTeam.getId(), userFromSameTeam.getId());
 
         Assert.assertNotEquals(resultResponse, null);
         Assert.assertNotEquals(resultResponse.getUsers(), null);
@@ -148,7 +148,7 @@ public class TeamServiceTest {
         }
 
         Assert.assertThat(resultResponse, instanceOf(TeamResponse.class));
-        Assert.assertThat(resultResponse, instanceOf(ColleagueTeamOverviewResponse.class));
+        Assert.assertThat(resultResponse, instanceOf(NonColleagueResponse.class));
 
     }
 
@@ -163,7 +163,7 @@ public class TeamServiceTest {
 
         TeamResponse resultResponse = teamService.getTeamOverview(testTeam.getId(), userFromAnotherDepartment.getId());
 
-        Assert.assertThat(resultResponse, instanceOf(NonColleagueTeamOverviewResponse.class));
+        Assert.assertThat(resultResponse, instanceOf(NonColleagueResponse.class));
 
     }
     

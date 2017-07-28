@@ -25,13 +25,12 @@ public class TestHelper {
 
     public static int currentUserSkillId = 0;
     public static int currentSkillLevelId = 0;
-
+    public static List<Skill> skills;
+    public static List<SkillLevel> skillLevels; //Change to enumeration
     private static List<User> userList;
     private static List<Team> teams;
     private static List<Department> departments;
     private static List<Division> divisions;
-    public static List<Skill> skills;
-    public static List<SkillLevel> skillLevels; //Change to enumeration
     private static SkillLevel defaultSkillLevel;
 
 

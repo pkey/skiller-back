@@ -1,7 +1,6 @@
 package lt.swedbank.beans.entity;
 
 import lt.swedbank.beans.enums.Status;
-import lt.swedbank.exceptions.request.FalseRequestStatusException;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;

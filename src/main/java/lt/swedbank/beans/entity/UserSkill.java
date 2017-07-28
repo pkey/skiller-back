@@ -1,11 +1,9 @@
 package lt.swedbank.beans.entity;
 
-import lt.swedbank.beans.enums.Status;
 import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 @Entity

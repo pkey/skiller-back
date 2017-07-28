@@ -3,7 +3,6 @@ package lt.swedbank.controllers.team;
 import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.request.team.AddTeamRequest;
 import lt.swedbank.beans.response.TeamSkillTemplateResponse;
-import lt.swedbank.beans.response.team.TeamResponse;
 import lt.swedbank.beans.response.team.TeamWithUsersResponse;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.team.TeamService;

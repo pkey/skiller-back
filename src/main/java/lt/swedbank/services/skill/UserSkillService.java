@@ -1,6 +1,9 @@
 package lt.swedbank.services.skill;
 
-import lt.swedbank.beans.entity.*;
+import lt.swedbank.beans.entity.Skill;
+import lt.swedbank.beans.entity.User;
+import lt.swedbank.beans.entity.UserSkill;
+import lt.swedbank.beans.entity.UserSkillLevel;
 import lt.swedbank.beans.enums.Status;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;

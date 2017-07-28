@@ -1,7 +1,6 @@
 package lt.swedbank.controllers.auth;
 
 import com.auth0.exception.Auth0Exception;
-import com.auth0.json.auth.TokenHolder;
 import lt.swedbank.FakeAuthClasses.FakeAuthService;
 import lt.swedbank.FakeAuthClasses.FakeTokenHolder;
 import lt.swedbank.beans.entity.User;
@@ -9,8 +8,6 @@ import lt.swedbank.beans.request.LoginUserRequest;
 import lt.swedbank.beans.request.RegisterUserRequest;
 import lt.swedbank.beans.response.LoginTokenResponse;
 import lt.swedbank.beans.response.RegisterUserResponse;
-import lt.swedbank.services.auth.Auth0AuthenticationService;
-import lt.swedbank.services.auth.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;

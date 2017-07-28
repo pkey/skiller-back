@@ -8,6 +8,7 @@ import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.user.UserResponse;
+import lt.swedbank.beans.response.user.UserWithSkillsResponse;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.services.auth.AuthenticationService;
@@ -102,11 +103,11 @@ public class UserControllerTest {
 
     @Test
     public void get_user_profile_success() throws Exception {
-        UserResponse userEntityResponseTest = mock(UserResponse.class);
+        UserWithSkillsResponse userEntityResponseTest = mock(UserWithSkillsResponse.class);
 
         when(userService.getUserProfile(anyLong(), anyString())).thenReturn(userEntityResponseTest);
 
-        whenNew(UserResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
+        whenNew(UserWithSkillsResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
 
         mockMvc.perform(get("/user/profile/0")
                 .header("Authorization", "Bearer")
@@ -126,9 +127,9 @@ public class UserControllerTest {
 
         when(userService.getUserByAuthId(any())).thenReturn(testUser);
 
-        UserResponse userEntityResponseTest = mock(UserResponse.class);
+        UserWithSkillsResponse userEntityResponseTest = mock(UserWithSkillsResponse.class);
 
-        whenNew(UserResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
+        whenNew(UserWithSkillsResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
 
         mockMvc.perform(get("/user/get")
                 .header("Authorization", "Bearer")
@@ -176,9 +177,9 @@ public class UserControllerTest {
 
         String skillJson = mapper.writeValueAsString(new RemoveSkillRequest(newlyAddedUserSkill));
 
-        UserResponse userEntityResponseTest = mock(UserResponse.class);
+        UserWithSkillsResponse userEntityResponseTest = mock(UserWithSkillsResponse.class);
 
-        whenNew(UserResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
+        whenNew(UserWithSkillsResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
 
         when(userService.getUserByAuthId(any())).thenReturn(testUser);
         when(userService.removeUserSkill(any(), any())).thenReturn(testUser);

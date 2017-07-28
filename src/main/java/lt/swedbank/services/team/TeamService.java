@@ -68,8 +68,6 @@ public class TeamService {
 
         userList.sort(Comparator.comparing(User::toString));
 
-        team.setUsers(userList);
-
         if(user.getTeam() == null)
         {
             return new NonColleagueTeamOverviewWithUsersResponse(team,getUserWithSkillResponseList(team.getUsers()), getTeamSkillTemplateResponseList(team));
@@ -83,6 +81,10 @@ public class TeamService {
 
     public List<UserWithSkillsResponse> getUserWithSkillResponseList(List<User> users)
     {
+        if(users == null)
+        {
+          return new ArrayList<>();
+        }
         return users.stream().map(user -> new UserWithSkillsResponse(user, userSkillService.getNormalUserSkillResponseList(user.getUserSkills()))).collect(Collectors.toList());
     }
 

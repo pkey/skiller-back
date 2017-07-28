@@ -104,7 +104,7 @@ public class UserControllerTest {
     public void get_user_profile_success() throws Exception {
         UserResponse userEntityResponseTest = mock(UserResponse.class);
 
-        when(userService.getUserProfile(anyLong(), anyString())).thenReturn(testUserEntityResponse);
+        when(userService.getUserProfile(anyLong(), anyString())).thenReturn(userEntityResponseTest);
 
         whenNew(UserResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
 
@@ -112,10 +112,9 @@ public class UserControllerTest {
                 .header("Authorization", "Bearer")
                 .contentType(contentType))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is(testUser.getName())))
-                .andExpect(jsonPath("$.lastName", is(testUser.getLastName())))
-                .andExpect(jsonPath("$.email", is(testUser.getEmail())))
-                .andExpect(jsonPath("$.skills", hasSize(TestHelper.NUMBER_OF_SKILLS_USER_HAS)));
+                .andExpect(jsonPath("$.name", is(userEntityResponseTest.getName())))
+                .andExpect(jsonPath("$.lastName", is(userEntityResponseTest.getLastName())))
+                .andExpect(jsonPath("$.email", is(userEntityResponseTest.getEmail())));
 
         verify(userService, times(1)).getUserProfile(any(), any());
         verifyNoMoreInteractions(userService);

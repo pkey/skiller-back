@@ -6,6 +6,7 @@ import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.user.NonColleagueResponse;
 import lt.swedbank.beans.response.user.UserResponse;
+import lt.swedbank.beans.response.user.UserWithSkillsResponse;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.repositories.UserRepository;
@@ -69,15 +70,12 @@ public class UserServiceTest {
         Long userID = Long.parseLong("0");
         Long teamID = Long.parseLong("1");
 
-
-
         testUserList = TestHelper.fetchUsers(10);
-
-
-        testUser = testUserList.get(0);
+        testUser = new User();
         loggedUser = testUserList.get(1);
 
         teams = TestHelper.fetchTeams(3);
+
 
         testUser.setTeam(teams.get(0));
         loggedUser.setTeam(teams.get(1));
@@ -88,15 +86,12 @@ public class UserServiceTest {
         testUserSkill.setSkill(TestHelper.skills.get(6));
         testUserSkill.addUserSkillLevel(TestHelper.createUserSkillLevel(testUserSkill, TestHelper.skillLevels.get(0)));
 
-
-
         testAddSkillRequest = new AddSkillRequest(testUserSkill);
-
         testAssignTeamRequest = new AssignTeamRequest();
         testAssignTeamRequest.setTeamId(teamID);
         testAssignTeamRequest.setUserId(userID);
-
-
+        testTeam = new Team();
+        testTeam.setId(1L);
     }
 
     @After
@@ -175,9 +170,9 @@ public class UserServiceTest {
     public void set_team_to_user_success() {
         Mockito.when(teamService.getTeamById(any())).thenReturn(testTeam);
         doReturn(testUser).when(userService).getUserById(any());
-
+        Mockito.when(userRepository.save(any(User.class))).thenReturn(testUser);
         User newUser = userService.assignTeam(testUser.getId(), testAssignTeamRequest);
-        assertEquals(testTeam, newUser.getTeam());
+        assertEquals(testTeam.getId(), newUser.getTeam().getId());
     }
 
     @Test
@@ -206,7 +201,7 @@ public class UserServiceTest {
         UserResponse resultEntity = userService.getUserProfile(any(), any());
 
         assertEquals(resultEntity.getEmail(), testEntity.getEmail());
-        assertThat(resultEntity, instanceOf(UserResponse.class));
+        assertThat(resultEntity, instanceOf(UserWithSkillsResponse.class));
     }
 
     @Test

@@ -81,4 +81,6 @@ public class Team {
     public void setSkillTemplate(SkillTemplate skillTemplate) {
         this.skillTemplate = skillTemplate;
     }
+
+
 }

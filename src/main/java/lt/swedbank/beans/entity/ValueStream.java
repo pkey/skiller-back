@@ -41,6 +41,4 @@ public class ValueStream {
     public void setTeams(List<Team> teams) {
         this.teams = teams;
     }
-
-
 }

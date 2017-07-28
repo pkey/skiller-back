@@ -2,7 +2,17 @@ package lt.swedbank.controllers.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lt.swedbank.beans.entity.Skill;
+import lt.swedbank.beans.entity.User;
+import lt.swedbank.beans.entity.UserSkill;
+import lt.swedbank.beans.request.AddSkillRequest;
+import lt.swedbank.beans.request.RemoveSkillRequest;
+import lt.swedbank.beans.response.user.UserResponse;
+import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.helpers.TestHelper;
+import lt.swedbank.services.auth.AuthenticationService;
+import lt.swedbank.services.user.UserService;
+import org.hamcrest.core.Is;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,16 +24,22 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
+
+import static org.hamcrest.core.Is.is;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 public class UserControllerTest {
 
@@ -40,8 +56,8 @@ public class UserControllerTest {
 
     private User testUser;
     private UserSkill newlyAddedUserSkill;
-    private List<UserEntityResponse> testUserEntityResponseList;
-    private UserEntityResponse testUserEntityResponse;
+    private List<UserResponse> testUserEntityResponseList;
+    private UserResponse testUserEntityResponse;
     private List<User> testUsers;
 
     @InjectMocks
@@ -70,7 +86,7 @@ public class UserControllerTest {
 
         testUser = testUsers.get(0);
 
-        testUserEntityResponse = new UserEntityResponse(testUser);
+        testUserEntityResponse = new UserResponse(testUser);
 
         testUserEntityResponseList = new ArrayList<>();
         testUserEntityResponseList.add(testUserEntityResponse);
@@ -86,11 +102,11 @@ public class UserControllerTest {
 
     @Test
     public void get_user_profile_success() throws Exception {
-        UserEntityResponse userEntityResponseTest = mock(UserEntityResponse.class);
+        UserResponse userEntityResponseTest = mock(UserResponse.class);
 
         when(userService.getUserProfile(anyLong(), anyString())).thenReturn(testUserEntityResponse);
 
-        whenNew(UserEntityResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
+        whenNew(UserResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
 
         mockMvc.perform(get("/user/profile/0")
                 .header("Authorization", "Bearer")
@@ -111,9 +127,9 @@ public class UserControllerTest {
 
         when(userService.getUserByAuthId(any())).thenReturn(testUser);
 
-        UserEntityResponse userEntityResponseTest = mock(UserEntityResponse.class);
+        UserResponse userEntityResponseTest = mock(UserResponse.class);
 
-        whenNew(UserEntityResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
+        whenNew(UserResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
 
         mockMvc.perform(get("/user/get")
                 .header("Authorization", "Bearer")
@@ -137,9 +153,9 @@ public class UserControllerTest {
         when(userService.addUserSkill(any(), any())).thenReturn(testUser);
         when(userService.getUserById(any())).thenReturn(testUser);
 
-        UserEntityResponse userEntityResponseTest = mock(UserEntityResponse.class);
+        UserResponse userEntityResponseTest = mock(UserResponse.class);
 
-        whenNew(UserEntityResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
+        whenNew(UserResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
 
         mockMvc.perform(post("/user/skill/add").header("Authorization", "Bearer")
                 .contentType(contentType)
@@ -161,9 +177,9 @@ public class UserControllerTest {
 
         String skillJson = mapper.writeValueAsString(new RemoveSkillRequest(newlyAddedUserSkill));
 
-        UserEntityResponse userEntityResponseTest = mock(UserEntityResponse.class);
+        UserResponse userEntityResponseTest = mock(UserResponse.class);
 
-        whenNew(UserEntityResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
+        whenNew(UserResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
 
         when(userService.getUserByAuthId(any())).thenReturn(testUser);
         when(userService.removeUserSkill(any(), any())).thenReturn(testUser);

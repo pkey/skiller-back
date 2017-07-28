@@ -57,7 +57,7 @@ public class UserSkillLevelServiceTest {
                 .thenReturn(userSkill);
 
         Mockito.when
-                (userSkillLevelRepository.findTopByUserSkillAndIsApprovedOrderByValidFromDesc(any(), any()))
+                (userSkillLevelRepository.findTopByUserSkillAndStatusOrderByValidFromDesc(any(), any()))
                 .thenReturn(userSkillLevel);
 
         UserSkillLevel resultUserSkillLevel = userSkillLevelService.getCurrentUserSkillLevelByUserIdAndSkillId(any(), any());
@@ -73,7 +73,7 @@ public class UserSkillLevelServiceTest {
                 .thenReturn(userSkill);
 
         Mockito.when
-                (userSkillLevelRepository.findTopByUserSkillAndIsApprovedOrderByValidFromDesc(any(), any()))
+                (userSkillLevelRepository.findTopByUserSkillAndStatusOrderByValidFromDesc(any(), any()))
                 .thenReturn(null);
 
         userSkillLevelService.getCurrentUserSkillLevelByUserIdAndSkillId(any(), any());

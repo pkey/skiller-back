@@ -44,6 +44,10 @@ public class TestHelper {
         createUsers();
     }
 
+    private TestHelper(){
+        throw new AssertionError();
+    }
+
     private static void createLevels() {
 
         String[] levelNames = {"Novice", "Amateur", "Pro"};

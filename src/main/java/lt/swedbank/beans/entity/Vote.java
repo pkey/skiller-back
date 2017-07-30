@@ -36,4 +36,5 @@ public class Vote {
     @NonNull
     private String message;
 
+
 }

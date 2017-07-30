@@ -27,7 +27,7 @@ public class UserResponse extends Response{
         this.name = user.getName();
         this.lastName = user.getLastName();
         this.email = user.getEmail();
-        this.team = user.getTeam() == null ? null : new TeamResponse(user.getTeam());
+        this.team = user.getTeam().map(TeamResponse::new).orElse(null);
     }
 
     public Long getId() {

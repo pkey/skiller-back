@@ -50,18 +50,20 @@ public class TeamService {
 
     public List<TeamWithUsersResponse> getAllTeamOverviewResponses() {
 
-        List<TeamWithUsersResponse> teamWithUsersRespons = new ArrayList<>();
+        List<TeamWithUsersResponse> teamWithUsersResponses = new ArrayList<>();
 
         for (Team team : teamRepository.findAll()) {
-            teamWithUsersRespons.add(new ColleagueTeamOverviewWithUsersResponse(team,getUserWithSkillResponseList(team.getUsers()), getTeamSkillTemplateResponseList(team)));
+            teamWithUsersResponses.add(new ColleagueTeamOverviewWithUsersResponse(team,
+                    getUserWithSkillResponseList(team.getUsers()),
+                    getTeamSkillTemplateResponseList(team)));
         }
 
-        return teamWithUsersRespons;
+        return teamWithUsersResponses;
     }
 
     public Team getTeamById(Long id) {
         Team team = teamRepository.findOne(id);
-        if(team == null) {
+        if (team == null) {
             throw new TeamNotFoundException();
         }
         return team;
@@ -70,37 +72,37 @@ public class TeamService {
 
     public TeamWithUsersResponse getTeamOverview(Long teamId, Long currentUserId) {
         User user = userService.getUserById(currentUserId);
-        Team team = getTeamById(teamId);
-        List<User> userList = team.getUsers();
+        Team currentTeam = getTeamById(teamId);
+        List<User> userList = currentTeam.getUsers();
 
         userList.sort(Comparator.comparing(User::toString));
 
-        if(user.getTeam() == null)
-        {
-            return new NonColleagueTeamOverviewWithUsersResponse(team,getUserWithSkillResponseList(team.getUsers()), getTeamSkillTemplateResponseList(team));
-        }
+        if (user.getTeam().isPresent() && user.getTeam().get().getDepartment().equals(currentTeam.getDepartment())) {
+            return new ColleagueTeamOverviewWithUsersResponse(currentTeam,
+                    getUserWithSkillResponseList(currentTeam.getUsers()),
+                    getTeamSkillTemplateResponseList(currentTeam));
+        } else
+            return new NonColleagueTeamOverviewWithUsersResponse(currentTeam,
+                    getUserWithSkillResponseList(currentTeam.getUsers()),
+                    getTeamSkillTemplateResponseList(currentTeam));
 
-        if(user.getTeam().getDepartment().getId().equals(team.getDepartment().getId()))
-            return new ColleagueTeamOverviewWithUsersResponse(team,getUserWithSkillResponseList(team.getUsers()), getTeamSkillTemplateResponseList(team));
-        else
-            return new NonColleagueTeamOverviewWithUsersResponse(team,getUserWithSkillResponseList(team.getUsers()), getTeamSkillTemplateResponseList(team));
     }
 
-    public List<UserWithSkillsResponse> getUserWithSkillResponseList(List<User> users)
-    {
-       if(users == null) {
+    public List<UserWithSkillsResponse> getUserWithSkillResponseList(List<User> users) {
+        if (users == null) {
             return new ArrayList<>();
         }
-        return users.stream().map(user -> new UserWithSkillsResponse(user, userSkillService.getNormalUserSkillResponseList(user.getUserSkills()))).collect(Collectors.toList());
+        return users.stream().map(user -> new UserWithSkillsResponse(user,
+                userSkillService.getNormalUserSkillResponseList(user.getUserSkills()))).collect(Collectors.toList());
     }
 
     public TeamWithUsersResponse getMyTeam(Long currentUserId) {
         User user = userService.getUserById(currentUserId);
-        Team team = getTeamById(user.getTeam().getId());
+        Team team = user.getTeam().orElseThrow(TeamNotFoundException::new);
         List<User> userList = team.getUsers();
         userList.sort(Comparator.comparing(User::toString));
-        team.setUsers(userList);
-        return new ColleagueTeamOverviewWithUsersResponse(team,getUserWithSkillResponseList(team.getUsers()), getTeamSkillTemplateResponseList(team));
+
+        return new ColleagueTeamOverviewWithUsersResponse(team, getUserWithSkillResponseList(userList), getTeamSkillTemplateResponseList(team));
     }
 
     public TeamWithUsersResponse addTeam(AddTeamRequest addTeamRequest) {
@@ -164,16 +166,15 @@ public class TeamService {
         return skillTemplateService.getByTeamId(team.getId());
     }
 
-    public List<TeamSkillTemplateResponse> getTeamSkillTemplateResponseList(Team team){
+    public List<TeamSkillTemplateResponse> getTeamSkillTemplateResponseList(Team team) {
         List<TeamSkillTemplateResponse> teamSkillTemplateResponseList = new ArrayList<>();
 
-        if(getTeamSkillTemplate(team)== null)
-        {
+        if (getTeamSkillTemplate(team) == null) {
             return new ArrayList<>();
         }
 
-        for (Skill skill: getTeamSkillTemplate(team).getSkills()
-             ) {
+        for (Skill skill : getTeamSkillTemplate(team).getSkills()
+                ) {
             TeamSkillTemplateResponse teamSkillTemplateResponse =
                     new TeamSkillTemplateResponse(skill, getSkillCountInTeam(team, skill), getAverageSkillLevelInTeam(team, skill));
             teamSkillTemplateResponseList.add(teamSkillTemplateResponse);
@@ -181,37 +182,34 @@ public class TeamService {
         return teamSkillTemplateResponseList;
     }
 
-    public double getAverageSkillLevelInTeam(Team team, Skill skill)
-    {
+    public double getAverageSkillLevelInTeam(Team team, Skill skill) {
         List<User> users = (List<User>) userService.getAllByTeam(team);
         int counter = 0;
         double sum = 0;
-        for (User user: users
+        for (User user : users
                 ) {
-            for (UserSkill userSkill: user.getUserSkills()
+            for (UserSkill userSkill : user.getUserSkills()
                     ) {
-                if(userSkill.getSkill().equals(skill)) {
+                if (userSkill.getSkill().equals(skill)) {
                     counter++;
-                    sum+=userSkillService.getCurrentSkillLevel(userSkill).getSkillLevel().getLevel();
+                    sum += userSkillService.getCurrentSkillLevel(userSkill).getSkillLevel().getLevel();
                 }
             }
         }
-        if(counter == 0)
-        {
+        if (counter == 0) {
             return 0;
         }
-        return sum/counter;
+        return sum / counter;
     }
 
-    public int getSkillCountInTeam(Team team, Skill skill)
-    {
+    public int getSkillCountInTeam(Team team, Skill skill) {
         List<User> users = (List<User>) userService.getAllByTeam(team);
         int counter = 0;
-        for (User user: users
-             ) {
-            for (UserSkill userSkill: user.getUserSkills()
-                 ) {
-                if(userSkill.getSkill().equals(skill)) {
+        for (User user : users
+                ) {
+            for (UserSkill userSkill : user.getUserSkills()
+                    ) {
+                if (userSkill.getSkill().equals(skill)) {
                     counter++;
                 }
             }

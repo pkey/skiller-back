@@ -82,5 +82,30 @@ public class Team {
         this.skillTemplate = skillTemplate;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
 
+        if (o instanceof Team) {
+            return this.id.equals(((Team) o).getId());
+        } else {
+            return false;
+        }
+
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + this.id.intValue();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Department " + this.name + "with id of " + this.id.toString();
+    }
 }

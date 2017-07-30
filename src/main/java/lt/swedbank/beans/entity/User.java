@@ -8,6 +8,7 @@ import org.hibernate.search.annotations.Indexed;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Entity
@@ -124,8 +125,8 @@ public class User {
         this.userSkills.add(userSkill);
     }
 
-    public Team getTeam() {
-        return team;
+    public Optional<Team> getTeam() {
+        return Optional.ofNullable(team);
     }
 
     public void setTeam(Team team) {

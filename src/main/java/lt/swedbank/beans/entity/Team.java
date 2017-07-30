@@ -2,6 +2,7 @@ package lt.swedbank.beans.entity;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 public class Team {
@@ -66,8 +67,8 @@ public class Team {
         }
     }
 
-    public ValueStream getValueStream() {
-        return valueStream;
+    public Optional<ValueStream> getValueStream() {
+        return Optional.ofNullable(valueStream);
     }
 
     public void setValueStream(ValueStream valueStream) {

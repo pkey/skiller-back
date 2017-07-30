@@ -26,7 +26,7 @@ public class TeamResponse {
         this.name = team.getName();
         this.department = new DepartmentResponse(team.getDepartment());
         this.division = new DivisionResponse(team.getDepartment().getDivision());
-        this.valueStream = team.getValueStream() == null ? null : new ValueStreamResponse(team.getValueStream());
+        this.valueStream = team.getValueStream().map(ValueStreamResponse::new).orElseGet(null);
         this.skillTemplate =  teamSkillTemplateResponses;
     }
 

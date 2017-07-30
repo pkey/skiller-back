@@ -76,11 +76,8 @@ public class DepartmentControllerTest {
 
         List<Team> teamList1 = new ArrayList<>();
         List<Team> teamList2 = new ArrayList<>();
-        Team team1 = new Team("vienas");
-        team1.setDepartment(department1);
-        Team team2 = new Team("du");
-        team2.setDepartment(department2);
-
+        Team team1 = new Team("vienas", department1);
+        Team team2 = new Team("du", department2);
 
         teamList1.add(team1);
         teamList2.add(team2);

@@ -113,8 +113,7 @@ public class TeamService {
             throw new TeamNameAlreadyExistsException();
         }
 
-        Team team = new Team(addTeamRequest.getName());
-        team.setDepartment(departmentService.getDepartmentById(addTeamRequest.getDepartmentId()));
+        Team team = new Team(addTeamRequest.getName(), departmentService.getDepartmentById(addTeamRequest.getDepartmentId()));
 
         if (addTeamRequest.getUserIds() != null) {
             team.setUsers(userService.getUsersByIds(addTeamRequest.getUserIds()));

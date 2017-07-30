@@ -164,10 +164,9 @@ public class TestHelper {
         for (int i = 0; i < NUMBER_OF_TEAMS; i++) {
             TextProducer textProducer = fairy.textProducer();
 
-            Team team = new Team("Team " + textProducer.word());
+            Team team = new Team("Team " + textProducer.word(), departments.get(i % NUMBER_OF_DEPARTMENTS));
             team.setId(Integer.toUnsignedLong(i));
             team.setName("Team" + textProducer.word());
-            team.setDepartment(departments.get(i%NUMBER_OF_DEPARTMENTS));
 
             teams.add(team);
         }

@@ -1,22 +1,32 @@
 package lt.swedbank.beans.entity;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+
 import javax.persistence.*;
 import java.util.List;
 import java.util.Optional;
 
 @Entity
+@Data
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class Team {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @NonNull
     private String name;
 
     @OneToMany(mappedBy = "team")
     private List<User> users;
 
     @ManyToOne
+    @NonNull
     private Department department;
 
     @ManyToOne
@@ -25,88 +35,15 @@ public class Team {
     @OneToOne(mappedBy = "team")
     private SkillTemplate skillTemplate;
 
-    public Team() {
-    }
-
-    public Team(String name) {
-        this.name = name;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Department getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(Department department) {
-        this.department = department;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-        for (User user : users) {
-            user.setTeam(this);
-        }
-    }
-
     public Optional<ValueStream> getValueStream() {
         return Optional.ofNullable(valueStream);
     }
 
-    public void setValueStream(ValueStream valueStream) {
-        this.valueStream = valueStream;
-    }
+//    public void setUsers(List<User> users) {
+//        this.users = users;
+//        for (User user : users) {
+//            user.setTeam(this);
+//        }
+//    }
 
-    public SkillTemplate getSkillTemplate() {
-        return skillTemplate;
-    }
-
-    public void setSkillTemplate(SkillTemplate skillTemplate) {
-        this.skillTemplate = skillTemplate;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == this) {
-            return true;
-        }
-
-        if (o instanceof Team) {
-            return this.id.equals(((Team) o).getId());
-        } else {
-            return false;
-        }
-
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = 17;
-        result = 31 * result + this.id.intValue();
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Department " + this.name + "with id of " + this.id.toString();
-    }
 }

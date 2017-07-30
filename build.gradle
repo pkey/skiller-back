@@ -10,6 +10,12 @@ buildscript {
 	}
 }
 
+plugins {
+	id 'io.franzbecker.gradle-lombok' version '1.10'
+	id 'java'
+}
+
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
@@ -25,6 +31,10 @@ springBoot {
 	executable = true
 }
 
+lombok {
+	version = "1.16.18"
+	sha256 = ""
+}
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')

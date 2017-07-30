@@ -1,5 +1,10 @@
 package lt.swedbank.beans.entity;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
@@ -10,6 +15,9 @@ import javax.validation.constraints.Size;
                 @UniqueConstraint(columnNames = {"voter_id", "user_skill_level_id" })
         }
 )
+@Data
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class Vote {
 
     @Id
@@ -17,52 +25,15 @@ public class Vote {
     private Long id;
 
     @ManyToOne
+    @NonNull
     private User voter;
 
     @ManyToOne
+    @NonNull
     private UserSkillLevel userSkillLevel;
 
     @Size(max=500)
+    @NonNull
     private String message;
 
-    public Vote() {
-    }
-
-    public Vote(User voter, UserSkillLevel userSkillLevel, String message) {
-        this.voter = voter;
-        this.userSkillLevel = userSkillLevel;
-        this.message = message;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getVoter() {
-        return voter;
-    }
-
-    public void setVoter(User voter) {
-        this.voter = voter;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public UserSkillLevel getUserSkillLevel() {
-        return userSkillLevel;
-    }
-
-    public void setUserSkillLevel(UserSkillLevel userSkillLevel) {
-        this.userSkillLevel = userSkillLevel;
-    }
 }

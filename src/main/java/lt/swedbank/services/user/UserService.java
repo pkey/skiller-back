@@ -3,10 +3,8 @@ package lt.swedbank.services.user;
 import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
-import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
-import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.user.NonColleagueResponse;
 import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.beans.response.user.UserWithSkillsResponse;
@@ -64,10 +62,6 @@ public class UserService {
         return users;
     }
 
-    public Iterable<User> getColleagues(Long userId){
-         return userRepository.findAllByIdIsNotOrderByNameAscLastNameAsc(userId);
-    }
-
     public List<UserResponse> searchColleagues(Long userId, String query) {
         User currentUser = getUserById(userId);
 
@@ -97,12 +91,11 @@ public class UserService {
         return userRepository.findAllByTeam(team);
     }
 
-
-    public UserResponse getUserProfile(Long requeredUserId, String currentUserAuthId) {
+    public UserResponse getUserProfile(Long requiredUserId, String currentUserAuthId) {
         User currentUser = getUserByAuthId(currentUserAuthId);
-        User requeredUser = getUserById(requeredUserId);
+        User requiredUser = getUserById(requiredUserId);
 
-        return getUserResponseBasedOnDepartment(currentUser, requeredUser);
+        return getUserResponseBasedOnDepartment(currentUser, requiredUser);
     }
 
     private UserResponse getUserResponseBasedOnDepartment(User currentUser, User requiredUser) {
@@ -114,33 +107,6 @@ public class UserService {
             }
         }
         return new NonColleagueResponse(requiredUser, userSkillService.getNonColleagueUserSkillResponseList(requiredUser.getUserSkills()));
-    }
-
-    public User addUserSkill(Long userId, AddSkillRequest addSkillRequest) throws UserNotFoundException {
-        User user = getUserById(userId);
-
-        if (user == null) {
-            throw new UserNotFoundException();
-        }
-
-        user.setUserSkill(userSkillService.addUserSkill(user, addSkillRequest));
-
-        return user;
-    }
-
-    public User removeUserSkill(Long userid, RemoveSkillRequest removeSkillRequest) throws UserNotFoundException {
-        User user = getUserById(userid);
-
-        if (user == null) {
-            throw new UserNotFoundException();
-        }
-
-        List<UserSkill> userSkills = user.getUserSkills();
-        userSkills.remove(userSkillService.removeUserSkill(userid, removeSkillRequest));
-
-        user.setUserSkills(userSkills);
-
-        return user;
     }
 
     public UserSkill assignUserSkillLevel(Long userid, AssignSkillLevelRequest request) throws UserNotFoundException {

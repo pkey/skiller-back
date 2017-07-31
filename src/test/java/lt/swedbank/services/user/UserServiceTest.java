@@ -3,7 +3,6 @@ package lt.swedbank.services.user;
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
-import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.user.NonColleagueResponse;
 import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.beans.response.user.UserWithSkillsResponse;
@@ -24,10 +23,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.HashSet;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doReturn;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class UserServiceTest {
@@ -120,53 +120,6 @@ public class UserServiceTest {
     }
 
     @Test
-    public void add_skill_to_user_success() throws Exception {
-        User testAddSkillUser = testUserList.get(3);
-
-        Mockito.when(userSkillService.addUserSkill(any(), any())).thenReturn(testUserSkill);
-        Mockito.when(userRepository.findOne(testUser.getId())).thenReturn(testAddSkillUser);
-
-
-        User user = userService.addUserSkill(testUser.getId(), testAddSkillRequest);
-        assertEquals(user, testAddSkillUser);
-        assertEquals(user.getUserSkills().get(user.getUserSkills().size() - 1), testUserSkill);
-
-        verify(userService, times(1)).getUserById(testUser.getId());
-        verify(userSkillService, times(1)).addUserSkill(any(), any());
-    }
-
-    @Test(expected = UserNotFoundException.class)
-    public void addUserSkillExceptionTest() throws Exception {
-        doReturn(null).when(userService).getUserById(any());
-
-        userService.addUserSkill(any(), any());
-    }
-
-    @Test
-    public void remove_skill_from_user() throws Exception {
-        User testRemoveSkillUser = testUserList.get(3);
-
-        Mockito.when(userSkillService.removeUserSkill(any(), any())).thenReturn(testUserSkill);
-        doReturn(testRemoveSkillUser).when(userService).getUserById(any());
-
-        RemoveSkillRequest removeSkillRequest = new RemoveSkillRequest(testUserSkill);
-
-        User resultUser = userService.removeUserSkill(testRemoveSkillUser.getId(), removeSkillRequest);
-        assertEquals(testRemoveSkillUser, resultUser);
-        Assert.assertThat(resultUser.getUserSkills(), not(hasItem(testUserSkill)));
-
-        verify(userService, times(1)).getUserById(testRemoveSkillUser.getId());
-        verify(userSkillService, times(1)).removeUserSkill(any(), any());
-    }
-
-    @Test(expected = UserNotFoundException.class)
-    public void removeUserSkillExceptionTest() throws Exception {
-        doReturn(null).when(userService).getUserById(any());
-
-        userService.removeUserSkill(any(), any());
-    }
-
-    @Test
     public void set_team_to_user_success() throws Exception {
         Mockito.when(teamService.getTeamById(any())).thenReturn(testTeam);
         doReturn(testUser).when(userService).getUserById(any());
@@ -239,6 +192,7 @@ public class UserServiceTest {
 
         Assert.assertEquals(testUserList.size(), resultList.size());
 
+        //Todo fix this test
         for (int i = 0; i < testUserList.size() - 1; i++) {
             assertNotEquals(1, compareNames(testUserList.get(i), resultList.get(i+1)));
 

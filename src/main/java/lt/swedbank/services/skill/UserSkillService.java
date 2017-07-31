@@ -16,6 +16,7 @@ import lt.swedbank.exceptions.skill.SkillNotFoundException;
 import lt.swedbank.exceptions.userSkill.UserSkillNotFoundException;
 import lt.swedbank.exceptions.userSkillLevel.UserSkillLevelIsPendingException;
 import lt.swedbank.repositories.UserSkillRepository;
+import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,8 @@ public class UserSkillService {
     private SkillService skillService;
     @Autowired
     private UserSkillLevelService userSkillLevelService;
+    @Autowired
+    private UserService userService;
 
     public UserSkill getUserSkillByUserIdAndSkillId(Long userId, Long skillId) throws UserSkillNotFoundException {
 
@@ -42,7 +45,7 @@ public class UserSkillService {
     }
 
 
-    public UserSkill addUserSkill(User user, AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
+    public UserSkillResponse addUserSkill(Long userId, AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
 
         Skill skill;
 
@@ -52,11 +55,11 @@ public class UserSkillService {
             skill = skillService.addSkill(addSkillRequest);
         }
 
-        if (userSkillAlreadyExists(user.getId(), skill)) {
+        if (userSkillAlreadyExists(userId, skill)) {
             throw new SkillAlreadyExistsException();
         }
 
-        UserSkill userSkill = new UserSkill(user, skill);
+        UserSkill userSkill = new UserSkill(userService.getUserById(userId), skill);
         userSkillRepository.save(userSkill);
 
         List<UserSkillLevel> userSkillLevels = new ArrayList<>();
@@ -64,10 +67,10 @@ public class UserSkillService {
 
         userSkill.setUserSkillLevels(userSkillLevels);
 
-        return userSkill;
+        return new UserSkillResponse(userSkill.getSkill());
     }
 
-    public UserSkill removeUserSkill(Long userId, RemoveSkillRequest removeSkillRequest) throws SkillNotFoundException, UserSkillLevelIsPendingException {
+    public UserSkillResponse removeUserSkill(Long userId, RemoveSkillRequest removeSkillRequest) throws SkillNotFoundException, UserSkillLevelIsPendingException {
 
         Skill skill = skillService.findByTitle(removeSkillRequest.getTitle());
 
@@ -82,7 +85,7 @@ public class UserSkillService {
         } else {
             throw new UserSkillLevelIsPendingException();
         }
-        return userSkill;
+        return new UserSkillResponse(userSkill.getSkill());
     }
 
     public UserSkill assignSkillLevel(User user, AssignSkillLevelRequest request) {
@@ -100,12 +103,7 @@ public class UserSkillService {
     }
 
     public void sortUserSkillLevels(UserSkill userSkill) {
-        userSkill.getUserSkillLevels().sort(new Comparator<UserSkillLevel>() {
-            @Override
-            public int compare(UserSkillLevel o1, UserSkillLevel o2) {
-                return o2.getValidFrom().compareTo(o1.getValidFrom());
-            }
-        });
+        userSkill.getUserSkillLevels().sort((o1, o2) -> o2.getValidFrom().compareTo(o1.getValidFrom()));
     }
 
     public UserSkillLevel getCurrentSkillLevelStatus(UserSkill userSkill) {
@@ -132,17 +130,6 @@ public class UserSkillService {
             }
         }
         return currentUserSkillLevel;
-    }
-
-    public void sortUserSkillListBySkillLevel(List<UserSkill> userSkillList)
-    {
-
-        Collections.sort(userSkillList, new Comparator<UserSkill>() {
-            @Override
-            public int compare(UserSkill o, UserSkill o2) {
-                return getCurrentSkillLevel(o).getSkillLevel().compareTo(getCurrentSkillLevel(o2).getSkillLevel());
-            }
-        });
     }
 
     public List<UserSkillResponse> getProfileUserSkills(List<UserSkill> userSkills)

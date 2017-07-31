@@ -123,13 +123,11 @@ public class TeamService {
             team.setValueStream(valueStreamService.getValueStreamById(addTeamRequest.getStreamId()));
         }
 
-        teamRepository.save(team);
-
         if (addTeamRequest.getSkillIds() != null) {
             team.setSkillTemplate(skillTemplateService.createSkillTemplate(team, skillService.getSkillsByIds(addTeamRequest.getSkillIds())));
         }
 
-        return new TeamWithUsersResponse(team, getUserWithSkillResponseList(userService.getUsersByIds(addTeamRequest.getUserIds())), getTeamSkillTemplateResponseList(team));
+        return new TeamWithUsersResponse(teamRepository.save(team), getUserWithSkillResponseList(userService.getUsersByIds(addTeamRequest.getUserIds())), getTeamSkillTemplateResponseList(team));
     }
 
 

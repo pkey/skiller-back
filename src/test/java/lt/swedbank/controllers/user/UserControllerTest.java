@@ -1,40 +1,29 @@
 package lt.swedbank.controllers.user;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.User;
-import lt.swedbank.beans.entity.UserSkill;
-import lt.swedbank.beans.request.AddSkillRequest;
-import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.user.UserResponse;
-import lt.swedbank.beans.response.user.UserWithSkillsResponse;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.user.UserService;
-
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -48,12 +37,7 @@ public class UserControllerTest {
 
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper mapper;
-
-
     private User testUser;
-    private UserSkill newlyAddedUserSkill;
     private List<UserResponse> testUserEntityResponseList;
     private UserResponse testUserEntityResponse;
     private List<User> testUsers;
@@ -67,7 +51,6 @@ public class UserControllerTest {
     private AuthenticationService authenticationService;
 
 
-
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
@@ -77,10 +60,7 @@ public class UserControllerTest {
                 .setControllerAdvice(new RestResponseEntityExceptionHandler())
                 .build();
 
-        mapper = new ObjectMapper();
-
         testUsers = TestHelper.fetchUsers(5);
-
 
         testUser = testUsers.get(0);
 
@@ -89,7 +69,6 @@ public class UserControllerTest {
         testUserEntityResponseList = new ArrayList<>();
         testUserEntityResponseList.add(testUserEntityResponse);
 
-        newlyAddedUserSkill = new UserSkill(testUser, new Skill("SkillToAddLater"));
 
     }
 
@@ -100,20 +79,15 @@ public class UserControllerTest {
 
     @Test
     public void get_user_profile_success() throws Exception {
+        when(userService.getUserProfile(anyLong(), anyString())).thenReturn(testUserEntityResponse);
 
-        UserWithSkillsResponse userEntityResponseTest = mock(UserWithSkillsResponse.class);
-
-        when(userService.getUserProfile(anyLong(), anyString())).thenReturn(userEntityResponseTest);
-
-        whenNew(UserWithSkillsResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
-
-        mockMvc.perform(get("/user/profile/0")
+        mockMvc.perform(get("/user/0")
                 .header("Authorization", "Bearer")
                 .contentType(contentType))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is(userEntityResponseTest.getName())))
-                .andExpect(jsonPath("$.lastName", is(userEntityResponseTest.getLastName())))
-                .andExpect(jsonPath("$.email", is(userEntityResponseTest.getEmail())));
+                .andExpect(jsonPath("$.name", is(testUserEntityResponse.getName())))
+                .andExpect(jsonPath("$.lastName", is(testUserEntityResponse.getLastName())))
+                .andExpect(jsonPath("$.email", is(testUserEntityResponse.getEmail())));
 
         verify(userService, times(1)).getUserProfile(any(), any());
         verifyNoMoreInteractions(userService);
@@ -122,72 +96,17 @@ public class UserControllerTest {
     @Test
     public void get_user_success() throws Exception {
 
+        when(userService.getUserProfile(any(), any())).thenReturn(testUserEntityResponse);
         when(userService.getUserByAuthId(any())).thenReturn(testUser);
-        UserWithSkillsResponse userEntityResponseTest = mock(UserWithSkillsResponse.class);
-        whenNew(UserWithSkillsResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
 
-        mockMvc.perform(get("/user/get")
+        mockMvc.perform(get("/user")
                 .header("Authorization", "Bearer")
                 .contentType(contentType))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is(testUser.getName())))
                 .andExpect(jsonPath("$.lastName", is(testUser.getLastName())))
-                .andExpect(jsonPath("$.email", is(testUser.getEmail())))
-                .andExpect(jsonPath("$.skills", hasSize(TestHelper.NUMBER_OF_SKILLS_USER_HAS)));
+                .andExpect(jsonPath("$.email", is(testUser.getEmail())));
 
         verify(userService, times(1)).getUserByAuthId(any());
-        verifyNoMoreInteractions(userService);
-    }
-
-    @Test
-    public void add_skill_to_user_success() throws Exception {
-
-        String skillJson = mapper.writeValueAsString(new AddSkillRequest(newlyAddedUserSkill));
-
-        when(userService.getUserByAuthId(any())).thenReturn(testUser);
-        when(userService.addUserSkill(any(), any())).thenReturn(testUser);
-        when(userService.getUserById(any())).thenReturn(testUser);
-
-        UserResponse userEntityResponseTest = mock(UserResponse.class);
-
-        whenNew(UserResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
-
-        mockMvc.perform(post("/user/skill/add").header("Authorization", "Bearer")
-                .contentType(contentType)
-                .content(skillJson))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is(testUser.getName())))
-                .andExpect(jsonPath("$.lastName", is(testUser.getLastName())))
-                .andExpect(jsonPath("$.email", is(testUser.getEmail())))
-                .andExpect(jsonPath("$.skills", hasSize(TestHelper.NUMBER_OF_SKILLS_USER_HAS)));
-
-        verify(userService, times(1)).getUserByAuthId(any());
-        verify(userService, times(1)).addUserSkill(any(), any());
-        verify(userService, times(1)).getUserById(any());
-
-    }
-
-    @Test
-    public void remove_skill_from_user_success() throws Exception {
-
-        String skillJson = mapper.writeValueAsString(new RemoveSkillRequest(newlyAddedUserSkill));
-        UserWithSkillsResponse userEntityResponseTest = mock(UserWithSkillsResponse.class);
-        whenNew(UserWithSkillsResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
-
-        when(userService.getUserByAuthId(any())).thenReturn(testUser);
-        when(userService.removeUserSkill(any(), any())).thenReturn(testUser);
-
-        mockMvc.perform(post("/user/skill/remove").header("Authorization", "Bearer")
-                .contentType(contentType)
-                .content(skillJson))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is(testUser.getName())))
-                .andExpect(jsonPath("$.lastName", is(testUser.getLastName())))
-                .andExpect(jsonPath("$.email", is(testUser.getEmail())))
-                .andExpect(jsonPath("$.skills", hasSize(TestHelper.NUMBER_OF_SKILLS_USER_HAS)));
-
-        verify(userService, times(1)).getUserByAuthId(any());
-        verify(userService, times(1)).removeUserSkill(any(), any());
-
     }
 }

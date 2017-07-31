@@ -11,7 +11,6 @@ import lt.swedbank.beans.response.user.UserWithSkillsResponse;
 import lt.swedbank.beans.response.userSkill.UserSkillResponse;
 import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.helpers.TestHelper;
-import lt.swedbank.repositories.SkillTemplateRepository;
 import lt.swedbank.repositories.TeamRepository;
 import lt.swedbank.services.department.DepartmentService;
 import lt.swedbank.services.skill.SkillTemplateService;
@@ -21,6 +20,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
+
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -35,31 +35,24 @@ public class TeamServiceTest {
     @Spy
     @InjectMocks
     private TeamService teamService;
-
-    @Mock
-    private SkillTemplateRepository skillTemplateRepository;
-
     @Mock
     private TeamRepository teamRepository;
-
     @Mock
     private UserService userService;
-
     @Mock
     private DepartmentService departmentService;
-
     @Mock
     private UserSkillService userSkillService;
-
     @Mock
     private SkillTemplateService skillTemplateService;
+
     //Test DAta
 
     private List<Team> teams;
     private Team testTeam;
     private NonColleagueTeamOverviewWithUsersResponse nonColleagueTeamOverviewWithUsersResponse;
-    private SkillTemplate skillTemplate;
-    private List<Skill> skills;
+    private SkillTemplate testSkillTemplate;
+    private List<Skill> testSkills;
     private List<TeamSkillTemplateResponse> teamSkillTemplateResponse;
     private List<User> users;
     private UserSkillLevel userSkillLevel;
@@ -78,18 +71,18 @@ public class TeamServiceTest {
 
         users = TestHelper.fetchUsers(3);
 
-        skills = new LinkedList<>();
-        skills.add(new Skill("test"));
-        skills.add(new Skill("test2"));
+        testSkills = new LinkedList<>();
+        testSkills.add(new Skill("test"));
+        testSkills.add(new Skill("test2"));
 
         userSkillLevel = new UserSkillLevel();
         SkillLevel skillLevel = new SkillLevel();
         skillLevel.setLevel(2L);
         userSkillLevel.setSkillLevel(skillLevel);
 
-        skillTemplate = new SkillTemplate();
-        skillTemplate.setTeam(testTeam);
-        skillTemplate.setSkills(skills);
+        testSkillTemplate = new SkillTemplate();
+        testSkillTemplate.setTeam(testTeam);
+        testSkillTemplate.setSkills(testSkills);
 
         teamSkillTemplateResponse = new LinkedList<>();
         teamSkillTemplateResponse.add(new TeamSkillTemplateResponse(new Skill("test"), 2, 2));
@@ -120,10 +113,10 @@ public class TeamServiceTest {
     }
 
     @Test
-    public void getTeamSkillTemplate() {
-        Mockito.when(skillTemplateRepository.findOneByTeamId(any())).thenReturn(skillTemplate);
+    public void getTeamSkillTemplate() throws Exception {
+        Mockito.when(skillTemplateService.getByTeamId(any())).thenReturn(testSkillTemplate);
 
-        Assert.assertEquals(teamService.getTeamSkillTemplate(testTeam), skillTemplate);
+        Assert.assertEquals(teamService.getTeamSkillTemplate(testTeam), testSkillTemplate);
     }
 
     @Test
@@ -131,8 +124,7 @@ public class TeamServiceTest {
         doReturn(2).when(teamService).getSkillCountInTeam(any(Team.class), any(Skill.class));
         doReturn(2.0).when(teamService).getAverageSkillLevelInTeam(any(Team.class), any(Skill.class));
 
-        Mockito.when(teamService.getTeamSkillTemplate(any())).thenReturn(skillTemplate);
-        Mockito.when(teamService.getTeamSkillTemplateResponseList(any())).thenReturn(teamSkillTemplateResponse);
+        Mockito.when(skillTemplateService.getByTeamId(any())).thenReturn(testSkillTemplate);
 
         Assert.assertEquals(teamSkillTemplateResponse, teamService.getTeamSkillTemplateResponseList(any()));
         Assert.assertEquals(teamSkillTemplateResponse.get(0).getSkill().getTitle(),
@@ -141,6 +133,7 @@ public class TeamServiceTest {
 
     @Test
     public void getTeamSkillTemplateResponseListException() throws Exception {
+        doReturn(null).when(teamService).getTeamSkillTemplate(any(Team.class));
         List<TeamSkillTemplateResponse> teamSkillTemplateResponses = teamService.getTeamSkillTemplateResponseList(any());
         Assert.assertEquals(teamSkillTemplateResponses.isEmpty(), true);
     }
@@ -172,19 +165,17 @@ public class TeamServiceTest {
 
     @Test
     public void getNonColleagueTeamOverview() throws Exception {
-        User userFromAnotherDepartment = new User();
-        userFromAnotherDepartment.setId(1L);
-        userFromAnotherDepartment.setTeam(null);
-        Department department = new Department();
-        Team team = new Team();
+        User userWithoutTeam = new User();
+        userWithoutTeam.setId(1L);
+        userWithoutTeam.setTeam(null);
 
         Mockito.when(teamRepository.findOne(testTeam.getId())).thenReturn(testTeam);
-        Mockito.when(userService.getUserById(any())).thenReturn(userFromAnotherDepartment);
+        Mockito.when(userService.getUserById(any())).thenReturn(userWithoutTeam);
         
         testTeam.setUsers(TestHelper.fetchUsers(5));
-        team.setDepartment(department);
+        testTeam.setDepartment(TestHelper.fetchDepartments(1).get(0));
 
-        TeamResponse resultResponse = teamService.getTeamOverview(testTeam.getId(), userFromAnotherDepartment.getId());
+        TeamResponse resultResponse = teamService.getTeamOverview(testTeam.getId(), userWithoutTeam.getId());
         Assert.assertThat(resultResponse, instanceOf(NonColleagueTeamOverviewWithUsersResponse.class));
     }
     
@@ -234,7 +225,8 @@ public class TeamServiceTest {
         addTeamRequest.setName(testTeam.getName());
         addTeamRequest.setDepartmentId(testTeam.getDepartment().getId());
 
-        Assert.assertEquals(teamService.addTeam(addTeamRequest).getId(), new TeamResponse(testTeam).getId());
+        TeamWithUsersResponse response = teamService.addTeam(addTeamRequest);
+        Assert.assertEquals(response.getId(), testTeam.getId());
     }
 
     @Test

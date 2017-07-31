@@ -4,10 +4,13 @@ import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.request.RemoveSkillRequest;
+import lt.swedbank.beans.response.userSkill.UserSkillResponse;
 import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
 import lt.swedbank.exceptions.skill.SkillNotFoundException;
 import lt.swedbank.exceptions.userSkill.UserSkillNotFoundException;
+import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.repositories.UserSkillRepository;
+import lt.swedbank.services.user.UserService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,9 +35,10 @@ public class UserSkillServiceTest {
 
     @Mock
     private UserSkillRepository userSkillRepository;
-
     @Mock
     private UserSkillLevelService userSkillLevelService;
+    @Mock
+    private UserService userService;
 
     private AddSkillRequest addSkillRequest;
     private RemoveSkillRequest removeSkillRequest;
@@ -52,23 +56,21 @@ public class UserSkillServiceTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        skill = new Skill();
-        skill.setTitle("Angular");
-        skill.setId(Long.valueOf(0));
+        skill = TestHelper.skills.get(0);
 
         addSkillRequest = new AddSkillRequest();
-        addSkillRequest.setTitle("Angular");
+        addSkillRequest.setTitle(skill.getTitle());
 
         removeSkillRequest = new RemoveSkillRequest();
-        removeSkillRequest.setTitle("Angular");
+        removeSkillRequest.setTitle(skill.getTitle());
 
         assignSkillLevelRequest = new AssignSkillLevelRequest();
-        assignSkillLevelRequest.setLevelId(Long.valueOf(2));
+        assignSkillLevelRequest.setLevelId(2L);
         assignSkillLevelRequest.setSkillId(skill.getId());
         assignSkillLevelRequest.setMotivation("Motivation");
 
         user = new User();
-        user.setId(Long.valueOf(0));
+        user.setId(0L);
 
         testUserSkill = new UserSkill(user, skill);
 
@@ -89,9 +91,9 @@ public class UserSkillServiceTest {
     public void addUserSkill() throws Exception {
         Mockito.when(skillService.findByTitle(addSkillRequest.getTitle())).thenReturn(skill);
 
-        UserSkill resultUserSkill = userSkillService.addUserSkill(user, addSkillRequest);
+        UserSkillResponse resultUserSkill = userSkillService.addUserSkill(user.getId(), addSkillRequest);
 
-        Assert.assertEquals(testUserSkill.getId(), resultUserSkill.getId());
+        Assert.assertEquals(testUserSkill.getSkill().getId(), resultUserSkill.getId());
 
         Mockito.verify(userSkillRepository, Mockito.times(1)).save(any(UserSkill.class));
         Mockito.verify(skillService, Mockito.times(0)).addSkill(any());
@@ -102,9 +104,9 @@ public class UserSkillServiceTest {
     public void add_user_skill_as_well_as_new_skill() throws Exception {
         Mockito.when(skillService.findByTitle(addSkillRequest.getTitle())).thenThrow(new SkillNotFoundException());
         Mockito.when(skillService.addSkill(addSkillRequest)).thenReturn(skill);
-        UserSkill resultUserSkill = userSkillService.addUserSkill(user, addSkillRequest);
+        UserSkillResponse resultUserSkill = userSkillService.addUserSkill(user.getId(), addSkillRequest);
 
-        Assert.assertEquals(testUserSkill.getId(), resultUserSkill.getId());
+        Assert.assertEquals(skill.getId(), resultUserSkill.getId());
 
         Mockito.verify(userSkillRepository, Mockito.times(1)).save(any(UserSkill.class));
         Mockito.verify(skillService, Mockito.times(1)).addSkill(any());
@@ -115,7 +117,7 @@ public class UserSkillServiceTest {
         Mockito.when(skillService.findByTitle(addSkillRequest.getTitle())).thenReturn(skill);
         Mockito.when(userSkillRepository.findByUserIdAndSkillId(user.getId(), skill.getId())).thenReturn(testUserSkill);
 
-        userSkillService.addUserSkill(user, addSkillRequest);
+        userSkillService.addUserSkill(user.getId(), addSkillRequest);
     }
 
     @Test
@@ -123,9 +125,9 @@ public class UserSkillServiceTest {
         Mockito.when(skillService.findByTitle(addSkillRequest.getTitle())).thenReturn(skill);
         Mockito.when(userSkillRepository.findByUserIdAndSkillId(user.getId(), skill.getId())).thenReturn(testUserSkill);
 
-        UserSkill resultUserSkill = userSkillService.removeUserSkill(user.getId(), removeSkillRequest);
+        UserSkillResponse resultUserSkill = userSkillService.removeUserSkill(user.getId(), removeSkillRequest);
 
-        Assert.assertEquals(testUserSkill.getId(), resultUserSkill.getId());
+        Assert.assertEquals(testUserSkill.getSkill().getId(), resultUserSkill.getId());
 
         Mockito.verify(userSkillRepository, Mockito.times(1)).delete(any(UserSkill.class));
     }
@@ -135,7 +137,7 @@ public class UserSkillServiceTest {
         Mockito.when(skillService.findByTitle(addSkillRequest.getTitle())).thenReturn(skill);
         Mockito.when(userSkillRepository.findByUserIdAndSkillId(user.getId(), skill.getId())).thenReturn(null);
 
-        UserSkill resultUserSkill = userSkillService.removeUserSkill(user.getId(), removeSkillRequest);
+        UserSkillResponse resultUserSkill = userSkillService.removeUserSkill(user.getId(), removeSkillRequest);
     }
 
     @Test

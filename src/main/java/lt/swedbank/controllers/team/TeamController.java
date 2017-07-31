@@ -34,6 +34,16 @@ public class TeamController {
         return teamService.getTeamOverview(id, userId);
     }
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public @ResponseBody
+    TeamWithUsersResponse updateTeam(@RequestHeader(value = "Authorization") String authToken,
+                                          @PathVariable("id") Long id) {
+        String authId = authenticationService.extractAuthIdFromToken(authToken);
+        Long userId = userService.getUserByAuthId(authId).getId();
+        return teamService.getTeamOverview(id, userId);
+    }
+
+
     @RequestMapping(value = "/my", method = RequestMethod.GET)
     public @ResponseBody
     TeamWithUsersResponse getMyTeam(@RequestHeader(value = "Authorization") String authToken) {

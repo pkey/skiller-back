@@ -2,6 +2,7 @@ package lt.swedbank.services.team;
 
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.team.AddTeamRequest;
+import lt.swedbank.beans.request.team.UpdateTeamRequest;
 import lt.swedbank.beans.response.TeamSkillTemplateResponse;
 import lt.swedbank.beans.response.team.TeamWithUsersResponse;
 import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewWithUsersResponse;
@@ -15,6 +16,7 @@ import lt.swedbank.services.department.DepartmentService;
 import lt.swedbank.services.skill.SkillService;
 import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.user.UserService;
+import lt.swedbank.services.valueStream.ValueStreamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +36,8 @@ public class TeamService {
     private SkillTemplateRepository skillTemplateRepository;
     @Autowired
     private DepartmentService departmentService;
+    @Autowired
+    private ValueStreamService valueStreamService;
     @Autowired
     private UserSkillService userSkillService;
     @Autowired
@@ -101,6 +105,33 @@ public class TeamService {
         team.setUsers(userList);
 
         return new ColleagueTeamOverviewWithUsersResponse(team,getUserWithSkillResponseList(team.getUsers()), getTeamSkillTemplateResponseList(team));
+    }
+
+    public TeamWithUsersResponse updateTeam(Long id, UpdateTeamRequest updateTeamRequest) {
+        assert id != null;
+        assert updateTeamRequest != null;
+
+        Team team = getTeamById(id);
+
+        assert updateTeamRequest.getUserIds() != null;
+        team.setUsers(userService.getUsersByIds(updateTeamRequest.getUserIds()));
+
+        assert updateTeamRequest.getDepartmentId() != null;
+        team.setDepartment(departmentService.getDepartmentById(updateTeamRequest.getDepartmentId()));
+
+        assert updateTeamRequest.getName() != null || updateTeamRequest.getName().isEmpty();
+        team.setName(updateTeamRequest.getName());
+
+        assert updateTeamRequest.getSkillIds() != null;
+        team.setSkillTemplate(skillService.createSkillTemplate(team,
+                skillService.getSkillsByIds(updateTeamRequest.getSkillIds())));
+
+        if(updateTeamRequest.getStreamId() != null){
+            team.setValueStream(valueStreamService.getValueStreamById(updateTeamRequest.getStreamId()));
+        }
+        return new TeamWithUsersResponse(team,
+                getUserWithSkillResponseList(userService.getUsersByIds(updateTeamRequest.getUserIds())),
+                getTeamSkillTemplateResponseList(team));
     }
 
     public SkillTemplate getTeamSkillTemplate(Team team)
@@ -177,7 +208,7 @@ public class TeamService {
             team.setUsers(userService.getUsersByIds(addTeamRequest.getUserIds()));
         }
         if (addTeamRequest.getStreamId() != null) {
-            team.setValueStream(departmentService.getValueStreamById(addTeamRequest.getStreamId()));
+            team.setValueStream(valueStreamService.getValueStreamById(addTeamRequest.getStreamId()));
         }
 
         teamRepository.save(team);

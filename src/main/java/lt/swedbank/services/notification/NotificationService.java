@@ -17,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 public class NotificationService {
@@ -34,8 +37,8 @@ public class NotificationService {
         return requestNotificationRepository.findByReceiver(user);
     }
 
-    public Iterable<RequestNotification> setNotificationsAsExpired(Iterable<RequestNotification> requestNotifications){
-        for (RequestNotification requestNotification: requestNotifications) {
+    public Iterable<RequestNotification> setNotificationsAsExpired(Iterable<RequestNotification> requestNotifications) {
+        for (RequestNotification requestNotification : requestNotifications) {
             requestNotification.setExpired();
         }
         requestNotificationRepository.save(requestNotifications);
@@ -45,23 +48,20 @@ public class NotificationService {
     public ArrayList<NotificationResponse> getNotificationResponses(Iterable<RequestNotification> requestNotifications) {
         ArrayList<NotificationResponse> requestNotificationResponses = new ArrayList<NotificationResponse>();
         for (RequestNotification requestNotification : requestNotifications) {
-
             ApprovalRequest approvalRequest = requestNotification.getApprovalRequest();
-            if(approvalRequest.getUserSkillLevel().getUserSkill().getUser() == requestNotification.getReceiver()) {
+            if (approvalRequest.getUserSkillLevel().getUserSkill().getUser() == requestNotification.getReceiver()) {
                 if (approvalRequest.getStatus() == Status.DISAPPROVED) {
                     requestNotificationResponses.add(new RequestDisapprovedNotificationResponse(requestNotification));
-                }
-                else if (approvalRequest.getStatus() == Status.APPROVED) {
+                } else if (approvalRequest.getStatus() == Status.APPROVED) {
                     requestNotificationResponses.add(new RequestApprovedNotificationResponse(requestNotification));
                 }
-            }
-            else requestNotificationResponses.add(new RequestNotificationResponse(requestNotification));
+            } else requestNotificationResponses.add(new RequestNotificationResponse(requestNotification));
         }
         return requestNotificationResponses;
     }
 
-    public NotificationResponse handleRequest(NotificationAnswerRequest notificationAnswerRequest , User user) {
-        
+    public NotificationResponse handleRequest(NotificationAnswerRequest notificationAnswerRequest, User user) {
+
         RequestNotification requestNotification = getNotificationById(notificationAnswerRequest.getNotificationId());
         ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(requestNotification);
         switch (approvalRequest.getStatus()) {
@@ -110,21 +110,18 @@ public class NotificationService {
         return requestNotification;
     }
 
-    public void deleteRequestNotificationsFromApprovalRequest(ApprovalRequest approvalRequest)
-    {
+    public void deleteRequestNotificationsFromApprovalRequest(ApprovalRequest approvalRequest) {
         Iterable<RequestNotification> requestNotificationList = requestNotificationRepository.findByApprovalRequest(approvalRequest);
         requestNotificationRepository.delete(requestNotificationList);
     }
 
 
-    public void sendNotificationAboutSkillLevelStatusChanges(ApprovalRequest approvalRequest)
-    {
+    public void sendNotificationAboutSkillLevelStatusChanges(ApprovalRequest approvalRequest) {
         approvalRequest.setRequestNotification(new RequestNotification(getUserFromApprovalRequest(approvalRequest), approvalRequest));
         approvalService.update(approvalRequest);
     }
 
-    public User getUserFromApprovalRequest(ApprovalRequest approvalRequest)
-    {
+    public User getUserFromApprovalRequest(ApprovalRequest approvalRequest) {
         return userService.getUserById(approvalRequest.getUserSkillLevel().getUserSkill().getUser().getId());
     }
 
@@ -143,4 +140,12 @@ public class NotificationService {
         requestNotificationRepository.delete(request.getRequestNotifications());
     }
 
+    private void sortRequestNotifications(List<RequestNotification> requestNotifications) {
+        Collections.sort(requestNotifications, Comparator.comparing(RequestNotification::getCreationTime));
+    }
+
+    public List<NotificationResponse> getNotificationsResponsesSortedByDate(List<RequestNotification> requestNotifications) {
+        sortRequestNotifications(requestNotifications);
+        return getNotificationResponses(requestNotifications);
+    }
 }

@@ -94,16 +94,12 @@ public class TeamService {
         return users.stream().map(user -> new UserWithSkillsResponse(user, userSkillService.getNormalUserSkillResponseList(user.getUserSkills()))).collect(Collectors.toList());
     }
 
-
     public TeamWithUsersResponse getMyTeam(Long currentUserId) {
         User user = userService.getUserById(currentUserId);
         Team team = getTeamById(user.getTeam().getId());
         List<User> userList = team.getUsers();
-
         userList.sort(Comparator.comparing(User::toString));
-
         team.setUsers(userList);
-
         return new ColleagueTeamOverviewWithUsersResponse(team,getUserWithSkillResponseList(team.getUsers()), getTeamSkillTemplateResponseList(team));
     }
 

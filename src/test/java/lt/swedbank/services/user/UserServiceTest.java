@@ -193,7 +193,7 @@ public class UserServiceTest {
     @Test
     public void getUserColleagueProfile() throws Exception {
         User colleagueUser = testUser;
-        colleagueUser.setTeam(loggedUser.getTeam().orElse(null));
+        colleagueUser.setTeam(loggedUser.getTeam().orElseThrow(() -> new Exception("Logged user does not have a team")));
 
         doReturn(colleagueUser).when(userService).getUserById(any());
         doReturn(loggedUser).when(userService).getUserByAuthId(any());

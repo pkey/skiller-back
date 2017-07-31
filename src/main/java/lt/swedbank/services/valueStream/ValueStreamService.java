@@ -6,8 +6,8 @@ import lt.swedbank.repositories.ValueStreamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ValueStreamService {
@@ -20,10 +20,7 @@ public class ValueStreamService {
     }
 
     public Iterable<ValueStreamResponse> getAllValueStreamEntityResponseList() {
-        List<ValueStreamResponse> valueStreamList = new ArrayList<>();
-        for (ValueStream valueStream : getAllValueStreams()) {
-            valueStreamList.add(new ValueStreamResponse(valueStream));
-        }
-        return valueStreamList;
+        return ((List<ValueStream>) getAllValueStreams()).stream().map(ValueStreamResponse::new)
+                .collect(Collectors.toList());
     }
 }

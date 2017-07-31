@@ -2,7 +2,6 @@ package lt.swedbank.controllers.team;
 
 
 import lt.swedbank.beans.entity.User;
-import lt.swedbank.beans.response.team.TeamResponse;
 import lt.swedbank.beans.response.team.TeamWithUsersResponse;
 import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewWithUsersResponse;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
@@ -69,7 +68,7 @@ public class TeamControllerTest {
 
     @Test
     public void getMyTeam() throws Exception {
-        testTeamOverviewResponse = new ColleagueTeamOverviewWithUsersResponse(testUser.getTeam(), new ArrayList<>());
+        testTeamOverviewResponse = new ColleagueTeamOverviewWithUsersResponse(testUser.getTeam().orElse(null), new ArrayList<>());
 
         Mockito.when(userService.getUserByAuthId(any())).thenReturn(testUser);
         Mockito.when(teamService.getMyTeam(testUser.getId())).thenReturn(testTeamOverviewResponse);
@@ -89,10 +88,10 @@ public class TeamControllerTest {
 
     @Test
     public void getTeamOverviewOfColleaguesTeam() throws Exception {
-        testTeamOverviewResponse = new ColleagueTeamOverviewWithUsersResponse(testUser.getTeam(), new ArrayList<>());
+        testTeamOverviewResponse = new ColleagueTeamOverviewWithUsersResponse(testUser.getTeam().orElse(null), new ArrayList<>());
 
         Mockito.when(userService.getUserByAuthId(any())).thenReturn(testUser);
-        Mockito.when(teamService.getTeamOverview(testUser.getTeam().getId(), testUser.getId())).thenReturn(testTeamOverviewResponse);
+        Mockito.when(teamService.getTeamOverview(testUser.getTeam().orElse(null).getId(), testUser.getId())).thenReturn(testTeamOverviewResponse);
 
 
         mockMvc.perform(get("/team/0")

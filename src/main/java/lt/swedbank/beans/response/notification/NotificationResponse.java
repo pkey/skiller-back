@@ -4,14 +4,17 @@ import lt.swedbank.beans.entity.RequestNotification;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkillLevel;
 import lt.swedbank.beans.response.SkillEntityResponse;
+import org.bouncycastle.util.Times;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 abstract public class NotificationResponse {
 
     private Integer type;
 
-    private Date date;
+    private Timestamp date;
 
     private String status;
 
@@ -27,10 +30,10 @@ abstract public class NotificationResponse {
 
     private SkillEntityResponse skill;
 
-    public NotificationResponse() {}
+    public NotificationResponse() {
+    }
 
-    public NotificationResponse(RequestNotification requestNotification)
-    {
+    public NotificationResponse(RequestNotification requestNotification) {
         User user = requestNotification.getApprovalRequest().getUserSkillLevel().getUserSkill().getUser();
         UserSkillLevel userSkillLevel = requestNotification.getApprovalRequest().getUserSkillLevel();
         this.id = requestNotification.getId();
@@ -39,7 +42,7 @@ abstract public class NotificationResponse {
         this.senderName = user.getName();
         this.senderLastname = user.getLastName();
         this.skillLevel = userSkillLevel.getSkillLevel().getTitle();
-        this.date = requestNotification.getApprovalRequest().getCreationTime();
+        this.date = Timestamp.valueOf(requestNotification.getCreationTime());
         this.status = requestNotification.getStatusAsString();
     }
 
@@ -74,6 +77,7 @@ abstract public class NotificationResponse {
     public void setMessage(String message) {
         this.message = message;
     }
+
     public void setSkill(SkillEntityResponse skill) {
         this.skill = skill;
     }
@@ -90,11 +94,11 @@ abstract public class NotificationResponse {
         this.id = id;
     }
 
-    public Date getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
 
@@ -113,6 +117,5 @@ abstract public class NotificationResponse {
     public void setStatus(String status) {
         this.status = status;
     }
-
 
 }

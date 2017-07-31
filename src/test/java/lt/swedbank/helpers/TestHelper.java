@@ -21,6 +21,7 @@ public class TestHelper {
     public static final int NUMBER_OF_SKILLS = 10;
     public static final int NUMBER_OF_SKILLS_USER_HAS = 5;
     public static final int NUMBER_OF_SKILL_LEVELS = 3;
+    public static final int NUMBER_OF_VALUE_STREAM = 3;
 
 
     public static int currentUserSkillId = 0;
@@ -32,6 +33,7 @@ public class TestHelper {
     private static List<Department> departments;
     private static List<Division> divisions;
     private static SkillLevel defaultSkillLevel;
+    private static List<ValueStream> valueStreams;
 
 
 
@@ -42,6 +44,7 @@ public class TestHelper {
         createLevels();
         createSkills();
         createUsers();
+        generateValueStreamsList();
     }
 
     private static void createLevels() {
@@ -217,6 +220,28 @@ public class TestHelper {
 
     public static List<Division> fetchDivisions(int amount) {
         return divisions.subList(0, amount);
+    }
+
+    public static List<ValueStream> generateValueStreamsList() {
+        List<ValueStream> valueStreamsToBeGenerated = new ArrayList<>();
+
+        for (int i = 0; i < NUMBER_OF_VALUE_STREAM; i++) {
+            ValueStream valueStream = generateValueStream(i);
+            valueStreamsToBeGenerated.add(valueStream);
+        }
+        return valueStreams = valueStreamsToBeGenerated;
+    }
+
+    public static ValueStream generateValueStream(int i) {
+        ValueStream valueStream = new ValueStream();
+        valueStream.setId(new Long(i));
+        valueStream.setName(i + " - Value Stream");
+
+        return valueStream;
+    }
+
+    public static List<ValueStream> fetchValueStreams() {
+        return valueStreams;
     }
 
 }

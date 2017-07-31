@@ -55,8 +55,6 @@ public class UserSkillLevelService {
 
     public UserSkillLevel addDefaultUserSkillLevel(UserSkill userSkill) {
         UserSkillLevel userSkillLevel = new UserSkillLevel(userSkill, skillLevelService.getDefault());
-
-        approvalService.addDefaultApprovalRequest(userSkillLevel);
         userSkillLevelRepository.save(userSkillLevel);
 
         return userSkillLevel;

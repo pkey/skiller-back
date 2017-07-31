@@ -39,13 +39,6 @@ public class ApprovalService {
     @Autowired
     private UserSkillLevelService userSkillLevelService;
 
-    public ApprovalRequest addDefaultApprovalRequest(UserSkillLevel userSkillLevel) {
-        ApprovalRequest defaultApprovalRequest = new ApprovalRequest();
-        defaultApprovalRequest.setUserSkillLevel(userSkillLevel);
-        defaultApprovalRequest.setApproved();
-        return approvalRequestRepository.save(defaultApprovalRequest);
-    }
-
     public ApprovalRequest addSkillLevelApprovalRequestWithNotifications(Long userId, AssignSkillLevelRequest assignSkillLevelRequest) throws RequestAlreadySubmittedException, TooHighSkillLevelRequestException {
 
         if (userSkillLevelService.isLatestUserSkillLevelPending(userId, assignSkillLevelRequest.getSkillId())) {
@@ -159,7 +152,6 @@ public class ApprovalService {
 
         if (approvalRequest.getApproves() >= 5) {
             approvalRequest.setApproved();
-            notificationService.setNotificationsAsExpired(approvalRequest.getRequestNotifications());
         }
         return approvalRequestRepository.save(approvalRequest);
     }
@@ -171,12 +163,10 @@ public class ApprovalService {
     public ApprovalRequest disapprove(String message, ApprovalRequest approvalRequest, User user) {
 
         if (approvalRequest.getStatus() == Status.PENDING) {
-
             Disapprover disapprover = new Disapprover(user, message);
             saveDisapprover(disapprover);
             approvalRequest.addDisapprover(disapprover);
             approvalRequest.setDisapproved();
-            notificationService.setNotificationsAsExpired(approvalRequest.getRequestNotifications());
         }
         return approvalRequestRepository.save(approvalRequest);
     }

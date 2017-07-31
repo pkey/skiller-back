@@ -69,8 +69,10 @@ public class NotificationService {
                 requestNotification = changeNotificationRequestStatus(approvalRequest, requestNotification, user, notificationAnswerRequest);
                 break;
             case APPROVED:
+                requestNotification.setExpired();
                 return new RequestApprovedNotificationResponse(requestNotification);
             case DISAPPROVED:
+                requestNotification.setExpired();
                 return new RequestDisapprovedNotificationResponse(requestNotification);
         }
         return new RequestNotificationResponse(requestNotification);

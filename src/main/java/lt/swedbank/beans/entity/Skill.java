@@ -30,12 +30,8 @@ public class Skill {
 
     public Skill(String title) {
         this.title = title;
-        //TODO where this thing should be?
-        capitalizeTitle();
     }
 
 
-    private void capitalizeTitle() {
-        title = title.substring(0, 1).toUpperCase() + title.substring(1);
-    }
+
 }

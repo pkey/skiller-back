@@ -39,11 +39,11 @@ public class Team {
         return Optional.ofNullable(valueStream);
     }
 
-//    public void setUsers(List<User> users) {
-//        this.users = users;
-//        for (User user : users) {
-//            user.setTeam(this);
-//        }
-//    }
+    public void setUsers(List<User> users) {
+        this.users = users;
+        for (User user : users) {
+            user.setTeam(this);
+        }
+    }
 
 }

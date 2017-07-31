@@ -10,10 +10,10 @@ import lt.swedbank.beans.response.team.teamOverview.NonColleagueTeamOverviewWith
 import lt.swedbank.beans.response.user.UserWithSkillsResponse;
 import lt.swedbank.exceptions.team.TeamNameAlreadyExistsException;
 import lt.swedbank.exceptions.team.TeamNotFoundException;
-import lt.swedbank.repositories.SkillTemplateRepository;
 import lt.swedbank.repositories.TeamRepository;
 import lt.swedbank.services.department.DepartmentService;
 import lt.swedbank.services.skill.SkillService;
+import lt.swedbank.services.skill.SkillTemplateService;
 import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.user.UserService;
 import lt.swedbank.services.valueStream.ValueStreamService;
@@ -33,8 +33,6 @@ public class TeamService {
     @Autowired
     private UserService userService;
     @Autowired
-    private SkillTemplateRepository skillTemplateRepository;
-    @Autowired
     private DepartmentService departmentService;
     @Autowired
     private ValueStreamService valueStreamService;
@@ -42,6 +40,8 @@ public class TeamService {
     private UserSkillService userSkillService;
     @Autowired
     private SkillService skillService;
+    @Autowired
+    private SkillTemplateService skillTemplateService;
 
 
     public Iterable<Team> getAllTeams() {
@@ -107,6 +107,33 @@ public class TeamService {
         return new ColleagueTeamOverviewWithUsersResponse(team,getUserWithSkillResponseList(team.getUsers()), getTeamSkillTemplateResponseList(team));
     }
 
+    public TeamWithUsersResponse addTeam(AddTeamRequest addTeamRequest) {
+        assert addTeamRequest != null;
+
+        if (teamRepository.findByName(addTeamRequest.getName()) != null) {
+            throw new TeamNameAlreadyExistsException();
+        }
+
+        Team team = new Team(addTeamRequest.getName());
+        team.setDepartment(departmentService.getDepartmentById(addTeamRequest.getDepartmentId()));
+
+        if (addTeamRequest.getUserIds() != null) {
+            team.setUsers(userService.getUsersByIds(addTeamRequest.getUserIds()));
+        }
+        if (addTeamRequest.getStreamId() != null) {
+            team.setValueStream(valueStreamService.getValueStreamById(addTeamRequest.getStreamId()));
+        }
+
+        teamRepository.save(team);
+
+        if (addTeamRequest.getSkillIds() != null) {
+            team.setSkillTemplate(skillTemplateService.createSkillTemplate(team, skillService.getSkillsByIds(addTeamRequest.getSkillIds())));
+        }
+
+        return new TeamWithUsersResponse(team, getUserWithSkillResponseList(userService.getUsersByIds(addTeamRequest.getUserIds())), getTeamSkillTemplateResponseList(team));
+    }
+
+
     public TeamWithUsersResponse updateTeam(Long id, UpdateTeamRequest updateTeamRequest) {
         assert id != null;
         assert updateTeamRequest != null;
@@ -123,20 +150,22 @@ public class TeamService {
         team.setName(updateTeamRequest.getName());
 
         assert updateTeamRequest.getSkillIds() != null;
-        team.setSkillTemplate(skillService.createSkillTemplate(team,
+        team.setSkillTemplate(skillTemplateService.updateSkillTemplate(team.getSkillTemplate().getId(),
                 skillService.getSkillsByIds(updateTeamRequest.getSkillIds())));
 
         if(updateTeamRequest.getStreamId() != null){
             team.setValueStream(valueStreamService.getValueStreamById(updateTeamRequest.getStreamId()));
         }
-        return new TeamWithUsersResponse(team,
+
+
+        return new TeamWithUsersResponse(teamRepository.save(team),
                 getUserWithSkillResponseList(userService.getUsersByIds(updateTeamRequest.getUserIds())),
                 getTeamSkillTemplateResponseList(team));
     }
 
     public SkillTemplate getTeamSkillTemplate(Team team)
     {
-        return skillTemplateRepository.findOneByTeam(team);
+        return skillTemplateService.getByTeamId(team.getId());
     }
 
     public List<TeamSkillTemplateResponse> getTeamSkillTemplateResponseList(Team team){
@@ -193,31 +222,4 @@ public class TeamService {
         }
         return counter;
     }
-
-    public TeamWithUsersResponse addTeam(AddTeamRequest addTeamRequest) {
-        assert addTeamRequest != null;
-
-        if (teamRepository.findByName(addTeamRequest.getName()) != null) {
-            throw new TeamNameAlreadyExistsException();
-        }
-
-        Team team = new Team(addTeamRequest.getName());
-        team.setDepartment(departmentService.getDepartmentById(addTeamRequest.getDepartmentId()));
-
-        if (addTeamRequest.getUserIds() != null) {
-            team.setUsers(userService.getUsersByIds(addTeamRequest.getUserIds()));
-        }
-        if (addTeamRequest.getStreamId() != null) {
-            team.setValueStream(valueStreamService.getValueStreamById(addTeamRequest.getStreamId()));
-        }
-
-        teamRepository.save(team);
-
-        if (addTeamRequest.getSkillIds() != null) {
-            team.setSkillTemplate(skillService.createSkillTemplate(team, skillService.getSkillsByIds(addTeamRequest.getSkillIds())));
-        }
-
-        return new TeamWithUsersResponse(team, getUserWithSkillResponseList(userService.getUsersByIds(addTeamRequest.getUserIds())), getTeamSkillTemplateResponseList(team));
-    }
-
 }

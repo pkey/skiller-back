@@ -2,6 +2,7 @@ package lt.swedbank.controllers.team;
 
 import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.request.team.AddTeamRequest;
+import lt.swedbank.beans.request.team.UpdateTeamRequest;
 import lt.swedbank.beans.response.TeamSkillTemplateResponse;
 import lt.swedbank.beans.response.team.TeamWithUsersResponse;
 import lt.swedbank.services.auth.AuthenticationService;
@@ -36,11 +37,9 @@ public class TeamController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public @ResponseBody
-    TeamWithUsersResponse updateTeam(@RequestHeader(value = "Authorization") String authToken,
-                                          @PathVariable("id") Long id) {
-        String authId = authenticationService.extractAuthIdFromToken(authToken);
-        Long userId = userService.getUserByAuthId(authId).getId();
-        return teamService.getTeamOverview(id, userId);
+    TeamWithUsersResponse updateTeam(@PathVariable("id") Long id,
+                                     @RequestBody UpdateTeamRequest updateTeamRequest) {
+        return teamService.updateTeam(id, updateTeamRequest);
     }
 
 

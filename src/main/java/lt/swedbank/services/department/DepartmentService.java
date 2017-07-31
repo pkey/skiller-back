@@ -3,12 +3,14 @@ package lt.swedbank.services.department;
 import lt.swedbank.beans.entity.Department;
 import lt.swedbank.beans.entity.ValueStream;
 import lt.swedbank.beans.response.DepartmentEntityResponse;
+import lt.swedbank.exceptions.department.DepartmentNotFoundException;
 import lt.swedbank.exceptions.valueStream.ValueStreamNotFoundException;
 import lt.swedbank.repositories.DepartmentRepository;
 import lt.swedbank.repositories.ValueStreamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +22,12 @@ public class DepartmentService {
     @Autowired
     private ValueStreamRepository valueStreamRepository;
 
-    public Department getDepartmentById(Long id) {
-        return departmentRepository.findOne(id);
+    public Department getDepartmentById(@NotNull Long id) {
+        Department department = departmentRepository.findOne(id);
+        if (department == null) {
+            throw new DepartmentNotFoundException();
+        }
+        return department;
     }
 
     public Iterable<Department> getAllDepartments() {

@@ -3,8 +3,8 @@ package lt.swedbank.beans.request.team;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-public class AddTeamRequest {
-    @NotNull(message = "Team name is required")
+public class UpdateTeamRequest {
+    @NotNull(message = "Team title is required")
     private String name;
 
     @NotNull(message = "Department id is required")
@@ -18,7 +18,7 @@ public class AddTeamRequest {
 
     private Long streamId;
 
-    public AddTeamRequest() {
+    public UpdateTeamRequest() {
     }
 
     public String getName() {

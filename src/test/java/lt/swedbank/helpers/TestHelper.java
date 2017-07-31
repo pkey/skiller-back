@@ -45,7 +45,7 @@ public class TestHelper {
     }
 
     private TestHelper(){
-        throw new AssertionError();
+        throw new UnsupportedOperationException();
     }
 
     private static void createLevels() {

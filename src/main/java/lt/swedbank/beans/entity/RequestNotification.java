@@ -1,8 +1,9 @@
 package lt.swedbank.beans.entity;
 
 import lt.swedbank.beans.enums.Status;
-
+import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 public class RequestNotification  {
@@ -18,6 +19,10 @@ public class RequestNotification  {
 
     @ManyToOne
     private ApprovalRequest approvalRequest;
+
+    @CreationTimestamp
+    private LocalDateTime creationTime;
+
 
     public RequestNotification() {}
 
@@ -71,6 +76,14 @@ public class RequestNotification  {
 
     public final String getStatusAsString() {
         return status.toString();
+    }
+
+    public LocalDateTime getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(LocalDateTime creationTime) {
+        this.creationTime = creationTime;
     }
 }
 

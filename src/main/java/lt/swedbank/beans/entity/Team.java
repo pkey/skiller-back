@@ -2,6 +2,7 @@ package lt.swedbank.beans.entity;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 public class Team {
@@ -66,8 +67,8 @@ public class Team {
         }
     }
 
-    public ValueStream getValueStream() {
-        return valueStream;
+    public Optional<ValueStream> getValueStream() {
+        return Optional.ofNullable(valueStream);
     }
 
     public void setValueStream(ValueStream valueStream) {
@@ -82,5 +83,30 @@ public class Team {
         this.skillTemplate = skillTemplate;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
 
+        if (o instanceof Team) {
+            return this.id.equals(((Team) o).getId());
+        } else {
+            return false;
+        }
+
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + this.id.intValue();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Department " + this.name + "with id of " + this.id.toString();
+    }
 }

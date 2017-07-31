@@ -1,5 +1,6 @@
 package lt.swedbank.beans.response.team;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.response.TeamSkillTemplateResponse;
 import lt.swedbank.beans.response.department.DepartmentResponse;
@@ -9,6 +10,7 @@ import lt.swedbank.beans.response.valueStream.ValueStreamResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TeamResponse {
     protected Long id;
     protected String name;
@@ -26,7 +28,7 @@ public class TeamResponse {
         this.name = team.getName();
         this.department = new DepartmentResponse(team.getDepartment());
         this.division = new DivisionResponse(team.getDepartment().getDivision());
-        this.valueStream = team.getValueStream() == null ? null : new ValueStreamResponse(team.getValueStream());
+        this.valueStream = team.getValueStream().map(ValueStreamResponse::new).orElse(null);
         this.skillTemplate =  teamSkillTemplateResponses;
     }
 

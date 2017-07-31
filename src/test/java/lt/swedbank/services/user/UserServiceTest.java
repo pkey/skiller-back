@@ -101,7 +101,7 @@ public class UserServiceTest {
 
 
     @Test(expected = UserNotFoundException.class)
-    public void assignUserSkillLevelExceptionTest() {
+    public void assignUserSkillLevelExceptionTest() throws Exception {
         doReturn(null).when(userService).getUserById(any());
         userService.assignUserSkillLevel(any(), any());
     }
@@ -120,7 +120,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void add_skill_to_user_success() {
+    public void add_skill_to_user_success() throws Exception {
         User testAddSkillUser = testUserList.get(3);
 
         Mockito.when(userSkillService.addUserSkill(any(), any())).thenReturn(testUserSkill);
@@ -136,14 +136,14 @@ public class UserServiceTest {
     }
 
     @Test(expected = UserNotFoundException.class)
-    public void addUserSkillExceptionTest() {
+    public void addUserSkillExceptionTest() throws Exception {
         doReturn(null).when(userService).getUserById(any());
 
         userService.addUserSkill(any(), any());
     }
 
     @Test
-    public void remove_skill_from_user() {
+    public void remove_skill_from_user() throws Exception {
         User testRemoveSkillUser = testUserList.get(3);
 
         Mockito.when(userSkillService.removeUserSkill(any(), any())).thenReturn(testUserSkill);
@@ -160,23 +160,24 @@ public class UserServiceTest {
     }
 
     @Test(expected = UserNotFoundException.class)
-    public void removeUserSkillExceptionTest() {
+    public void removeUserSkillExceptionTest() throws Exception {
         doReturn(null).when(userService).getUserById(any());
 
         userService.removeUserSkill(any(), any());
     }
 
     @Test
-    public void set_team_to_user_success() {
+    public void set_team_to_user_success() throws Exception {
         Mockito.when(teamService.getTeamById(any())).thenReturn(testTeam);
         doReturn(testUser).when(userService).getUserById(any());
         Mockito.when(userRepository.save(any(User.class))).thenReturn(testUser);
         User newUser = userService.assignTeam(testUser.getId(), testAssignTeamRequest);
-        assertEquals(testTeam.getId(), newUser.getTeam().getId());
+        assertEquals(newUser.getTeam().isPresent(), true);
+        assertEquals(testTeam.getId(), newUser.getTeam().get().getId());
     }
 
     @Test
-    public void getUserNonColleagueProfile() {
+    public void getUserNonColleagueProfile() throws Exception {
 
         doReturn(testUser).when(userService).getUserById(any());
         doReturn(loggedUser).when(userService).getUserByAuthId(any());
@@ -190,9 +191,9 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getUserColleagueProfile() {
+    public void getUserColleagueProfile() throws Exception {
         User colleagueUser = testUser;
-        colleagueUser.setTeam(loggedUser.getTeam());
+        colleagueUser.setTeam(loggedUser.getTeam().orElseThrow(() -> new Exception("Logged user does not have a team")));
 
         doReturn(colleagueUser).when(userService).getUserById(any());
         doReturn(loggedUser).when(userService).getUserByAuthId(any());
@@ -206,7 +207,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void assignUserSkillLevelTest() {
+    public void assignUserSkillLevelTest() throws Exception {
 
         doReturn(testUser).when(userService).getUserById(any());
         Mockito.when(userSkillService.assignSkillLevel(any(), any())).thenReturn(testUserSkill);
@@ -216,7 +217,7 @@ public class UserServiceTest {
 
 
     @Test
-    public void getUserById() {
+    public void getUserById() throws Exception {
         Mockito.when(userRepository.findOne(any())).thenReturn(testUser);
 
         assertEquals(testUser, userService.getUserById(any()));

@@ -169,11 +169,9 @@ public class TeamService {
     public List<TeamSkillTemplateResponse> getTeamSkillTemplateResponseList(Team team) {
         List<TeamSkillTemplateResponse> teamSkillTemplateResponseList = new ArrayList<>();
         try {
-            for (Skill skill : getTeamSkillTemplate(team).getSkills()) {
-                TeamSkillTemplateResponse teamSkillTemplateResponse =
-                        new TeamSkillTemplateResponse(skill, getSkillCountInTeam(team, skill), getAverageSkillLevelInTeam(team, skill));
-                teamSkillTemplateResponseList.add(teamSkillTemplateResponse);
-            }
+            teamSkillTemplateResponseList = getTeamSkillTemplate(team).getSkills().stream().map(skill -> {
+                        return new TeamSkillTemplateResponse(skill, getSkillCountInTeam(team, skill), getAverageSkillLevelInTeam(team, skill));
+                    }).collect(Collectors.toList());
         } catch (TemplateNotFoundException e) {
             return new ArrayList<>();
         }

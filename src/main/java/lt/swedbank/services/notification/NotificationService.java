@@ -61,7 +61,6 @@ public class NotificationService {
     }
 
     public NotificationResponse handleRequest(NotificationAnswerRequest notificationAnswerRequest, User user) {
-
         RequestNotification requestNotification = getNotificationById(notificationAnswerRequest.getNotificationId());
         ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(requestNotification);
         switch (approvalRequest.getStatus()) {
@@ -70,9 +69,11 @@ public class NotificationService {
                 break;
             case APPROVED:
                 requestNotification.setExpired();
+                requestNotificationRepository.save(requestNotification);
                 return new RequestApprovedNotificationResponse(requestNotification);
             case DISAPPROVED:
                 requestNotification.setExpired();
+                requestNotificationRepository.save(requestNotification);
                 return new RequestDisapprovedNotificationResponse(requestNotification);
         }
         return new RequestNotificationResponse(requestNotification);
@@ -97,6 +98,7 @@ public class NotificationService {
         requestNotification.setApproved();
         Integer approves = approvalService.approve(message, approvalRequest, user).getApproves();
         if (approves >= 5) {
+            setNotificationsAsExpired(approvalRequest.getRequestNotifications());
             sendNotificationAboutSkillLevelStatusChanges(approvalRequest);
         }
         return requestNotification;
@@ -106,6 +108,7 @@ public class NotificationService {
     public RequestNotification disapprove(ApprovalRequest approvalRequest, RequestNotification requestNotification, User user, String message) {
         requestNotification.setDisapproved();
         approvalService.disapprove(message, approvalRequest, user);
+        setNotificationsAsExpired(approvalRequest.getRequestNotifications());
         sendNotificationAboutSkillLevelStatusChanges(approvalRequest);
         return requestNotification;
     }

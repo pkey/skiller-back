@@ -7,6 +7,8 @@ import lt.swedbank.beans.response.team.TeamResponse;
 import lt.swedbank.beans.response.team.TeamWithUsersResponse;
 import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewWithUsersResponse;
 import lt.swedbank.beans.response.team.teamOverview.NonColleagueTeamOverviewWithUsersResponse;
+import lt.swedbank.beans.response.user.UserWithSkillsResponse;
+import lt.swedbank.beans.response.userSkill.UserSkillResponse;
 import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.repositories.SkillTemplateRepository;
@@ -20,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -60,6 +63,8 @@ public class TeamServiceTest {
     private List<TeamSkillTemplateResponse> teamSkillTemplateResponse;
     private List<User> users;
     private UserSkillLevel userSkillLevel;
+    private UserSkillResponse testUserSkillResponse;
+    private List<UserSkillResponse> testUserSkillsResponse;
 
     @Before
     public void setUp() throws Exception {
@@ -88,6 +93,11 @@ public class TeamServiceTest {
         teamSkillTemplateResponse = new LinkedList<>();
         teamSkillTemplateResponse.add(new TeamSkillTemplateResponse(new Skill("test"), 2, 2));
 
+        testUserSkillsResponse = new ArrayList<>();
+        testUserSkillResponse = new UserSkillResponse(new Skill("Java"));
+        testUserSkillsResponse.add(testUserSkillResponse);
+        testUserSkillResponse = new UserSkillResponse(new Skill("Testing"));
+        testUserSkillsResponse.add(testUserSkillResponse);
     }
 
     @Test
@@ -236,6 +246,22 @@ public class TeamServiceTest {
 
         Assert.assertEquals(teams.size(), responses.size());
         Assert.assertEquals(responses.get(0).getId(), teams.get(0).getId());
+    }
+
+    @Test
+    public void getUserWithSkillResponseList() {
+        Mockito.when(userSkillService.getNormalUserSkillResponseList(any())).thenReturn(testUserSkillsResponse);
+
+        List<UserWithSkillsResponse> testUserWithSkillsResponses = teamService.getUserWithSkillResponseList(TestHelper.fetchUsers(3));
+
+        Assert.assertEquals(testUserWithSkillsResponses.isEmpty(), false);
+        Assert.assertEquals(testUserWithSkillsResponses.size(), 3);
+        for (int i = 0; i < 3; i++) {
+            Assert.assertEquals(testUserWithSkillsResponses.get(i).getSkills().get(0).getTitle(), "Java");
+            Assert.assertEquals(testUserWithSkillsResponses.get(i).getSkills().get(1).getTitle(), "Testing");
+            Assert.assertEquals(testUserWithSkillsResponses.get(i).getName().isEmpty(), false);
+            Assert.assertEquals(testUserWithSkillsResponses.get(i).getLastName().isEmpty(), false);
+        }
     }
 
 

@@ -248,4 +248,8 @@ public class TestHelper {
         return valueStreams;
     }
 
+    public static List<Skill> fetchSkills(int ammount) {
+        return skills.subList(0, ammount);
+    }
+
 }

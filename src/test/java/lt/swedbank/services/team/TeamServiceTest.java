@@ -65,6 +65,7 @@ public class TeamServiceTest {
     private UserSkillLevel userSkillLevel;
     private UserSkillResponse userSkillResponse;
     private List<UserSkillResponse> userSkillsResponse;
+    private TeamWithUsersResponse teamWithUsersResponse;
 
     @Before
     public void setUp() throws Exception {
@@ -260,6 +261,22 @@ public class TeamServiceTest {
             Assert.assertEquals(testUserWithSkillsResponses.get(i).getSkills().get(1).getTitle(), "Testing");
             Assert.assertEquals(testUserWithSkillsResponses.get(i).getName().isEmpty(), false);
             Assert.assertEquals(testUserWithSkillsResponses.get(i).getLastName().isEmpty(), false);
+        }
+    }
+
+    @Test
+    public void getMyTeam() throws Exception {
+        Mockito.when(userService.getUserById(any())).thenReturn(users.get(0));
+
+        testTeam.setUsers(users);
+
+        TeamWithUsersResponse resultTeam = teamService.getMyTeam(users.get(0).getId());
+
+        Assert.assertEquals(resultTeam.getName(), testTeam.getName());
+        Assert.assertEquals(resultTeam.getDepartment().getName(), testTeam.getDepartment().getName());
+        for (int i = 0; i < 3; i++) {
+            Assert.assertEquals(resultTeam.getUsers().get(i).getName(), testTeam.getUsers().get(i).getName());
+            Assert.assertEquals(resultTeam.getUsers().get(i).getLastName(), testTeam.getUsers().get(i).getLastName());
         }
     }
 

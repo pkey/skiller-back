@@ -232,7 +232,7 @@ public class TeamServiceTest {
 
     @Test
     public void getAllTeamOfColleaguesOverviewResponses() throws Exception {
-        teams.forEach(t -> t.setSkillTemplate(new SkillTemplate(t, skills)));
+        teams.forEach(t -> t.setSkillTemplate(new SkillTemplate(t, testSkills)));
         Mockito.when(teamRepository.findAll()).thenReturn(teams);
 
         List<TeamWithUsersResponse> responses = teamService.getAllTeamOverviewResponses();

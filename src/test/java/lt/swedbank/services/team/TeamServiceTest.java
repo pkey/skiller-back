@@ -20,6 +20,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
+import org.springframework.test.annotation.TestAnnotationUtils;
 
 
 import java.util.ArrayList;
@@ -71,9 +72,7 @@ public class TeamServiceTest {
 
         users = TestHelper.fetchUsers(3);
 
-        testSkills = new LinkedList<>();
-        testSkills.add(new Skill("test"));
-        testSkills.add(new Skill("test2"));
+        testSkills = TestHelper.skills.subList(0, 2);
 
         userSkillLevel = new UserSkillLevel();
         SkillLevel skillLevel = new SkillLevel();
@@ -124,11 +123,13 @@ public class TeamServiceTest {
         doReturn(2).when(teamService).getSkillCountInTeam(any(Team.class), any(Skill.class));
         doReturn(2.0).when(teamService).getAverageSkillLevelInTeam(any(Team.class), any(Skill.class));
 
-        Mockito.when(skillTemplateService.getByTeamId(any())).thenReturn(testSkillTemplate);
+        Mockito.when(skillTemplateService.getByTeamId(testTeam.getId())).thenReturn(testSkillTemplate);
 
-        Assert.assertEquals(teamSkillTemplateResponse, teamService.getTeamSkillTemplateResponseList(any()));
-        Assert.assertEquals(teamSkillTemplateResponse.get(0).getSkill().getTitle(),
-                teamService.getTeamSkillTemplateResponseList(any()).get(0).getSkill().getTitle() );
+        List<TeamSkillTemplateResponse> responses = teamService.getTeamSkillTemplateResponseList(testTeam);
+
+        Assert.assertEquals(responses.size(), 2);
+        Assert.assertEquals(testSkillTemplate.getSkills().get(0).getTitle(),
+                responses.get(0).getSkill().getTitle());
     }
 
     @Test
@@ -171,14 +172,14 @@ public class TeamServiceTest {
 
         Mockito.when(teamRepository.findOne(testTeam.getId())).thenReturn(testTeam);
         Mockito.when(userService.getUserById(any())).thenReturn(userWithoutTeam);
-        
+
         testTeam.setUsers(TestHelper.fetchUsers(5));
         testTeam.setDepartment(TestHelper.fetchDepartments(1).get(0));
 
         TeamResponse resultResponse = teamService.getTeamOverview(testTeam.getId(), userWithoutTeam.getId());
         Assert.assertThat(resultResponse, instanceOf(NonColleagueTeamOverviewWithUsersResponse.class));
     }
-    
+
     @Test
     public void getAverageSkillLevelInTeam() {
         List<User> testUsers = TestHelper.fetchUsers(2);
@@ -212,7 +213,7 @@ public class TeamServiceTest {
 
         Skill testSkill = users.get(0).getUserSkills().get(0).getSkill();
 
-        Assert.assertEquals((teamService.getSkillCountInTeam(testTeam, testSkill) > 0 ), true);
+        Assert.assertEquals((teamService.getSkillCountInTeam(testTeam, testSkill) > 0), true);
     }
 
     @Test

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -65,17 +66,8 @@ public class UserService {
     public List<UserResponse> searchColleagues(Long userId, String query) {
         User currentUser = getUserById(userId);
 
-        List<User> quariedUsers = this.searchUsers(query);
-        List<UserResponse> filteredUsers = new ArrayList<>();
-
-        quariedUsers.remove(currentUser);
-
-        for (User queriedUser : quariedUsers
-             ) {
-            filteredUsers.add(getUserResponseBasedOnDepartment(currentUser, queriedUser));
-        }
-
-        return filteredUsers;
+        return this.searchUsers(query).stream().filter(u -> !currentUser.getId().equals(u.getId()))
+                .map(u -> getUserResponseBasedOnDepartment(currentUser, u)).collect(Collectors.toList());
     }
 
     public List<User> searchUsers(String query) {

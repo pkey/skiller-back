@@ -31,6 +31,7 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -86,7 +87,7 @@ public class UserSkillControllerTest {
 
         whenNew(UserResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
 
-        mockMvc.perform(post("/user/skill/add").header("Authorization", "Bearer")
+        mockMvc.perform(post("/user/skill").header("Authorization", "Bearer")
                 .contentType(contentType)
                 .content(skillJson))
                 .andExpect(status().isOk())
@@ -108,7 +109,7 @@ public class UserSkillControllerTest {
         when(userService.getUserByAuthId(any())).thenReturn(testUser);
         when(userSkillService.removeUserSkill(any(), any())).thenReturn(new UserSkillResponse(newlyAddedUserSkill.getSkill()));
 
-        mockMvc.perform(post("/user/skill/remove").header("Authorization", "Bearer")
+        mockMvc.perform(delete("/user/skill").header("Authorization", "Bearer")
                 .contentType(contentType)
                 .content(skillJson))
                 .andExpect(status().isOk())

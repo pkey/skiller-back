@@ -3,12 +3,14 @@ package lt.swedbank.services.skill;
 import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.SkillTemplate;
 import lt.swedbank.beans.entity.Team;
+import lt.swedbank.beans.response.TeamSkillTemplateResponse;
 import lt.swedbank.exceptions.skillTemplate.TemplateNotFoundException;
 import lt.swedbank.repositories.SkillTemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service

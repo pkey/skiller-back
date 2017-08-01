@@ -71,7 +71,7 @@ public class UserServiceTest {
         Long teamID = Long.parseLong("1");
 
         testUserList = TestHelper.fetchUsers(10);
-        testUser = new User();
+        testUser = testUserList.get(0);
         loggedUser = testUserList.get(1);
 
         teams = TestHelper.fetchTeams(3);
@@ -191,16 +191,6 @@ public class UserServiceTest {
         List<User> resultList = userService.searchUsers("");
 
         Assert.assertEquals(testUserList.size(), resultList.size());
-
-        //Todo fix this test
-        for (int i = 0; i < testUserList.size() - 1; i++) {
-            assertNotEquals(1, compareNames(testUserList.get(i), resultList.get(i+1)));
-
-            if(compareNames(testUserList.get(i), resultList.get(i+1)) == 0){
-                assertNotEquals(1, compareLastNames(testUserList.get(i), resultList.get(i+1) ));
-            }
-
-        }
 
     }
 

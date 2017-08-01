@@ -8,6 +8,7 @@ import lt.swedbank.beans.response.team.TeamWithUsersResponse;
 import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewWithUsersResponse;
 import lt.swedbank.beans.response.team.teamOverview.NonColleagueTeamOverviewWithUsersResponse;
 import lt.swedbank.beans.response.user.UserWithSkillsResponse;
+import lt.swedbank.exceptions.skillTemplate.TemplateNotFoundException;
 import lt.swedbank.exceptions.team.TeamNameAlreadyExistsException;
 import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.repositories.TeamRepository;
@@ -151,7 +152,7 @@ public class TeamService {
         team.setSkillTemplate(skillTemplateService.updateSkillTemplate(team.getSkillTemplate().getId(),
                 skillService.getSkillsByIds(updateTeamRequest.getSkillIds())));
 
-        if(updateTeamRequest.getStreamId() != null){
+        if (updateTeamRequest.getStreamId() != null) {
             team.setValueStream(valueStreamService.getValueStreamById(updateTeamRequest.getStreamId()));
         }
 
@@ -161,23 +162,21 @@ public class TeamService {
                 getTeamSkillTemplateResponseList(team));
     }
 
-    public SkillTemplate getTeamSkillTemplate(Team team)
-    {
+    public SkillTemplate getTeamSkillTemplate(Team team) {
         return skillTemplateService.getByTeamId(team.getId());
     }
 
     public List<TeamSkillTemplateResponse> getTeamSkillTemplateResponseList(Team team) {
         List<TeamSkillTemplateResponse> teamSkillTemplateResponseList = new ArrayList<>();
-
-        if (getTeamSkillTemplate(team) == null) {
+        try {
+            for (Skill skill : getTeamSkillTemplate(team).getSkills()
+                    ) {
+                TeamSkillTemplateResponse teamSkillTemplateResponse =
+                        new TeamSkillTemplateResponse(skill, getSkillCountInTeam(team, skill), getAverageSkillLevelInTeam(team, skill));
+                teamSkillTemplateResponseList.add(teamSkillTemplateResponse);
+            }
+        } catch (TemplateNotFoundException e) {
             return new ArrayList<>();
-        }
-
-        for (Skill skill : getTeamSkillTemplate(team).getSkills()
-                ) {
-            TeamSkillTemplateResponse teamSkillTemplateResponse =
-                    new TeamSkillTemplateResponse(skill, getSkillCountInTeam(team, skill), getAverageSkillLevelInTeam(team, skill));
-            teamSkillTemplateResponseList.add(teamSkillTemplateResponse);
         }
         return teamSkillTemplateResponseList;
     }

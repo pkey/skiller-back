@@ -58,13 +58,13 @@ public class TeamServiceTest {
     private List<Team> teams;
     private Team testTeam;
     private NonColleagueTeamOverviewWithUsersResponse nonColleagueTeamOverviewWithUsersResponse;
-    private SkillTemplate testSkillTemplate;
-    private List<Skill> testSkills;
+    private SkillTemplate skillTemplate;
+    private List<Skill> skills;
     private List<TeamSkillTemplateResponse> teamSkillTemplateResponse;
     private List<User> users;
     private UserSkillLevel userSkillLevel;
-    private UserSkillResponse testUserSkillResponse;
-    private List<UserSkillResponse> testUserSkillsResponse;
+    private UserSkillResponse userSkillResponse;
+    private List<UserSkillResponse> userSkillsResponse;
 
     @Before
     public void setUp() throws Exception {
@@ -77,27 +77,27 @@ public class TeamServiceTest {
 
         users = TestHelper.fetchUsers(3);
 
-        testSkills = new LinkedList<>();
-        testSkills.add(new Skill("test"));
-        testSkills.add(new Skill("test2"));
+        skills = new LinkedList<>();
+        skills.add(new Skill("test"));
+        skills.add(new Skill("test2"));
 
         userSkillLevel = new UserSkillLevel();
         SkillLevel skillLevel = new SkillLevel();
         skillLevel.setLevel(2L);
         userSkillLevel.setSkillLevel(skillLevel);
 
-        testSkillTemplate = new SkillTemplate();
-        testSkillTemplate.setTeam(testTeam);
-        testSkillTemplate.setSkills(testSkills);
+        skillTemplate = new SkillTemplate();
+        skillTemplate.setTeam(testTeam);
+        skillTemplate.setSkills(skills);
 
         teamSkillTemplateResponse = new LinkedList<>();
         teamSkillTemplateResponse.add(new TeamSkillTemplateResponse(new Skill("test"), 2, 2));
 
-        testUserSkillsResponse = new ArrayList<>();
-        testUserSkillResponse = new UserSkillResponse(new Skill("Java"));
-        testUserSkillsResponse.add(testUserSkillResponse);
-        testUserSkillResponse = new UserSkillResponse(new Skill("Testing"));
-        testUserSkillsResponse.add(testUserSkillResponse);
+        userSkillsResponse = new ArrayList<>();
+        userSkillResponse = new UserSkillResponse(new Skill("Java"));
+        userSkillsResponse.add(userSkillResponse);
+        userSkillResponse = new UserSkillResponse(new Skill("Testing"));
+        userSkillsResponse.add(userSkillResponse);
     }
 
     @Test
@@ -120,10 +120,9 @@ public class TeamServiceTest {
 
     @Test
     public void getTeamSkillTemplate() {
+        Mockito.when(skillTemplateRepository.findOneByTeamId(any())).thenReturn(skillTemplate);
 
-        Mockito.when(skillTemplateRepository.findOneByTeamId(any())).thenReturn(testSkillTemplate);
-
-        Assert.assertEquals(teamService.getTeamSkillTemplate(testTeam), testSkillTemplate);
+        Assert.assertEquals(teamService.getTeamSkillTemplate(testTeam), skillTemplate);
     }
 
     @Test
@@ -131,7 +130,7 @@ public class TeamServiceTest {
         doReturn(2).when(teamService).getSkillCountInTeam(any(Team.class), any(Skill.class));
         doReturn(2.0).when(teamService).getAverageSkillLevelInTeam(any(Team.class), any(Skill.class));
 
-        Mockito.when(teamService.getTeamSkillTemplate(any())).thenReturn(testSkillTemplate);
+        Mockito.when(teamService.getTeamSkillTemplate(any())).thenReturn(skillTemplate);
         Mockito.when(teamService.getTeamSkillTemplateResponseList(any())).thenReturn(teamSkillTemplateResponse);
 
         Assert.assertEquals(teamSkillTemplateResponse, teamService.getTeamSkillTemplateResponseList(any()));
@@ -239,7 +238,7 @@ public class TeamServiceTest {
 
     @Test
     public void getAllTeamOfColleaguesOverviewResponses() throws Exception {
-        teams.forEach(t -> t.setSkillTemplate(new SkillTemplate(t, testSkills)));
+        teams.forEach(t -> t.setSkillTemplate(new SkillTemplate(t, skills)));
         Mockito.when(teamRepository.findAll()).thenReturn(teams);
 
         List<TeamWithUsersResponse> responses = teamService.getAllTeamOverviewResponses();
@@ -250,7 +249,7 @@ public class TeamServiceTest {
 
     @Test
     public void getUserWithSkillResponseList() {
-        Mockito.when(userSkillService.getNormalUserSkillResponseList(any())).thenReturn(testUserSkillsResponse);
+        Mockito.when(userSkillService.getNormalUserSkillResponseList(any())).thenReturn(userSkillsResponse);
 
         List<UserWithSkillsResponse> testUserWithSkillsResponses = teamService.getUserWithSkillResponseList(TestHelper.fetchUsers(3));
 

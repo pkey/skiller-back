@@ -7,18 +7,19 @@ import lt.swedbank.beans.response.team.TeamResponse;
 import lt.swedbank.beans.response.team.TeamWithUsersResponse;
 import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewWithUsersResponse;
 import lt.swedbank.beans.response.team.teamOverview.NonColleagueTeamOverviewWithUsersResponse;
-import lt.swedbank.beans.response.user.NonColleagueResponse;
 import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.repositories.SkillTemplateRepository;
 import lt.swedbank.repositories.TeamRepository;
 import lt.swedbank.services.department.DepartmentService;
+import lt.swedbank.services.skill.SkillTemplateService;
 import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.user.UserService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,7 +29,6 @@ import static org.powermock.api.mockito.PowerMockito.doReturn;
 
 
 public class TeamServiceTest {
-
     @Spy
     @InjectMocks
     private TeamService teamService;
@@ -47,6 +47,9 @@ public class TeamServiceTest {
 
     @Mock
     private UserSkillService userSkillService;
+
+    @Mock
+    private SkillTemplateService skillTemplateService;
     //Test DAta
 
     private List<Team> teams;
@@ -63,6 +66,7 @@ public class TeamServiceTest {
         MockitoAnnotations.initMocks(this);
 
         teams = TestHelper.fetchTeams(2);
+
         testTeam = teams.get(0);
         testTeam.getDepartment().setDivision(new Division());
 
@@ -107,7 +111,7 @@ public class TeamServiceTest {
     @Test
     public void getTeamSkillTemplate() {
 
-        Mockito.when(skillTemplateRepository.findOneByTeam(any())).thenReturn(testSkillTemplate);
+        Mockito.when(skillTemplateRepository.findOneByTeamId(any())).thenReturn(testSkillTemplate);
 
         Assert.assertEquals(teamService.getTeamSkillTemplate(testTeam), testSkillTemplate);
     }
@@ -221,6 +225,17 @@ public class TeamServiceTest {
         addTeamRequest.setDepartmentId(testTeam.getDepartment().getId());
 
         Assert.assertEquals(teamService.addTeam(addTeamRequest).getId(), new TeamResponse(testTeam).getId());
+    }
+
+    @Test
+    public void getAllTeamOfColleaguesOverviewResponses() throws Exception {
+        teams.forEach(t -> t.setSkillTemplate(new SkillTemplate(t, testSkills)));
+        Mockito.when(teamRepository.findAll()).thenReturn(teams);
+
+        List<TeamWithUsersResponse> responses = teamService.getAllTeamOverviewResponses();
+
+        Assert.assertEquals(teams.size(), responses.size());
+        Assert.assertEquals(responses.get(0).getId(), teams.get(0).getId());
     }
 
 

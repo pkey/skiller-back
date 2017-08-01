@@ -1,6 +1,7 @@
 package lt.swedbank.controllers.team;
 
 
+import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.response.team.TeamWithUsersResponse;
 import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewWithUsersResponse;
@@ -30,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TeamControllerTest {
-
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(),
             Charset.forName("utf8"));
@@ -52,6 +52,7 @@ public class TeamControllerTest {
     //Test Data
     private List<User> testUsers;
     private User testUser;
+    private List<Team> teams;
     private TeamWithUsersResponse testTeamOverviewResponse;
 
     @Before
@@ -63,6 +64,7 @@ public class TeamControllerTest {
                 .build();
 
         testUsers = TestHelper.fetchUsers(5);
+        teams = TestHelper.fetchTeams(2);
         testUser = testUsers.get(0);
     }
 
@@ -107,4 +109,28 @@ public class TeamControllerTest {
 
     }
 
+    @Test
+    public void getAllTeams() throws Exception {
+        List<TeamWithUsersResponse> teamOverviewWithUsersResponses = new ArrayList<>();
+        teamOverviewWithUsersResponses.add(new ColleagueTeamOverviewWithUsersResponse(teams.get(0), new ArrayList<>()));
+        teamOverviewWithUsersResponses.add(new ColleagueTeamOverviewWithUsersResponse(teams.get(1), new ArrayList<>()));
+
+        Mockito.when(teamService.getAllTeamOverviewResponses()).thenReturn(teamOverviewWithUsersResponses);
+
+        mockMvc.perform(get("/team/all")
+                .header("Authorization", "Bearer")
+                .contentType(contentType))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].id", is(teams.get(0).getId().intValue())))
+                .andExpect(jsonPath("$[0].name", is(teams.get(0).getName())))
+                .andExpect(jsonPath("$[0].division").exists())
+                .andExpect(jsonPath("$[0].department").exists())
+                .andExpect(jsonPath("$[0].users").isArray())
+                .andExpect(jsonPath("$[1].id", is(teams.get(1).getId().intValue())))
+                .andExpect(jsonPath("$[1].name", is(teams.get(1).getName())))
+                .andExpect(jsonPath("$[1].division").exists())
+                .andExpect(jsonPath("$[1].department").exists())
+                .andExpect(jsonPath("$[1].users").isArray());
+    }
 }

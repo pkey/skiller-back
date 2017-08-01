@@ -39,7 +39,7 @@ public class SkillTemplateService {
     }
 
     public SkillTemplate updateSkillTemplate(@NotNull Long id, @NotNull List<Skill> skills) {
-        SkillTemplate skillTemplate = getSkillTemplateById(id);
+        SkillTemplate skillTemplate = skillTemplateRepository.findOneByTeamId(id);
         skillTemplate.setSkills(skills);
 
         return skillTemplateRepository.save(skillTemplate);

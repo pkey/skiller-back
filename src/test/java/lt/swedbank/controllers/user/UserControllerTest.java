@@ -96,8 +96,7 @@ public class UserControllerTest {
     @Test
     public void get_user_success() throws Exception {
 
-        when(userService.getUserProfile(any(), any())).thenReturn(testUserEntityResponse);
-        when(userService.getUserByAuthId(any())).thenReturn(testUser);
+        when(userService.getMyProfile(testUser.getAuthId())).thenReturn(testUserEntityResponse);
 
         mockMvc.perform(get("/user")
                 .header("Authorization", "Bearer")
@@ -107,6 +106,5 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.lastName", is(testUser.getLastName())))
                 .andExpect(jsonPath("$.email", is(testUser.getEmail())));
 
-        verify(userService, times(1)).getUserByAuthId(any());
     }
 }

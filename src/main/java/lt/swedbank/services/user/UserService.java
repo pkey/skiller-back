@@ -90,6 +90,12 @@ public class UserService {
         return getUserResponseBasedOnDepartment(currentUser, requiredUser);
     }
 
+    public UserResponse getMyProfile(String currentUserAuthId) {
+        User currentUser = getUserByAuthId(currentUserAuthId);
+
+        return new UserWithSkillsResponse(currentUser, userSkillService.getNormalUserSkillResponseList(currentUser.getUserSkills()));
+    }
+
     private UserResponse getUserResponseBasedOnDepartment(User currentUser, User requiredUser) {
 
         if(requiredUser.getDepartment() != null && currentUser.getDepartment() != null) {

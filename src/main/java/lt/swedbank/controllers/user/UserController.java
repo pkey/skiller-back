@@ -33,10 +33,7 @@ public class UserController {
     @RequestMapping(method = RequestMethod.GET)
     public @ResponseBody
     UserResponse getMyProfile(@RequestHeader(value = "Authorization") String authToken) {
-        String authId = authService.extractAuthIdFromToken(authToken);
-        //Todo nesamone
-        return userService.getUserProfile(userService.getUserByAuthId(authId).getId(),
-                authId);
+        return userService.getMyProfile(authService.extractAuthIdFromToken(authToken));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)

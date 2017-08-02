@@ -123,7 +123,7 @@ public class TeamService {
         }
 
         if (addTeamRequest.getSkillIds() != null) {
-            team.setSkillTemplate(skillTemplateService.createSkillTemplate(team, skillService.getSkillsByIds(addTeamRequest.getSkillIds())));
+            team.setSkillTemplate(skillTemplateService.createOrUpdateSkillTemplate(team, skillService.getSkillsByIds(addTeamRequest.getSkillIds())));
         }
 
         return new TeamWithUsersResponse(teamRepository.save(team), getUserWithSkillResponseList(userService.getUsersByIds(addTeamRequest.getUserIds())), getTeamSkillTemplateResponseList(team));
@@ -146,7 +146,7 @@ public class TeamService {
         team.setName(updateTeamRequest.getName());
 
         assert updateTeamRequest.getSkillIds() != null;
-        team.setSkillTemplate(skillTemplateService.updateSkillTemplate(team.getSkillTemplate().getId(),
+        team.setSkillTemplate(skillTemplateService.createOrUpdateSkillTemplate(team,
                 skillService.getSkillsByIds(updateTeamRequest.getSkillIds())));
 
         if (updateTeamRequest.getStreamId() != null) {
@@ -160,14 +160,11 @@ public class TeamService {
     }
 
     public List<TeamSkillTemplateResponse> getTeamSkillTemplateResponseList(Team team) {
-        Optional<SkillTemplate> skillTemplateOptional = skillTemplateService.getByTeamId(team.getId());
 
-        if (skillTemplateOptional.isPresent()) {
-            return skillTemplateOptional.get().getSkills().stream().map(skill ->
-                    new TeamSkillTemplateResponse(skill,
-                            getSkillCountInTeam(team, skill),
-                            getAverageSkillLevelInTeam(team, skill)))
-                    .collect(Collectors.toList());
+        if (!skillTemplateService.getByTeamId(team.getId()).isPresent()) {
+            return skillTemplateService.getByTeamId(team.getId()).get().getSkills().stream().map(skill -> {
+                return new TeamSkillTemplateResponse(skill, getSkillCountInTeam(team, skill), getAverageSkillLevelInTeam(team, skill));
+            }).collect(Collectors.toList());
         } else {
             return new ArrayList<>();
         }

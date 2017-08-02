@@ -8,7 +8,6 @@ import javax.validation.ConstraintValidatorContext;
 public class SkillTitleValidator implements ConstraintValidator<SkillTitleConstraint, String> {
     @Override
     public void initialize(SkillTitleConstraint constraintAnnotation) {
-
     }
 
     @Override

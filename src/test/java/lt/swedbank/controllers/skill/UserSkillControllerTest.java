@@ -100,6 +100,45 @@ public class UserSkillControllerTest {
     }
 
     @Test
+    public void add_lower_case_skill_title_will_fail() throws Exception {
+
+        AddSkillRequest addSkillRequest = new AddSkillRequest();
+        addSkillRequest.setTitle("lower");
+        String skillJson = mapper.writeValueAsString(addSkillRequest);
+
+        mockMvc.perform(post("/user/skill").header("Authorization", "Bearer")
+                .contentType(contentType)
+                .content(skillJson))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void add_empty_skill_title_will_fail() throws Exception {
+
+        AddSkillRequest addSkillRequest = new AddSkillRequest();
+        addSkillRequest.setTitle("");
+        String skillJson = mapper.writeValueAsString(addSkillRequest);
+
+        mockMvc.perform(post("/user/skill").header("Authorization", "Bearer")
+                .contentType(contentType)
+                .content(skillJson))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void add_null_skill_title_will_fail() throws Exception {
+
+        AddSkillRequest addSkillRequest = new AddSkillRequest();
+        addSkillRequest.setTitle(null);
+        String skillJson = mapper.writeValueAsString(addSkillRequest);
+
+        mockMvc.perform(post("/user/skill").header("Authorization", "Bearer")
+                .contentType(contentType)
+                .content(skillJson))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void remove_skill_from_user_success() throws Exception {
 
         String skillJson = mapper.writeValueAsString(new RemoveSkillRequest(newlyAddedUserSkill));

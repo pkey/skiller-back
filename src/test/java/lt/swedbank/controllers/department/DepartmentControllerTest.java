@@ -6,6 +6,7 @@ import lt.swedbank.beans.entity.Department;
 import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.response.DepartmentEntityResponse;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
+import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.services.department.DepartmentService;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,22 +38,20 @@ public class DepartmentControllerTest {
 
     private MockMvc mockMvc;
 
-    private Department department1;
-    private Department department2;
-    private List<DepartmentEntityResponse> departments;
-
-
     @InjectMocks
     private DepartmentController departmentController;
-
     @Mock
     private DepartmentService departmentService;
-
     @Mock
     private org.springframework.validation.Validator mockValidator;
 
     @Autowired
     private ObjectMapper mapper;
+
+    private Department department1;
+    private Department department2;
+    private List<Department> departments;
+    private List<DepartmentEntityResponse> departmentResponses;
 
     @Before
     public void setup() throws Exception {
@@ -66,13 +65,9 @@ public class DepartmentControllerTest {
 
         mapper = new ObjectMapper();
 
-        department1 = new Department();
-        department1.setName("pirmas");
-        department1.setId(Long.parseLong("1"));
-
-        department2 = new Department();
-        department2.setName("antras");
-        department2.setId(Long.parseLong("2"));
+        departments = TestHelper.fetchDepartments(2);
+        department1 = departments.get(0);
+        department2 = departments.get(1);
 
         List<Team> teamList1 = new ArrayList<>();
         List<Team> teamList2 = new ArrayList<>();
@@ -85,9 +80,9 @@ public class DepartmentControllerTest {
         department1.setTeams(teamList1);
         department2.setTeams(teamList2);
 
-        departments = new ArrayList<>();
-        departments.add(new DepartmentEntityResponse(department1));
-        departments.add(new DepartmentEntityResponse(department2));
+        departmentResponses = new ArrayList<>();
+        departmentResponses.add(new DepartmentEntityResponse(department1));
+        departmentResponses.add(new DepartmentEntityResponse(department2));
 
 
     }
@@ -96,7 +91,7 @@ public class DepartmentControllerTest {
     @Test
     public void get_department_success() throws Exception {
 
-        when(departmentService.getAllDepartmentEntityResponseList()).thenReturn(departments);
+        when(departmentService.getAllDepartmentEntityResponseList()).thenReturn(departmentResponses);
 
         mockMvc.perform(get("/departments/")
                 .header("Authorization", "Bearer")

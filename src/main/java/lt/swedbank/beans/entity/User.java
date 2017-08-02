@@ -59,7 +59,7 @@ public class User {
         setPassword(registerUserRequest.getPassword());
     }
 
-    public void setUserSkill(UserSkill userSkill) {
+    public void addUserSkill(UserSkill userSkill) {
         if (userSkills == null) {
             this.userSkills = new ArrayList<>();
         }

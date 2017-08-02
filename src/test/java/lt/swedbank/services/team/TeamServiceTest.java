@@ -194,7 +194,7 @@ public class TeamServiceTest {
             UserSkill testUserSkill = new UserSkill(user, testSkill);
             testUserSkill.addUserSkillLevel(TestHelper.createUserSkillLevel(testUserSkill, TestHelper.skillLevels.get(1)));
 
-            user.setUserSkill(testUserSkill);
+            user.addUserSkill(testUserSkill);
         }
         Mockito.when(userService.getAllByTeam(testTeam)).thenReturn(testUsers);
         Mockito.when(userSkillService.getCurrentSkillLevel(any())).thenReturn(userSkillLevel);

@@ -26,10 +26,7 @@ public class SkillService {
             throw new SkillAlreadyExistsException();
         }
 
-        String firstUpperCaseTitle = addSkillRequest.getTitle().substring(0, 1).toUpperCase()
-                + addSkillRequest.getTitle().substring(1);
-
-        Skill skill = new Skill(firstUpperCaseTitle);
+        Skill skill = new Skill(addSkillRequest.getTitle());
         skillRepository.save(skill);
 
         return skill;

@@ -43,13 +43,10 @@ public class UserSkillServiceTest {
     private AddSkillRequest addSkillRequest;
     private RemoveSkillRequest removeSkillRequest;
     private AssignSkillLevelRequest assignSkillLevelRequest;
-
     private Skill skill;
-
+    private List<SkillLevel> skillLevels;
     private User user;
-
     private UserSkill testUserSkill;
-
     private List<UserSkillLevel> testUserSkillLevels;
 
     @Before
@@ -57,6 +54,7 @@ public class UserSkillServiceTest {
         MockitoAnnotations.initMocks(this);
 
         skill = TestHelper.skills.get(0);
+        skillLevels = TestHelper.skillLevels;
 
         addSkillRequest = new AddSkillRequest();
         addSkillRequest.setTitle(skill.getTitle());
@@ -74,11 +72,8 @@ public class UserSkillServiceTest {
 
         testUserSkill = new UserSkill(user, skill);
 
-        UserSkillLevel testUserSkillLevel = new UserSkillLevel(testUserSkill,
-                new SkillLevel("Level title", "Level Description"));
-
         UserSkillLevel testDefaultUserSkillLevel = new UserSkillLevel(testUserSkill,
-                new SkillLevel("Default Level title", "Default Level Description"));
+                TestHelper.defaultSkillLevel);
 
         testUserSkillLevels = new ArrayList<>();
         testUserSkillLevels.add(testDefaultUserSkillLevel);
@@ -147,7 +142,7 @@ public class UserSkillServiceTest {
                 .thenReturn(testUserSkill);
 
         UserSkillLevel testUserSkillLevel = new UserSkillLevel(testUserSkill,
-                new SkillLevel("Level title", "Level Description"));
+                skillLevels.get(1));
 
         testUserSkillLevel.setMotivation(assignSkillLevelRequest.getMotivation());
 

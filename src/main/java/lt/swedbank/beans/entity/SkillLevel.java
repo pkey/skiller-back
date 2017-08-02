@@ -30,12 +30,6 @@ public class SkillLevel implements  Comparable<SkillLevel> {
     @NonNull
     private String description;
 
-
-    public SkillLevel(String title, String description) {
-        this.title = title;
-        this.description = description;
-    }
-
     @Override
     public int compareTo(SkillLevel o) {
         return this.getLevel().compareTo(o.getLevel());

@@ -90,9 +90,6 @@ public class UserSkillLevelServiceTest {
 
         Mockito.when(userSkillLevelRepository.save(any(UserSkillLevel.class))).thenReturn(userSkillLevel);
 
-        Mockito.when(approvalService.addDefaultApprovalRequest(any(UserSkillLevel.class))).thenReturn(approvalRequest);
-
-
         UserSkillLevel resultUserSkillLevel = userSkillLevelService.addDefaultUserSkillLevel(userSkill);
 
         assertEquals(userSkillLevel.getId(), resultUserSkillLevel.getId());

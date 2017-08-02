@@ -32,7 +32,7 @@ public class TestHelper {
     private static List<Team> teams;
     private static List<Department> departments;
     private static List<Division> divisions;
-    private static SkillLevel defaultSkillLevel;
+    public static SkillLevel defaultSkillLevel;
     private static List<ValueStream> valueStreams;
 
 
@@ -59,7 +59,7 @@ public class TestHelper {
         skillLevels = new ArrayList<>();
 
         for (int i = 0; i < NUMBER_OF_SKILL_LEVELS; i++) {
-            SkillLevel skillLevel = new SkillLevel(levelNames[i], levelDescriptions[i]);
+            SkillLevel skillLevel = new SkillLevel((long) (i + 1),levelNames[i], levelDescriptions[i]);
             skillLevel.setId(Integer.toUnsignedLong(i));
             skillLevel.setLevel(Integer.toUnsignedLong(i) + 1);
 

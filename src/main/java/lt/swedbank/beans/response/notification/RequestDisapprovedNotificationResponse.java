@@ -13,7 +13,7 @@ public class RequestDisapprovedNotificationResponse extends NotificationResponse
 
     private List<DisapproverResponse> disapprovers;
 
-    public RequestDisapprovedNotificationResponse(){
+    public RequestDisapprovedNotificationResponse() {
     }
 
     public RequestDisapprovedNotificationResponse(RequestNotification requestNotification) {
@@ -22,11 +22,12 @@ public class RequestDisapprovedNotificationResponse extends NotificationResponse
         setDisapproversResponseList(requestNotification.getApprovalRequest().getDisapprovers());
     }
 
-    private void setDisapproversResponseList(List<Disapprover> disapproversList)
-    {
+    private void setDisapproversResponseList(List<Disapprover> disapproversList) {
         disapprovers = new ArrayList<>();
-        for (Disapprover disapprover: disapproversList) {
-            disapprovers.add(new DisapproverResponse(disapprover));
+        if (!disapproversList.isEmpty()) {
+            for (Disapprover disapprover : disapproversList) {
+                disapprovers.add(new DisapproverResponse(disapprover));
+            }
         }
     }
 

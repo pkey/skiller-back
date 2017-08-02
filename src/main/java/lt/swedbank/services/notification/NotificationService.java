@@ -45,21 +45,6 @@ public class NotificationService {
         return requestNotifications;
     }
 
-    public ArrayList<NotificationResponse> getNotificationResponses(Iterable<RequestNotification> requestNotifications) {
-        ArrayList<NotificationResponse> requestNotificationResponses = new ArrayList<NotificationResponse>();
-        for (RequestNotification requestNotification : requestNotifications) {
-            ApprovalRequest approvalRequest = requestNotification.getApprovalRequest();
-            if (approvalRequest.getUserSkillLevel().getUserSkill().getUser() == requestNotification.getReceiver()) {
-                if (approvalRequest.getStatus() == Status.DISAPPROVED) {
-                    requestNotificationResponses.add(new RequestDisapprovedNotificationResponse(requestNotification));
-                } else if (approvalRequest.getStatus() == Status.APPROVED) {
-                    requestNotificationResponses.add(new RequestApprovedNotificationResponse(requestNotification));
-                }
-            } else requestNotificationResponses.add(new RequestNotificationResponse(requestNotification));
-        }
-        return requestNotificationResponses;
-    }
-
     public NotificationResponse handleRequest(NotificationAnswerRequest notificationAnswerRequest, User user) {
         RequestNotification requestNotification = getNotificationById(notificationAnswerRequest.getNotificationId());
         ApprovalRequest approvalRequest = approvalService.getApprovalRequestByRequestNotification(requestNotification);
@@ -79,54 +64,27 @@ public class NotificationService {
         return new RequestNotificationResponse(requestNotification);
     }
 
-    private RequestNotification changeNotificationRequestStatus(ApprovalRequest approvalRequest, RequestNotification requestNotification, User user, NotificationAnswerRequest notificationAnswerRequest) {
-        requestNotification.setPending();
-        switch (notificationAnswerRequest.getApproved()) {
-            case 1:
-                requestNotification = approve(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
-                break;
-            case -1:
-                requestNotification = disapprove(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
-                break;
-            default:
-                break;
+    public ArrayList<NotificationResponse> getNotificationResponses(Iterable<RequestNotification> requestNotifications) {
+        ArrayList<NotificationResponse> requestNotificationResponses = new ArrayList<NotificationResponse>();
+        for (RequestNotification requestNotification : requestNotifications) {
+            ApprovalRequest approvalRequest = requestNotification.getApprovalRequest();
+            if (approvalRequest.getUserSkillLevel().getUserSkill().getUser() == requestNotification.getReceiver()) {
+                if (approvalRequest.getStatus() == Status.DISAPPROVED) {
+                    requestNotificationResponses.add(new RequestDisapprovedNotificationResponse(requestNotification));
+                } else if (approvalRequest.getStatus() == Status.APPROVED) {
+                    requestNotificationResponses.add(new RequestApprovedNotificationResponse(requestNotification));
+                }
+            } else requestNotificationResponses.add(new RequestNotificationResponse(requestNotification));
         }
-        return requestNotificationRepository.save(requestNotification);
+        return requestNotificationResponses;
     }
 
-    public RequestNotification approve(ApprovalRequest approvalRequest, RequestNotification requestNotification, User user, String message) {
-        requestNotification.setApproved();
-        Integer approves = approvalService.approve(message, approvalRequest, user).getApproves();
-        if (approves >= 5) {
-            setNotificationsAsExpired(approvalRequest.getRequestNotifications());
-            sendNotificationAboutSkillLevelStatusChanges(approvalRequest);
-        }
-        return requestNotification;
-    }
-
-
-    public RequestNotification disapprove(ApprovalRequest approvalRequest, RequestNotification requestNotification, User user, String message) {
-        requestNotification.setDisapproved();
-        approvalService.disapprove(message, approvalRequest, user);
-        setNotificationsAsExpired(approvalRequest.getRequestNotifications());
-        sendNotificationAboutSkillLevelStatusChanges(approvalRequest);
-        return requestNotification;
-    }
 
     public void deleteRequestNotificationsFromApprovalRequest(ApprovalRequest approvalRequest) {
         Iterable<RequestNotification> requestNotificationList = requestNotificationRepository.findByApprovalRequest(approvalRequest);
         requestNotificationRepository.delete(requestNotificationList);
     }
 
-
-    public void sendNotificationAboutSkillLevelStatusChanges(ApprovalRequest approvalRequest) {
-        approvalRequest.setRequestNotification(new RequestNotification(getUserFromApprovalRequest(approvalRequest), approvalRequest));
-        approvalService.update(approvalRequest);
-    }
-
-    public User getUserFromApprovalRequest(ApprovalRequest approvalRequest) {
-        return userService.getUserById(approvalRequest.getUserSkillLevel().getUserSkill().getUser().getId());
-    }
 
     public RequestNotification getNotificationById(Long id) {
         if (requestNotificationRepository.findOne(id) == null) {
@@ -143,12 +101,54 @@ public class NotificationService {
         requestNotificationRepository.delete(request.getRequestNotifications());
     }
 
-    private void sortRequestNotifications(List<RequestNotification> requestNotifications) {
-        Collections.sort(requestNotifications, Comparator.comparing(RequestNotification::getCreationTime));
-    }
-
     public List<NotificationResponse> getNotificationsResponsesSortedByDate(List<RequestNotification> requestNotifications) {
         sortRequestNotifications(requestNotifications);
         return getNotificationResponses(requestNotifications);
+    }
+
+    private RequestNotification changeNotificationRequestStatus(ApprovalRequest approvalRequest, RequestNotification requestNotification, User user, NotificationAnswerRequest notificationAnswerRequest) {
+        requestNotification.setPending();
+        switch (notificationAnswerRequest.getApproved()) {
+            case 1:
+                requestNotification = approve(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
+                break;
+            case -1:
+                requestNotification = disapprove(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
+                break;
+            default:
+                break;
+        }
+        return requestNotificationRepository.save(requestNotification);
+    }
+
+    private RequestNotification approve(ApprovalRequest approvalRequest, RequestNotification requestNotification, User user, String message) {
+        requestNotification.setApproved();
+        Integer approves = approvalService.approve(message, approvalRequest, user).getApproves();
+        if (approves >= 5) {
+            setNotificationsAsExpired(approvalRequest.getRequestNotifications());
+            sendNotificationAboutSkillLevelStatusChanges(approvalRequest);
+        }
+        return requestNotification;
+    }
+
+    private RequestNotification disapprove(ApprovalRequest approvalRequest, RequestNotification requestNotification, User user, String message) {
+        requestNotification.setDisapproved();
+        approvalService.disapprove(message, approvalRequest, user);
+        setNotificationsAsExpired(approvalRequest.getRequestNotifications());
+        sendNotificationAboutSkillLevelStatusChanges(approvalRequest);
+        return requestNotification;
+    }
+
+    private void sortRequestNotifications(List<RequestNotification> requestNotifications) {
+        requestNotifications.sort(Comparator.comparing(RequestNotification::getCreationTime));
+    }
+
+    private User getUserFromApprovalRequest(ApprovalRequest approvalRequest) {
+        return userService.getUserById(approvalRequest.getUserSkillLevel().getUserSkill().getUser().getId());
+    }
+
+    private void sendNotificationAboutSkillLevelStatusChanges(ApprovalRequest approvalRequest) {
+        approvalRequest.setRequestNotification(new RequestNotification(getUserFromApprovalRequest(approvalRequest), approvalRequest));
+        approvalService.update(approvalRequest);
     }
 }

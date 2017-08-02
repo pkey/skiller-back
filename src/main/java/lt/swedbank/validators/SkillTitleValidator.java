@@ -13,6 +13,6 @@ public class SkillTitleValidator implements ConstraintValidator<SkillTitleConstr
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        return value != null && Character.isUpperCase(value.charAt(0));
+        return value != null && !value.isEmpty() && Character.isUpperCase(value.charAt(0));
     }
 }

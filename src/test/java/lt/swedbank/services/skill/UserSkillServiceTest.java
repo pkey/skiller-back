@@ -62,10 +62,7 @@ public class UserSkillServiceTest {
         removeSkillRequest = new RemoveSkillRequest();
         removeSkillRequest.setTitle(skill.getTitle());
 
-        assignSkillLevelRequest = new AssignSkillLevelRequest();
-        assignSkillLevelRequest.setLevelId(2L);
-        assignSkillLevelRequest.setSkillId(skill.getId());
-        assignSkillLevelRequest.setMotivation("Motivation");
+        assignSkillLevelRequest = new AssignSkillLevelRequest(2L, skill.getId(), "Motivation");
 
         user = new User();
         user.setId(0L);

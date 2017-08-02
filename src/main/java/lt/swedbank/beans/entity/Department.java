@@ -3,6 +3,7 @@ package lt.swedbank.beans.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,5 +26,12 @@ public class Department {
     @ManyToOne
     @NonNull
     private Division division;
+
+    public void addTeam(Team team) {
+        if (teams == null) {
+            this.teams = new ArrayList<>();
+        }
+        this.teams.add(team);
+    }
 
 }

@@ -163,10 +163,13 @@ public class TestHelper {
 
         for (int i = 0; i < NUMBER_OF_TEAMS; i++) {
             TextProducer textProducer = fairy.textProducer();
+            Department department = departments.get(i % NUMBER_OF_DEPARTMENTS);
 
-            Team team = new Team("Team " + textProducer.word(), departments.get(i % NUMBER_OF_DEPARTMENTS));
+            Team team = new Team("Team " + textProducer.word(), department);
             team.setId(Integer.toUnsignedLong(i));
             team.setName("Team" + textProducer.word());
+
+            department.addTeam(team);
 
             teams.add(team);
         }
@@ -237,7 +240,7 @@ public class TestHelper {
 
     public static ValueStream generateValueStream(int i) {
         ValueStream valueStream = new ValueStream();
-        valueStream.setId(new Long(i));
+        valueStream.setId((long) i);
         valueStream.setName(i + " - Value Stream");
 
         return valueStream;

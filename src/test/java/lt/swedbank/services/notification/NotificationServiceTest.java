@@ -11,11 +11,10 @@ import lt.swedbank.services.user.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -49,6 +48,11 @@ public class NotificationServiceTest {
 
     @Before
     public void setUp() {
+
+        MockitoAnnotations.initMocks(this);
+
+        ReflectionTestUtils.setField(notificationService, "APPROVES_NEEDED", 5);
+        ReflectionTestUtils.setField(notificationService, "DISAPPROVES_NEEDED", 1);
 
         LocalDateTime localDateTime = LocalDateTime.of(1111, 11, 11, 11, 11, 11);
         notificationAnswerRequestl = new NotificationAnswerRequest();
@@ -166,9 +170,8 @@ public class NotificationServiceTest {
     @Test
     public void handleRequestPendingApprove() {
         setUpMocks();
-        approvalRequestl.setApproves(0);
         approvalRequestl.setPending();
-        notificationAnswerRequestl.setApproved(1);
+        notificationAnswerRequestl.setStatus(Status.APPROVED);
         requestNotification1.setApproved();
         NotificationResponse result = notificationService.handleRequest(notificationAnswerRequestl, user);
         assertEquals(result.getStatus(), Status.APPROVED.toString());
@@ -180,7 +183,7 @@ public class NotificationServiceTest {
         setUpMocks();
         approvalRequestl.setDisapprovers(new ArrayList<>());
         approvalRequestl.setPending();
-        notificationAnswerRequestl.setApproved(-1);
+        notificationAnswerRequestl.setStatus(Status.DISAPPROVED);
         NotificationResponse result = notificationService.handleRequest(notificationAnswerRequestl, user);
         assertEquals(Status.DISAPPROVED.toString(), result.getStatus());
         assertEquals(approvalRequestl.getStatus(), Status.PENDING);

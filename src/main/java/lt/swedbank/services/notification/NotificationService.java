@@ -11,15 +11,12 @@ import lt.swedbank.beans.response.notification.RequestDisapprovedNotificationRes
 import lt.swedbank.beans.response.notification.RequestNotificationResponse;
 import lt.swedbank.exceptions.notification.NoSuchNotificationException;
 import lt.swedbank.repositories.RequestNotificationRepository;
-import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 @Service
 public class NotificationService {
@@ -30,6 +27,11 @@ public class NotificationService {
     private UserService userService;
     @Autowired
     private ApprovalService approvalService;
+
+    @Value("${notification.approves_needed}")
+    public  Integer APPROVES_NEEDED;
+    @Value("${notification.disapproves_needed}")
+    public  Integer DISAPPROVES_NEEDED;
 
     public Iterable<RequestNotification> getNotificationsByUser(User user) {
         return requestNotificationRepository.findByReceiver(user);
@@ -86,13 +88,15 @@ public class NotificationService {
 
     private RequestNotification changeNotificationRequestStatus(ApprovalRequest approvalRequest, RequestNotification requestNotification, User user, NotificationAnswerRequest notificationAnswerRequest) {
         requestNotification.setPending();
-        switch (notificationAnswerRequest.getApproved()) {
-            case 1:
+        switch (notificationAnswerRequest.getStatus()) {
+            case APPROVED:
                 requestNotification = approve(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
                 break;
-            case -1:
+            case DISAPPROVED:
                 requestNotification = disapprove(approvalRequest, requestNotification, user, notificationAnswerRequest.getMessage());
                 break;
+            case PENDING:
+                requestNotification = setNotificationsAsPending(approvalRequest, requestNotification, user);
             default:
                 break;
         }
@@ -101,8 +105,8 @@ public class NotificationService {
 
     private RequestNotification approve(ApprovalRequest approvalRequest, RequestNotification requestNotification, User user, String message) {
         requestNotification.setApproved();
-        Integer approves = approvalService.approve(message, approvalRequest, user).getApproves();
-        if (approves >= 5) {
+        Integer approves = approvalService.approve(message, approvalRequest, user).getApprovers().size();
+        if (approves >= APPROVES_NEEDED) {
             setNotificationsAsExpired(approvalRequest.getRequestNotifications());
             sendNotificationAboutSkillLevelStatusChanges(approvalRequest);
         }
@@ -112,8 +116,17 @@ public class NotificationService {
     private RequestNotification disapprove(ApprovalRequest approvalRequest, RequestNotification requestNotification, User user, String message) {
         requestNotification.setDisapproved();
         approvalService.disapprove(message, approvalRequest, user);
-        setNotificationsAsExpired(approvalRequest.getRequestNotifications());
-        sendNotificationAboutSkillLevelStatusChanges(approvalRequest);
+        Integer disapproves = approvalService.disapprove(message, approvalRequest, user).getDisapprovers().size();
+        if (disapproves >= DISAPPROVES_NEEDED ) {
+            setNotificationsAsExpired(approvalRequest.getRequestNotifications());
+            sendNotificationAboutSkillLevelStatusChanges(approvalRequest);
+        }
+        return requestNotification;
+    }
+
+    private RequestNotification setNotificationsAsPending(ApprovalRequest approvalRequest, RequestNotification requestNotification, User user) {
+        approvalService.removeUserFromApproversAndDisapproversIfExists(approvalRequest, user);
+        requestNotification.setPending();
         return requestNotification;
     }
 

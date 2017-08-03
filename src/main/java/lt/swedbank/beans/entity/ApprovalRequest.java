@@ -23,8 +23,6 @@ public class ApprovalRequest {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private Integer approves = 0;
-
     private Status status = Status.PENDING;
 
     @OneToOne(cascade = {CascadeType.ALL})
@@ -49,7 +47,6 @@ public class ApprovalRequest {
             approvers = new ArrayList<>();
         }
         approvers.add(approver);
-        approves++;
     }
 
     public void addDisapprover(Disapprover disapprover) {

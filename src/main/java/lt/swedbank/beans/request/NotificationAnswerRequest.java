@@ -1,6 +1,7 @@
 package lt.swedbank.beans.request;
 
 import io.swagger.annotations.ApiModelProperty;
+import lt.swedbank.beans.enums.Status;
 
 import javax.validation.constraints.NotNull;
 
@@ -16,16 +17,16 @@ public class NotificationAnswerRequest {
 
     @NotNull(message = "Required string!")
     @ApiModelProperty(required = true, example = "-1")
-    private Integer approved;
+    private Status status;
 
     public NotificationAnswerRequest() {}
 
-    public Integer getApproved() {
-        return approved;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setApproved(Integer approved) {
-        this.approved = approved;
+    public void setStatus(Status approved) {
+        this.status = approved;
     }
 
     public Long getNotificationId() {

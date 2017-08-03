@@ -2,8 +2,10 @@ package lt.swedbank.services.notification;
 
 
 import lt.swedbank.beans.entity.*;
-import lt.swedbank.beans.enums.Status;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
+import lt.swedbank.exceptions.notification.ApproverNotFoundException;
+import lt.swedbank.exceptions.notification.DisapproverNotFoundException;
+import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.exceptions.userSkillLevel.RequestAlreadySubmittedException;
 import lt.swedbank.exceptions.userSkillLevel.TooHighSkillLevelRequestException;
 import lt.swedbank.repositories.ApprovalRequestRepository;
@@ -14,18 +16,18 @@ import lt.swedbank.services.skill.UserSkillLevelService;
 import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Service
 public class ApprovalService {
 
     @Autowired
     private ApprovalRequestRepository approvalRequestRepository;
-    @Autowired
-    private NotificationService notificationService;
     @Autowired
     private ApproversRepository approversRepository;
     @Autowired
@@ -38,6 +40,13 @@ public class ApprovalService {
     private SkillLevelService skillLevelService;
     @Autowired
     private UserSkillLevelService userSkillLevelService;
+
+    @Value("${notification.approves_needed}")
+    public  Integer APPROVES_NEEDED;
+    @Value("${notification.disapproves_needed}")
+    public  Integer DISAPPROVES_NEEDED;
+    @Value("${notification.min_amount_of_users_required}")
+    public  Integer MIN_AMOUNT_OF_NOTIFIED_USERS_REQUIRED;
 
     public ApprovalRequest addSkillLevelApprovalRequestWithNotifications(Long userId, AssignSkillLevelRequest assignSkillLevelRequest) throws RequestAlreadySubmittedException, TooHighSkillLevelRequestException {
 
@@ -77,7 +86,8 @@ public class ApprovalService {
             }
         }
 
-        if (usersToBeNotified.size() < 5) {
+
+        if (usersToBeNotified.size() < MIN_AMOUNT_OF_NOTIFIED_USERS_REQUIRED) {
             usersToBeNotified = (List<User>) userService.getAllUsers();
         }
 
@@ -88,70 +98,58 @@ public class ApprovalService {
         return notifications;
     }
 
-    public Approver saveApprover(Approver approver) {
-        return approversRepository.save(approver);
-    }
-
-
-    public boolean isUserAlreadyApprovedReqest(User user, ApprovalRequest approvalRequest)
-    {
-        for (Approver approver: approvalRequest.getApprovers()) {
-            if(approver.getUser() == user) {
+    public boolean isUserAlreadyApprovedReqest(User user, ApprovalRequest approvalRequest) {
+        for (Approver approver : approvalRequest.getApprovers()) {
+            if (approver.getUser().equals(user)) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean isUserAlreadyDissapprovedRequest(User user, ApprovalRequest approvalRequest)
-    {
-        for (Disapprover disapprover: approvalRequest.getDisapprovers()) {
-            if(disapprover.getUser() == user) {
+    public boolean isUserAlreadyDissapprovedRequest(User user, ApprovalRequest approvalRequest) {
+        for (Disapprover disapprover : approvalRequest.getDisapprovers()) {
+            if (disapprover.getUser().equals(user)) {
                 return true;
             }
         }
         return false;
     }
 
-    public void removeDissapproverFromApprovalRequest(User user, ApprovalRequest approvalRequest)
-    {
-        for (Disapprover disapprover: approvalRequest.getDisapprovers()
-             ) {
-            if(disapprover.getUser() == user)
-            {
-                disaproversRepository.delete(disapprover.getId());
-            }
+    public void removeUserFromApproversAndDisapproversIfExists(ApprovalRequest approvalRequest, User user) {
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+        if (isUserAlreadyDissapprovedRequest(user, approvalRequest)) {
+            removeDissapproverFromApprovalRequest(user, approvalRequest);
+        } else if (isUserAlreadyApprovedReqest(user, approvalRequest)) {
+            removeApproverFromApprovalRequest(user, approvalRequest);
         }
     }
+
 
     public ApprovalRequest approve(String message, ApprovalRequest approvalRequest, User user) {
 
-        if(isUserAlreadyDissapprovedRequest(user, approvalRequest)) {
-            removeDissapproverFromApprovalRequest(user, approvalRequest);
-        }
+        removeUserFromApproversAndDisapproversIfExists(approvalRequest, user);
+        Approver approver = new Approver(user, message);
+        approversRepository.save(approver);
+        approvalRequest.addApprover(approver);
 
-        if (!isUserAlreadyApprovedReqest(user, approvalRequest)) {
-            Approver approver = new Approver(user, message);
-            saveApprover(approver);
-            approvalRequest.addApprover(approver);
-        }
-
-        if (approvalRequest.getApproves() >= 5) {
+        if (approvalRequest.getApprovers().size() >= APPROVES_NEEDED) {
             approvalRequest.setApproved();
         }
         return approvalRequestRepository.save(approvalRequest);
     }
 
-    public Disapprover saveDisapprover(Disapprover disapprover) {
-        return disaproversRepository.save(disapprover);
-    }
 
     public ApprovalRequest disapprove(String message, ApprovalRequest approvalRequest, User user) {
 
-        if (approvalRequest.getStatus() == Status.PENDING) {
-            Disapprover disapprover = new Disapprover(user, message);
-            saveDisapprover(disapprover);
-            approvalRequest.addDisapprover(disapprover);
+        removeUserFromApproversAndDisapproversIfExists(approvalRequest, user);
+        Disapprover disapprover = new Disapprover(user, message);
+        disaproversRepository.save(disapprover);
+        approvalRequest.addDisapprover(disapprover);
+
+        if (approvalRequest.getDisapprovers().size() >= DISAPPROVES_NEEDED) {
             approvalRequest.setDisapproved();
         }
         return approvalRequestRepository.save(approvalRequest);
@@ -163,5 +161,45 @@ public class ApprovalService {
 
     public ApprovalRequest update(ApprovalRequest approvalRequest) {
         return approvalRequestRepository.save(approvalRequest);
+    }
+
+    private void removeApproverFromApprovalRequest(User user, ApprovalRequest approvalRequest) {
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+        approvalRequest.getApprovers().remove(approversRepository.findOne(user.getId()));
+        approversRepository.delete(getApproverById(user.getId()));
+    }
+
+    public void removeDissapproverFromApprovalRequest(User user, ApprovalRequest approvalRequest) {
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+        approvalRequest.getDisapprovers().remove(getDisapproverById(user.getId()));
+        disaproversRepository.delete(getDisapproverById(user.getId()));
+    }
+
+    public Approver saveApprover(Approver approver) {
+        return approversRepository.save(approver);
+    }
+
+    public Disapprover saveDisapprover(Disapprover disapprover) {
+        return disaproversRepository.save(disapprover);
+    }
+
+    public Disapprover getDisapproverById(Long id) {
+        Disapprover disapprover = disaproversRepository.findOne(id);
+        if (disapprover == null) {
+            throw new DisapproverNotFoundException();
+        }
+        return disapprover;
+    }
+
+    public Approver getApproverById(Long id) {
+        Approver approver = approversRepository.findOne(id);
+        if (approver == null) {
+            throw new ApproverNotFoundException();
+        }
+        return approver;
     }
 }

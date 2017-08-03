@@ -2,6 +2,9 @@ package lt.swedbank.services.notification;
 
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
+import lt.swedbank.exceptions.notification.ApproverNotFoundException;
+import lt.swedbank.exceptions.notification.DisapproverNotFoundException;
+import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.exceptions.userSkillLevel.RequestAlreadySubmittedException;
 import lt.swedbank.exceptions.userSkillLevel.TooHighSkillLevelRequestException;
 import lt.swedbank.helpers.TestHelper;
@@ -15,7 +18,10 @@ import lt.swedbank.services.user.UserService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.*;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -25,11 +31,12 @@ import java.util.Set;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.*;
 
+@RunWith(SpringJUnit4ClassRunner.class)
 
 public class ApprovalServiceTest {
 
-    @Spy
     @InjectMocks
+    @Spy
     private ApprovalService approvalService;
     @Mock
     private ApproversRepository approversRepository;
@@ -67,6 +74,10 @@ public class ApprovalServiceTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+
+        ReflectionTestUtils.setField(approvalService, "APPROVES_NEEDED", 5);
+        ReflectionTestUtils.setField(approvalService, "DISAPPROVES_NEEDED", 1);
+        ReflectionTestUtils.setField(approvalService, "MIN_AMOUNT_OF_NOTIFIED_USERS_REQUIRED", 5);
 
         userSkillLevel = new UserSkillLevel();
         requestNotification = new RequestNotification();
@@ -118,9 +129,12 @@ public class ApprovalServiceTest {
     public void userAlreadyNotApprovedRequestTest() {
         user = new User();
         user.setName("Jonas");
+        user.setId(1L);
 
         Assert.assertEquals(approvalService.isUserAlreadyApprovedReqest(user, approvalRequest), false);
     }
+
+
 
     @Test
     public void userAlreadyApprovedRequestTest() {
@@ -154,13 +168,14 @@ public class ApprovalServiceTest {
     public void userAlreadyNotDisapprovedRequestTest() {
         user = new User();
         user.setName("Jonas");
+        user.setId(1L);
 
         boolean isUserAlreadyDisapprovedRequestResult = approvalService.isUserAlreadyDissapprovedRequest(user, approvalRequest);
 
         Assert.assertEquals(isUserAlreadyDisapprovedRequestResult, false);
     }
 
-    @Test
+    @Test(expected = UserNotFoundException.class)
     public void notRemoveDissapproverFromApprovalRequest() {
         Mockito.doNothing().when(disaproversRepository).delete(anyLong());
 
@@ -172,10 +187,11 @@ public class ApprovalServiceTest {
     @Test
     public void removeDissapproverFromApprovalRequest() {
         Mockito.doNothing().when(disaproversRepository).delete(anyLong());
+        doReturn(new Disapprover()).when(approvalService).getDisapproverById(any());
 
         approvalService.removeDissapproverFromApprovalRequest(user, approvalRequest);
 
-        verify(disaproversRepository, times(1)).delete(anyLong());
+        verify(disaproversRepository, times(1)).delete(any(Disapprover.class));
     }
 
     @Test
@@ -194,9 +210,11 @@ public class ApprovalServiceTest {
         doReturn(false).when(approvalService).isUserAlreadyDissapprovedRequest(user, approvalRequest);
         Mockito.when(approvalRequestRepository.save(approvalRequest)).thenReturn(approvalRequest);
         doReturn(approver).when(approvalService).saveApprover(approver);
+        doNothing().when(approvalService).removeUserFromApproversAndDisapproversIfExists(any(), any());
 
         User user = new User();
         user.setName("Approver");
+
         ApprovalRequest approvalRequestResult = approvalService.approve(message, approvalRequest, user);
 
         Assert.assertEquals(approvalRequestResult.getApprovers().get(approvalRequestResult.getApprovers().size() - 1).getUser(), user);
@@ -217,10 +235,11 @@ public class ApprovalServiceTest {
         Mockito.when(approvalRequestRepository.save(approvalRequest)).thenReturn(approvalRequest);
         doReturn(disapprover).when(approvalService).saveDisapprover(disapprover);
 
+        Disapprover disapprover = new Disapprover(user, message);
+        doReturn(disapprover).when(approvalService).getDisapproverById(any());
+
         approvalRequest.setPending();
         ApprovalRequest approvalRequestResult = approvalService.disapprove(message, approvalRequest, user);
-
-        Disapprover disapprover = new Disapprover(user, message);
 
         Assert.assertEquals(approvalRequestResult.getDisapprovers().get(approvalRequestResult.getDisapprovers().size() - 1).getUser(), disapprover.getUser());
         Assert.assertEquals(approvalRequestResult.getDisapprovers().get(approvalRequestResult.getDisapprovers().size() - 1).getMessage(), disapprover.getMessage());
@@ -281,5 +300,31 @@ public class ApprovalServiceTest {
 
 
         approvalService.addSkillLevelApprovalRequestWithNotifications(user.getId(), assignSkillLevelRequest);
+    }
+
+    @Test
+    public void getDisapproverById() {
+        Disapprover disapprover = new Disapprover(user, "test");
+        Mockito.doReturn(disapprover).when(disaproversRepository).findOne(any());
+        Disapprover result = approvalService.getDisapproverById(any());
+        Assert.assertEquals(disapprover, result);
+    }
+
+    @Test(expected = DisapproverNotFoundException.class)
+    public void getDisapproverByIdException() {
+        approvalService.getDisapproverById(null);
+    }
+
+    @Test
+    public void getApproverById() {
+        Approver disapprover = new Approver(user, "test");
+        Mockito.doReturn(disapprover).when(approversRepository).findOne(any());
+        Approver result = approvalService.getApproverById(any());
+        Assert.assertEquals(disapprover, result);
+    }
+
+    @Test(expected = ApproverNotFoundException.class)
+    public void getApproverByIdException() {
+        approvalService.getApproverById(null);
     }
 }

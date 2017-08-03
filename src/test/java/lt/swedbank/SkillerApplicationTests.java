@@ -12,5 +12,4 @@ public class SkillerApplicationTests {
     @Test
     public void contextLoads() {
     }
-
 }

@@ -45,8 +45,7 @@ public class ApprovalRequest {
     private String motivation;
 
     public void addApprover(Approver approver) {
-        if(approvers == null)
-        {
+        if(approvers == null) {
             approvers = new ArrayList<>();
         }
         approvers.add(approver);

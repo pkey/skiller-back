@@ -160,11 +160,14 @@ public class TeamService {
     }
 
     public List<TeamSkillTemplateResponse> getTeamSkillTemplateResponseList(Team team) {
+        Optional<SkillTemplate> skillTemplateOptional = skillTemplateService.getByTeamId(team.getId());
 
-        if (!skillTemplateService.getByTeamId(team.getId()).isPresent()) {
-            return skillTemplateService.getByTeamId(team.getId()).get().getSkills().stream().map(skill -> {
-                return new TeamSkillTemplateResponse(skill, getSkillCountInTeam(team, skill), getAverageSkillLevelInTeam(team, skill));
-            }).collect(Collectors.toList());
+        if (skillTemplateOptional.isPresent()) {
+            return skillTemplateOptional.get().getSkills().stream().map(skill ->
+                    new TeamSkillTemplateResponse(skill,
+                            getSkillCountInTeam(team, skill),
+                            getAverageSkillLevelInTeam(team, skill)))
+                    .collect(Collectors.toList());
         } else {
             return new ArrayList<>();
         }

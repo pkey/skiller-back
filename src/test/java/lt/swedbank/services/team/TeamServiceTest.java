@@ -21,7 +21,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
 
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -264,7 +263,6 @@ public class TeamServiceTest {
         //Return empty arrays to simplify testing
         doReturn(new ArrayList<>()).when(teamService).getTeamSkillTemplateResponseList(any(Team.class));
         doReturn(new ArrayList<>()).when(teamService).getUserWithSkillResponseList(any());
-
         TeamWithUsersResponse resultTeam = teamService.getMyTeam(myUser.getId());
 
         Assert.assertEquals(resultTeam.getName(), testTeam.getName());

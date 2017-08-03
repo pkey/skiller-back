@@ -18,7 +18,7 @@ public class SkillTemplateService {
     @Autowired
     private SkillTemplateRepository skillTemplateRepository;
 
-    private SkillTemplate getSkillTemplateById(@NotNull Long id) {
+    private SkillTemplate getById(@NotNull Long id) {
         SkillTemplate skillTemplate = skillTemplateRepository.findOne(id);
 
         if (skillTemplate == null) {
@@ -29,18 +29,20 @@ public class SkillTemplateService {
 
     }
 
-    public Optional<SkillTemplate> getByTeamId(@NotNull Long teamId) {
-        return Optional.ofNullable(skillTemplateRepository.findOneByTeamId(teamId));
+    public Optional<SkillTemplate> getByTeamId(@NotNull Long id) {
+        return Optional.ofNullable(skillTemplateRepository.findOneByTeamId(id));
     }
 
-    public SkillTemplate createSkillTemplate(Team team, List<Skill> skills) {
-        SkillTemplate skillTemplate = new SkillTemplate(team, skills);
-        return skillTemplateRepository.save(skillTemplate);
-    }
+    public SkillTemplate createOrUpdateSkillTemplate(@NotNull Team team, @NotNull List<Skill> skills) {
 
-    public SkillTemplate updateSkillTemplate(@NotNull Long id, @NotNull List<Skill> skills) {
-        SkillTemplate skillTemplate = getSkillTemplateById(id);
-        skillTemplate.setSkills(skills);
+        SkillTemplate skillTemplate;
+
+        try {
+            skillTemplate = getById(team.getSkillTemplate().getId());
+            skillTemplate.setSkills(skills);
+        } catch (TemplateNotFoundException e){
+            skillTemplate = new SkillTemplate(team, skills);
+        }
 
         return skillTemplateRepository.save(skillTemplate);
     }

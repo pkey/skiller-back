@@ -20,7 +20,10 @@ import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,14 +63,10 @@ public class UserSkillService {
         }
 
         UserSkill userSkill = new UserSkill(userService.getUserById(userId), skill);
-        userSkillRepository.save(userSkill);
+        userSkill.addUserSkillLevel(userSkillLevelService.addDefaultUserSkillLevel(userSkill));
 
-        List<UserSkillLevel> userSkillLevels = new ArrayList<>();
-        userSkillLevels.add(userSkillLevelService.addDefaultUserSkillLevel(userSkill));
 
-        userSkill.setUserSkillLevels(userSkillLevels);
-
-        return new UserSkillResponse(userSkill.getSkill());
+        return new UserSkillResponse(userSkillRepository.save(userSkill).getSkill());
     }
 
     public UserSkillResponse removeUserSkill(Long userId, RemoveSkillRequest removeSkillRequest) throws SkillNotFoundException, UserSkillLevelIsPendingException {
@@ -148,7 +147,6 @@ public class UserSkillService {
     }
 
     private boolean userSkillAlreadyExists(Long userID, Skill skill) {
-        UserSkill userSkill = userSkillRepository.findByUserIdAndSkillId(userID, skill.getId());
         return Optional.ofNullable(userSkillRepository.findByUserIdAndSkillId(userID, skill.getId())).isPresent();
     }
 

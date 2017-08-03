@@ -19,11 +19,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Matchers.any;
-
 
 public class UserSkillServiceTest {
 
@@ -46,8 +44,9 @@ public class UserSkillServiceTest {
     private Skill skill;
     private List<SkillLevel> skillLevels;
     private User user;
+    private List<User> users;
     private UserSkill testUserSkill;
-    private List<UserSkillLevel> testUserSkillLevels;
+    private UserSkillLevel defaultUserSkillLevel;
 
     @Before
     public void setUp() throws Exception {
@@ -64,45 +63,58 @@ public class UserSkillServiceTest {
 
         assignSkillLevelRequest = new AssignSkillLevelRequest(2L, skill.getId(), "Motivation");
 
-        user = new User();
-        user.setId(0L);
+        users = TestHelper.fetchUsers(3);
+        user = users.get(0);
 
         testUserSkill = new UserSkill(user, skill);
-
-        UserSkillLevel testDefaultUserSkillLevel = new UserSkillLevel(testUserSkill,
-                TestHelper.defaultSkillLevel);
-
-        testUserSkillLevels = new ArrayList<>();
-        testUserSkillLevels.add(testDefaultUserSkillLevel);
-
-        testUserSkill.setUserSkillLevels(testUserSkillLevels);
+        defaultUserSkillLevel = new UserSkillLevel(testUserSkill, TestHelper.defaultSkillLevel);
+        testUserSkill.addUserSkillLevel(defaultUserSkillLevel);
 
     }
 
     @Test
-    public void addUserSkill() throws Exception {
+    public void add_user_skill() throws Exception {
         Mockito.when(skillService.findByTitle(addSkillRequest.getTitle())).thenReturn(skill);
+        Mockito.when(userSkillRepository.findByUserIdAndSkillId(user.getId(), skill.getId())).thenReturn(null);
+        Mockito.when(userService.getUserById(user.getId())).thenReturn(user);
+        Mockito.when(userSkillLevelService.addDefaultUserSkillLevel(any(UserSkill.class))).thenReturn(defaultUserSkillLevel);
+        Mockito.when(userSkillRepository.save(any(UserSkill.class))).thenReturn(testUserSkill);
 
-        UserSkillResponse resultUserSkill = userSkillService.addUserSkill(user.getId(), addSkillRequest);
+        UserSkillResponse userSkillResponse = userSkillService.addUserSkill(user.getId(), addSkillRequest);
 
-        Assert.assertEquals(testUserSkill.getSkill().getId(), resultUserSkill.getId());
+        Assert.assertEquals(testUserSkill.getSkill().getId(), userSkillResponse.getId());
 
         Mockito.verify(userSkillRepository, Mockito.times(1)).save(any(UserSkill.class));
         Mockito.verify(skillService, Mockito.times(0)).addSkill(any());
 
     }
 
+    @Test(expected = SkillAlreadyExistsException.class)
+    public void add_user_skill_fails_if_already_exists() throws Exception {
+        Mockito.when(skillService.findByTitle(addSkillRequest.getTitle())).thenReturn(skill);
+        Mockito.when(userSkillRepository.findByUserIdAndSkillId(user.getId(), skill.getId())).thenReturn(testUserSkill);
+
+        userSkillService.addUserSkill(user.getId(), addSkillRequest);
+    }
+
     @Test
-    public void add_user_skill_as_well_as_new_skill() throws Exception {
+    public void add_user_skill_adds_new_skill_if_it_does_not_exist() throws Exception {
         Mockito.when(skillService.findByTitle(addSkillRequest.getTitle())).thenThrow(new SkillNotFoundException());
         Mockito.when(skillService.addSkill(addSkillRequest)).thenReturn(skill);
-        UserSkillResponse resultUserSkill = userSkillService.addUserSkill(user.getId(), addSkillRequest);
+        Mockito.when(userSkillRepository.findByUserIdAndSkillId(user.getId(), skill.getId())).thenReturn(null);
+        Mockito.when(userService.getUserById(user.getId())).thenReturn(user);
+        Mockito.when(userSkillLevelService.addDefaultUserSkillLevel(any(UserSkill.class))).thenReturn(defaultUserSkillLevel);
+        Mockito.when(userSkillRepository.save(any(UserSkill.class))).thenReturn(testUserSkill);
 
-        Assert.assertEquals(skill.getId(), resultUserSkill.getId());
+        UserSkillResponse userSkillResponse = userSkillService.addUserSkill(user.getId(), addSkillRequest);
+
+        Assert.assertEquals(testUserSkill.getSkill().getId(), userSkillResponse.getId());
 
         Mockito.verify(userSkillRepository, Mockito.times(1)).save(any(UserSkill.class));
         Mockito.verify(skillService, Mockito.times(1)).addSkill(any());
+
     }
+
 
     @Test(expected = SkillAlreadyExistsException.class)
     public void if_skill_already_exist_exception_is_thrown() throws Exception {

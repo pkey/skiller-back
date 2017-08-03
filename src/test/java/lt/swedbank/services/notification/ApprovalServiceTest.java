@@ -58,8 +58,6 @@ public class ApprovalServiceTest {
     private AssignSkillLevelRequest assignSkillLevelRequest;
     private UserSkill userSkill;
     private Skill skill;
-    private SkillLevel skillLevel;
-    private List<RequestNotification> requestNotificationList;
     private List<SkillLevel> skillLevels;
     private Set<UserSkillLevel> userSkillLevels;
     private List<User> usersToBeNotifed;
@@ -95,16 +93,13 @@ public class ApprovalServiceTest {
         assignSkillLevelRequest = new AssignSkillLevelRequest(1L, 1L, "I am, i am");
         skill = new Skill("Testing");
         userSkill = new UserSkill(user, skill);
-        skillLevel = new SkillLevel(1L, "Novice", "1-st level");
-        userSkillLevel = new UserSkillLevel(userSkill, skillLevel);
+        userSkillLevel = new UserSkillLevel(userSkill, TestHelper.skillLevels.get(0));
 
-        SkillLevel skillLevel2 = new SkillLevel(2L, "Advanced beginner", "2-nd level");
         skillLevels = new ArrayList<>();
-        skillLevels.add(skillLevel);
-        skillLevels.add(skillLevel2);
+        skillLevels = TestHelper.skillLevels;
         Skill skill2 = new Skill("Java8");
         UserSkill userSkill2 = new UserSkill(user, skill2);
-        UserSkillLevel userSkillLevel2 = new UserSkillLevel(userSkill2, skillLevel2);
+        UserSkillLevel userSkillLevel2 = new UserSkillLevel(userSkill2, TestHelper.skillLevels.get(1));
 
         userSkillLevels = new HashSet<>();
         userSkillLevels.add(userSkillLevel);
@@ -251,7 +246,7 @@ public class ApprovalServiceTest {
 
     @Test
     public void addSkillLevelApprovalRequestWithNotifications() {
-        Mockito.when(userSkillService.getUserSkillByUserIdAndSkillId(user.getId(), skillLevel.getId())).thenReturn(userSkill);
+        Mockito.when(userSkillService.getUserSkillByUserIdAndSkillId(user.getId(), TestHelper.skillLevels.get(0).getId())).thenReturn(userSkill);
         Mockito.when(userSkillLevelService.addUserSkillLevel(any(), any())).thenReturn(userSkillLevel);
         Mockito.when(approvalRequestRepository.save(approvalRequest)).thenReturn(approvalRequest);
         Mockito.when(userSkillLevelService.getCurrentUserSkillLevelByUserIdAndSkillId(user.getId(), assignSkillLevelRequest.getSkillId()))

@@ -29,8 +29,6 @@ public class NotificationService {
     @Autowired
     private UserService userService;
     @Autowired
-    private UserSkillService userSkillService;
-    @Autowired
     private ApprovalService approvalService;
 
     public Iterable<RequestNotification> getNotificationsByUser(User user) {
@@ -68,7 +66,7 @@ public class NotificationService {
         ArrayList<NotificationResponse> requestNotificationResponses = new ArrayList<NotificationResponse>();
         for (RequestNotification requestNotification : requestNotifications) {
             ApprovalRequest approvalRequest = requestNotification.getApprovalRequest();
-            if (approvalRequest.getUserSkillLevel().getUserSkill().getUser() == requestNotification.getReceiver()) {
+            if (approvalRequest.getUserSkillLevel().getUserSkill().getUser().equals(requestNotification.getReceiver())) {
                 if (approvalRequest.getStatus() == Status.DISAPPROVED) {
                     requestNotificationResponses.add(new RequestDisapprovedNotificationResponse(requestNotification));
                 } else if (approvalRequest.getStatus() == Status.APPROVED) {
@@ -79,31 +77,11 @@ public class NotificationService {
         return requestNotificationResponses;
     }
 
-
-    public void deleteRequestNotificationsFromApprovalRequest(ApprovalRequest approvalRequest) {
-        Iterable<RequestNotification> requestNotificationList = requestNotificationRepository.findByApprovalRequest(approvalRequest);
-        requestNotificationRepository.delete(requestNotificationList);
-    }
-
-
     public RequestNotification getNotificationById(Long id) {
         if (requestNotificationRepository.findOne(id) == null) {
             throw new NoSuchNotificationException();
         }
         return requestNotificationRepository.findOne(id);
-    }
-
-    public Iterable<RequestNotification> addNotifications(ApprovalRequest request) {
-        return requestNotificationRepository.save(request.getRequestNotifications());
-    }
-
-    public void deleteNotifications(ApprovalRequest request) {
-        requestNotificationRepository.delete(request.getRequestNotifications());
-    }
-
-    public List<NotificationResponse> getNotificationsResponsesSortedByDate(List<RequestNotification> requestNotifications) {
-        sortRequestNotifications(requestNotifications);
-        return getNotificationResponses(requestNotifications);
     }
 
     private RequestNotification changeNotificationRequestStatus(ApprovalRequest approvalRequest, RequestNotification requestNotification, User user, NotificationAnswerRequest notificationAnswerRequest) {
@@ -137,10 +115,6 @@ public class NotificationService {
         setNotificationsAsExpired(approvalRequest.getRequestNotifications());
         sendNotificationAboutSkillLevelStatusChanges(approvalRequest);
         return requestNotification;
-    }
-
-    private void sortRequestNotifications(List<RequestNotification> requestNotifications) {
-        requestNotifications.sort(Comparator.comparing(RequestNotification::getCreationTime));
     }
 
     private User getUserFromApprovalRequest(ApprovalRequest approvalRequest) {

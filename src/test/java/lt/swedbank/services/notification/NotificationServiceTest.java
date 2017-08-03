@@ -1,5 +1,4 @@
-package lt.swedbank.services.
-        notification;
+package lt.swedbank.services.notification;
 
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.enums.Status;
@@ -9,8 +8,6 @@ import lt.swedbank.beans.response.notification.RequestNotificationResponse;
 import lt.swedbank.exceptions.notification.NoSuchNotificationException;
 import lt.swedbank.repositories.RequestNotificationRepository;
 import lt.swedbank.services.user.UserService;
-import org.hibernate.annotations.CreationTimestamp;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -27,7 +23,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class NotificationServiceTest {
@@ -50,8 +46,6 @@ public class NotificationServiceTest {
     private ApprovalRequest approvalRequestl;
     private NotificationAnswerRequest notificationAnswerRequestl;
     private UserSkillLevel userSkillLevel;
-    private Skill skill1;
-    private LocalDateTime localDateTime;
 
     @Before
     public void setUp() {
@@ -107,7 +101,6 @@ public class NotificationServiceTest {
     public void getNotificationsByUser() {
         Mockito.when(requestNotificationRepository.findByReceiver(any())).thenReturn(requestNotificationList);
         assertEquals(notificationService.getNotificationsByUser(any()), requestNotificationList);
-        assertEquals(notificationService.getNotificationsByUser(any()), requestNotificationList);
     }
 
 
@@ -159,7 +152,7 @@ public class NotificationServiceTest {
         assertEquals(requestNotification1.getStatus(), Status.EXPIRED);
     }
 
-    public void mocksForHandleRequestPending() {
+    public void setUpMocks() {
         doReturn(requestNotification1).when(notificationService).getNotificationById(notificationAnswerRequestl.getNotificationId());
         Mockito.when(approvalService.getApprovalRequestByRequestNotification(requestNotification1)).thenReturn(approvalRequestl);
         Mockito.when(requestNotificationRepository.save(any(RequestNotification.class))).thenReturn(requestNotification1);
@@ -172,7 +165,7 @@ public class NotificationServiceTest {
 
     @Test
     public void handleRequestPendingApprove() {
-        mocksForHandleRequestPending();
+        setUpMocks();
         approvalRequestl.setApproves(0);
         approvalRequestl.setPending();
         notificationAnswerRequestl.setApproved(1);
@@ -184,7 +177,7 @@ public class NotificationServiceTest {
 
     @Test
     public void handleRequestPendingDisapprove() {
-        mocksForHandleRequestPending();
+        setUpMocks();
         approvalRequestl.setDisapprovers(new ArrayList<>());
         approvalRequestl.setPending();
         notificationAnswerRequestl.setApproved(-1);

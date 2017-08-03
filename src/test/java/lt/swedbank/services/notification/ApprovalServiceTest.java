@@ -61,6 +61,7 @@ public class ApprovalServiceTest {
     private List<SkillLevel> skillLevels;
     private Set<UserSkillLevel> userSkillLevels;
     private List<User> usersToBeNotifed;
+    private String motivationMessage;
 
 
     @Before
@@ -89,15 +90,16 @@ public class ApprovalServiceTest {
         requestNotification.setApprovalRequest(approvalRequest);
 
         message = "Message";
+        motivationMessage = "I am, i am";
 
-        assignSkillLevelRequest = new AssignSkillLevelRequest(1L, 1L, "I am, i am");
-        skill = new Skill("Testing");
+        assignSkillLevelRequest = new AssignSkillLevelRequest(1L, 1L, motivationMessage);
+        skill = new Skill(TestHelper.skills.get(0).getTitle());
         userSkill = new UserSkill(user, skill);
         userSkillLevel = new UserSkillLevel(userSkill, TestHelper.skillLevels.get(0));
 
         skillLevels = new ArrayList<>();
         skillLevels = TestHelper.skillLevels;
-        Skill skill2 = new Skill("Java8");
+        Skill skill2 = new Skill(TestHelper.skills.get(1).getTitle());
         UserSkill userSkill2 = new UserSkill(user, skill2);
         UserSkillLevel userSkillLevel2 = new UserSkillLevel(userSkill2, TestHelper.skillLevels.get(1));
 
@@ -117,9 +119,7 @@ public class ApprovalServiceTest {
         user = new User();
         user.setName("Jonas");
 
-        boolean isUserAlreadyApprovedRequestResult = approvalService.isUserAlreadyApprovedReqest(user, approvalRequest);
-
-        Assert.assertEquals(isUserAlreadyApprovedRequestResult, false);
+        Assert.assertEquals(approvalService.isUserAlreadyApprovedReqest(user, approvalRequest), false);
     }
 
     @Test
@@ -200,7 +200,7 @@ public class ApprovalServiceTest {
         ApprovalRequest approvalRequestResult = approvalService.approve(message, approvalRequest, user);
 
         Assert.assertEquals(approvalRequestResult.getApprovers().get(approvalRequestResult.getApprovers().size() - 1).getUser(), user);
-        Assert.assertEquals(approvalRequestResult.getApprovers().get(approvalRequestResult.getApprovers().size() - 1).getMessage(), "Message");
+        Assert.assertEquals(approvalRequestResult.getApprovers().get(approvalRequestResult.getApprovers().size() - 1).getMessage(), message);
     }
 
     @Test
@@ -261,7 +261,7 @@ public class ApprovalServiceTest {
         ApprovalRequest approvalRequestResult = approvalService.addSkillLevelApprovalRequestWithNotifications(user.getId(), assignSkillLevelRequest);
 
         Assert.assertEquals(approvalRequestResult.getUserSkillLevel(), userSkillLevel);
-        Assert.assertEquals(approvalRequestResult.getMotivation(), "I am, i am");
+        Assert.assertEquals(approvalRequestResult.getMotivation(), motivationMessage);
     }
 
     @Test(expected = RequestAlreadySubmittedException.class)

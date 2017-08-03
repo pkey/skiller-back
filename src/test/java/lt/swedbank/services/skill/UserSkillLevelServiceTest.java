@@ -13,14 +13,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class UserSkillLevelServiceTest {
@@ -34,8 +32,6 @@ public class UserSkillLevelServiceTest {
     private SkillLevelService skillLevelService;
     @Mock
     private UserSkillService userSkillService;
-    @Mock
-    private ApprovalService approvalService;
 
     private UserSkill userSkill;
     private List<User> users;

@@ -64,8 +64,7 @@ public class UserSkillService {
 
         UserSkill userSkill = new UserSkill(userService.getUserById(userId), skill);
         userSkill.addUserSkillLevel(userSkillLevelService.addDefaultUserSkillLevel(userSkill));
-
-
+        
         return new UserSkillResponse(userSkillRepository.save(userSkill).getSkill());
     }
 

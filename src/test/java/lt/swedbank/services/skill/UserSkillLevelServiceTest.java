@@ -75,15 +75,12 @@ public class UserSkillLevelServiceTest {
 
     @Test
     public void addDefaultUserSkillLevel() throws Exception {
-        ApprovalRequest approvalRequest = mock(ApprovalRequest.class);
-        UserSkillLevel userSkillLevel = new UserSkillLevel();
-
         when(skillLevelService.getDefault()).thenReturn(TestHelper.defaultSkillLevel);
 
         when(userSkillLevelRepository.save(any(UserSkillLevel.class))).thenReturn(userSkillLevel);
 
         UserSkillLevel resultUserSkillLevel = userSkillLevelService.addDefaultUserSkillLevel(userSkill);
-
+        
         assertEquals(userSkillLevel.getUserSkill().getId(), resultUserSkillLevel.getUserSkill().getId());
     }
 

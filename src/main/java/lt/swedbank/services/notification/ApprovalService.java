@@ -127,17 +127,6 @@ public class ApprovalService {
         }
     }
 
-    public void removeApproverFromApprovalRequest(User user, ApprovalRequest approvalRequest)
-    {
-        for (Approver approver: approvalRequest.getApprovers()) {
-            if(approver.getUser() == user)
-            {
-                disaproversRepository.delete(approver.getId());
-            }
-        }
-    }
-
-
     public ApprovalRequest approve(String message, ApprovalRequest approvalRequest, User user) {
 
         if(isUserAlreadyDissapprovedRequest(user, approvalRequest)) {

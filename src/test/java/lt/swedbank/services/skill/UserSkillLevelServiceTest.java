@@ -1,5 +1,6 @@
 package lt.swedbank.services.skill;
 
+import lt.swedbank.beans.entity.ApprovalRequest;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.entity.UserSkillLevel;
@@ -7,16 +8,19 @@ import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.exceptions.userSkillLevel.UserSkillLevelNotFoundException;
 import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.repositories.UserSkillLevelRepository;
+import lt.swedbank.services.notification.ApprovalService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class UserSkillLevelServiceTest {
@@ -30,6 +34,8 @@ public class UserSkillLevelServiceTest {
     private SkillLevelService skillLevelService;
     @Mock
     private UserSkillService userSkillService;
+    @Mock
+    private ApprovalService approvalService;
 
     private UserSkill userSkill;
     private List<User> users;
@@ -64,10 +70,13 @@ public class UserSkillLevelServiceTest {
         when(userSkillLevelRepository.findTopByUserSkillAndStatusOrderByValidFromDesc(any(), any())).thenReturn(null);
 
         userSkillLevelService.getCurrentUserSkillLevelByUserIdAndSkillId(any(), any());
+
     }
 
     @Test
     public void addDefaultUserSkillLevel() throws Exception {
+        ApprovalRequest approvalRequest = mock(ApprovalRequest.class);
+        UserSkillLevel userSkillLevel = new UserSkillLevel();
 
         when(skillLevelService.getDefault()).thenReturn(TestHelper.defaultSkillLevel);
 

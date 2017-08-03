@@ -8,7 +8,6 @@ import lt.swedbank.beans.response.team.TeamWithUsersResponse;
 import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewWithUsersResponse;
 import lt.swedbank.beans.response.team.teamOverview.NonColleagueTeamOverviewWithUsersResponse;
 import lt.swedbank.beans.response.user.UserWithSkillsResponse;
-import lt.swedbank.exceptions.skillTemplate.TemplateNotFoundException;
 import lt.swedbank.exceptions.team.TeamNameAlreadyExistsException;
 import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.repositories.TeamRepository;
@@ -24,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -159,20 +159,18 @@ public class TeamService {
                 getTeamSkillTemplateResponseList(team));
     }
 
-    public SkillTemplate getTeamSkillTemplate(Team team) {
-        return skillTemplateService.getByTeamId(team.getId());
-    }
-
     public List<TeamSkillTemplateResponse> getTeamSkillTemplateResponseList(Team team) {
-        List<TeamSkillTemplateResponse> teamSkillTemplateResponseList = new ArrayList<>();
-        try {
-            teamSkillTemplateResponseList = getTeamSkillTemplate(team).getSkills().stream().map(skill -> {
-                        return new TeamSkillTemplateResponse(skill, getSkillCountInTeam(team, skill), getAverageSkillLevelInTeam(team, skill));
-                    }).collect(Collectors.toList());
-        } catch (TemplateNotFoundException e) {
+        Optional<SkillTemplate> skillTemplateOptional = skillTemplateService.getByTeamId(team.getId());
+
+        if (skillTemplateOptional.isPresent()) {
+            return skillTemplateOptional.get().getSkills().stream().map(skill ->
+                    new TeamSkillTemplateResponse(skill,
+                            getSkillCountInTeam(team, skill),
+                            getAverageSkillLevelInTeam(team, skill)))
+                    .collect(Collectors.toList());
+        } else {
             return new ArrayList<>();
         }
-        return teamSkillTemplateResponseList;
     }
 
     public double getAverageSkillLevelInTeam(Team team, Skill skill) {

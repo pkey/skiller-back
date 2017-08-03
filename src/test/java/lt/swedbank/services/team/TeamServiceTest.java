@@ -24,6 +24,7 @@ import org.mockito.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.Matchers.any;
@@ -45,11 +46,9 @@ public class TeamServiceTest {
     @Mock
     private SkillTemplateService skillTemplateService;
 
-    //Test DAta
 
     private List<Team> teams;
     private Team testTeam;
-    private NonColleagueTeamOverviewWithUsersResponse nonColleagueTeamOverviewWithUsersResponse;
     private SkillTemplate testSkillTemplate;
     private List<Skill> testSkills;
     private List<TeamSkillTemplateResponse> teamSkillTemplateResponse;
@@ -57,19 +56,14 @@ public class TeamServiceTest {
     private UserSkillLevel userSkillLevel;
     private UserSkillResponse userSkillResponse;
     private List<UserSkillResponse> userSkillsResponse;
-    private TeamWithUsersResponse teamWithUsersResponse;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
         teams = TestHelper.fetchTeams(2);
-
         testTeam = teams.get(0);
-        testTeam.getDepartment().setDivision(new Division());
-
         users = TestHelper.fetchUsers(3);
-
         testSkills = TestHelper.skills.subList(0, 2);
 
         userSkillLevel = new UserSkillLevel();
@@ -109,32 +103,20 @@ public class TeamServiceTest {
         Assert.assertEquals(resultTeam, testTeam);
     }
 
-    @Test
-    public void getTeamSkillTemplate() throws Exception {
-        Mockito.when(skillTemplateService.getByTeamId(any())).thenReturn(testSkillTemplate);
-
-        Assert.assertEquals(teamService.getTeamSkillTemplate(testTeam), testSkillTemplate);
-    }
 
     @Test
     public void getTeamSkillTemplateResponseList() throws Exception {
         doReturn(2).when(teamService).getSkillCountInTeam(any(Team.class), any(Skill.class));
         doReturn(2.0).when(teamService).getAverageSkillLevelInTeam(any(Team.class), any(Skill.class));
 
-        Mockito.when(skillTemplateService.getByTeamId(testTeam.getId())).thenReturn(testSkillTemplate);
+        Optional<SkillTemplate> skillTemplateOptional = Optional.ofNullable(testSkillTemplate);
+        Mockito.when(skillTemplateService.getByTeamId(testTeam.getId())).thenReturn(skillTemplateOptional);
 
         List<TeamSkillTemplateResponse> responses = teamService.getTeamSkillTemplateResponseList(testTeam);
 
         Assert.assertEquals(responses.size(), 2);
         Assert.assertEquals(testSkillTemplate.getSkills().get(0).getTitle(),
                 responses.get(0).getSkill().getTitle());
-    }
-
-    @Test
-    public void getTeamSkillTemplateResponseListException() throws Exception {
-        doReturn(null).when(teamService).getTeamSkillTemplate(any(Team.class));
-        List<TeamSkillTemplateResponse> teamSkillTemplateResponses = teamService.getTeamSkillTemplateResponseList(any());
-        Assert.assertEquals(teamSkillTemplateResponses.isEmpty(), true);
     }
 
     @Test(expected = TeamNotFoundException.class)
@@ -148,6 +130,9 @@ public class TeamServiceTest {
         User userFromSameTeam = users.get(0);
 
         testTeam.setUsers(TestHelper.fetchUsers(5));
+        //Return empty arrays to simplify testing
+        doReturn(new ArrayList<>()).when(teamService).getTeamSkillTemplateResponseList(any(Team.class));
+        doReturn(new ArrayList<>()).when(teamService).getUserWithSkillResponseList(any());
 
         Mockito.when(teamRepository.findOne(testTeam.getId())).thenReturn(testTeam);
         Mockito.when(userService.getUserById(userFromSameTeam.getId())).thenReturn(userFromSameTeam);
@@ -167,6 +152,11 @@ public class TeamServiceTest {
         User userWithoutTeam = new User();
         userWithoutTeam.setId(1L);
         userWithoutTeam.setTeam(null);
+
+        //Return empty arrays to simplify testing
+        doReturn(new ArrayList<>()).when(teamService).getTeamSkillTemplateResponseList(any(Team.class));
+        doReturn(new ArrayList<>()).when(teamService).getUserWithSkillResponseList(any());
+
 
         Mockito.when(teamRepository.findOne(testTeam.getId())).thenReturn(testTeam);
         Mockito.when(userService.getUserById(any())).thenReturn(userWithoutTeam);
@@ -219,6 +209,10 @@ public class TeamServiceTest {
         Mockito.when(teamRepository.save(any(Team.class))).thenReturn(testTeam);
         Mockito.when(departmentService.getDepartmentById(testTeam.getDepartment().getId())).thenReturn(testTeam.getDepartment());
 
+        //Return empty arrays to simplify testing
+        doReturn(new ArrayList<>()).when(teamService).getTeamSkillTemplateResponseList(any(Team.class));
+        doReturn(new ArrayList<>()).when(teamService).getUserWithSkillResponseList(any());
+
 
         AddTeamRequest addTeamRequest = new AddTeamRequest();
         addTeamRequest.setName(testTeam.getName());
@@ -232,6 +226,10 @@ public class TeamServiceTest {
     public void getAllTeamOfColleaguesOverviewResponses() throws Exception {
         teams.forEach(t -> t.setSkillTemplate(new SkillTemplate(t, testSkills)));
         Mockito.when(teamRepository.findAll()).thenReturn(teams);
+
+        //Return empty arrays to simplify testing
+        doReturn(new ArrayList<>()).when(teamService).getTeamSkillTemplateResponseList(any(Team.class));
+        doReturn(new ArrayList<>()).when(teamService).getUserWithSkillResponseList(any());
 
         List<TeamWithUsersResponse> responses = teamService.getAllTeamOverviewResponses();
 
@@ -257,18 +255,21 @@ public class TeamServiceTest {
 
     @Test
     public void getMyTeam() throws Exception {
-        Mockito.when(userService.getUserById(any())).thenReturn(users.get(0));
+        User myUser = users.get(0);
+        Team myTeam = myUser.getTeam().orElseThrow(() -> new Exception("Test failed, user hasn't got a team"));
 
-        testTeam.setUsers(users);
+        Mockito.when(userService.getUserById(any())).thenReturn(myUser);
 
-        TeamWithUsersResponse resultTeam = teamService.getMyTeam(users.get(0).getId());
+        //Return empty arrays to simplify testing
+        doReturn(new ArrayList<>()).when(teamService).getTeamSkillTemplateResponseList(any(Team.class));
+        doReturn(new ArrayList<>()).when(teamService).getUserWithSkillResponseList(any());
+
+        TeamWithUsersResponse resultTeam = teamService.getMyTeam(myUser.getId());
 
         Assert.assertEquals(resultTeam.getName(), testTeam.getName());
         Assert.assertEquals(resultTeam.getDepartment().getName(), testTeam.getDepartment().getName());
-        for (int i = 0; i < 3; i++) {
-            Assert.assertEquals(resultTeam.getUsers().get(i).getName(), testTeam.getUsers().get(i).getName());
-            Assert.assertEquals(resultTeam.getUsers().get(i).getLastName(), testTeam.getUsers().get(i).getLastName());
-        }
+        Assert.assertEquals(resultTeam.getUsers().size(), 0);
+
     }
 
 

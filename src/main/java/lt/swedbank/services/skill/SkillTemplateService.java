@@ -3,15 +3,14 @@ package lt.swedbank.services.skill;
 import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.SkillTemplate;
 import lt.swedbank.beans.entity.Team;
-import lt.swedbank.beans.response.TeamSkillTemplateResponse;
 import lt.swedbank.exceptions.skillTemplate.TemplateNotFoundException;
 import lt.swedbank.repositories.SkillTemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SkillTemplateService {
@@ -30,14 +29,8 @@ public class SkillTemplateService {
 
     }
 
-    public SkillTemplate getByTeamId(@NotNull Long id) {
-        SkillTemplate skillTemplate = skillTemplateRepository.findOneByTeamId(id);
-
-        if (skillTemplate == null) {
-            throw new TemplateNotFoundException();
-        }
-
-        return skillTemplate;
+    public Optional<SkillTemplate> getByTeamId(@NotNull Long teamId) {
+        return Optional.ofNullable(skillTemplateRepository.findOneByTeamId(teamId));
     }
 
     public SkillTemplate createSkillTemplate(Team team, List<Skill> skills) {

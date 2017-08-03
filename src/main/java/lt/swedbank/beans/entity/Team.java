@@ -6,6 +6,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,6 +45,13 @@ public class Team {
         for (User user : users) {
             user.setTeam(this);
         }
+    }
+
+    public void addUser(User user) {
+        if (users == null) {
+            this.users = new ArrayList<>();
+        }
+        this.users.add(user);
     }
 
 }

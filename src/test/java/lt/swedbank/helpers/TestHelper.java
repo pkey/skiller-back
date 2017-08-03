@@ -44,7 +44,7 @@ public class TestHelper {
         createLevels();
         createSkills();
         createUsers();
-        generateValueStreamsList();
+        createValueStreams();
     }
 
     private TestHelper(){
@@ -89,8 +89,9 @@ public class TestHelper {
 
             user.setConnection("connection");
 
-
-            user.setTeam(teams.get(i%NUMBER_OF_TEAMS));
+            Team team = teams.get(i % NUMBER_OF_TEAMS);
+            team.addUser(user);
+            user.setTeam(team);
 
             userList.add(user);
         }
@@ -210,10 +211,28 @@ public class TestHelper {
         }
     }
 
+    private static void createValueStreams() {
+        List<ValueStream> valueStreamsToBeGenerated = new ArrayList<>();
+
+        for (int i = 0; i < NUMBER_OF_VALUE_STREAM; i++) {
+            ValueStream valueStream = generateValueStream(i);
+            valueStreamsToBeGenerated.add(valueStream);
+        }
+
+        valueStreams = valueStreamsToBeGenerated;
+    }
+
+    private static ValueStream generateValueStream(int i) {
+        ValueStream valueStream = new ValueStream();
+        valueStream.setId((long) i);
+        valueStream.setName(i + " - Value Stream");
+
+        return valueStream;
+    }
+
     public static List<User> fetchUsers(int amount) {
         return userList.subList(0, amount);
     }
-
 
 
     public static List<Team> fetchTeams(int amount) {
@@ -228,23 +247,7 @@ public class TestHelper {
         return divisions.subList(0, amount);
     }
 
-    public static List<ValueStream> generateValueStreamsList() {
-        List<ValueStream> valueStreamsToBeGenerated = new ArrayList<>();
 
-        for (int i = 0; i < NUMBER_OF_VALUE_STREAM; i++) {
-            ValueStream valueStream = generateValueStream(i);
-            valueStreamsToBeGenerated.add(valueStream);
-        }
-        return valueStreams = valueStreamsToBeGenerated;
-    }
-
-    public static ValueStream generateValueStream(int i) {
-        ValueStream valueStream = new ValueStream();
-        valueStream.setId((long) i);
-        valueStream.setName(i + " - Value Stream");
-
-        return valueStream;
-    }
 
     public static List<ValueStream> fetchValueStreams() {
         return valueStreams;

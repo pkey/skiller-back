@@ -2,7 +2,7 @@ package lt.swedbank.beans.response.team;
 
 
 import lt.swedbank.beans.entity.Team;
-import lt.swedbank.beans.response.TeamSkillTemplateResponse;
+import lt.swedbank.beans.response.SkillTemplateResponse;
 import lt.swedbank.beans.response.user.UserWithSkillsResponse;
 
 import java.util.ArrayList;
@@ -12,8 +12,8 @@ public class TeamWithUsersResponse extends TeamResponse {
 
     protected List<UserWithSkillsResponse> users;
 
-    public TeamWithUsersResponse(Team team, List<UserWithSkillsResponse> usersWithSkills, List<TeamSkillTemplateResponse> teamSkillTemplateResponses) {
-        super(team, teamSkillTemplateResponses);
+    public TeamWithUsersResponse(Team team, List<UserWithSkillsResponse> usersWithSkills, List<SkillTemplateResponse> skillTemplateRespons) {
+        super(team, skillTemplateRespons);
         this.users =  usersWithSkills;
     }
 

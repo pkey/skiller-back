@@ -2,7 +2,7 @@ package lt.swedbank.beans.response.team;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lt.swedbank.beans.entity.Team;
-import lt.swedbank.beans.response.TeamSkillTemplateResponse;
+import lt.swedbank.beans.response.SkillTemplateResponse;
 import lt.swedbank.beans.response.department.DepartmentResponse;
 import lt.swedbank.beans.response.division.DivisionResponse;
 import lt.swedbank.beans.response.valueStream.ValueStreamResponse;
@@ -21,15 +21,15 @@ public class TeamResponse {
 
     protected ValueStreamResponse valueStream;
 
-    protected List<TeamSkillTemplateResponse> skillTemplate;
+    protected List<SkillTemplateResponse> skillTemplate;
 
-    public TeamResponse(Team team, List<TeamSkillTemplateResponse> teamSkillTemplateResponses) {
+    public TeamResponse(Team team, List<SkillTemplateResponse> skillTemplateResponse) {
         this.id = team.getId();
         this.name = team.getName();
         this.department = new DepartmentResponse(team.getDepartment());
         this.division = new DivisionResponse(team.getDepartment().getDivision());
         this.valueStream = team.getValueStream().map(ValueStreamResponse::new).orElse(null);
-        this.skillTemplate =  teamSkillTemplateResponses;
+        this.skillTemplate = skillTemplateResponse;
     }
 
     public TeamResponse(Team team) {
@@ -76,11 +76,11 @@ public class TeamResponse {
         this.valueStream = valueStream;
     }
 
-    public List<TeamSkillTemplateResponse> getSkillTemplate() {
+    public List<SkillTemplateResponse> getSkillTemplate() {
         return skillTemplate;
     }
 
-    public void setSkillTemplate(List<TeamSkillTemplateResponse> skillTemplate) {
+    public void setSkillTemplate(List<SkillTemplateResponse> skillTemplate) {
         this.skillTemplate = skillTemplate;
     }
 }

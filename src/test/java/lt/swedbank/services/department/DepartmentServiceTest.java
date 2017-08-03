@@ -1,7 +1,7 @@
 package lt.swedbank.services.department;
 
 import lt.swedbank.beans.entity.Department;
-import lt.swedbank.beans.response.DepartmentEntityResponse;
+import lt.swedbank.beans.response.department.DepartmentEntityResponse;
 import lt.swedbank.repositories.DepartmentRepository;
 import org.junit.Assert;
 import org.junit.Before;

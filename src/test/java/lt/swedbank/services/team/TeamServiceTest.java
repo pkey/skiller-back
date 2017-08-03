@@ -4,6 +4,7 @@ import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.team.AddTeamRequest;
 import lt.swedbank.beans.request.team.UpdateTeamRequest;
 import lt.swedbank.beans.response.TeamSkillTemplateResponse;
+import lt.swedbank.beans.response.SkillTemplateResponse;
 import lt.swedbank.beans.response.team.TeamResponse;
 import lt.swedbank.beans.response.team.TeamWithUsersResponse;
 import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewWithUsersResponse;
@@ -62,7 +63,7 @@ public class TeamServiceTest {
     private Team testTeam;
     private SkillTemplate testSkillTemplate;
     private List<Skill> testSkills;
-    private List<TeamSkillTemplateResponse> teamSkillTemplateResponse;
+    private List<SkillTemplateResponse> skillTemplateResponse;
     private List<User> users;
     private UserSkillLevel userSkillLevel;
     private UserSkillResponse userSkillResponse;
@@ -90,10 +91,8 @@ public class TeamServiceTest {
         testSkillTemplate.setTeam(testTeam);
         testSkillTemplate.setSkills(testSkills);
 
-        testTeam.setSkillTemplate(testSkillTemplate);
-
-        teamSkillTemplateResponse = new LinkedList<>();
-        teamSkillTemplateResponse.add(new TeamSkillTemplateResponse(new Skill("test"), 2, 2));
+        skillTemplateResponse = new LinkedList<>();
+        skillTemplateResponse.add(new SkillTemplateResponse(new Skill("test"), 2, 2));
 
         userSkillsResponse = new ArrayList<>();
         userSkillResponse = new UserSkillResponse(new Skill("Java"));
@@ -144,7 +143,7 @@ public class TeamServiceTest {
         Optional<SkillTemplate> skillTemplateOptional = Optional.ofNullable(testSkillTemplate);
         Mockito.when(skillTemplateService.getSkillTemplateByTeamId(testTeam.getId())).thenReturn(skillTemplateOptional);
 
-        List<TeamSkillTemplateResponse> responses = teamService.getTeamSkillTemplateResponseList(testTeam);
+        List<SkillTemplateResponse> responses = teamService.getTeamSkillTemplateResponseList(testTeam);
 
         Assert.assertEquals(responses.size(), 2);
         Assert.assertEquals(testSkillTemplate.getSkills().get(0).getTitle(),

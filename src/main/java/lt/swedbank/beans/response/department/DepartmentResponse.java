@@ -1,37 +1,23 @@
 package lt.swedbank.beans.response.department;
 
 
+import lombok.Data;
+import lombok.NonNull;
 import lt.swedbank.beans.entity.Department;
 
 import javax.validation.constraints.NotNull;
 
+@Data
 public class DepartmentResponse {
 
+    @NonNull
     private Long id;
+    @NonNull
     private String name;
-
-    public DepartmentResponse() {
-    }
 
     public DepartmentResponse(@NotNull Department department) {
         this.id = department.getId();
         this.name = department.getName();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
 }

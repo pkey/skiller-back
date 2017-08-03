@@ -1,9 +1,12 @@
 package lt.swedbank.services.team;
 
-import lt.swedbank.beans.entity.*;
+import lt.swedbank.beans.entity.SkillTemplate;
+import lt.swedbank.beans.entity.Team;
+import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.team.AddTeamRequest;
 import lt.swedbank.beans.request.team.UpdateTeamRequest;
-import lt.swedbank.beans.response.TeamSkillTemplateResponse;
+import lt.swedbank.beans.response.SkillEntityResponse;
+import lt.swedbank.beans.response.SkillTemplateResponse;
 import lt.swedbank.beans.response.team.TeamWithUsersResponse;
 import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewWithUsersResponse;
 import lt.swedbank.beans.response.team.teamOverview.NonColleagueTeamOverviewWithUsersResponse;
@@ -12,6 +15,7 @@ import lt.swedbank.exceptions.team.TeamNameAlreadyExistsException;
 import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.repositories.TeamRepository;
 import lt.swedbank.services.department.DepartmentService;
+import lt.swedbank.services.overview.OverviewService;
 import lt.swedbank.services.skill.SkillService;
 import lt.swedbank.services.skill.SkillTemplateService;
 import lt.swedbank.services.skill.UserSkillService;
@@ -43,6 +47,8 @@ public class TeamService {
     private SkillService skillService;
     @Autowired
     private SkillTemplateService skillTemplateService;
+    @Autowired
+    private OverviewService overviewService;
 
 
     public Iterable<Team> getAllTeams() {
@@ -161,52 +167,18 @@ public class TeamService {
                 getTeamSkillTemplateResponseList(team));
     }
 
-    public List<TeamSkillTemplateResponse> getTeamSkillTemplateResponseList(Team team) {
+    public List<SkillTemplateResponse> getTeamSkillTemplateResponseList(Team team) {
         Optional<SkillTemplate> skillTemplateOptional = skillTemplateService.getSkillTemplateByTeamId(team.getId());
 
         if (skillTemplateOptional.isPresent()) {
             return skillTemplateOptional.get().getSkills().stream().map(skill ->
-                    new TeamSkillTemplateResponse(skill,
-                            getSkillCountInTeam(team, skill),
-                            getAverageSkillLevelInTeam(team, skill)))
+                    new SkillTemplateResponse(new SkillEntityResponse(skill),
+                            overviewService.getUserSkillCount(team.getUsers(), skill),
+                            overviewService.getUserAverageSkillLevel(team.getUsers(), skill)))
                     .collect(Collectors.toList());
         } else {
             return new ArrayList<>();
         }
     }
 
-    public double getAverageSkillLevelInTeam(Team team, Skill skill) {
-        List<User> users = (List<User>) userService.getAllByTeam(team);
-        int counter = 0;
-        double sum = 0;
-        for (User user : users
-                ) {
-            for (UserSkill userSkill : user.getUserSkills()
-                    ) {
-                if (userSkill.getSkill().equals(skill)) {
-                    counter++;
-                    sum += userSkillService.getCurrentSkillLevel(userSkill).getSkillLevel().getLevel();
-                }
-            }
-        }
-        if (counter == 0) {
-            return 0;
-        }
-        return sum / counter;
-    }
-
-    public int getSkillCountInTeam(Team team, Skill skill) {
-        List<User> users = (List<User>) userService.getAllByTeam(team);
-        int counter = 0;
-        for (User user : users
-                ) {
-            for (UserSkill userSkill : user.getUserSkills()
-                    ) {
-                if (userSkill.getSkill().equals(skill)) {
-                    counter++;
-                }
-            }
-        }
-        return counter;
-    }
 }

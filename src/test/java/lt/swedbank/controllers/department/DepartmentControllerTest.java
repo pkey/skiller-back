@@ -3,7 +3,7 @@ package lt.swedbank.controllers.department;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.entity.Department;
-import lt.swedbank.beans.response.DepartmentEntityResponse;
+import lt.swedbank.beans.response.department.DepartmentEntityResponse;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.services.department.DepartmentService;

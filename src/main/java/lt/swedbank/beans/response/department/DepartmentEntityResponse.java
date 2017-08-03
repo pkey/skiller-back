@@ -1,9 +1,10 @@
-package lt.swedbank.beans.response;
+package lt.swedbank.beans.response.department;
 
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lt.swedbank.beans.entity.Department;
 import lt.swedbank.beans.entity.Team;
+import lt.swedbank.beans.response.Response;
 import lt.swedbank.beans.response.serializers.DepartmentTeamsSerializer;
 
 public class DepartmentEntityResponse extends Response {

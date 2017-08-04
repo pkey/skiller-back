@@ -17,12 +17,9 @@ import lt.swedbank.services.skill.SkillTemplateService;
 import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.user.UserService;
 import lt.swedbank.services.valueStream.ValueStreamService;
-import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -139,6 +136,8 @@ public class TeamService {
         assert updateTeamRequest != null;
 
         Team team = getTeamById(id);
+
+        userService.updateUsersTeam(team, userService.getUsersByIds(updateTeamRequest.getUserIds()));
 
         assert updateTeamRequest.getUserIds() != null;
         team.setUsers(userService.getUsersByIds(updateTeamRequest.getUserIds()));

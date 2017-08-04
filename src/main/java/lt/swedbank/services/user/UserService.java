@@ -135,4 +135,14 @@ public class UserService {
         return allUsers;
     }
 
+    public void updateUsersTeam(Team team, List<User> newUsers) {
+        for (User user : team.getUsers()) {
+            user.setTeam(null);
+        }
+        userRepository.save(team.getUsers());
+        for (User user : newUsers) {
+            user.setTeam(team);
+        }
+        userRepository.save(newUsers);
+    }
 }

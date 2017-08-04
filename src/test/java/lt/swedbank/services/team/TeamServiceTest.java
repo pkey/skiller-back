@@ -75,6 +75,8 @@ public class TeamServiceTest {
         testSkillTemplate.setTeam(testTeam);
         testSkillTemplate.setSkills(testSkills);
 
+        testTeam.setSkillTemplate(testSkillTemplate);
+
         teamSkillTemplateResponse = new LinkedList<>();
         teamSkillTemplateResponse.add(new TeamSkillTemplateResponse(new Skill("test"), 2, 2));
 
@@ -207,7 +209,9 @@ public class TeamServiceTest {
     @Test
     public void addNewTeam() throws Exception {
         Mockito.when(teamRepository.save(any(Team.class))).thenReturn(testTeam);
+        Mockito.when(teamRepository.findByName(any())).thenReturn(null);
         Mockito.when(departmentService.getDepartmentById(testTeam.getDepartment().getId())).thenReturn(testTeam.getDepartment());
+        Mockito.when(skillTemplateService.saveSkillTemplate(testTeam.getSkillTemplate())).thenReturn(testTeam.getSkillTemplate());
 
         //Return empty arrays to simplify testing
         doReturn(new ArrayList<>()).when(teamService).getTeamSkillTemplateResponseList(any(Team.class));
@@ -219,7 +223,9 @@ public class TeamServiceTest {
         addTeamRequest.setDepartmentId(testTeam.getDepartment().getId());
 
         TeamWithUsersResponse response = teamService.addTeam(addTeamRequest);
-        Assert.assertEquals(response.getId(), testTeam.getId());
+
+        Assert.assertEquals(response.getName(), testTeam.getName());
+        Assert.assertEquals(response.getDepartment().getId(), testTeam.getDepartment().getId());
     }
 
     @Test

@@ -35,15 +35,15 @@ public class SkillTemplateService {
 
     public SkillTemplate createOrUpdateSkillTemplate(@NotNull Team team, @NotNull List<Skill> skills) {
 
-        SkillTemplate skillTemplate;
+        Optional<SkillTemplate> skillTemplateOptional = Optional.ofNullable(team.getSkillTemplate());
 
-        try {
-            skillTemplate = getById(team.getSkillTemplate().getId());
-            skillTemplate.setSkills(skills);
-        } catch (TemplateNotFoundException e){
-            skillTemplate = new SkillTemplate(team, skills);
+        if (skillTemplateOptional.isPresent()) {
+            return skillTemplateOptional.get();
         }
+        return new SkillTemplate(team, skills);
+    }
 
+    public SkillTemplate saveSkillTemplate(SkillTemplate skillTemplate) {
         return skillTemplateRepository.save(skillTemplate);
     }
 }

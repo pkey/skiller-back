@@ -17,9 +17,12 @@ import lt.swedbank.services.skill.SkillTemplateService;
 import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.user.UserService;
 import lt.swedbank.services.valueStream.ValueStreamService;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -109,11 +112,13 @@ public class TeamService {
     public TeamWithUsersResponse addTeam(AddTeamRequest addTeamRequest) {
         assert addTeamRequest != null;
 
-        if (teamRepository.findByName(addTeamRequest.getName()) != null) {
+        Team team = teamRepository.findByName(addTeamRequest.getName());
+
+        if (team != null) {
             throw new TeamNameAlreadyExistsException();
         }
 
-        Team team = new Team(addTeamRequest.getName(), departmentService.getDepartmentById(addTeamRequest.getDepartmentId()));
+        team = new Team(addTeamRequest.getName(), departmentService.getDepartmentById(addTeamRequest.getDepartmentId()));
 
         if (addTeamRequest.getUserIds() != null) {
             team.setUsers(userService.getUsersByIds(addTeamRequest.getUserIds()));
@@ -126,9 +131,15 @@ public class TeamService {
             team.setSkillTemplate(skillTemplateService.createOrUpdateSkillTemplate(team, skillService.getSkillsByIds(addTeamRequest.getSkillIds())));
         }
 
-        return new TeamWithUsersResponse(teamRepository.save(team), getUserWithSkillResponseList(userService.getUsersByIds(addTeamRequest.getUserIds())), getTeamSkillTemplateResponseList(team));
+        completeCreateOrUpdateTeamTransaction(team);
+
+        return new TeamWithUsersResponse(team, getUserWithSkillResponseList(userService.getUsersByIds(addTeamRequest.getUserIds())), getTeamSkillTemplateResponseList(team));
     }
 
+    private void completeCreateOrUpdateTeamTransaction(Team team) {
+        teamRepository.save(team);
+        skillTemplateService.saveSkillTemplate(team.getSkillTemplate());
+    }
 
     public TeamWithUsersResponse updateTeam(Long id, UpdateTeamRequest updateTeamRequest) {
         assert id != null;
@@ -153,8 +164,9 @@ public class TeamService {
             team.setValueStream(valueStreamService.getValueStreamById(updateTeamRequest.getStreamId()));
         }
 
+        completeCreateOrUpdateTeamTransaction(team);
 
-        return new TeamWithUsersResponse(teamRepository.save(team),
+        return new TeamWithUsersResponse(team,
                 getUserWithSkillResponseList(userService.getUsersByIds(updateTeamRequest.getUserIds())),
                 getTeamSkillTemplateResponseList(team));
     }

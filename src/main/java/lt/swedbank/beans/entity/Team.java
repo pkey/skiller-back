@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class Team {
     @ManyToOne
     private ValueStream valueStream;
 
-    @OneToOne(mappedBy = "team")
+    @OneToOne(mappedBy = "team", cascade = CascadeType.PERSIST)
     private SkillTemplate skillTemplate;
 
     public Optional<ValueStream> getValueStream() {

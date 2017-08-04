@@ -3,6 +3,7 @@ package lt.swedbank.beans.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lt.swedbank.beans.request.RegisterUserRequest;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
@@ -48,7 +49,7 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true)
     private List<UserSkill> userSkills;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Team team;
 
     public User(RegisterUserRequest registerUserRequest) {

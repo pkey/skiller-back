@@ -24,7 +24,7 @@ public class Team {
     @NonNull
     private String name;
 
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
     private List<User> users;
 
     @ManyToOne
@@ -34,18 +34,11 @@ public class Team {
     @ManyToOne
     private ValueStream valueStream;
 
-    @OneToOne(mappedBy = "team", cascade = CascadeType.PERSIST)
+    @OneToOne(mappedBy = "team")
     private SkillTemplate skillTemplate;
 
     public Optional<ValueStream> getValueStream() {
         return Optional.ofNullable(valueStream);
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-        for (User user : users) {
-            user.setTeam(this);
-        }
     }
 
     public void addUser(User user) {

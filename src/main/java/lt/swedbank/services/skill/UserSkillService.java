@@ -7,7 +7,6 @@ import lt.swedbank.beans.entity.UserSkillLevel;
 import lt.swedbank.beans.enums.Status;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
-import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.userSkill.NonColleagueUserSkillResponse;
 import lt.swedbank.beans.response.userSkill.NormalUserSkillResponse;
 import lt.swedbank.beans.response.userSkill.UserSkillResponse;
@@ -68,9 +67,9 @@ public class UserSkillService {
         return new UserSkillResponse(userSkillRepository.save(userSkill).getSkill());
     }
 
-    public UserSkillResponse removeUserSkill(Long userId, RemoveSkillRequest removeSkillRequest) throws SkillNotFoundException, UserSkillLevelIsPendingException {
+    public UserSkillResponse removeUserSkill(Long userId, Long skillId) throws SkillNotFoundException, UserSkillLevelIsPendingException {
 
-        Skill skill = skillService.findByTitle(removeSkillRequest.getTitle());
+        Skill skill = skillService.findById(skillId);
 
         UserSkill userSkill = userSkillRepository.findByUserIdAndSkillId(userId, skill.getId());
 

@@ -109,7 +109,7 @@ public class TestHelper {
 
             Skill skill = new Skill();
             skill.setId(Integer.toUnsignedLong(i));
-            skill.setTitle(textProducer.word());
+            skill.setTitle(skillNames[i]);
 
             skills.add(skill);
         }

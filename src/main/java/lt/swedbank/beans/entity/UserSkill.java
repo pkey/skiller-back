@@ -28,7 +28,7 @@ public class UserSkill {
     @NonNull
     private Skill skill;
 
-    @OneToMany(mappedBy = "userSkill", orphanRemoval = true)
+    @OneToMany(mappedBy = "userSkill", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<UserSkillLevel> userSkillLevels;
 
     public String getTitle() {

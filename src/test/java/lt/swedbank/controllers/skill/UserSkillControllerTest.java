@@ -1,7 +1,6 @@
 package lt.swedbank.controllers.skill;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
@@ -71,7 +70,7 @@ public class UserSkillControllerTest {
         testUsers = TestHelper.fetchUsers(5);
         testUser = testUsers.get(0);
 
-        newlyAddedUserSkill = new UserSkill(testUser, new Skill("SkillToAddLater"));
+        newlyAddedUserSkill = new UserSkill(testUser, TestHelper.skills.get(0));
     }
 
     @Test
@@ -91,7 +90,7 @@ public class UserSkillControllerTest {
                 .contentType(contentType)
                 .content(skillJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(newlyAddedUserSkill.getSkill().getId())))
+                .andExpect(jsonPath("$.id", is(newlyAddedUserSkill.getSkill().getId().intValue())))
                 .andExpect(jsonPath("$.title", is(newlyAddedUserSkill.getSkill().getTitle())));
 
         verify(userService, times(1)).getUserByAuthId(any());
@@ -148,11 +147,11 @@ public class UserSkillControllerTest {
         when(userService.getUserByAuthId(any())).thenReturn(testUser);
         when(userSkillService.removeUserSkill(any(), any())).thenReturn(new UserSkillResponse(newlyAddedUserSkill.getSkill()));
 
-        mockMvc.perform(delete("/user/skill").header("Authorization", "Bearer")
+        mockMvc.perform(delete("/user/skill/" + newlyAddedUserSkill.getSkill().getId().toString()).header("Authorization", "Bearer")
                 .contentType(contentType)
                 .content(skillJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(newlyAddedUserSkill.getSkill().getId())))
+                .andExpect(jsonPath("$.id", is(newlyAddedUserSkill.getSkill().getId().intValue())))
                 .andExpect(jsonPath("$.title", is(newlyAddedUserSkill.getSkill().getTitle())));
 
         verify(userService, times(1)).getUserByAuthId(any());

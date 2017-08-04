@@ -126,10 +126,10 @@ public class UserSkillServiceTest {
 
     @Test
     public void removeUserSkill() throws Exception {
-        Mockito.when(skillService.findByTitle(addSkillRequest.getTitle())).thenReturn(skill);
+        Mockito.when(skillService.findById(skill.getId())).thenReturn(skill);
         Mockito.when(userSkillRepository.findByUserIdAndSkillId(user.getId(), skill.getId())).thenReturn(testUserSkill);
 
-        UserSkillResponse resultUserSkill = userSkillService.removeUserSkill(user.getId(), removeSkillRequest);
+        UserSkillResponse resultUserSkill = userSkillService.removeUserSkill(user.getId(), skill.getId());
 
         Assert.assertEquals(testUserSkill.getSkill().getId(), resultUserSkill.getId());
 
@@ -138,10 +138,10 @@ public class UserSkillServiceTest {
 
     @Test(expected = SkillNotFoundException.class)
     public void removing_not_existing_user_skill_throws_exception() throws Exception {
-        Mockito.when(skillService.findByTitle(addSkillRequest.getTitle())).thenReturn(skill);
+        Mockito.when(skillService.findById(skill.getId())).thenReturn(skill);
         Mockito.when(userSkillRepository.findByUserIdAndSkillId(user.getId(), skill.getId())).thenReturn(null);
 
-        UserSkillResponse resultUserSkill = userSkillService.removeUserSkill(user.getId(), removeSkillRequest);
+        UserSkillResponse resultUserSkill = userSkillService.removeUserSkill(user.getId(), skill.getId());
     }
 
     @Test

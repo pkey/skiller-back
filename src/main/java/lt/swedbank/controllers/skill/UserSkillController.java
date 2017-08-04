@@ -5,7 +5,6 @@ import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
-import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.request.VoteUserSkillRequest;
 import lt.swedbank.beans.response.VoteResponse;
 import lt.swedbank.beans.response.userSkill.NormalUserSkillResponse;
@@ -44,13 +43,13 @@ public class UserSkillController {
         return userSkillService.addUserSkill(userId, addSkillRequest);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public @ResponseBody
-    UserSkillResponse removeUserSkill(@Valid @RequestBody RemoveSkillRequest removeSkillRequest,
-                                      @RequestHeader(value = "Authorization") String authToken) {
+    UserSkillResponse removeUserSkill(@RequestHeader(value = "Authorization") String authToken,
+                                      @PathVariable("id") Long id) {
         String authId = authService.extractAuthIdFromToken(authToken);
         User user = userService.getUserByAuthId(authId);
-        return userSkillService.removeUserSkill(user.getId(), removeSkillRequest);
+        return userSkillService.removeUserSkill(user.getId(), id);
     }
 
     @RequestMapping(value = "/level", method = RequestMethod.POST)

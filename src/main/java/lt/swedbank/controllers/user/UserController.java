@@ -5,10 +5,8 @@ import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.beans.response.user.UserWithSkillsResponse;
 import lt.swedbank.services.auth.AuthenticationService;
-import lt.swedbank.services.notification.ApprovalService;
 import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.user.UserService;
-import lt.swedbank.services.vote.VoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,10 +23,6 @@ public class UserController {
     private AuthenticationService authService;
     @Autowired
     private UserSkillService userSkillService;
-    @Autowired
-    private VoteService voteService;
-    @Autowired
-    private ApprovalService approvalService;
 
     @RequestMapping(method = RequestMethod.GET)
     public @ResponseBody

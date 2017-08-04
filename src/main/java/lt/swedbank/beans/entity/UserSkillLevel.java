@@ -22,7 +22,7 @@ public class UserSkillLevel {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @NonNull
     private UserSkill userSkill;
 

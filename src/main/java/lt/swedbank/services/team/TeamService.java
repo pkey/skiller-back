@@ -24,10 +24,7 @@ import lt.swedbank.services.valueStream.ValueStreamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -115,13 +112,11 @@ public class TeamService {
     public TeamWithUsersResponse addTeam(AddTeamRequest addTeamRequest) {
         assert addTeamRequest != null;
 
-        Team team = teamRepository.findByName(addTeamRequest.getName());
-
-        if (team != null) {
+        if (teamRepository.findByName(addTeamRequest.getName()) != null) {
             throw new TeamNameAlreadyExistsException();
         }
 
-        team = new Team(addTeamRequest.getName(), departmentService.getDepartmentById(addTeamRequest.getDepartmentId()));
+        Team team = new Team(addTeamRequest.getName(), departmentService.getDepartmentById(addTeamRequest.getDepartmentId()));
 
         if (addTeamRequest.getUserIds() != null) {
             team.setUsers(userService.getUsersByIds(addTeamRequest.getUserIds()));
@@ -167,7 +162,7 @@ public class TeamService {
                 getTeamSkillTemplateResponseList(team));
     }
 
-    public List<SkillTemplateResponse> getTeamSkillTemplateResponseList(Team team) {
+    public Set<SkillTemplateResponse> getTeamSkillTemplateResponseList(Team team) {
         Optional<SkillTemplate> skillTemplateOptional = skillTemplateService.getSkillTemplateByTeamId(team.getId());
 
         if (skillTemplateOptional.isPresent()) {
@@ -175,9 +170,9 @@ public class TeamService {
                     new SkillTemplateResponse(new SkillEntityResponse(skill),
                             overviewService.getUserSkillCount(team.getUsers(), skill),
                             overviewService.getUserAverageSkillLevel(team.getUsers(), skill)))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
         } else {
-            return new ArrayList<>();
+            return new HashSet<>();
         }
     }
 

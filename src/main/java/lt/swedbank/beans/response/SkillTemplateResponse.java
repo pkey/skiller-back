@@ -1,11 +1,13 @@
 package lt.swedbank.beans.response;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
 import java.util.Comparator;
 
 @Data
+@EqualsAndHashCode(of = "skill")
 public class SkillTemplateResponse implements Comparator<SkillTemplateResponse>, Comparable<SkillTemplateResponse> {
 
     @NonNull

@@ -9,7 +9,7 @@ import lt.swedbank.beans.response.Response;
 import lt.swedbank.beans.response.SkillTemplateResponse;
 import lt.swedbank.beans.response.user.UserResponse;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -20,8 +20,8 @@ public class DepartmentOverviewResponse extends Response {
     @NonNull
     private DepartmentResponse departmentResponse;
     @NonNull
-    private List<UserResponse> users;
+    private Set<UserResponse> users;
     @NonNull
-    private List<SkillTemplateResponse> skillTemplate;
+    private Set<SkillTemplateResponse> skillTemplate;
 
 }

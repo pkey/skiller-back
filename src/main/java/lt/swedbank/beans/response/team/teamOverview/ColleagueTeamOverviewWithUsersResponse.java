@@ -7,10 +7,11 @@ import lt.swedbank.beans.response.team.TeamWithUsersResponse;
 import lt.swedbank.beans.response.user.UserWithSkillsResponse;
 
 import java.util.List;
+import java.util.Set;
 
 public class ColleagueTeamOverviewWithUsersResponse extends TeamWithUsersResponse {
 
-    public ColleagueTeamOverviewWithUsersResponse(Team team, List<UserWithSkillsResponse> usersWithSkills, List<SkillTemplateResponse> skillTemplateResponseList) {
+    public ColleagueTeamOverviewWithUsersResponse(Team team, List<UserWithSkillsResponse> usersWithSkills, Set<SkillTemplateResponse> skillTemplateResponseList) {
         super(team, usersWithSkills, skillTemplateResponseList);
     }
 

@@ -22,6 +22,7 @@ public class TestHelper {
     public static final int NUMBER_OF_SKILLS_USER_HAS = 5;
     public static final int NUMBER_OF_SKILL_LEVELS = 3;
     public static final int NUMBER_OF_VALUE_STREAM = 3;
+    public static final int NUMBER_OF_USERS_IN_A_TEAM = (NUMBER_OF_TEAMS / NUMBER_OF_DEPARTMENTS) * (NUMBER_OF_USERS / NUMBER_OF_TEAMS);
 
 
     public static int currentUserSkillId = 0;

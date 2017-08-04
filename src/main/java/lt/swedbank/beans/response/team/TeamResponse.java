@@ -1,16 +1,18 @@
 package lt.swedbank.beans.response.team;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Data;
 import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.response.SkillTemplateResponse;
 import lt.swedbank.beans.response.department.DepartmentResponse;
 import lt.swedbank.beans.response.division.DivisionResponse;
 import lt.swedbank.beans.response.valueStream.ValueStreamResponse;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Data
 public class TeamResponse {
     protected Long id;
     protected String name;
@@ -21,9 +23,9 @@ public class TeamResponse {
 
     protected ValueStreamResponse valueStream;
 
-    protected List<SkillTemplateResponse> skillTemplate;
+    protected Set<SkillTemplateResponse> skillTemplate;
 
-    public TeamResponse(Team team, List<SkillTemplateResponse> skillTemplateResponse) {
+    public TeamResponse(Team team, Set<SkillTemplateResponse> skillTemplateResponse) {
         this.id = team.getId();
         this.name = team.getName();
         this.department = new DepartmentResponse(team.getDepartment());
@@ -33,54 +35,8 @@ public class TeamResponse {
     }
 
     public TeamResponse(Team team) {
-        this(team, new ArrayList<>());
+        //Todo test if works iwth hashset
+        this(team, new HashSet<>());
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public DepartmentResponse getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(DepartmentResponse department) {
-        this.department = department;
-    }
-
-    public DivisionResponse getDivision() {
-        return division;
-    }
-
-    public void setDivision(DivisionResponse division) {
-        this.division = division;
-    }
-
-    public ValueStreamResponse getValueStream() {
-        return valueStream;
-    }
-
-    public void setValueStream(ValueStreamResponse valueStream) {
-        this.valueStream = valueStream;
-    }
-
-    public List<SkillTemplateResponse> getSkillTemplate() {
-        return skillTemplate;
-    }
-
-    public void setSkillTemplate(List<SkillTemplateResponse> skillTemplate) {
-        this.skillTemplate = skillTemplate;
-    }
 }

@@ -38,12 +38,12 @@ public class SkillTemplateService {
         Optional<SkillTemplate> skillTemplateOptional = Optional.ofNullable(team.getSkillTemplate());
 
         if (skillTemplateOptional.isPresent()) {
-            return skillTemplateOptional.get();
+            return saveSkillTemplate(skillTemplateOptional.get());
         }
-        return new SkillTemplate(team, skills);
+        return saveSkillTemplate(new SkillTemplate(team, skills));
     }
 
-    public SkillTemplate saveSkillTemplate(SkillTemplate skillTemplate) {
+    private SkillTemplate saveSkillTemplate(SkillTemplate skillTemplate) {
         return skillTemplateRepository.save(skillTemplate);
     }
 }

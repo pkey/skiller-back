@@ -17,7 +17,7 @@ public class SkillTemplate {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name="team_id", unique=true)
     @NonNull
     private Team team;

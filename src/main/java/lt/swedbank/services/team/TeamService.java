@@ -131,14 +131,7 @@ public class TeamService {
             team.setSkillTemplate(skillTemplateService.createOrUpdateSkillTemplate(team, skillService.getSkillsByIds(addTeamRequest.getSkillIds())));
         }
 
-        completeCreateOrUpdateTeamTransaction(team);
-
-        return new TeamWithUsersResponse(team, getUserWithSkillResponseList(userService.getUsersByIds(addTeamRequest.getUserIds())), getTeamSkillTemplateResponseList(team));
-    }
-
-    private void completeCreateOrUpdateTeamTransaction(Team team) {
-        teamRepository.save(team);
-        skillTemplateService.saveSkillTemplate(team.getSkillTemplate());
+        return new TeamWithUsersResponse(teamRepository.save(team), getUserWithSkillResponseList(userService.getUsersByIds(addTeamRequest.getUserIds())), getTeamSkillTemplateResponseList(team));
     }
 
     public TeamWithUsersResponse updateTeam(Long id, UpdateTeamRequest updateTeamRequest) {
@@ -164,9 +157,7 @@ public class TeamService {
             team.setValueStream(valueStreamService.getValueStreamById(updateTeamRequest.getStreamId()));
         }
 
-        completeCreateOrUpdateTeamTransaction(team);
-
-        return new TeamWithUsersResponse(team,
+        return new TeamWithUsersResponse(teamRepository.save(team),
                 getUserWithSkillResponseList(userService.getUsersByIds(updateTeamRequest.getUserIds())),
                 getTeamSkillTemplateResponseList(team));
     }

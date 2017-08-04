@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.request.AddSkillRequest;
-import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.beans.response.user.UserWithSkillsResponse;
 import lt.swedbank.beans.response.userSkill.UserSkillResponse;
@@ -139,8 +138,6 @@ public class UserSkillControllerTest {
 
     @Test
     public void remove_skill_from_user_success() throws Exception {
-
-        String skillJson = mapper.writeValueAsString(new RemoveSkillRequest(newlyAddedUserSkill));
         UserWithSkillsResponse userEntityResponseTest = mock(UserWithSkillsResponse.class);
         whenNew(UserWithSkillsResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
 
@@ -148,8 +145,7 @@ public class UserSkillControllerTest {
         when(userSkillService.removeUserSkill(any(), any())).thenReturn(new UserSkillResponse(newlyAddedUserSkill.getSkill()));
 
         mockMvc.perform(delete("/user/skill/" + newlyAddedUserSkill.getSkill().getId().toString()).header("Authorization", "Bearer")
-                .contentType(contentType)
-                .content(skillJson))
+                .contentType(contentType))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(newlyAddedUserSkill.getSkill().getId().intValue())))
                 .andExpect(jsonPath("$.title", is(newlyAddedUserSkill.getSkill().getTitle())));

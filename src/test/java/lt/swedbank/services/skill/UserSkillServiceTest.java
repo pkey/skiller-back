@@ -3,7 +3,6 @@ package lt.swedbank.services.skill;
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
-import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.userSkill.UserSkillResponse;
 import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
 import lt.swedbank.exceptions.skill.SkillNotFoundException;
@@ -39,7 +38,6 @@ public class UserSkillServiceTest {
     private UserService userService;
 
     private AddSkillRequest addSkillRequest;
-    private RemoveSkillRequest removeSkillRequest;
     private AssignSkillLevelRequest assignSkillLevelRequest;
     private Skill skill;
     private List<SkillLevel> skillLevels;
@@ -57,9 +55,6 @@ public class UserSkillServiceTest {
 
         addSkillRequest = new AddSkillRequest();
         addSkillRequest.setTitle(skill.getTitle());
-
-        removeSkillRequest = new RemoveSkillRequest();
-        removeSkillRequest.setTitle(skill.getTitle());
 
         assignSkillLevelRequest = new AssignSkillLevelRequest(2L, skill.getId(), "Motivation");
 

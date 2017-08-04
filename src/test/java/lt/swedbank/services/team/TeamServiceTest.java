@@ -11,6 +11,7 @@ import lt.swedbank.beans.response.user.UserWithSkillsResponse;
 import lt.swedbank.beans.response.userSkill.UserSkillResponse;
 import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.helpers.TestHelper;
+import lt.swedbank.repositories.SkillTemplateRepository;
 import lt.swedbank.repositories.TeamRepository;
 import lt.swedbank.services.department.DepartmentService;
 import lt.swedbank.services.skill.SkillTemplateService;
@@ -45,6 +46,8 @@ public class TeamServiceTest {
     private UserSkillService userSkillService;
     @Mock
     private SkillTemplateService skillTemplateService;
+    @Mock
+    private SkillTemplateRepository skillTemplateRepository;
 
 
     private List<Team> teams;
@@ -211,7 +214,7 @@ public class TeamServiceTest {
         Mockito.when(teamRepository.save(any(Team.class))).thenReturn(testTeam);
         Mockito.when(teamRepository.findByName(any())).thenReturn(null);
         Mockito.when(departmentService.getDepartmentById(testTeam.getDepartment().getId())).thenReturn(testTeam.getDepartment());
-        Mockito.when(skillTemplateService.saveSkillTemplate(testTeam.getSkillTemplate())).thenReturn(testTeam.getSkillTemplate());
+        Mockito.when(skillTemplateRepository.save(testTeam.getSkillTemplate())).thenReturn(testTeam.getSkillTemplate());
 
         //Return empty arrays to simplify testing
         doReturn(new ArrayList<>()).when(teamService).getTeamSkillTemplateResponseList(any(Team.class));

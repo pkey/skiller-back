@@ -1,48 +1,29 @@
 package lt.swedbank.beans.response.department;
 
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lt.swedbank.beans.entity.Department;
-import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.response.Response;
-import lt.swedbank.beans.response.serializers.DepartmentTeamsSerializer;
+import lt.swedbank.beans.response.team.TeamResponse;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Data
+@EqualsAndHashCode(callSuper = false)
+@RequiredArgsConstructor
 public class DepartmentEntityResponse extends Response {
 
-    private Long id;
-    private String name;
-
-    @JsonSerialize(using = DepartmentTeamsSerializer.class)
-    private Iterable<Team> teams;
+    @NonNull
+    private DepartmentResponse departmentResponse;
+    @NonNull
+    private List<TeamResponse> teams;
 
     public DepartmentEntityResponse(Department department) {
-        this.id = department.getId();
-        this.name = department.getName();
-        this.teams = department.getTeams();
+        this.departmentResponse = new DepartmentResponse(department);
+        this.teams = department.getTeams().stream().map(TeamResponse::new).collect(Collectors.toList());
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Iterable<Team> getTeams() {
-        return teams;
-    }
-
-    public void setTeams(Iterable<Team> teams) {
-        this.teams = teams;
-    }
-
 }

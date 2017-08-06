@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,17 +46,9 @@ public class DepartmentService {
                 this.getDepartmentSkillTemplateResponses(department));
 
     }
-    public Iterable<Department> getAllDepartments() {
-        return departmentRepository.findAll();
-    }
 
     public Iterable<DepartmentEntityResponse> getAllDepartmentEntityResponseList() {
-        List<DepartmentEntityResponse> departmentList = new ArrayList<>();
-        for (Department department : getAllDepartments()
-                ) {
-            departmentList.add(new DepartmentEntityResponse(department));
-        }
-        return departmentList;
+        return this.getAllDepartments().stream().map(DepartmentEntityResponse::new).collect(Collectors.toList());
     }
 
     public Set<SkillTemplateResponse> getDepartmentSkillTemplateResponses(Department department) {
@@ -74,5 +65,8 @@ public class DepartmentService {
         return users.stream().map(UserResponse::new).collect(Collectors.toSet());
     }
 
+    private List<Department> getAllDepartments() {
+        return (List<Department>) departmentRepository.findAll();
+    }
 
 }

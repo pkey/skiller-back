@@ -170,10 +170,12 @@ public class TeamService {
                     new SkillTemplateResponse(new SkillEntityResponse(skill),
                             overviewService.getUserSkillCount(team.getUsers(), skill),
                             overviewService.getUserAverageSkillLevel(team.getUsers(), skill)))
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toCollection(TreeSet::new));
         } else {
-            return new HashSet<>();
+            return new TreeSet<>();
         }
+
+        //TODO test ordering
     }
 
 }

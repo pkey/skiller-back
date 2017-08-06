@@ -149,7 +149,7 @@ public class TeamServiceTest {
         Assert.assertEquals(responses.size(), 2);
 
         //Todo fix test
-        Assert.assertEquals(responses.contains();
+
     }
 
     @Test(expected = TeamNotFoundException.class)

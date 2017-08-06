@@ -4,11 +4,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
-import java.util.Comparator;
-
 @Data
 @EqualsAndHashCode(of = "skill")
-public class SkillTemplateResponse implements Comparator<SkillTemplateResponse>, Comparable<SkillTemplateResponse> {
+public class SkillTemplateResponse implements Comparable<SkillTemplateResponse> {
 
     @NonNull
     private SkillEntityResponse skill;
@@ -22,8 +20,4 @@ public class SkillTemplateResponse implements Comparator<SkillTemplateResponse>,
         return this.userCounter.compareTo(skillTemplateResponse.getUserCounter());
     }
 
-    @Override
-    public int compare(SkillTemplateResponse skillTemplateResponse, SkillTemplateResponse t1) {
-        return skillTemplateResponse.getUserCounter().compareTo(t1.getUserCounter());
-    }
 }

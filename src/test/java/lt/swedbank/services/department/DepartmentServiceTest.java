@@ -15,7 +15,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,36 +45,6 @@ public class DepartmentServiceTest {
         departmentList = TestHelper.fetchDepartments(2);
         testDepartment = departmentList.get(0);
 
-    }
-
-    private List<Department> generateDepartmentList() {
-
-        List<Department> departmentsToBeGenerated = new ArrayList<>();
-        int numberOfDepartments = 5;
-
-        for (int i = 0; i < numberOfDepartments; i++) {
-            Department department = generateDepartment(i);
-            departmentsToBeGenerated.add(department);
-        }
-
-        return departmentsToBeGenerated;
-    }
-
-    private Department generateDepartment(int index) {
-        Department department = new Department();
-        department.setId((long) index);
-        department.setName("Department No. " + index);
-
-        return department;
-    }
-
-    @Test
-    public void getAllDepartments() throws Exception {
-        Mockito.when(departmentRepository.findAll()).thenReturn(departmentList);
-
-        List<Department> resultDepartmentList = (List<Department>) departmentService.getAllDepartments();
-
-        Assert.assertEquals(departmentList, resultDepartmentList);
     }
 
     @Test

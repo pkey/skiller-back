@@ -2,6 +2,7 @@ package lt.swedbank.services.team;
 
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.team.AddTeamRequest;
+import lt.swedbank.beans.request.team.UpdateTeamRequest;
 import lt.swedbank.beans.response.TeamSkillTemplateResponse;
 import lt.swedbank.beans.response.team.TeamResponse;
 import lt.swedbank.beans.response.team.TeamWithUsersResponse;
@@ -29,6 +30,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.Matchers.any;
+import static org.powermock.api.mockito.PowerMockito.doNothing;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
 
 
@@ -59,6 +61,7 @@ public class TeamServiceTest {
     private UserSkillLevel userSkillLevel;
     private UserSkillResponse userSkillResponse;
     private List<UserSkillResponse> userSkillsResponse;
+    private UpdateTeamRequest updateTeamRequest;
 
     @Before
     public void setUp() throws Exception {
@@ -277,6 +280,21 @@ public class TeamServiceTest {
         Assert.assertEquals(resultTeam.getName(), testTeam.getName());
         Assert.assertEquals(resultTeam.getDepartment().getName(), testTeam.getDepartment().getName());
         Assert.assertEquals(resultTeam.getUsers().size(), 0);
+
+    }
+
+    @Test
+    public void updateTeamTest() {
+        Team updateResponse = teams.get(1);
+
+        doNothing().when(userService).updateUsersTeam(any(), any());
+        doReturn(testTeam).when(teamService).getTeamById(any());
+        Mockito.when(userService.getUsersByIds(any())).thenReturn(updateResponse.getUsers());
+        Mockito.when(departmentService.getDepartmentById(any())).thenReturn(updateResponse.getDepartment());
+        Mockito.when(skillTemplateService.createOrUpdateSkillTemplate(any(), any())).thenReturn(updateResponse.getSkillTemplate());
+        doNothing().when(teamRepository).save(testTeam);
+
+
 
     }
 

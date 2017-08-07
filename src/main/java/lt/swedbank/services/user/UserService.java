@@ -136,6 +136,8 @@ public class UserService {
     }
 
     public void updateUsersTeam(Team team, List<User> newUsers) {
+        team.getUsers().removeAll(newUsers);
+
         removeAllUsers(team);
 
         addUsers(team, newUsers);

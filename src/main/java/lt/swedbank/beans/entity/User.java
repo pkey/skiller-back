@@ -19,7 +19,6 @@ import java.util.Optional;
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
-@EqualsAndHashCode(exclude = {"userSkills", "team"})
 public class User {
 
     @Id

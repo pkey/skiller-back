@@ -78,16 +78,13 @@ public class ApprovalService {
         }
 
         if (usersToBeNotified.size() < 5) {
-            usersToBeNotified = userService.getAllUsers();
+            usersToBeNotified = (List) userService.getAllUsers();
         }
 
         List<RequestNotification> notifications = new ArrayList<>();
-        for (User user : usersToBeNotified) {
-            if (!user.getId().equals(userId)) {
-                notifications.add(new RequestNotification(user, approvalRequest));
-            }
-        }
-
+        usersToBeNotified.stream()
+                .filter(user -> !user.getId().equals(userId))
+                .forEach(user -> notifications.add(new RequestNotification(user, approvalRequest)));
         return notifications;
     }
 

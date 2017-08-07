@@ -78,7 +78,7 @@ public class ApprovalService {
         }
 
         if (usersToBeNotified.size() < 5) {
-            usersToBeNotified = (List) userService.getAllUsers();
+            usersToBeNotified = (List<User>) userService.getAllUsers();
         }
 
         List<RequestNotification> notifications = new ArrayList<>();

@@ -127,33 +127,23 @@ public class UserService {
         return currentUser.getDepartment().getId().equals(colleague.getDepartment().getId());
     }
 
-    public List<User> getAllUsers() {
-        List<User> allUsers = new ArrayList<>();
-        for (User user : userRepository.findAll()) {
-            allUsers.add(user);
-        }
-        return allUsers;
+    public Iterable<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
     public void updateUsersTeam(Team team, List<User> newUsers) {
         team.getUsers().removeAll(newUsers);
-
         removeAllUsers(team);
-
         addUsers(team, newUsers);
     }
 
     private void removeAllUsers(Team team) {
-        for (User user : team.getUsers()) {
-            user.setTeam(null);
-        }
+        team.getUsers().stream().forEach(user -> user.setTeam(null));
         userRepository.save(team.getUsers());
     }
 
     private void addUsers(Team team, List<User> newUsers) {
-        for (User user : newUsers) {
-            user.setTeam(team);
-        }
+        newUsers.stream().forEach(newUser -> newUser.setTeam(team));
         userRepository.save(newUsers);
     }
 }

@@ -21,8 +21,6 @@ import org.springframework.test.context.TestPropertySource;
         @PropertySource("classpath:auth0.properties"),
         @PropertySource("classpath:notification.properties")
 })
-@TestPropertySource("classpath:notification.properties")
-
 
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 

@@ -17,7 +17,6 @@ import lt.swedbank.exceptions.team.TeamNameAlreadyExistsException;
 import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.repositories.TeamRepository;
 import lt.swedbank.services.department.DepartmentService;
-import lt.swedbank.services.overview.OverviewService;
 import lt.swedbank.services.skill.SkillService;
 import lt.swedbank.services.skill.SkillTemplateService;
 import lt.swedbank.services.skill.UserSkillService;
@@ -48,8 +47,6 @@ public class TeamService {
     private SkillService skillService;
     @Autowired
     private SkillTemplateService skillTemplateService;
-    @Autowired
-    private OverviewService overviewService;
     @Autowired
     private TeamSkillService teamSkillService;
     @Autowired
@@ -187,7 +184,7 @@ public class TeamService {
             return new TreeSet<>();
         }
 
-        //TODO test ordering
+
     }
 
 }

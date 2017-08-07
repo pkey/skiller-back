@@ -31,21 +31,21 @@ public class CustomEventListener {
     @EventListener
     public void onUserSkillAddedEvent(UserSkillAddedEvent userSkillAddedEvent) {
         Optional<Team> team = userSkillAddedEvent.getUserSkill().getUser().getTeam();
-        team.ifPresent(t -> teamSkillService.updateTeamSkill(t.getId(),
+        team.ifPresent(t -> teamSkillService.updateTeamSkill(t,
                 userSkillAddedEvent.getUserSkill().getSkill()));
     }
 
     @EventListener
     public void onUserSkillRemovedEvent(UserSkillRemovedEvent userSkillRemovedEvent) {
         Optional<Team> team = userSkillRemovedEvent.getUserSkill().getUser().getTeam();
-        team.ifPresent(t -> teamSkillService.updateTeamSkill(t.getId(),
+        team.ifPresent(t -> teamSkillService.updateTeamSkill(t,
                 userSkillRemovedEvent.getUserSkill().getSkill()));
     }
 
     @EventListener
     public void onUserSkillLevelRaisedEvent(UserSkillLevelRaisedEvent userSkillRaisedEvent) {
         Optional<Team> team = userSkillRaisedEvent.getUserSkillLevel().getUserSkill().getUser().getTeam();
-        team.ifPresent(t -> teamSkillService.updateTeamSkill(t.getId(),
+        team.ifPresent(t -> teamSkillService.updateTeamSkill(t,
                 userSkillRaisedEvent.getUserSkillLevel().getUserSkill().getSkill()));
     }
 

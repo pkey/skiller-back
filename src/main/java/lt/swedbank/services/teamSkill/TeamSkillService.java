@@ -3,7 +3,6 @@ package lt.swedbank.services.teamSkill;
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.repositories.TeamSkillRepository;
 import lt.swedbank.services.skill.UserSkillService;
-import lt.swedbank.services.team.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +16,9 @@ public class TeamSkillService {
     @Autowired
     private TeamSkillRepository teamSkillRepository;
     @Autowired
-    private TeamService teamService;
-    @Autowired
     private UserSkillService userSkillService;
 
-    public List<TeamSkill> createTeamSkills(Team team) {
+    public void createTeamSkills(Team team) {
         List<TeamSkill> teamSkills = new ArrayList<>();
         for (Skill skill : team.getSkillTemplate().getSkills()) {
             TeamSkill teamSkill = new TeamSkill(team,
@@ -32,15 +29,15 @@ public class TeamSkillService {
             teamSkills.add(teamSkill);
         }
 
-        return (List<TeamSkill>) teamSkillRepository.save(teamSkills);
+        teamSkillRepository.save(teamSkills);
     }
 
-    public List<TeamSkill> updateTeamSkills(@NotNull Team team) {
+    public void updateTeamSkills(@NotNull Team team) {
         List<TeamSkill> teamSkills = new ArrayList<>();
 
         for (Skill skill : team.getSkillTemplate().getSkills()) {
             if (teamSkillRepository.findTopByTeamAndSkill(team, skill) != null) {
-                this.updateTeamSkill(team.getId(), skill);
+                this.updateTeamSkill(team, skill);
             } else {
                 TeamSkill teamSkill = new TeamSkill(team,
                         skill,
@@ -50,17 +47,23 @@ public class TeamSkillService {
             }
         }
 
-        return (List<TeamSkill>) teamSkillRepository.save(teamSkills);
+        teamSkillRepository.save(teamSkills);
     }
 
-    public TeamSkill updateTeamSkill(@NotNull Long teamID, @NotNull Skill skill) {
-        //Update creates new team skill in order to have a statistics on how they average and total changed
-        Team team = teamService.getTeamById(teamID);
+    public TeamSkill updateTeamSkill(@NotNull Team team, @NotNull Skill skill) {
+        TeamSkill teamSkill = teamSkillRepository.findTopByTeamAndSkill(team, skill);
 
-        TeamSkill teamSkill = new TeamSkill(team,
-                skill,
-                this.getUserSkillCount(team.getUsers(), skill),
-                this.getUserAverageSkillLevel(team.getUsers(), skill));
+        if (teamSkill != null) {
+            teamSkill.setSkillCounter(this.getUserSkillCount(team.getUsers(), skill));
+            teamSkill.setSkillLevelAverage(this.getUserAverageSkillLevel(team.getUsers(), skill));
+        } else {
+            teamSkill = new TeamSkill(team,
+                    skill,
+                    this.getUserSkillCount(team.getUsers(), skill),
+                    this.getUserAverageSkillLevel(team.getUsers(), skill));
+            return teamSkillRepository.save(teamSkill);
+        }
+
         return teamSkillRepository.save(teamSkill);
     }
 
@@ -68,7 +71,7 @@ public class TeamSkillService {
         return teamSkillRepository.findTopByTeamAndSkill(team, skill);
     }
 
-    public Double getUserAverageSkillLevel(List<User> users, Skill skill) {
+    public Double getUserAverageSkillLevel(@NotNull List<User> users, @NotNull Skill skill) {
         int counter = 0;
         double sum = 0;
         for (User user : users
@@ -87,7 +90,7 @@ public class TeamSkillService {
         return sum / counter;
     }
 
-    public Integer getUserSkillCount(List<User> users, Skill skill) {
+    public Integer getUserSkillCount(@NotNull List<User> users, @NotNull Skill skill) {
         int counter = 0;
         for (User user : users
                 ) {

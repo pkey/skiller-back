@@ -23,4 +23,9 @@ public class UserBeanTest {
         Assert.assertEquals(true, user1.equals(user2));
     }
 
+    @Test
+    public void equalsFalse() {
+        Assert.assertEquals(false, user1.equals(null));
+    }
+
 }

@@ -115,7 +115,6 @@ public class NotificationService {
 
     private RequestNotification disapprove(ApprovalRequest approvalRequest, RequestNotification requestNotification, User user, String message) {
         requestNotification.setDisapproved();
-        approvalService.disapprove(message, approvalRequest, user);
         Integer disapproves = approvalService.disapprove(message, approvalRequest, user).getDisapprovers().size();
         if (disapproves >= DISAPPROVES_NEEDED ) {
             setNotificationsAsExpired(approvalRequest.getRequestNotifications());

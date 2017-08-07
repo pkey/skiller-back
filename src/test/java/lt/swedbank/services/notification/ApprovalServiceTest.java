@@ -187,11 +187,13 @@ public class ApprovalServiceTest {
     @Test
     public void removeDissapproverFromApprovalRequest() {
         Mockito.doNothing().when(disaproversRepository).delete(anyLong());
-        doReturn(new Disapprover()).when(approvalService).getDisapproverById(any());
+        Disapprover disapprover = new Disapprover();
+        disapprover.setId(1L);
+        doReturn(disapprover).when(approvalService).getDisapproverById(any());
 
         approvalService.removeDissapproverFromApprovalRequest(user, approvalRequest);
 
-        verify(disaproversRepository, times(1)).delete(any(Disapprover.class));
+        verify(disaproversRepository, times(1)).delete(anyLong());
     }
 
     @Test

@@ -15,8 +15,6 @@ public class NotificationAnswerRequest {
     @ApiModelProperty(required = true, example = "Real expert here. Approved!!")
     private String message;
 
-    @NotNull(message = "Required string!")
-    @ApiModelProperty(required = true, example = "-1")
     private Status status;
 
     public NotificationAnswerRequest() {}

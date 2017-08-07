@@ -167,16 +167,27 @@ public class ApprovalService {
         if (user == null) {
             throw new UserNotFoundException();
         }
-        approvalRequest.getApprovers().remove(approversRepository.findOne(user.getId()));
-        approversRepository.delete(getApproverById(user.getId()));
+        Approver currentApprover = getApproverById(approvalRequest.getApprovers().stream()
+                .filter(approver -> approver.getUser().equals(user))
+                .findFirst()
+                .get().getId());
+
+        approvalRequest.getApprovers().remove(currentApprover);
+        approversRepository.delete(currentApprover.getId());
     }
+
 
     public void removeDissapproverFromApprovalRequest(User user, ApprovalRequest approvalRequest) {
         if (user == null) {
             throw new UserNotFoundException();
         }
-        approvalRequest.getDisapprovers().remove(getDisapproverById(user.getId()));
-        disaproversRepository.delete(getDisapproverById(user.getId()));
+        Disapprover currentDisapprover = getDisapproverById(approvalRequest.getDisapprovers().stream()
+                .filter(disapprover -> disapprover.getUser().equals(user))
+                .findFirst()
+                .get().getId());
+
+        approvalRequest.getDisapprovers().remove(currentDisapprover);
+        disaproversRepository.delete(currentDisapprover.getId());
     }
 
     public Approver saveApprover(Approver approver) {

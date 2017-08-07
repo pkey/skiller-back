@@ -136,10 +136,19 @@ public class UserService {
     }
 
     public void updateUsersTeam(Team team, List<User> newUsers) {
+        removeAllUsers(team);
+
+        addUsers(team, newUsers);
+    }
+
+    private void removeAllUsers(Team team) {
         for (User user : team.getUsers()) {
             user.setTeam(null);
         }
         userRepository.save(team.getUsers());
+    }
+
+    private void addUsers(Team team, List<User> newUsers) {
         for (User user : newUsers) {
             user.setTeam(team);
         }

@@ -5,8 +5,6 @@ import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.entity.UserSkillLevel;
 import lt.swedbank.beans.enums.Status;
 import lt.swedbank.beans.request.AddSkillRequest;
-import lt.swedbank.beans.request.RemoveSkillRequest;
-import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.response.userSkill.NonColleagueUserSkillResponse;
 import lt.swedbank.beans.response.userSkill.ColleagueUserSkillResponse;
 import lt.swedbank.beans.response.userSkill.UserSkillResponse;

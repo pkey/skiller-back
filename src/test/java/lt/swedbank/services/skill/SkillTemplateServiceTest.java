@@ -13,8 +13,7 @@ import org.mockito.*;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 public class SkillTemplateServiceTest {
 
@@ -25,23 +24,23 @@ public class SkillTemplateServiceTest {
     private SkillTemplateRepository skillTemplateRepository;
 
     private SkillTemplate mockedSkillTemplate;
-    private Team team;
-    private List<Skill> skills;
+    private Team mockedTeam;
+    private List<Skill> mockedSkills;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
         mockedSkillTemplate = new SkillTemplate(TestHelper.fetchTeams(1).get(0), TestHelper.fetchSkills(2));
-        team = mockedSkillTemplate.getTeam();
-        skills = mockedSkillTemplate.getSkills();
+        mockedTeam = mockedSkillTemplate.getTeam();
+        mockedSkills = mockedSkillTemplate.getSkills();
     }
 
     @Test
     public void successfullyGettingTeamById() {
         Mockito.when(skillTemplateRepository.findOneByTeamId(mockedSkillTemplate.getId())).thenReturn(mockedSkillTemplate);
 
-        Optional<SkillTemplate> skillTemplateResult = skillTemplateService.getByTeamId(mockedSkillTemplate.getId());
+        Optional<SkillTemplate> skillTemplateResult = skillTemplateService.getSkillTemplateByTeamId(mockedSkillTemplate.getId());
 
         Assert.assertEquals(skillTemplateResult.get(), mockedSkillTemplate);
     }
@@ -49,9 +48,10 @@ public class SkillTemplateServiceTest {
     @Test
     public  void creatingNewSkillTemplate() {
         Mockito.when(skillTemplateRepository.save(mockedSkillTemplate)).thenReturn(mockedSkillTemplate);
+        Team team1 = mock(Team.class);
+        Mockito.when(team1.getSkillTemplate()).thenReturn(null);
 
-        team.setSkillTemplate(null);
-        SkillTemplate skillTemplateResult = skillTemplateService.createOrUpdateSkillTemplate(team, skills);
+        SkillTemplate skillTemplateResult = skillTemplateService.createOrUpdateSkillTemplate(mockedTeam, mockedSkills);
 
         Assert.assertEquals(skillTemplateResult, mockedSkillTemplate);
     }
@@ -59,9 +59,10 @@ public class SkillTemplateServiceTest {
     @Test
     public void updatingSkillTemplate() {
         Mockito.when(skillTemplateRepository.save(mockedSkillTemplate)).thenReturn(mockedSkillTemplate);
+        Team team1 = mock(Team.class);
+        Mockito.when(team1.getSkillTemplate()).thenReturn(mockedSkillTemplate);
 
-        team.setSkillTemplate(mockedSkillTemplate);
-        SkillTemplate skillTemplateResult = skillTemplateService.createOrUpdateSkillTemplate(team, skills);
+        SkillTemplate skillTemplateResult = skillTemplateService.createOrUpdateSkillTemplate(mockedTeam, mockedSkills);
 
         Assert.assertEquals(skillTemplateResult, mockedSkillTemplate);
 

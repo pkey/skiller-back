@@ -1,5 +1,6 @@
 package lt.swedbank.services.user;
 
+import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.beans.response.user.NonColleagueResponse;

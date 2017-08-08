@@ -33,21 +33,9 @@ public class TeamSkillService {
     }
 
     public void updateTeamSkills(@NotNull Team team) {
-        List<TeamSkill> teamSkills = new ArrayList<>();
-
         for (Skill skill : team.getSkillTemplate().getSkills()) {
-            if (teamSkillRepository.findTopByTeamAndSkill(team, skill) != null) {
-                this.updateTeamSkill(team, skill);
-            } else {
-                TeamSkill teamSkill = new TeamSkill(team,
-                        skill,
-                        this.getUserSkillCount(team.getUsers(), skill),
-                        this.getUserAverageSkillLevel(team.getUsers(), skill));
-                teamSkills.add(teamSkill);
-            }
+            this.updateTeamSkill(team, skill);
         }
-
-        teamSkillRepository.save(teamSkills);
     }
 
     public TeamSkill updateTeamSkill(@NotNull Team team, @NotNull Skill skill) {
@@ -61,7 +49,6 @@ public class TeamSkillService {
                     skill,
                     this.getUserSkillCount(team.getUsers(), skill),
                     this.getUserAverageSkillLevel(team.getUsers(), skill));
-            return teamSkillRepository.save(teamSkill);
         }
 
         return teamSkillRepository.save(teamSkill);
@@ -71,11 +58,10 @@ public class TeamSkillService {
         return teamSkillRepository.findTopByTeamAndSkill(team, skill);
     }
 
-    public Double getUserAverageSkillLevel(@NotNull List<User> users, @NotNull Skill skill) {
+    private Double getUserAverageSkillLevel(@NotNull List<User> users, @NotNull Skill skill) {
         int counter = 0;
         double sum = 0;
-        for (User user : users
-                ) {
+        for (User user : users) {
             for (UserSkill userSkill : user.getUserSkills()
                     ) {
                 if (userSkill.getSkill().equals(skill)) {
@@ -90,10 +76,9 @@ public class TeamSkillService {
         return sum / counter;
     }
 
-    public Integer getUserSkillCount(@NotNull List<User> users, @NotNull Skill skill) {
+    private Integer getUserSkillCount(@NotNull List<User> users, @NotNull Skill skill) {
         int counter = 0;
-        for (User user : users
-                ) {
+        for (User user : users) {
             for (UserSkill userSkill : user.getUserSkills()
                     ) {
                 if (userSkill.getSkill().equals(skill)) {

@@ -3,6 +3,8 @@ package lt.swedbank.beans.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,5 +27,12 @@ public class SkillTemplate {
     @ManyToMany
     @NonNull
     private List<Skill> skills;
+
+    public void addSkill(@NotNull Skill skill) {
+        if (skills == null) {
+            skills = new ArrayList<>();
+        }
+        skills.add(skill);
+    }
 
 }

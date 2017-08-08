@@ -18,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 
@@ -37,6 +38,8 @@ public class UserSkillServiceTest {
     private UserSkillLevelService userSkillLevelService;
     @Mock
     private UserService userService;
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
 
     private AddSkillRequest addSkillRequest;
     private AssignSkillLevelRequest assignSkillLevelRequest;
@@ -85,7 +88,6 @@ public class UserSkillServiceTest {
 
         Mockito.verify(userSkillRepository, Mockito.times(1)).save(any(UserSkill.class));
         Mockito.verify(skillService, Mockito.times(0)).addSkill(any());
-
     }
 
     @Test(expected = SkillAlreadyExistsException.class)

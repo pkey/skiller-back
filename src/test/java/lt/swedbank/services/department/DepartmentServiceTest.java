@@ -1,15 +1,13 @@
 package lt.swedbank.services.department;
 
 import lt.swedbank.beans.entity.Department;
-import lt.swedbank.beans.entity.Team;
-import lt.swedbank.beans.response.SkillEntityResponse;
 import lt.swedbank.beans.response.SkillTemplateResponse;
 import lt.swedbank.beans.response.department.DepartmentEntityResponse;
 import lt.swedbank.beans.response.department.DepartmentOverviewResponse;
 import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.repositories.DepartmentRepository;
-import lt.swedbank.services.team.TeamService;
+import lt.swedbank.services.teamSkill.TeamSkillService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +18,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.Matchers.any;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
 
 
@@ -33,7 +30,7 @@ public class DepartmentServiceTest {
     @Mock
     private DepartmentRepository departmentRepository;
     @Mock
-    private TeamService teamService;
+    private TeamSkillService teamSkillService;
 
     private List<Department> departmentList;
     private Department testDepartment;
@@ -77,27 +74,11 @@ public class DepartmentServiceTest {
 
     @Test
     public void getDepartmentSkillTemplateResponses() throws Exception {
-        SkillTemplateResponse skillTemplateResponse1 = new SkillTemplateResponse(new SkillEntityResponse((long) 0, "Test Skill 1"),
-                0,
-                (double) 0);
-
-        SkillTemplateResponse skillTemplateResponseSameAs1 = new SkillTemplateResponse(new SkillEntityResponse((long) 0, "Test Skill 1"),
-                0,
-                (double) 0);
-
-        SkillTemplateResponse skillTemplateResponse2 = new SkillTemplateResponse(new SkillEntityResponse((long) 1, "Test Skill 2"),
-                0,
-                (double) 0);
-
-        Set<SkillTemplateResponse> skillTemplateResponses1 = new HashSet<>();
-        skillTemplateResponses1.add(skillTemplateResponse1);
-        skillTemplateResponses1.add(skillTemplateResponse2);
-
-        //Todo finish testing
-        Mockito.when(teamService.getTeamSkillTemplateResponseList(any(Team.class))).thenReturn(skillTemplateResponses1, skillTemplateResponses1);
+        //TeamSkill teamSkill1 = new TeamSkill(testDepartment.getTeams().get(0));
+        //Mockito.when(teamSkillService.getCurrentTeamSkillByTeamAndSkill(any(), any())).thenReturn();
 
         Set<SkillTemplateResponse> skillTemplateResponses = departmentService.getDepartmentSkillTemplateResponses(testDepartment);
-        Assert.assertEquals(skillTemplateResponses.size(), 10);
+        Assert.assertEquals(2, skillTemplateResponses.size());
     }
 
 

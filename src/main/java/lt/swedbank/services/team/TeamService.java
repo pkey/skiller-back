@@ -1,8 +1,6 @@
 package lt.swedbank.services.team;
 
-import lt.swedbank.beans.entity.SkillTemplate;
-import lt.swedbank.beans.entity.Team;
-import lt.swedbank.beans.entity.User;
+import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.team.AddTeamRequest;
 import lt.swedbank.beans.request.team.UpdateTeamRequest;
 import lt.swedbank.beans.response.SkillEntityResponse;
@@ -174,17 +172,17 @@ public class TeamService {
     public Set<SkillTemplateResponse> getTeamSkillTemplateResponseList(Team team) {
         Optional<SkillTemplate> skillTemplateOptional = skillTemplateService.getSkillTemplateByTeamId(team.getId());
 
+        TreeSet<SkillTemplateResponse> skillTemplateResponses = new TreeSet<>();
         if (skillTemplateOptional.isPresent()) {
-            return skillTemplateOptional.get().getSkills().stream().map(skill ->
-                    new SkillTemplateResponse(new SkillEntityResponse(skill),
-                            teamSkillService.getCurrentTeamSkillByTeamAndSkill(team, skill).getSkillCounter(),
-                            teamSkillService.getCurrentTeamSkillByTeamAndSkill(team, skill).getSkillLevelAverage()))
-                    .collect(Collectors.toCollection(TreeSet::new));
-        } else {
-            return new TreeSet<>();
+            for (Skill skill : skillTemplateOptional.get().getSkills()) {
+                TeamSkill teamSkill = teamSkillService.getCurrentTeamSkillByTeamAndSkill(team, skill);
+                SkillTemplateResponse skillTemplateResponse = new SkillTemplateResponse(new SkillEntityResponse(skill),
+                        teamSkill.getSkillCounter(),
+                        teamSkill.getSkillLevelAverage());
+
+                skillTemplateResponses.add(skillTemplateResponse);
+            }
         }
-
-
+        return skillTemplateResponses;
     }
-
 }

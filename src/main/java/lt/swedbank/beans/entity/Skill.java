@@ -11,6 +11,7 @@ import java.util.List;
 @Indexed
 @Data
 @NoArgsConstructor
+@RequiredArgsConstructor
 @EqualsAndHashCode(exclude = {"userSkills"})
 @ToString(exclude = {"userSkills"})
 public class Skill {
@@ -26,12 +27,4 @@ public class Skill {
 
     @OneToMany(mappedBy = "skill")
     private List<UserSkill> userSkills;
-
-
-    public Skill(String title) {
-        this.title = title;
-    }
-
-
-
 }

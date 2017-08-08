@@ -4,7 +4,6 @@ import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.team.AddTeamRequest;
 import lt.swedbank.beans.response.SkillEntityResponse;
 import lt.swedbank.beans.request.team.UpdateTeamRequest;
-import lt.swedbank.beans.response.TeamSkillTemplateResponse;
 import lt.swedbank.beans.response.SkillTemplateResponse;
 import lt.swedbank.beans.response.team.TeamResponse;
 import lt.swedbank.beans.response.team.TeamWithUsersResponse;
@@ -14,18 +13,18 @@ import lt.swedbank.beans.response.user.UserWithSkillsResponse;
 import lt.swedbank.beans.response.userSkill.UserSkillResponse;
 import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.helpers.TestHelper;
-import lt.swedbank.repositories.SkillTemplateRepository;
 import lt.swedbank.repositories.TeamRepository;
 import lt.swedbank.services.department.DepartmentService;
-import lt.swedbank.services.skill.SkillService;
 import lt.swedbank.services.skill.SkillTemplateService;
 import lt.swedbank.services.skill.UserSkillService;
+import lt.swedbank.services.teamSkill.TeamSkillService;
 import lt.swedbank.services.user.UserService;
 import lt.swedbank.services.valueStream.ValueStreamService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.*;
 
@@ -50,17 +49,18 @@ public class TeamServiceTest {
     @Mock
     private SkillTemplateService skillTemplateService;
     @Mock
-    private SkillTemplateRepository skillTemplateRepository;
-    @Mock
     private ValueStreamService valueStreamService;
     @Mock
-    private SkillService skillService;
+    private TeamSkillService teamSkillService;
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
 
 
     private List<Team> teams;
     private Team testTeam;
     private SkillTemplate testSkillTemplate;
     private List<Skill> testSkills;
+    private Skill testSkill;
     private List<SkillTemplateResponse> skillTemplateResponse;
     private List<User> users;
     private UserSkillLevel userSkillLevel;
@@ -79,6 +79,8 @@ public class TeamServiceTest {
         testTeam = teams.get(0);
         users = TestHelper.fetchUsers(3);
         testSkills = TestHelper.skills.subList(0, 2);
+        testSkill = testSkills.get(0);
+
 
         userSkillLevel = new UserSkillLevel();
         SkillLevel skillLevel = new SkillLevel();
@@ -87,7 +89,7 @@ public class TeamServiceTest {
 
         testSkillTemplate = new SkillTemplate();
         testSkillTemplate.setTeam(testTeam);
-        testSkillTemplate.setSkills(testSkills);
+        testSkillTemplate.addSkill(testSkill);
 
         skillTemplateResponse = new LinkedList<>();
         skillTemplateResponse.add(new SkillTemplateResponse(
@@ -137,16 +139,28 @@ public class TeamServiceTest {
 
 
     @Test
-    public void getTeamSkillTemplateResponseList() throws Exception {
-
+    public void get_ordered_team_skill_template_response_list() throws Exception {
+        Skill testSkillWithLowerCount = new Skill("Test Skill 2");
+        testSkillTemplate.addSkill(testSkillWithLowerCount);
         Optional<SkillTemplate> skillTemplateOptional = Optional.ofNullable(testSkillTemplate);
         Mockito.when(skillTemplateService.getSkillTemplateByTeamId(testTeam.getId())).thenReturn(skillTemplateOptional);
 
+
+        TeamSkill teamSkillWithHigherUserCount = new TeamSkill(testTeam, testSkill, 2, 1D);
+        TeamSkill teamSkillWithLowerUserCount = new TeamSkill(testTeam, testSkill, 1, 1D);
+
+        Mockito.when(teamSkillService.getCurrentTeamSkillByTeamAndSkill(any(Team.class), any(Skill.class)))
+                .thenReturn(teamSkillWithLowerUserCount,
+                        teamSkillWithHigherUserCount);
+        Mockito.when(skillTemplateService.getByTeamId(testTeam.getId())).thenReturn(skillTemplateOptional);
+
         Set<SkillTemplateResponse> responses = teamService.getTeamSkillTemplateResponseList(testTeam);
 
-        Assert.assertEquals(responses.size(), 2);
-
-        //Todo fix test
+        Assert.assertEquals(2, responses.size());
+        Assert.assertEquals(true, responses.contains(new SkillTemplateResponse(
+                new SkillEntityResponse(testSkill), 1, 1D)));
+        Assert.assertEquals(true, responses.contains(new SkillTemplateResponse(
+                new SkillEntityResponse(testSkillWithLowerCount), 1, 1D)));
 
     }
 
@@ -162,7 +176,7 @@ public class TeamServiceTest {
 
         testTeam.setUsers(TestHelper.fetchUsers(5));
         //Return empty arrays to simplify testing
-        doReturn(new ArrayList<>()).when(teamService).getTeamSkillTemplateResponseList(any(Team.class));
+        doReturn(new TreeSet<>()).when(teamService).getTeamSkillTemplateResponseList(any(Team.class));
         doReturn(new ArrayList<>()).when(teamService).getUserWithSkillResponseList(any());
 
         Mockito.when(teamRepository.findOne(testTeam.getId())).thenReturn(testTeam);
@@ -185,7 +199,7 @@ public class TeamServiceTest {
         userWithoutTeam.setTeam(null);
 
         //Return empty arrays to simplify testing
-        doReturn(new ArrayList<>()).when(teamService).getTeamSkillTemplateResponseList(any(Team.class));
+        doReturn(new TreeSet<>()).when(teamService).getTeamSkillTemplateResponseList(any(Team.class));
         doReturn(new ArrayList<>()).when(teamService).getUserWithSkillResponseList(any());
 
 
@@ -201,19 +215,13 @@ public class TeamServiceTest {
 
 
     @Test
-    public void getSkillCountInTeam() {
-
-    }
-
-    @Test
     public void addNewTeam() throws Exception {
         Mockito.when(teamRepository.save(any(Team.class))).thenReturn(testTeam);
         Mockito.when(teamRepository.findByName(any())).thenReturn(null);
         Mockito.when(departmentService.getDepartmentById(testTeam.getDepartment().getId())).thenReturn(testTeam.getDepartment());
-        Mockito.when(skillTemplateRepository.save(testTeam.getSkillTemplate())).thenReturn(testTeam.getSkillTemplate());
 
         //Return empty arrays to simplify testing
-        doReturn(new ArrayList<>()).when(teamService).getTeamSkillTemplateResponseList(any(Team.class));
+        doReturn(new TreeSet<>()).when(teamService).getTeamSkillTemplateResponseList(any(Team.class));
         doReturn(new ArrayList<>()).when(teamService).getUserWithSkillResponseList(any());
 
 
@@ -233,7 +241,7 @@ public class TeamServiceTest {
         Mockito.when(teamRepository.findAll()).thenReturn(teams);
 
         //Return empty arrays to simplify testing
-        doReturn(new ArrayList<>()).when(teamService).getTeamSkillTemplateResponseList(any(Team.class));
+        doReturn(new TreeSet<>()).when(teamService).getTeamSkillTemplateResponseList(any(Team.class));
         doReturn(new ArrayList<>()).when(teamService).getUserWithSkillResponseList(any());
 
         List<TeamWithUsersResponse> responses = teamService.getAllTeamOverviewResponses();
@@ -261,18 +269,19 @@ public class TeamServiceTest {
     @Test
     public void getMyTeam() throws Exception {
         User myUser = users.get(0);
-        Team myTeam = myUser.getTeam().orElseThrow(() -> new Exception("Test failed, user hasn't got a team"));
+        myUser.setTeam(testTeam);
+        //Team myTeam = myUser.getTeam().orElseThrow(() -> new Exception("Test failed, user hasn't got a team"));
 
         Mockito.when(userService.getUserById(any())).thenReturn(myUser);
 
         //Return empty arrays to simplify testing
-        doReturn(new ArrayList<>()).when(teamService).getTeamSkillTemplateResponseList(any(Team.class));
+        doReturn(new TreeSet<>()).when(teamService).getTeamSkillTemplateResponseList(any(Team.class));
         doReturn(new ArrayList<>()).when(teamService).getUserWithSkillResponseList(any());
         TeamWithUsersResponse resultTeam = teamService.getMyTeam(myUser.getId());
 
         Assert.assertEquals(resultTeam.getName(), testTeam.getName());
         Assert.assertEquals(resultTeam.getDepartment().getName(), testTeam.getDepartment().getName());
-        Assert.assertEquals(resultTeam.getUsers().size(), 0);
+        Assert.assertEquals(0, resultTeam.getUsers().size());
 
     }
 

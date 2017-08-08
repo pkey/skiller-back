@@ -32,8 +32,8 @@ public class SkillTemplateServiceTest {
         MockitoAnnotations.initMocks(this);
 
         mockedSkillTemplate = new SkillTemplate(TestHelper.fetchTeams(1).get(0), TestHelper.fetchSkills(2));
-        mockedTeam = mockedSkillTemplate.getTeam();
         mockedSkills = mockedSkillTemplate.getSkills();
+        mockedTeam = mock(Team.class);
     }
 
     @Test
@@ -48,8 +48,7 @@ public class SkillTemplateServiceTest {
     @Test
     public  void creatingNewSkillTemplate() {
         Mockito.when(skillTemplateRepository.save(mockedSkillTemplate)).thenReturn(mockedSkillTemplate);
-        Team team1 = mock(Team.class);
-        Mockito.when(team1.getSkillTemplate()).thenReturn(null);
+        Mockito.when(mockedTeam.getSkillTemplate()).thenReturn(null);
 
         SkillTemplate skillTemplateResult = skillTemplateService.createOrUpdateSkillTemplate(mockedTeam, mockedSkills);
 
@@ -59,8 +58,7 @@ public class SkillTemplateServiceTest {
     @Test
     public void updatingSkillTemplate() {
         Mockito.when(skillTemplateRepository.save(mockedSkillTemplate)).thenReturn(mockedSkillTemplate);
-        Team team1 = mock(Team.class);
-        Mockito.when(team1.getSkillTemplate()).thenReturn(mockedSkillTemplate);
+        Mockito.when(mockedTeam.getSkillTemplate()).thenReturn(mockedSkillTemplate);
 
         SkillTemplate skillTemplateResult = skillTemplateService.createOrUpdateSkillTemplate(mockedTeam, mockedSkills);
 

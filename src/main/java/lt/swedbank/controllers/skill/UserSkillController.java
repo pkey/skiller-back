@@ -37,7 +37,7 @@ public class UserSkillController {
 
     @RequestMapping(method = RequestMethod.POST)
     public @ResponseBody
-    UserSkillResponse addUserSkill(@Valid @RequestBody AddSkillRequest addSkillRequest,
+    NormalUserSkillResponse addUserSkill(@Valid @RequestBody AddSkillRequest addSkillRequest,
                                    @RequestHeader(value = "Authorization") String authToken) {
         Long userId = userService.getUserByAuthId(authService.extractAuthIdFromToken(authToken)).getId();
         return userSkillService.addUserSkill(userId, addSkillRequest);

@@ -15,6 +15,7 @@ import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.repositories.TeamRepository;
 import lt.swedbank.services.department.DepartmentService;
+import lt.swedbank.services.skill.SkillService;
 import lt.swedbank.services.skill.SkillTemplateService;
 import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.teamSkill.TeamSkillService;
@@ -52,6 +53,8 @@ public class TeamServiceTest {
     private ValueStreamService valueStreamService;
     @Mock
     private TeamSkillService teamSkillService;
+    @Mock
+    private SkillService skillService;
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;
 
@@ -295,7 +298,7 @@ public class TeamServiceTest {
         Mockito.when(valueStreamService.getValueStreamById(any())).thenReturn(testTeam1.getValueStream().get());
         Mockito.when(teamRepository.save(testTeam)).thenReturn(testTeam1);
         doReturn(testTeam1.getUsers()).when(teamService).getUserWithSkillResponseList(any());
-        doReturn(new ArrayList<>()).when(teamService).getTeamSkillTemplateResponseList(any());
+        doReturn(new HashSet<>()).when(teamService).getTeamSkillTemplateResponseList(any());
         doReturn(null).when(teamService).getTeamSkillTemplateResponseList(any());
 
         TeamWithUsersResponse teamWithUsersResponseResult = teamService.updateTeam(1L, updateTeamRequest);

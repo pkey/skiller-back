@@ -35,7 +35,6 @@ public class TeamResponse {
     }
 
     public TeamResponse(Team team) {
-        //Todo test if works iwth hashset
         this(team, new HashSet<>());
     }
 

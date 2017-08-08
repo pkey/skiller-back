@@ -206,7 +206,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void searchAllUsers() throws Exception {
+    public void canGetAllUsers() throws Exception {
         Mockito.when(userRepository.findAll()).thenReturn(testUserList);
 
         List<UserResponse> userResponses = userService.getAllUserResponses();
@@ -216,9 +216,7 @@ public class UserServiceTest {
         int i = 0;
         for (UserResponse userResponse : userResponses) {
             assertEquals(userResponse.getId(), testUserList.get(i).getId());
-            assertThat(userResponse, instanceOf(UserResponse.class));
             i++;
         }
     }
-
 }

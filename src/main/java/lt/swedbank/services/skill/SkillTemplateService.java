@@ -18,7 +18,7 @@ public class SkillTemplateService {
     @Autowired
     private SkillTemplateRepository skillTemplateRepository;
 
-    public Optional<SkillTemplate> getByTeamId(@NotNull Long id) {
+    public Optional<SkillTemplate> getSkillTemplateByTeamId(@NotNull Long id) {
         return Optional.ofNullable(skillTemplateRepository.findOneByTeamId(id));
     }
 

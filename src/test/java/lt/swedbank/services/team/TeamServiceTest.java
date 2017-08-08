@@ -142,7 +142,7 @@ public class TeamServiceTest {
         doReturn(2.0).when(teamService).getAverageSkillLevelInTeam(any(Team.class), any(Skill.class));
 
         Optional<SkillTemplate> skillTemplateOptional = Optional.ofNullable(testSkillTemplate);
-        Mockito.when(skillTemplateService.getByTeamId(testTeam.getId())).thenReturn(skillTemplateOptional);
+        Mockito.when(skillTemplateService.getSkillTemplateByTeamId(testTeam.getId())).thenReturn(skillTemplateOptional);
 
         List<TeamSkillTemplateResponse> responses = teamService.getTeamSkillTemplateResponseList(testTeam);
 

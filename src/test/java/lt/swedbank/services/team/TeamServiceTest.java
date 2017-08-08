@@ -15,9 +15,11 @@ import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.repositories.SkillTemplateRepository;
 import lt.swedbank.repositories.TeamRepository;
 import lt.swedbank.services.department.DepartmentService;
+import lt.swedbank.services.skill.SkillService;
 import lt.swedbank.services.skill.SkillTemplateService;
 import lt.swedbank.services.skill.UserSkillService;
 import lt.swedbank.services.user.UserService;
+import lt.swedbank.services.valueStream.ValueStreamService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,6 +52,10 @@ public class TeamServiceTest {
     private SkillTemplateService skillTemplateService;
     @Mock
     private SkillTemplateRepository skillTemplateRepository;
+    @Mock
+    private ValueStreamService valueStreamService;
+    @Mock
+    private SkillService skillService;
 
 
     private List<Team> teams;
@@ -62,6 +68,9 @@ public class TeamServiceTest {
     private UserSkillResponse userSkillResponse;
     private List<UserSkillResponse> userSkillsResponse;
     private UpdateTeamRequest updateTeamRequest;
+    private Team testTeam1;
+    private List<Long> userIds;
+    private List<Long> skillIds;
 
     @Before
     public void setUp() throws Exception {
@@ -91,6 +100,21 @@ public class TeamServiceTest {
         userSkillsResponse.add(userSkillResponse);
         userSkillResponse = new UserSkillResponse(new Skill("Testing"));
         userSkillsResponse.add(userSkillResponse);
+
+        testTeam1 = teams.get(1);
+        userIds = new ArrayList<>();
+        skillIds = new ArrayList<>();
+        skillIds.add(1L);
+        skillIds.add(2L);
+        skillIds.add(3L);
+        testTeam1.setValueStream(TestHelper.fetchValueStreams().get(0));
+        testTeam1.getUsers().stream().forEach(user -> userIds.add(user.getId()));
+        updateTeamRequest = new UpdateTeamRequest();
+        updateTeamRequest.setName(testTeam1.getName());
+        updateTeamRequest.setUserIds(userIds);
+        updateTeamRequest.setDepartmentId(testTeam1.getDepartment().getId());
+        updateTeamRequest.setSkillIds(skillIds);
+        updateTeamRequest.setStreamId(testTeam1.getValueStream().get().getId());
     }
 
     @Test
@@ -285,17 +309,23 @@ public class TeamServiceTest {
 
     @Test
     public void updateTeamTest() {
-        Team updateResponse = teams.get(1);
-
         doNothing().when(userService).updateUsersTeam(any(), any());
         doReturn(testTeam).when(teamService).getTeamById(any());
-        Mockito.when(userService.getUsersByIds(any())).thenReturn(updateResponse.getUsers());
-        Mockito.when(departmentService.getDepartmentById(any())).thenReturn(updateResponse.getDepartment());
-        Mockito.when(skillTemplateService.createOrUpdateSkillTemplate(any(), any())).thenReturn(updateResponse.getSkillTemplate());
-        doNothing().when(teamRepository).save(testTeam);
+        Mockito.when(userService.getUsersByIds(any())).thenReturn(testTeam1.getUsers());
+        Mockito.when(departmentService.getDepartmentById(any())).thenReturn(testTeam.getDepartment());
+        Mockito.when(skillTemplateService.createOrUpdateSkillTemplate(any(), any())).thenReturn(testTeam1.getSkillTemplate());
+        Mockito.when(valueStreamService.getValueStreamById(any())).thenReturn(testTeam1.getValueStream().get());
+        Mockito.when(teamRepository.save(testTeam)).thenReturn(testTeam1);
+        doReturn(testTeam1.getUsers()).when(teamService).getUserWithSkillResponseList(any());
+        doReturn(new ArrayList<>()).when(teamService).getTeamSkillTemplateResponseList(any());
+        doReturn(null).when(teamService).getTeamSkillTemplateResponseList(any());
 
+        TeamWithUsersResponse teamWithUsersResponseResult = teamService.updateTeam(1L, updateTeamRequest);
 
-
+        Assert.assertEquals(teamWithUsersResponseResult.getDepartment().getName(), testTeam1.getDepartment().getName());
+        Assert.assertEquals(teamWithUsersResponseResult.getName(), testTeam1.getName());
+        Assert.assertEquals(teamWithUsersResponseResult.getValueStream().getName(), testTeam1.getValueStream().get().getName());
+        Assert.assertEquals(teamWithUsersResponseResult.getUsers(), testTeam1.getUsers());
     }
 
 

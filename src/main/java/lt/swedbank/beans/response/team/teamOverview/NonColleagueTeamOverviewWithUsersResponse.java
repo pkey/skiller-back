@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class NonColleagueTeamOverviewWithUsersResponse extends TeamWithUsersResponse {
 
-    public NonColleagueTeamOverviewWithUsersResponse(Team team, List<UserWithSkillsResponse> usersWithSkills, Set<SkillTemplateResponse> skillTemplateRespons) {
-        super(team, usersWithSkills, skillTemplateRespons);
+    public NonColleagueTeamOverviewWithUsersResponse(Team team, List<UserWithSkillsResponse> usersWithSkills, Set<SkillTemplateResponse> skillTemplateResponses) {
+        super(team, usersWithSkills, skillTemplateResponses);
     }
 }

@@ -113,8 +113,6 @@ public class TeamService {
     }
 
     public TeamWithUsersResponse addTeam(AddTeamRequest addTeamRequest) {
-        assert addTeamRequest != null;
-
         if (teamRepository.findByName(addTeamRequest.getName()) != null) {
             throw new TeamNameAlreadyExistsException();
         }
@@ -138,23 +136,13 @@ public class TeamService {
     }
 
     public TeamWithUsersResponse updateTeam(Long id, UpdateTeamRequest updateTeamRequest) {
-        assert id != null;
-        assert updateTeamRequest != null;
-
         Team team = getTeamById(id);
 
         userService.updateUsersTeam(team, userService.getUsersByIds(updateTeamRequest.getUserIds()));
 
-        assert updateTeamRequest.getUserIds() != null;
         team.setUsers(userService.getUsersByIds(updateTeamRequest.getUserIds()));
-
-        assert updateTeamRequest.getDepartmentId() != null;
         team.setDepartment(departmentService.getDepartmentById(updateTeamRequest.getDepartmentId()));
-
-        assert updateTeamRequest.getName() != null || updateTeamRequest.getName().isEmpty();
         team.setName(updateTeamRequest.getName());
-
-        assert updateTeamRequest.getSkillIds() != null;
         team.setSkillTemplate(skillTemplateService.createOrUpdateSkillTemplate(team,
                 skillService.getSkillsByIds(updateTeamRequest.getSkillIds())));
 
@@ -175,7 +163,7 @@ public class TeamService {
         TreeSet<SkillTemplateResponse> skillTemplateResponses = new TreeSet<>();
         if (skillTemplateOptional.isPresent()) {
             for (Skill skill : skillTemplateOptional.get().getSkills()) {
-                TeamSkill teamSkill = teamSkillService.getCurrentTeamSkillByTeamAndSkill(team, skill);
+                TeamSkill teamSkill = teamSkillService.getTeamSkillByTeamAndSkill(team, skill);
                 SkillTemplateResponse skillTemplateResponse = new SkillTemplateResponse(new SkillEntityResponse(skill),
                         teamSkill.getSkillCount(),
                         teamSkill.getSkillLevelAverage());

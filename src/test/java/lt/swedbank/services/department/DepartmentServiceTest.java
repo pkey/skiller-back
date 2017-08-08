@@ -82,7 +82,7 @@ public class DepartmentServiceTest {
     public void getDepartmentOverviewById() throws Exception {
         doReturn(testDepartment).when(departmentService).getDepartmentById(testDepartment.getId());
         doReturn(new HashSet<>()).when(departmentService).getUserResponsesFromDepartment(testDepartment);
-        doReturn(new HashSet<>()).when(departmentService).getDepartmentSkillTemplateResponses(testDepartment);
+        doReturn(new HashSet<>()).when(departmentService).aggregateDepartmentSkillTemplateResponsesFromTeams(testDepartment.getTeams());
 
         DepartmentOverviewResponse departmentOverviewResponse = departmentService.getDepartmentOverviewByDepartmentId(testDepartment.getId());
 
@@ -103,7 +103,7 @@ public class DepartmentServiceTest {
         Mockito.when(teamSkillService.getTeamSkillCount(any(Team.class), any(Skill.class))).thenReturn(0, 0);
         Mockito.when(teamSkillService.getTeamAverageSkillLevel(any(Team.class), any(Skill.class))).thenReturn(0D, 0D);
 
-        Set<SkillTemplateResponse> skillTemplateResponses = departmentService.getDepartmentSkillTemplateResponses(testDepartment);
+        Set<SkillTemplateResponse> skillTemplateResponses = departmentService.aggregateDepartmentSkillTemplateResponsesFromTeams(testDepartment.getTeams());
         Assert.assertEquals(1, skillTemplateResponses.size());
     }
 
@@ -121,7 +121,7 @@ public class DepartmentServiceTest {
         Mockito.when(teamSkillService.getTeamAverageSkillLevel(any(Team.class), any(Skill.class)))
                 .thenReturn(averageSkillLevels[0], averageSkillLevels[0]);
 
-        Set<SkillTemplateResponse> skillTemplateResponses = departmentService.getDepartmentSkillTemplateResponses(testDepartment);
+        Set<SkillTemplateResponse> skillTemplateResponses = departmentService.aggregateDepartmentSkillTemplateResponsesFromTeams(testDepartment.getTeams());
         Assert.assertEquals(2, skillTemplateResponses.size());
 
         //Checks if order has changed

@@ -44,7 +44,7 @@ public class DepartmentService {
 
         return new DepartmentOverviewResponse(new DepartmentResponse(department),
                 this.getUserResponsesFromDepartment(department),
-                this.getDepartmentSkillTemplateResponses(department));
+                this.aggregateDepartmentSkillTemplateResponsesFromTeams(department.getTeams()));
 
     }
 
@@ -52,9 +52,9 @@ public class DepartmentService {
         return this.getAllDepartments().stream().map(DepartmentEntityResponse::new).collect(Collectors.toList());
     }
 
-    public Set<SkillTemplateResponse> getDepartmentSkillTemplateResponses(Department department) {
+    public Set<SkillTemplateResponse> aggregateDepartmentSkillTemplateResponsesFromTeams(List<Team> departmentTeams) {
         Set<SkillTemplateResponse> skillTemplateResponses = new TreeSet<>();
-        for (Team team : department.getTeams()) {
+        for (Team team : departmentTeams) {
             for (Skill skill : team.getSkillTemplate().getSkills()) {
                 SkillTemplateResponse skillTemplateResponse = new SkillTemplateResponse(new SkillEntityResponse(skill),
                         teamSkillService.getTeamSkillCount(team, skill),

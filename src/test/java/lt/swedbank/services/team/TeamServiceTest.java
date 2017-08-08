@@ -2,8 +2,8 @@ package lt.swedbank.services.team;
 
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.team.AddTeamRequest;
-import lt.swedbank.beans.response.SkillEntityResponse;
 import lt.swedbank.beans.request.team.UpdateTeamRequest;
+import lt.swedbank.beans.response.SkillEntityResponse;
 import lt.swedbank.beans.response.SkillTemplateResponse;
 import lt.swedbank.beans.response.team.TeamResponse;
 import lt.swedbank.beans.response.team.TeamWithUsersResponse;
@@ -152,7 +152,7 @@ public class TeamServiceTest {
         TeamSkill teamSkillWithHigherUserCount = new TeamSkill(testTeam, testSkill, 2, 1D);
         TeamSkill teamSkillWithLowerUserCount = new TeamSkill(testTeam, testSkill, 1, 1D);
 
-        Mockito.when(teamSkillService.getCurrentTeamSkillByTeamAndSkill(any(Team.class), any(Skill.class)))
+        Mockito.when(teamSkillService.getTeamSkillByTeamAndSkill(any(Team.class), any(Skill.class)))
                 .thenReturn(teamSkillWithLowerUserCount,
                         teamSkillWithHigherUserCount);
         Mockito.when(skillTemplateService.getSkillTemplateByTeamId(testTeam.getId())).thenReturn(skillTemplateOptional);

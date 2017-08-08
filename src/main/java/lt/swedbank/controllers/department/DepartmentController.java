@@ -22,7 +22,7 @@ public class DepartmentController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public @ResponseBody
-    DepartmentOverviewResponse getById(@PathVariable("id") Long id) {
+    DepartmentOverviewResponse getDepartmentOverviewById(@PathVariable("id") Long id) {
         return departmentService.getDepartmentOverviewByDepartmentId(id);
     }
 

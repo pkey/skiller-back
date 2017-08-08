@@ -23,7 +23,7 @@ public class TeamSkillService {
         for (Skill skill : team.getSkillTemplate().getSkills()) {
             TeamSkill teamSkill = new TeamSkill(team,
                     skill,
-                    this.getUserSkillCount(team.getUsers(), skill),
+                    this.countUserSkills(team.getUsers(), skill),
                     this.getUserAverageSkillLevel(team.getUsers(), skill));
 
             teamSkills.add(teamSkill);
@@ -42,28 +42,37 @@ public class TeamSkillService {
         TeamSkill teamSkill = teamSkillRepository.findTopByTeamAndSkill(team, skill);
 
         if (teamSkill != null) {
-            teamSkill.setSkillCount(this.getUserSkillCount(team.getUsers(), skill));
+            teamSkill.setSkillCount(this.countUserSkills(team.getUsers(), skill));
             teamSkill.setSkillLevelAverage(this.getUserAverageSkillLevel(team.getUsers(), skill));
         } else {
             teamSkill = new TeamSkill(team,
                     skill,
-                    this.getUserSkillCount(team.getUsers(), skill),
+                    this.countUserSkills(team.getUsers(), skill),
                     this.getUserAverageSkillLevel(team.getUsers(), skill));
         }
 
         return teamSkillRepository.save(teamSkill);
     }
 
-    public TeamSkill getCurrentTeamSkillByTeamAndSkill(@NotNull Team team, @NotNull Skill skill) {
+    public TeamSkill getTeamSkillByTeamAndSkill(@NotNull Team team, @NotNull Skill skill) {
         return teamSkillRepository.findTopByTeamAndSkill(team, skill);
+    }
+
+    public Integer getTeamSkillCount(@NotNull Team team, @NotNull Skill skill) {
+        TeamSkill teamSkill = teamSkillRepository.findTopByTeamAndSkill(team, skill);
+        return teamSkill.getSkillCount();
+    }
+
+    public Double getTeamAverageSkillLevel(@NotNull Team team, @NotNull Skill skill) {
+        TeamSkill teamSkill = teamSkillRepository.findTopByTeamAndSkill(team, skill);
+        return teamSkill.getSkillLevelAverage();
     }
 
     private Double getUserAverageSkillLevel(@NotNull List<User> users, @NotNull Skill skill) {
         int counter = 0;
         double sum = 0;
         for (User user : users) {
-            for (UserSkill userSkill : user.getUserSkills()
-                    ) {
+            for (UserSkill userSkill : user.getUserSkills()) {
                 if (userSkill.getSkill().equals(skill)) {
                     counter++;
                     sum += userSkillService.getCurrentSkillLevel(userSkill).getSkillLevel().getLevel();
@@ -76,26 +85,15 @@ public class TeamSkillService {
         return sum / counter;
     }
 
-    private Integer getUserSkillCount(@NotNull List<User> users, @NotNull Skill skill) {
+    private Integer countUserSkills(@NotNull List<User> users, @NotNull Skill skill) {
         int counter = 0;
         for (User user : users) {
-            for (UserSkill userSkill : user.getUserSkills()
-                    ) {
+            for (UserSkill userSkill : user.getUserSkills()) {
                 if (userSkill.getSkill().equals(skill)) {
                     counter++;
                 }
             }
         }
         return counter;
-    }
-
-    public Integer getTeamSkillCount(@NotNull Team team, @NotNull Skill skill) {
-        TeamSkill teamSkill = teamSkillRepository.findTopByTeamAndSkill(team, skill);
-        return teamSkill.getSkillCount();
-    }
-
-    public Double getTeamAverageSkillLevel(@NotNull Team team, @NotNull Skill skill) {
-        TeamSkill teamSkill = teamSkillRepository.findTopByTeamAndSkill(team, skill);
-        return teamSkill.getSkillLevelAverage();
     }
 }

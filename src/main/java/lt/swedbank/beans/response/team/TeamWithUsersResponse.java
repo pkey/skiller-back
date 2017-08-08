@@ -13,8 +13,8 @@ public class TeamWithUsersResponse extends TeamResponse {
 
     protected List<UserWithSkillsResponse> users;
 
-    public TeamWithUsersResponse(Team team, List<UserWithSkillsResponse> usersWithSkills, Set<SkillTemplateResponse> skillTemplateRespons) {
-        super(team, skillTemplateRespons);
+    public TeamWithUsersResponse(Team team, List<UserWithSkillsResponse> usersWithSkills, Set<SkillTemplateResponse> skillTemplateResponses) {
+        super(team, skillTemplateResponses);
         this.users =  usersWithSkills;
     }
 

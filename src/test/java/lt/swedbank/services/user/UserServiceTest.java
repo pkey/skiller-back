@@ -24,7 +24,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -40,11 +41,8 @@ public class UserServiceTest {
     private AddSkillRequest testAddSkillRequest;
 
     private List<User> testUserList;
-
     private User testUser;
-
     private User loggedUser;
-
     private List<Team> teams;
 
     @Spy
@@ -207,12 +205,20 @@ public class UserServiceTest {
 
     }
 
-    private int compareNames(User actualUser, User resultUser) {
-        return actualUser.getName().compareTo(resultUser.getName());
-    }
+    @Test
+    public void searchAllUsers() throws Exception {
+        Mockito.when(userRepository.findAll()).thenReturn(testUserList);
 
-    private int compareLastNames(User actualUser, User resultUser) {
-        return actualUser.getLastName().compareTo(resultUser.getLastName());
+        List<UserResponse> userResponses = userService.getAllUserResponses();
+
+        assertEquals(testUserList.size(), userResponses.size());
+
+        int i = 0;
+        for (UserResponse userResponse : userResponses) {
+            assertEquals(userResponse.getId(), testUserList.get(i).getId());
+            assertThat(userResponse, instanceOf(UserResponse.class));
+            i++;
+        }
     }
 
 }

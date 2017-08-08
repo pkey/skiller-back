@@ -38,6 +38,13 @@ public class UserController {
         return userService.getUserProfile(id, authId);
     }
 
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    public @ResponseBody
+    List<UserResponse> getAllUsers() {
+        return userService.getAllUserResponses();
+    }
+
+
     @RequestMapping("/search")
     public List<UserResponse> searchColleagues(@RequestHeader(value = "Authorization") String authToken,
                                                      String q) {

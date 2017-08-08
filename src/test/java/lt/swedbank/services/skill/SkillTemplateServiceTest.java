@@ -8,15 +8,13 @@ import lt.swedbank.repositories.SkillTemplateRepository;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
 
 public class SkillTemplateServiceTest {
 
@@ -26,48 +24,46 @@ public class SkillTemplateServiceTest {
     @Mock
     private SkillTemplateRepository skillTemplateRepository;
 
-    private SkillTemplate skillTemplate;
+    private SkillTemplate mockedSkillTemplate;
     private Team team;
-    private Team teamWithoutSkillTemplate;
     private List<Skill> skills;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        skillTemplate = new SkillTemplate(TestHelper.fetchTeams(1).get(0), TestHelper.fetchSkills(2));
-        team = skillTemplate.getTeam();
-        skills = skillTemplate.getSkills();
-        teamWithoutSkillTemplate = team;
-        teamWithoutSkillTemplate.setSkillTemplate(null);
+        mockedSkillTemplate = new SkillTemplate(TestHelper.fetchTeams(1).get(0), TestHelper.fetchSkills(2));
+        team = mockedSkillTemplate.getTeam();
+        skills = mockedSkillTemplate.getSkills();
     }
 
     @Test
     public void successfullyGettingTeamById() {
-        Mockito.when(skillTemplateRepository.findOneByTeamId(any())).thenReturn(skillTemplate);
+        Mockito.when(skillTemplateRepository.findOneByTeamId(mockedSkillTemplate.getId())).thenReturn(mockedSkillTemplate);
 
-        Optional<SkillTemplate> skillTemplateResult = skillTemplateService.getByTeamId(skillTemplate.getId());
+        Optional<SkillTemplate> skillTemplateResult = skillTemplateService.getByTeamId(mockedSkillTemplate.getId());
 
-        Assert.assertEquals(skillTemplateResult.get(), skillTemplate);
+        Assert.assertEquals(skillTemplateResult.get(), mockedSkillTemplate);
     }
 
     @Test
     public  void creatingNewSkillTemplate() {
-        Mockito.when(skillTemplateRepository.save(skillTemplate)).thenReturn(skillTemplate);
+        Mockito.when(skillTemplateRepository.save(mockedSkillTemplate)).thenReturn(mockedSkillTemplate);
 
-        SkillTemplate skillTemplateResult = skillTemplateService.createOrUpdateSkillTemplate(teamWithoutSkillTemplate, skills);
+        team.setSkillTemplate(null);
+        SkillTemplate skillTemplateResult = skillTemplateService.createOrUpdateSkillTemplate(team, skills);
 
-        Assert.assertEquals(skillTemplateResult, skillTemplate);
+        Assert.assertEquals(skillTemplateResult, mockedSkillTemplate);
     }
 
     @Test
     public void updatingSkillTemplate() {
-        Mockito.when(skillTemplateRepository.save(skillTemplate)).thenReturn(this.skillTemplate);
+        Mockito.when(skillTemplateRepository.save(mockedSkillTemplate)).thenReturn(mockedSkillTemplate);
 
-        team.setSkillTemplate(skillTemplate);
+        team.setSkillTemplate(mockedSkillTemplate);
         SkillTemplate skillTemplateResult = skillTemplateService.createOrUpdateSkillTemplate(team, skills);
 
-        Assert.assertEquals(skillTemplateResult, skillTemplate);
+        Assert.assertEquals(skillTemplateResult, mockedSkillTemplate);
 
     }
 

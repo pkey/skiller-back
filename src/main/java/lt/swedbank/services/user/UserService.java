@@ -133,16 +133,16 @@ public class UserService {
 
     public void updateUsersTeam(Team team, List<User> newUsers) {
         team.getUsers().removeAll(newUsers);
-        removeAllUsers(team);
-        addUsers(team, newUsers);
+        removeAllUsersFromTeam(team);
+        addUsersToATeam(team, newUsers);
     }
 
-    private void removeAllUsers(Team team) {
+    private void removeAllUsersFromTeam(Team team) {
         team.getUsers().forEach(user -> user.setTeam(null));
         userRepository.save(team.getUsers());
     }
 
-    private void addUsers(Team team, List<User> newUsers) {
+    private void addUsersToATeam(Team team, List<User> newUsers) {
         newUsers.forEach(newUser -> newUser.setTeam(team));
         userRepository.save(newUsers);
     }

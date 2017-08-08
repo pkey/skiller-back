@@ -110,7 +110,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void get_users_success() throws Exception {
+    public void allUsersAndTheirPropertiesAreReturned() throws Exception {
         when(userService.getAllUserResponses()).thenReturn(testUserEntityResponseList);
 
         mockMvc.perform(get("/user/all")

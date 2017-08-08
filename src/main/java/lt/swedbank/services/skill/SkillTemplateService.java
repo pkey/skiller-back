@@ -18,17 +18,6 @@ public class SkillTemplateService {
     @Autowired
     private SkillTemplateRepository skillTemplateRepository;
 
-    private SkillTemplate getById(@NotNull Long id) {
-        SkillTemplate skillTemplate = skillTemplateRepository.findOne(id);
-
-        if (skillTemplate == null) {
-            throw new TemplateNotFoundException();
-        }
-
-        return skillTemplate;
-
-    }
-
     public Optional<SkillTemplate> getByTeamId(@NotNull Long id) {
         return Optional.ofNullable(skillTemplateRepository.findOneByTeamId(id));
     }

@@ -28,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -218,5 +219,17 @@ public class UserServiceTest {
             assertEquals(userResponse.getId(), testUserList.get(i).getId());
             i++;
         }
+    }
+
+    @Test
+    public void updatingUsersTeam() {
+        List<User> newUsers = TestHelper.fetchUsers(4);
+        testTeam.setUsers(newUsers);
+        Mockito.when(userRepository.save(newUsers)).thenReturn(newUsers);
+        Mockito.when(userRepository.save(testTeam.getUsers())).thenReturn(testTeam.getUsers());
+
+        userService.updateUsersTeam(testTeam, newUsers);
+
+        Assert.assertEquals(testTeam.getUsers(), newUsers);
     }
 }

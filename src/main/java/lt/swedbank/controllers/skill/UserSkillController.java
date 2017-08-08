@@ -7,7 +7,7 @@ import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.request.VoteUserSkillRequest;
 import lt.swedbank.beans.response.VoteResponse;
-import lt.swedbank.beans.response.userSkill.NormalUserSkillResponse;
+import lt.swedbank.beans.response.userSkill.ColleagueUserSkillResponse;
 import lt.swedbank.beans.response.userSkill.UserSkillResponse;
 import lt.swedbank.services.auth.AuthenticationService;
 import lt.swedbank.services.notification.ApprovalService;
@@ -37,8 +37,8 @@ public class UserSkillController {
 
     @RequestMapping(method = RequestMethod.POST)
     public @ResponseBody
-    NormalUserSkillResponse addUserSkill(@Valid @RequestBody AddSkillRequest addSkillRequest,
-                                   @RequestHeader(value = "Authorization") String authToken) {
+    ColleagueUserSkillResponse addUserSkill(@Valid @RequestBody AddSkillRequest addSkillRequest,
+                                            @RequestHeader(value = "Authorization") String authToken) {
         Long userId = userService.getUserByAuthId(authService.extractAuthIdFromToken(authToken)).getId();
         return userSkillService.addUserSkill(userId, addSkillRequest);
     }
@@ -62,7 +62,7 @@ public class UserSkillController {
         ApprovalRequest approvalRequest = approvalService.addSkillLevelApprovalRequestWithNotifications(userId, request);
         UserSkill userSkill = approvalRequest.getUserSkillLevel().getUserSkill();
 
-        return new NormalUserSkillResponse(userSkill.getSkill(), userSkillService.getCurrentSkillLevelStatus(userSkill));
+        return new ColleagueUserSkillResponse(userSkill.getSkill(), userSkillService.getCurrentSkillLevelStatus(userSkill));
     }
 
     @RequestMapping(value = "/vote", method = RequestMethod.POST)

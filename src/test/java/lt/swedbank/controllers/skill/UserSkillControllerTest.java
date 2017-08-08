@@ -6,7 +6,7 @@ import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.entity.UserSkillLevel;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.response.user.UserWithSkillsResponse;
-import lt.swedbank.beans.response.userSkill.NormalUserSkillResponse;
+import lt.swedbank.beans.response.userSkill.ColleagueUserSkillResponse;
 import lt.swedbank.beans.response.userSkill.UserSkillResponse;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.helpers.TestHelper;
@@ -86,7 +86,7 @@ public class UserSkillControllerTest {
 
         when(userService.getUserByAuthId(any())).thenReturn(testUser);
         when(userService.getUserById(any())).thenReturn(testUser);
-        when(userSkillService.addUserSkill(any(), any())).thenReturn(new NormalUserSkillResponse(newlyAddedUserSkill.getSkill(), userSkillLevel));
+        when(userSkillService.addUserSkill(any(), any())).thenReturn(new ColleagueUserSkillResponse(newlyAddedUserSkill.getSkill(), userSkillLevel));
 
         mockMvc.perform(post("/user/skill").header("Authorization", "Bearer")
                 .contentType(contentType)

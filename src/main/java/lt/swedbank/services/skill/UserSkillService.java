@@ -8,7 +8,7 @@ import lt.swedbank.beans.enums.Status;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.response.userSkill.NonColleagueUserSkillResponse;
-import lt.swedbank.beans.response.userSkill.NormalUserSkillResponse;
+import lt.swedbank.beans.response.userSkill.ColleagueUserSkillResponse;
 import lt.swedbank.beans.response.userSkill.UserSkillResponse;
 import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
 import lt.swedbank.exceptions.skill.SkillNotFoundException;
@@ -47,7 +47,7 @@ public class UserSkillService {
     }
 
 
-    public NormalUserSkillResponse addUserSkill(Long userId, AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
+    public ColleagueUserSkillResponse addUserSkill(Long userId, AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
 
         Skill skill;
 
@@ -65,7 +65,7 @@ public class UserSkillService {
         UserSkillLevel newUserSkillLevel = userSkillLevelService.addDefaultUserSkillLevel(userSkill);
         userSkill.addUserSkillLevel(newUserSkillLevel);
 
-        return new NormalUserSkillResponse(userSkillRepository.save(userSkill).getSkill(), newUserSkillLevel);
+        return new ColleagueUserSkillResponse(userSkillRepository.save(userSkill).getSkill(), newUserSkillLevel);
     }
 
     public UserSkillResponse removeUserSkill(Long userId, Long skillId) throws SkillNotFoundException, UserSkillLevelIsPendingException {
@@ -132,12 +132,12 @@ public class UserSkillService {
 
     public List<UserSkillResponse> getProfileUserSkills(List<UserSkill> userSkills)
     {
-        return userSkills.stream().map(userSkill -> new NormalUserSkillResponse(userSkill.getSkill(), getCurrentSkillLevelStatus(userSkill))).collect(Collectors.toList());
+        return userSkills.stream().map(userSkill -> new ColleagueUserSkillResponse(userSkill.getSkill(), getCurrentSkillLevelStatus(userSkill))).collect(Collectors.toList());
     }
 
     public List<UserSkillResponse> getNormalUserSkillResponseList(List<UserSkill> userSkills)
     {
-        return userSkills.stream().map(userSkill -> new NormalUserSkillResponse(userSkill.getSkill(), getCurrentSkillLevel(userSkill))).collect(Collectors.toList());
+        return userSkills.stream().map(userSkill -> new ColleagueUserSkillResponse(userSkill.getSkill(), getCurrentSkillLevel(userSkill))).collect(Collectors.toList());
     }
 
     public List<NonColleagueUserSkillResponse> getNonColleagueUserSkillResponseList(List<UserSkill> userSkills)

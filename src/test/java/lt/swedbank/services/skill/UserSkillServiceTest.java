@@ -3,7 +3,7 @@ package lt.swedbank.services.skill;
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
-import lt.swedbank.beans.response.userSkill.NormalUserSkillResponse;
+import lt.swedbank.beans.response.userSkill.ColleagueUserSkillResponse;
 import lt.swedbank.beans.response.userSkill.UserSkillResponse;
 import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
 import lt.swedbank.exceptions.skill.SkillNotFoundException;
@@ -76,12 +76,12 @@ public class UserSkillServiceTest {
         Mockito.when(userSkillLevelService.addDefaultUserSkillLevel(any(UserSkill.class))).thenReturn(defaultUserSkillLevel);
         Mockito.when(userSkillRepository.save(any(UserSkill.class))).thenReturn(testUserSkill);
 
-        NormalUserSkillResponse normalUserSkillResponse = userSkillService.addUserSkill(user.getId(), addSkillRequest);
+        ColleagueUserSkillResponse colleagueUserSkillResponse = userSkillService.addUserSkill(user.getId(), addSkillRequest);
 
-        Assert.assertEquals(testUserSkill.getSkill().getId(), normalUserSkillResponse.getId());
-        Assert.assertEquals(testUserSkill.getSkill().getTitle(), normalUserSkillResponse.getTitle());
-        Assert.assertEquals(testUserSkill.getUserSkillLevels().get(0).getSkillLevel().getId(), normalUserSkillResponse.getLevel().getId());
-        Assert.assertEquals(testUserSkill.getUserSkillLevels().get(0).getVotes().size(), normalUserSkillResponse.getVotes().size());
+        Assert.assertEquals(testUserSkill.getSkill().getId(), colleagueUserSkillResponse.getId());
+        Assert.assertEquals(testUserSkill.getSkill().getTitle(), colleagueUserSkillResponse.getTitle());
+        Assert.assertEquals(testUserSkill.getUserSkillLevels().get(0).getSkillLevel().getId(), colleagueUserSkillResponse.getLevel().getId());
+        Assert.assertEquals(testUserSkill.getUserSkillLevels().get(0).getVotes().size(), colleagueUserSkillResponse.getVotes().size());
 
         Mockito.verify(userSkillRepository, Mockito.times(1)).save(any(UserSkill.class));
         Mockito.verify(skillService, Mockito.times(0)).addSkill(any());

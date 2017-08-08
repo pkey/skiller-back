@@ -7,9 +7,9 @@ import lt.swedbank.beans.entity.UserSkillLevel;
 import lt.swedbank.beans.response.CurrentSkillLevelResponse;
 
 @Data
-public class NormalUserSkillResponse extends UserSkillResponse {
+public class ColleagueUserSkillResponse extends UserSkillResponse {
 
-    public NormalUserSkillResponse(Skill skill, UserSkillLevel userSkillLevel) {
+    public ColleagueUserSkillResponse(Skill skill, UserSkillLevel userSkillLevel) {
         super(skill);
         this.setLevel(new CurrentSkillLevelResponse(userSkillLevel));
         this.setVotes(convertVoteEntityListToVoteResponseList(userSkillLevel.getVotes()));

@@ -31,7 +31,7 @@ public class SkillTemplateServiceTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        mockedSkillTemplate = new SkillTemplate(TestHelper.fetchTeams(1).get(0), TestHelper.fetchSkills(2));
+        mockedSkillTemplate = new SkillTemplate(TestHelper.fetchTeams().get(0), TestHelper.fetchSkills(2));
         mockedSkills = mockedSkillTemplate.getSkills();
         mockedTeam = mock(Team.class);
     }

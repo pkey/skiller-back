@@ -155,7 +155,7 @@ public class TeamServiceTest {
         Mockito.when(teamSkillService.getCurrentTeamSkillByTeamAndSkill(any(Team.class), any(Skill.class)))
                 .thenReturn(teamSkillWithLowerUserCount,
                         teamSkillWithHigherUserCount);
-        Mockito.when(skillTemplateService.getByTeamId(testTeam.getId())).thenReturn(skillTemplateOptional);
+        Mockito.when(skillTemplateService.getSkillTemplateByTeamId(testTeam.getId())).thenReturn(skillTemplateOptional);
 
         Set<SkillTemplateResponse> responses = teamService.getTeamSkillTemplateResponseList(testTeam);
 

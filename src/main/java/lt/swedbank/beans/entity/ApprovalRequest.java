@@ -64,6 +64,7 @@ public class ApprovalRequest {
         userSkillLevel.setApproved();
     }
 
+    //Todo metodas nenaudojamas, naudojamas tik servisuose. Set pending kvieciamas tiesiogiai.
     public void setPending() {
         this.status = Status.PENDING;
         userSkillLevel.setPending();

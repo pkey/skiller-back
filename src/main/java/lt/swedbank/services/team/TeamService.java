@@ -11,6 +11,8 @@ import lt.swedbank.beans.response.team.TeamWithUsersResponse;
 import lt.swedbank.beans.response.team.teamOverview.ColleagueTeamOverviewWithUsersResponse;
 import lt.swedbank.beans.response.team.teamOverview.NonColleagueTeamOverviewWithUsersResponse;
 import lt.swedbank.beans.response.user.UserWithSkillsResponse;
+import lt.swedbank.events.team.TeamAddedEvent;
+import lt.swedbank.events.team.TeamUpdatedEvent;
 import lt.swedbank.exceptions.team.TeamNameAlreadyExistsException;
 import lt.swedbank.exceptions.team.TeamNotFoundException;
 import lt.swedbank.repositories.TeamRepository;
@@ -19,9 +21,11 @@ import lt.swedbank.services.overview.OverviewService;
 import lt.swedbank.services.skill.SkillService;
 import lt.swedbank.services.skill.SkillTemplateService;
 import lt.swedbank.services.skill.UserSkillService;
+import lt.swedbank.services.teamSkill.TeamSkillService;
 import lt.swedbank.services.user.UserService;
 import lt.swedbank.services.valueStream.ValueStreamService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -46,6 +50,10 @@ public class TeamService {
     private SkillTemplateService skillTemplateService;
     @Autowired
     private OverviewService overviewService;
+    @Autowired
+    private TeamSkillService teamSkillService;
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
 
     public Iterable<Team> getAllTeams() {
@@ -129,6 +137,8 @@ public class TeamService {
             team.setSkillTemplate(skillTemplateService.createOrUpdateSkillTemplate(team, skillService.getSkillsByIds(addTeamRequest.getSkillIds())));
         }
 
+        applicationEventPublisher.publishEvent(new TeamAddedEvent(team));
+
         return new TeamWithUsersResponse(teamRepository.save(team), getUserWithSkillResponseList(userService.getUsersByIds(addTeamRequest.getUserIds())), getTeamSkillTemplateResponseList(team));
     }
 
@@ -157,6 +167,8 @@ public class TeamService {
             team.setValueStream(valueStreamService.getValueStreamById(updateTeamRequest.getStreamId()));
         }
 
+        applicationEventPublisher.publishEvent(new TeamUpdatedEvent(team));
+
         return new TeamWithUsersResponse(teamRepository.save(team),
                 getUserWithSkillResponseList(userService.getUsersByIds(updateTeamRequest.getUserIds())),
                 getTeamSkillTemplateResponseList(team));
@@ -168,8 +180,8 @@ public class TeamService {
         if (skillTemplateOptional.isPresent()) {
             return skillTemplateOptional.get().getSkills().stream().map(skill ->
                     new SkillTemplateResponse(new SkillEntityResponse(skill),
-                            overviewService.getUserSkillCount(team.getUsers(), skill),
-                            overviewService.getUserAverageSkillLevel(team.getUsers(), skill)))
+                            teamSkillService.getCurrentTeamSkillByTeamAndSkill(team, skill).getSkillCounter(),
+                            teamSkillService.getCurrentTeamSkillByTeamAndSkill(team, skill).getSkillLevelAverage()))
                     .collect(Collectors.toCollection(TreeSet::new));
         } else {
             return new TreeSet<>();

@@ -1,9 +1,6 @@
 package lt.swedbank.services.user;
 
-import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.entity.User;
-import lt.swedbank.beans.entity.UserSkill;
-import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
 import lt.swedbank.beans.response.user.NonColleagueResponse;
 import lt.swedbank.beans.response.user.UserResponse;
@@ -79,10 +76,6 @@ public class UserService {
         return userList;
     }
 
-    public Iterable<User> getAllByTeam(Team team){
-        return userRepository.findAllByTeam(team);
-    }
-
     public UserResponse getUserProfile(Long requiredUserId, String currentUserAuthId) {
         User currentUser = getUserByAuthId(currentUserAuthId);
         User requiredUser = getUserById(requiredUserId);
@@ -107,14 +100,6 @@ public class UserService {
         return new NonColleagueResponse(requiredUser, userSkillService.getNonColleagueUserSkillResponseList(requiredUser.getUserSkills()));
     }
 
-    public UserSkill assignUserSkillLevel(Long userid, AssignSkillLevelRequest request) throws UserNotFoundException {
-        User user = getUserById(userid);
-
-        if (user == null) {
-            throw new UserNotFoundException();
-        }
-        return userSkillService.assignSkillLevel(user, request);
-    }
 
     public User assignTeam(final Long userId, final AssignTeamRequest assignTeamRequest) {
         User user = getUserById(userId);

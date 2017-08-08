@@ -97,14 +97,6 @@ public class UserServiceTest {
     public void tearDown() throws Exception {
     }
 
-
-
-    @Test(expected = UserNotFoundException.class)
-    public void assignUserSkillLevelExceptionTest() throws Exception {
-        doReturn(null).when(userService).getUserById(any());
-        userService.assignUserSkillLevel(any(), any());
-    }
-
     @Test
     public void getUserByAuthId() throws Exception {
         Mockito.when(userRepository.findByAuthId(any())).thenReturn(testUser);
@@ -156,15 +148,6 @@ public class UserServiceTest {
         assertEquals(resultEntity.getEmail(), testEntity.getEmail());
         assertThat(resultEntity, instanceOf(UserWithSkillsResponse.class));
 
-    }
-
-    @Test
-    public void assignUserSkillLevelTest() throws Exception {
-
-        doReturn(testUser).when(userService).getUserById(any());
-        Mockito.when(userSkillService.assignSkillLevel(any(), any())).thenReturn(testUserSkill);
-
-        assertEquals(userService.assignUserSkillLevel(any(), any()), testUserSkill);
     }
 
 

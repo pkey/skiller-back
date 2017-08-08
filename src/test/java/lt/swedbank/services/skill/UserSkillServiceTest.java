@@ -143,27 +143,6 @@ public class UserSkillServiceTest {
         UserSkillResponse resultUserSkill = userSkillService.removeUserSkill(user.getId(), skill.getId());
     }
 
-    @Test
-    public void assignSkillLevel() throws Exception {
-        Mockito.when(userSkillRepository.findByUserIdAndSkillId(
-                user.getId(), assignSkillLevelRequest.getSkillId()))
-                .thenReturn(testUserSkill);
-
-        UserSkillLevel testUserSkillLevel = new UserSkillLevel(testUserSkill,
-                skillLevels.get(1));
-
-        testUserSkillLevel.setMotivation(assignSkillLevelRequest.getMotivation());
-
-        Mockito.when(userSkillLevelService.addUserSkillLevel(
-                testUserSkill, assignSkillLevelRequest))
-                .thenReturn(testUserSkillLevel);
-
-        UserSkill resultUserSkill = userSkillService.assignSkillLevel(user, assignSkillLevelRequest);
-
-        Assert.assertEquals(assignSkillLevelRequest.getMotivation(), resultUserSkill.getUserSkillLevels().get(1).getMotivation());
-
-        Mockito.verify(userSkillRepository, Mockito.times(1)).findByUserIdAndSkillId(any(), any());
-    }
 
     @Test
     public void getUserSkillByUserIdAndSkillId(){

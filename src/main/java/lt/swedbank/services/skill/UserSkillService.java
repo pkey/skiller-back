@@ -1,15 +1,17 @@
 package lt.swedbank.services.skill;
 
 import lt.swedbank.beans.entity.Skill;
-import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
 import lt.swedbank.beans.entity.UserSkillLevel;
 import lt.swedbank.beans.enums.Status;
 import lt.swedbank.beans.request.AddSkillRequest;
+import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.response.userSkill.NonColleagueUserSkillResponse;
 import lt.swedbank.beans.response.userSkill.ColleagueUserSkillResponse;
 import lt.swedbank.beans.response.userSkill.UserSkillResponse;
+import lt.swedbank.events.userSkill.UserSkillAddedEvent;
+import lt.swedbank.events.userSkill.UserSkillRemovedEvent;
 import lt.swedbank.exceptions.skill.SkillAlreadyExistsException;
 import lt.swedbank.exceptions.skill.SkillNotFoundException;
 import lt.swedbank.exceptions.userSkill.UserSkillNotFoundException;
@@ -17,6 +19,7 @@ import lt.swedbank.exceptions.userSkillLevel.UserSkillLevelIsPendingException;
 import lt.swedbank.repositories.UserSkillRepository;
 import lt.swedbank.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -36,6 +39,8 @@ public class UserSkillService {
     private UserSkillLevelService userSkillLevelService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     public UserSkill getUserSkillByUserIdAndSkillId(Long userId, Long skillId) throws UserSkillNotFoundException {
 
@@ -65,7 +70,11 @@ public class UserSkillService {
         UserSkillLevel newUserSkillLevel = userSkillLevelService.addDefaultUserSkillLevel(userSkill);
         userSkill.addUserSkillLevel(newUserSkillLevel);
 
-        return new ColleagueUserSkillResponse(userSkillRepository.save(userSkill).getSkill(), newUserSkillLevel);
+        UserSkill updatedUserSkill = userSkillRepository.save(userSkill);
+
+        applicationEventPublisher.publishEvent(new UserSkillAddedEvent(updatedUserSkill));
+
+        return new ColleagueUserSkillResponse(updatedUserSkill.getSkill(),newUserSkillLevel);
     }
 
     public UserSkillResponse removeUserSkill(Long userId, Long skillId) throws SkillNotFoundException, UserSkillLevelIsPendingException {
@@ -83,21 +92,10 @@ public class UserSkillService {
         } else {
             throw new UserSkillLevelIsPendingException();
         }
+
+        applicationEventPublisher.publishEvent(new UserSkillRemovedEvent(userSkill));
+
         return new UserSkillResponse(userSkill.getSkill());
-    }
-
-    public UserSkill assignSkillLevel(User user, AssignSkillLevelRequest request) {
-
-        UserSkill userSkill = userSkillRepository.findByUserIdAndSkillId(user.getId(), request.getSkillId());
-
-        userSkill.addUserSkillLevel(userSkillLevelService.addUserSkillLevel(userSkill, request));
-
-        return userSkill;
-    }
-
-    public Iterable<UserSkill> getAllUserSkillsBySkill(Skill skill)
-    {
-        return userSkillRepository.findBySkill(skill);
     }
 
     public void sortUserSkillLevels(UserSkill userSkill) {

@@ -138,8 +138,6 @@ public class TeamServiceTest {
 
     @Test
     public void getTeamSkillTemplateResponseList() throws Exception {
-        Mockito.when(overviewService.getUserSkillCount(testTeam.getUsers(), any(Skill.class)));
-        Mockito.when(overviewService.getUserAverageSkillLevel(testTeam.getUsers(), any(Skill.class)));
 
         Optional<SkillTemplate> skillTemplateOptional = Optional.ofNullable(testSkillTemplate);
         Mockito.when(skillTemplateService.getSkillTemplateByTeamId(testTeam.getId())).thenReturn(skillTemplateOptional);

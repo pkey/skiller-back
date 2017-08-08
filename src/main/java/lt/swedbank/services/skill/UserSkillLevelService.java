@@ -7,7 +7,6 @@ import lt.swedbank.beans.enums.Status;
 import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.exceptions.userSkillLevel.UserSkillLevelNotFoundException;
 import lt.swedbank.repositories.UserSkillLevelRepository;
-import lt.swedbank.services.notification.ApprovalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,8 +22,6 @@ public class UserSkillLevelService {
     private SkillLevelService skillLevelService;
     @Autowired
     private UserSkillService userSkillService;
-    @Autowired
-    private ApprovalService approvalService;
 
     public UserSkillLevel getCurrentUserSkillLevelByUserIdAndSkillId(Long userId, Long userSkillId) throws UserSkillLevelNotFoundException {
         UserSkill userSkill = userSkillService.getUserSkillByUserIdAndSkillId(userId, userSkillId);
@@ -67,12 +64,6 @@ public class UserSkillLevelService {
         userSkillLevel.setMotivation(assignSkillLevelRequest.getMotivation());
         userSkillLevel.setPending();
 
-        return userSkillLevelRepository.save(userSkillLevel);
-    }
-
-    public UserSkillLevel levelUp(UserSkillLevel userSkillLevel) {
-        Long oldLevel = userSkillLevel.getSkillLevel().getLevel().longValue();
-        userSkillLevel.setSkillLevel(skillLevelService.getByLevel(oldLevel + 1));
         return userSkillLevelRepository.save(userSkillLevel);
     }
 

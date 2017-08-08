@@ -138,12 +138,17 @@ public class UserService {
     }
 
     private void removeAllUsers(Team team) {
-        team.getUsers().stream().forEach(user -> user.setTeam(null));
+        team.getUsers().forEach(user -> user.setTeam(null));
         userRepository.save(team.getUsers());
     }
 
     private void addUsers(Team team, List<User> newUsers) {
-        newUsers.stream().forEach(newUser -> newUser.setTeam(team));
+        newUsers.forEach(newUser -> newUser.setTeam(team));
         userRepository.save(newUsers);
+    }
+
+    public List<UserResponse> getAllUserResponses() {
+        List<User> users = (List<User>) userRepository.findAll();
+        return users.stream().map(UserResponse::new).collect(Collectors.toList());
     }
 }

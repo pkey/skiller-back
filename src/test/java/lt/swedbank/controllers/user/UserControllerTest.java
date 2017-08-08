@@ -68,6 +68,7 @@ public class UserControllerTest {
 
         testUserEntityResponseList = new ArrayList<>();
         testUserEntityResponseList.add(testUserEntityResponse);
+        testUserEntityResponseList.add(new UserResponse(testUsers.get(1)));
 
 
     }
@@ -105,6 +106,27 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name", is(testUser.getName())))
                 .andExpect(jsonPath("$.lastName", is(testUser.getLastName())))
                 .andExpect(jsonPath("$.email", is(testUser.getEmail())));
+
+    }
+
+    @Test
+    public void get_users_success() throws Exception {
+        when(userService.getAllUserResponses()).thenReturn(testUserEntityResponseList);
+
+        mockMvc.perform(get("/user/all")
+                .header("Authorization", "Bearer")
+                .contentType(contentType))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id", is(testUsers.get(0).getId().intValue())))
+                .andExpect(jsonPath("$[0].name", is(testUsers.get(0).getName())))
+                .andExpect(jsonPath("$[0].lastName", is(testUsers.get(0).getLastName())))
+                .andExpect(jsonPath("$[0].email", is(testUsers.get(0).getEmail())))
+                .andExpect(jsonPath("$[0].team").exists())
+                .andExpect(jsonPath("$[1].id", is(testUsers.get(1).getId().intValue())))
+                .andExpect(jsonPath("$[1].name", is(testUsers.get(1).getName())))
+                .andExpect(jsonPath("$[1].lastName", is(testUsers.get(1).getLastName())))
+                .andExpect(jsonPath("$[1].email", is(testUsers.get(1).getEmail())))
+                .andExpect(jsonPath("$[1].team").exists());
 
     }
 }

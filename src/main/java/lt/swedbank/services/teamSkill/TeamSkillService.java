@@ -42,7 +42,7 @@ public class TeamSkillService {
         TeamSkill teamSkill = teamSkillRepository.findTopByTeamAndSkill(team, skill);
 
         if (teamSkill != null) {
-            teamSkill.setSkillCounter(this.getUserSkillCount(team.getUsers(), skill));
+            teamSkill.setSkillCount(this.getUserSkillCount(team.getUsers(), skill));
             teamSkill.setSkillLevelAverage(this.getUserAverageSkillLevel(team.getUsers(), skill));
         } else {
             teamSkill = new TeamSkill(team,
@@ -87,5 +87,15 @@ public class TeamSkillService {
             }
         }
         return counter;
+    }
+
+    public Integer getTeamSkillCount(@NotNull Team team, @NotNull Skill skill) {
+        TeamSkill teamSkill = teamSkillRepository.findTopByTeamAndSkill(team, skill);
+        return teamSkill.getSkillCount();
+    }
+
+    public Double getTeamAverageSkillLevel(@NotNull Team team, @NotNull Skill skill) {
+        TeamSkill teamSkill = teamSkillRepository.findTopByTeamAndSkill(team, skill);
+        return teamSkill.getSkillLevelAverage();
     }
 }

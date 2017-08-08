@@ -75,7 +75,7 @@ public class TeamServiceTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        teams = TestHelper.fetchTeams(2);
+        teams = TestHelper.fetchTeams();
         testTeam = teams.get(0);
         users = TestHelper.fetchUsers(3);
         testSkills = TestHelper.skills.subList(0, 2);
@@ -207,7 +207,7 @@ public class TeamServiceTest {
         Mockito.when(userService.getUserById(any())).thenReturn(userWithoutTeam);
 
         testTeam.setUsers(TestHelper.fetchUsers(5));
-        testTeam.setDepartment(TestHelper.fetchDepartments(1).get(0));
+        testTeam.setDepartment(TestHelper.fetchDepartments().get(0));
 
         TeamResponse resultResponse = teamService.getTeamOverview(testTeam.getId(), userWithoutTeam.getId());
         Assert.assertThat(resultResponse, instanceOf(NonColleagueTeamOverviewWithUsersResponse.class));

@@ -1,6 +1,9 @@
 package lt.swedbank.services.department;
 
-import lt.swedbank.beans.entity.*;
+import lt.swedbank.beans.entity.Department;
+import lt.swedbank.beans.entity.Skill;
+import lt.swedbank.beans.entity.Team;
+import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.response.SkillEntityResponse;
 import lt.swedbank.beans.response.SkillTemplateResponse;
 import lt.swedbank.beans.response.department.DepartmentEntityResponse;
@@ -53,10 +56,9 @@ public class DepartmentService {
         Set<SkillTemplateResponse> skillTemplateResponses = new TreeSet<>();
         for (Team team : department.getTeams()) {
             for (Skill skill : team.getSkillTemplate().getSkills()) {
-                TeamSkill teamSkill = teamSkillService.getCurrentTeamSkillByTeamAndSkill(team, skill);
                 SkillTemplateResponse skillTemplateResponse = new SkillTemplateResponse(new SkillEntityResponse(skill),
-                        teamSkill.getSkillCounter(),
-                        teamSkill.getSkillLevelAverage());
+                        teamSkillService.getTeamSkillCount(team, skill),
+                        teamSkillService.getTeamAverageSkillLevel(team, skill));
                 skillTemplateResponses.add(skillTemplateResponse);
             }
         }

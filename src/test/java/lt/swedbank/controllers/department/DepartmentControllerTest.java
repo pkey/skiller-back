@@ -3,7 +3,12 @@ package lt.swedbank.controllers.department;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.entity.Department;
+import lt.swedbank.beans.response.SkillEntityResponse;
+import lt.swedbank.beans.response.SkillTemplateResponse;
 import lt.swedbank.beans.response.department.DepartmentEntityResponse;
+import lt.swedbank.beans.response.department.DepartmentOverviewResponse;
+import lt.swedbank.beans.response.department.DepartmentResponse;
+import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.services.department.DepartmentService;
@@ -19,7 +24,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
@@ -64,7 +71,7 @@ public class DepartmentControllerTest {
 
         mapper = new ObjectMapper();
 
-        departments = TestHelper.fetchDepartments(2);
+        departments = TestHelper.fetchDepartments();
         department1 = departments.get(0);
         department2 = departments.get(1);
 
@@ -77,7 +84,38 @@ public class DepartmentControllerTest {
 
 
     @Test
-    public void get_department_success() throws Exception {
+    public void canGetDepartmentOverviewById() throws Exception {
+        DepartmentResponse departmentResponse = new DepartmentResponse(department1);
+        Set<UserResponse> userResponses = new HashSet<>();
+        Set<SkillTemplateResponse> skillTemplateResponses = new HashSet<>();
+        department1.getTeams().forEach(t -> t.getUsers().forEach(u -> userResponses.add(new UserResponse(u))));
+
+        SkillEntityResponse skillEntityResponse = new SkillEntityResponse(TestHelper.skills.get(0));
+        SkillTemplateResponse skillTemplateResponse = new SkillTemplateResponse(skillEntityResponse, 1, 1D);
+        skillTemplateResponses.add(skillTemplateResponse);
+
+        DepartmentOverviewResponse departmentOverviewResponse = new DepartmentOverviewResponse(departmentResponse,
+                userResponses,
+                skillTemplateResponses);
+
+        when(departmentService.getDepartmentOverviewByDepartmentId(department1.getId())).thenReturn(departmentOverviewResponse);
+
+        mockMvc.perform(get("/departments/" + department1.getId().toString())
+                .header("Authorization", "Bearer")
+                .contentType(contentType))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(department1.getId().intValue())))
+                .andExpect(jsonPath("$.name", is(department1.getName())))
+
+                .andExpect(jsonPath("$.users").isArray())
+                .andExpect(jsonPath("$.users", hasSize(userResponses.size())))
+
+                .andExpect(jsonPath("$.skillTemplate").isArray())
+                .andExpect(jsonPath("$.skillTemplate", hasSize(skillTemplateResponses.size())));
+    }
+
+    @Test
+    public void canGetAllDepartments() throws Exception {
 
         when(departmentService.getAllDepartmentEntityResponseList()).thenReturn(departmentResponses);
 

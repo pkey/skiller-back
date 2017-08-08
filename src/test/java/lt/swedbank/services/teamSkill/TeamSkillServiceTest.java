@@ -33,12 +33,13 @@ public class TeamSkillServiceTest {
 
     private Team testTeam;
     private Skill testSkill;
+    private TeamSkill teamSkill;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        testTeam = TestHelper.fetchTeams(1).get(0);
+        testTeam = TestHelper.fetchTeams().get(0);
         testSkill = new Skill("Test Skill");
         testSkill.setId(1L);
 
@@ -46,6 +47,8 @@ public class TeamSkillServiceTest {
         skillTemplate.addSkill(testSkill);
 
         testTeam.setSkillTemplate(skillTemplate);
+
+        teamSkill = new TeamSkill(testTeam, testSkill, 1, 2D);
     }
 
 
@@ -62,7 +65,7 @@ public class TeamSkillServiceTest {
 
         Mockito.verify(teamSkillRepository).save(teamSkillListCaptor.capture());
         TeamSkill teamSkill = teamSkillListCaptor.getValue().get(0);
-        Assert.assertEquals(Integer.valueOf(5), teamSkill.getSkillCounter());
+        Assert.assertEquals(Integer.valueOf(5), teamSkill.getSkillCount());
         Assert.assertEquals(Double.valueOf(1), teamSkill.getSkillLevelAverage());
 
     }
@@ -87,9 +90,21 @@ public class TeamSkillServiceTest {
         Mockito.verify(teamSkillRepository).save(teamSkillCaptor.capture());
 
         TeamSkill updateTeamSkill = teamSkillCaptor.getValue();
-        Assert.assertEquals(Integer.valueOf(4), updateTeamSkill.getSkillCounter());
+        Assert.assertEquals(Integer.valueOf(4), updateTeamSkill.getSkillCount());
         Assert.assertEquals(Double.valueOf(2), updateTeamSkill.getSkillLevelAverage());
+    }
 
+    @Test
+    public void canGetAverageCountOfTeamSkill() throws Exception {
+        Mockito.when(teamSkillRepository.findTopByTeamAndSkill(testTeam, testSkill)).thenReturn(teamSkill);
+        Integer skillCount = teamSkillService.getTeamSkillCount(testTeam, testSkill);
+        Assert.assertEquals(teamSkill.getSkillCount(), skillCount);
+    }
 
+    @Test
+    public void canGetAverageSkillLevelOfTeamSkill() throws Exception {
+        Mockito.when(teamSkillRepository.findTopByTeamAndSkill(testTeam, testSkill)).thenReturn(teamSkill);
+        Double averageSkillLevel = teamSkillService.getTeamAverageSkillLevel(testTeam, testSkill);
+        Assert.assertEquals(teamSkill.getSkillLevelAverage(), averageSkillLevel);
     }
 }

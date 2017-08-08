@@ -1,6 +1,9 @@
 package lt.swedbank.services.department;
 
 import lt.swedbank.beans.entity.Department;
+import lt.swedbank.beans.entity.Skill;
+import lt.swedbank.beans.entity.SkillTemplate;
+import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.response.SkillTemplateResponse;
 import lt.swedbank.beans.response.department.DepartmentEntityResponse;
 import lt.swedbank.beans.response.department.DepartmentOverviewResponse;
@@ -13,11 +16,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.Matchers.any;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
 
 
@@ -35,12 +37,33 @@ public class DepartmentServiceTest {
     private List<Department> departmentList;
     private Department testDepartment;
 
+    private List<Team> testTeams;
+
+    private SkillTemplate skillTemplate1;
+    private SkillTemplate skillTemplate2;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        departmentList = TestHelper.fetchDepartments(2);
+        departmentList = TestHelper.fetchDepartments();
         testDepartment = departmentList.get(0);
+
+        skillTemplate1 = new SkillTemplate();
+        skillTemplate1.addSkill(TestHelper.skills.get(0));
+
+        skillTemplate2 = new SkillTemplate();
+        skillTemplate2.addSkill(TestHelper.skills.get(1));
+
+        Team testTeam1 = TestHelper.fetchTeams().get(0);
+        Team testTeam2 = TestHelper.fetchTeams().get(1);
+
+        testTeams = new ArrayList<>();
+        testTeams.add(testTeam1);
+        testTeams.add(testTeam2);
+        testDepartment.setTeams(testTeams);
+
+
 
     }
 
@@ -73,13 +96,38 @@ public class DepartmentServiceTest {
     }
 
     @Test
-    public void getDepartmentSkillTemplateResponses() throws Exception {
-        //TeamSkill teamSkill1 = new TeamSkill(testDepartment.getTeams().get(0));
-        //Mockito.when(teamSkillService.getCurrentTeamSkillByTeamAndSkill(any(), any())).thenReturn();
+    public void departmentSkillTemplateResponsesAreDistinct() throws Exception {
+        testTeams.get(0).setSkillTemplate(skillTemplate1);
+        testTeams.get(1).setSkillTemplate(skillTemplate1);
+
+        Mockito.when(teamSkillService.getTeamSkillCount(any(Team.class), any(Skill.class))).thenReturn(0, 0);
+        Mockito.when(teamSkillService.getTeamAverageSkillLevel(any(Team.class), any(Skill.class))).thenReturn(0D, 0D);
+
+        Set<SkillTemplateResponse> skillTemplateResponses = departmentService.getDepartmentSkillTemplateResponses(testDepartment);
+        Assert.assertEquals(1, skillTemplateResponses.size());
+    }
+
+    @Test
+    public void departmentSkillTemplateResponsesAreOrdered() throws Exception {
+        testTeams.get(0).setSkillTemplate(skillTemplate1);
+        testTeams.get(1).setSkillTemplate(skillTemplate2);
+
+        int skillCounts[] = {2, 5};
+        double averageSkillLevels[] = {1D, 3D};
+
+        //Skill counts are returned exactly in the order specified.
+        Mockito.when(teamSkillService.getTeamSkillCount(any(Team.class), any(Skill.class)))
+                .thenReturn(skillCounts[0], skillCounts[1]);
+        Mockito.when(teamSkillService.getTeamAverageSkillLevel(any(Team.class), any(Skill.class)))
+                .thenReturn(averageSkillLevels[0], averageSkillLevels[0]);
 
         Set<SkillTemplateResponse> skillTemplateResponses = departmentService.getDepartmentSkillTemplateResponses(testDepartment);
         Assert.assertEquals(2, skillTemplateResponses.size());
+
+        //Checks if order has changed
+        Iterator<SkillTemplateResponse> iterator = skillTemplateResponses.iterator();
+        for (int i = skillTemplateResponses.size() - 1; i >= 0; i--) {
+            Assert.assertEquals(skillCounts[i], iterator.next().getUserCounter().intValue());
+        }
     }
-
-
 }

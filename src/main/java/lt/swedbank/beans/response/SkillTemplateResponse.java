@@ -17,7 +17,10 @@ public class SkillTemplateResponse implements Comparable<SkillTemplateResponse> 
 
     @Override
     public int compareTo(SkillTemplateResponse skillTemplateResponse) {
-        return this.userCounter.compareTo(skillTemplateResponse.getUserCounter());
+        if (skill.equals(skillTemplateResponse.skill)) {
+            return 0;
+        }
+        return skillTemplateResponse.getUserCounter().compareTo(this.userCounter);
     }
 
 }

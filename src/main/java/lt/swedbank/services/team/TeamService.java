@@ -177,7 +177,7 @@ public class TeamService {
             for (Skill skill : skillTemplateOptional.get().getSkills()) {
                 TeamSkill teamSkill = teamSkillService.getCurrentTeamSkillByTeamAndSkill(team, skill);
                 SkillTemplateResponse skillTemplateResponse = new SkillTemplateResponse(new SkillEntityResponse(skill),
-                        teamSkill.getSkillCounter(),
+                        teamSkill.getSkillCount(),
                         teamSkill.getSkillLevelAverage());
 
                 skillTemplateResponses.add(skillTemplateResponse);

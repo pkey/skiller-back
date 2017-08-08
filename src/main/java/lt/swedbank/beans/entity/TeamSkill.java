@@ -24,7 +24,7 @@ public class TeamSkill {
     @NonNull
     private Skill skill;
     @NonNull
-    private Integer skillCounter;
+    private Integer skillCount;
     @NonNull
     private Double skillLevelAverage;
     @CreationTimestamp

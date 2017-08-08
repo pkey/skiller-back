@@ -73,7 +73,7 @@ public class UserServiceTest {
         testUser = testUserList.get(0);
         loggedUser = testUserList.get(1);
 
-        teams = TestHelper.fetchTeams(3);
+        teams = TestHelper.fetchTeams();
 
 
         testUser.setTeam(teams.get(0));

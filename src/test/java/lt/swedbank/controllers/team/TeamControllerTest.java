@@ -64,7 +64,7 @@ public class TeamControllerTest {
                 .build();
 
         testUsers = TestHelper.fetchUsers(5);
-        teams = TestHelper.fetchTeams(2);
+        teams = TestHelper.fetchTeams();
         testUser = testUsers.get(0);
     }
 

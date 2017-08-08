@@ -1,6 +1,7 @@
 package lt.swedbank.beans.response.department;
 
 
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 public class DepartmentEntityResponse extends Response {
 
     @NonNull
+    @JsonUnwrapped
     private DepartmentResponse departmentResponse;
     @NonNull
     private List<TeamResponse> teams;

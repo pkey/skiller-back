@@ -236,12 +236,12 @@ public class TestHelper {
     }
 
 
-    public static List<Team> fetchTeams(int amount) {
-        return teams.subList(0, amount);
+    public static List<Team> fetchTeams() {
+        return new ArrayList<>(teams);
     }
 
-    public static List<Department> fetchDepartments(int amount) {
-        return departments.subList(0, amount);
+    public static List<Department> fetchDepartments() {
+        return new ArrayList<>(departments);
     }
 
     public static List<Division> fetchDivisions(int amount) {

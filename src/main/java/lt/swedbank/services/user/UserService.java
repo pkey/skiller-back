@@ -93,7 +93,7 @@ public class UserService {
     public UserResponse getMyProfile(String currentUserAuthId) {
         User currentUser = getUserByAuthId(currentUserAuthId);
 
-        return new UserWithSkillsResponse(currentUser, userSkillService.getNormalUserSkillResponseList(currentUser.getUserSkills()));
+        return new UserWithSkillsResponse(currentUser, userSkillService.getProfileUserSkills(currentUser.getUserSkills()));
     }
 
     private UserResponse getUserResponseBasedOnDepartment(User currentUser, User requiredUser) {

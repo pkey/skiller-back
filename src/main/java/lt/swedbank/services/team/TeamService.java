@@ -162,7 +162,7 @@ public class TeamService {
     }
 
     public List<TeamSkillTemplateResponse> getTeamSkillTemplateResponseList(Team team) {
-        Optional<SkillTemplate> skillTemplateOptional = skillTemplateService.getByTeamId(team.getId());
+        Optional<SkillTemplate> skillTemplateOptional = skillTemplateService.getSkillTemplateByTeamId(team.getId());
 
         if (skillTemplateOptional.isPresent()) {
             return skillTemplateOptional.get().getSkills().stream().map(skill ->

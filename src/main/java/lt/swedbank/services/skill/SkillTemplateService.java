@@ -38,7 +38,7 @@ public class SkillTemplateService {
         try {
             skillTemplate = getById(team.getSkillTemplate().getId());
             skillTemplate.setSkills(skills);
-        } catch (TemplateNotFoundException e){
+        } catch (Exception e){
             return saveSkillTemplate(new SkillTemplate(team, skills));
         }
 

@@ -47,7 +47,7 @@ public class UserSkillService {
     }
 
 
-    public UserSkillResponse addUserSkill(Long userId, AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
+    public NormalUserSkillResponse addUserSkill(Long userId, AddSkillRequest addSkillRequest) throws SkillAlreadyExistsException {
 
         Skill skill;
 
@@ -62,9 +62,10 @@ public class UserSkillService {
         }
 
         UserSkill userSkill = new UserSkill(userService.getUserById(userId), skill);
-        userSkill.addUserSkillLevel(userSkillLevelService.addDefaultUserSkillLevel(userSkill));
+        UserSkillLevel newUserSkillLevel = userSkillLevelService.addDefaultUserSkillLevel(userSkill);
+        userSkill.addUserSkillLevel(newUserSkillLevel);
 
-        return new UserSkillResponse(userSkillRepository.save(userSkill).getSkill());
+        return new NormalUserSkillResponse(userSkillRepository.save(userSkill).getSkill(), newUserSkillLevel);
     }
 
     public UserSkillResponse removeUserSkill(Long userId, Long skillId) throws SkillNotFoundException, UserSkillLevelIsPendingException {

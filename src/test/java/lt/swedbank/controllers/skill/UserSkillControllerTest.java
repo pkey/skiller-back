@@ -3,9 +3,10 @@ package lt.swedbank.controllers.skill;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.entity.UserSkill;
+import lt.swedbank.beans.entity.UserSkillLevel;
 import lt.swedbank.beans.request.AddSkillRequest;
-import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.beans.response.user.UserWithSkillsResponse;
+import lt.swedbank.beans.response.userSkill.NormalUserSkillResponse;
 import lt.swedbank.beans.response.userSkill.UserSkillResponse;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.helpers.TestHelper;
@@ -23,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
@@ -70,27 +72,30 @@ public class UserSkillControllerTest {
         testUser = testUsers.get(0);
 
         newlyAddedUserSkill = new UserSkill(testUser, TestHelper.skills.get(0));
+
+
     }
 
     @Test
-    public void add_skill_to_user_success() throws Exception {
+    public void addSkillToUserIsSuccessful() throws Exception {
+        UserSkillLevel userSkillLevel = new UserSkillLevel(newlyAddedUserSkill, TestHelper.defaultSkillLevel);
+        userSkillLevel.setVotes(new ArrayList<>());
 
+        newlyAddedUserSkill.addUserSkillLevel(userSkillLevel);
         String skillJson = mapper.writeValueAsString(new AddSkillRequest(newlyAddedUserSkill));
 
         when(userService.getUserByAuthId(any())).thenReturn(testUser);
-        when(userSkillService.addUserSkill(any(), any())).thenReturn(new UserSkillResponse(newlyAddedUserSkill.getSkill()));
         when(userService.getUserById(any())).thenReturn(testUser);
-
-        UserResponse userEntityResponseTest = mock(UserResponse.class);
-
-        whenNew(UserResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
+        when(userSkillService.addUserSkill(any(), any())).thenReturn(new NormalUserSkillResponse(newlyAddedUserSkill.getSkill(), userSkillLevel));
 
         mockMvc.perform(post("/user/skill").header("Authorization", "Bearer")
                 .contentType(contentType)
                 .content(skillJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(newlyAddedUserSkill.getSkill().getId().intValue())))
-                .andExpect(jsonPath("$.title", is(newlyAddedUserSkill.getSkill().getTitle())));
+                .andExpect(jsonPath("$.title", is(newlyAddedUserSkill.getSkill().getTitle())))
+                .andExpect(jsonPath("$.votes").isEmpty())
+                .andExpect(jsonPath("$.level").exists());
 
         verify(userService, times(1)).getUserByAuthId(any());
         verify(userSkillService, times(1)).addUserSkill(any(), any());

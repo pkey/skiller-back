@@ -226,6 +226,7 @@ public class UserServiceTest {
         newUsers.addAll(TestHelper.fetchUsers(3));
         testTeam.setUsers(testUserList);
         testUserList.removeAll(newUsers);
+        
         userService.updateUsersTeam(testTeam, newUsers);
 
         for (User user : newUsers) {

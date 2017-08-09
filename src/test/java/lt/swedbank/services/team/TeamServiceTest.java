@@ -95,9 +95,7 @@ public class TeamServiceTest {
         testSkillTemplate.addSkill(testSkill);
 
         skillTemplateResponse = new LinkedList<>();
-        skillTemplateResponse.add(new SkillTemplateResponse(new SkillEntityResponse(new Skill("test")),
-                2,
-                (double) 2));
+        skillTemplateResponse.add(new SkillTemplateResponse(new SkillEntityResponse(new Skill("test")), 2, (double) 2));
 
         userSkillsResponse = new ArrayList<>();
         userSkillResponse = new UserSkillResponse(new Skill("Java"));

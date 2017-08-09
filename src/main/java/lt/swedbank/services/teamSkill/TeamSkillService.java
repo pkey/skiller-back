@@ -77,8 +77,7 @@ public class TeamSkillService {
                                 .getSkillLevel().getLevel().doubleValue()))
                 .average();
 
-        return average.isPresent() ? average.getAsDouble() : 0;
-
+        return average.isPresent() ? average.getAsDouble() : 0d;
     }
 
     private Integer countUserSkills(@NotNull List<User> users, @NotNull Skill skill) {

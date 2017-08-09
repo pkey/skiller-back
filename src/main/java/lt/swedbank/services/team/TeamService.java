@@ -181,4 +181,8 @@ public class TeamService {
     public Team getTeamByName(String name) {
         return teamRepository.findByName(name);
     }
+
+    public Team getTeamByName(String name) {
+        return teamRepository.findByName(name);
+    }
 }

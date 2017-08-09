@@ -138,7 +138,7 @@ public class TeamService {
     public TeamWithUsersResponse updateTeam(Long id, UpdateTeamRequest updateTeamRequest) {
         Team team = getTeamById(id);
 
-        if (!team.equals(getTeamByName(updateTeamRequest.getName())) && getTeamByName(updateTeamRequest.getName()) != null) {
+        if (getTeamByName(updateTeamRequest.getName()) != null && !team.equals(getTeamByName(updateTeamRequest.getName()))) {
             throw new TeamNameAlreadyExistsException();
     }
 

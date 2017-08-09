@@ -1,7 +1,10 @@
 package lt.swedbank.beans.entity;
 
-import lombok.*;
-import org.hibernate.annotations.Cascade;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.util.ArrayList;

@@ -1,12 +1,13 @@
 package lt.swedbank.beans.response;
 
 
-import com.sun.istack.internal.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lt.swedbank.beans.entity.Skill;
+
+import javax.validation.constraints.NotNull;
 
 @Data
 @RequiredArgsConstructor

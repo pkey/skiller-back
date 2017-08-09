@@ -23,6 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
@@ -222,16 +223,17 @@ public class UserServiceTest {
     @Test
     public void successfullyUpdateUsersTeam() {
         List<User> newUsers = new ArrayList<>();
-        newUsers.add(TestHelper.fetchUsers(3).get(0));
-        newUsers.add(TestHelper.fetchUsers(3).get(1));
-        newUsers.add(TestHelper.fetchUsers(3).get(2));
+        newUsers.addAll(TestHelper.fetchUsers(3));
         testTeam.setUsers(testUserList);
-        Mockito.when(userRepository.save(newUsers)).thenReturn(null);
-        Mockito.when(userRepository.save(testTeam.getUsers())).thenReturn(null);
-
+        testUserList.removeAll(newUsers);
         userService.updateUsersTeam(testTeam, newUsers);
 
-        Assert.assertEquals(testTeam, newUsers.get(0).getTeam().get());
+        for (User user : newUsers) {
+            Assert.assertEquals(testTeam, user.getTeam().get());
+        }
+        for (User user : testUserList) {
+            Assert.assertEquals(user.getTeam(), Optional.empty());
+        }
         Assert.assertEquals(testTeam.getUsers(), newUsers);
     }
 }

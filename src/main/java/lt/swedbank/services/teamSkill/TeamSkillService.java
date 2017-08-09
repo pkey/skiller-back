@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalDouble;
 
 @Service
 public class TeamSkillService {
@@ -69,20 +70,15 @@ public class TeamSkillService {
     }
 
     private Double getUserAverageSkillLevel(@NotNull List<User> users, @NotNull Skill skill) {
-        int counter = 0;
-        double sum = 0;
-        for (User user : users) {
-            for (UserSkill userSkill : user.getUserSkills()) {
-                if (userSkill.getSkill().equals(skill)) {
-                    counter++;
-                    sum += userSkillService.getCurrentSkillLevel(userSkill).getSkillLevel().getLevel();
-                }
-            }
-        }
-        if (counter == 0) {
-            return 0d;
-        }
-        return sum / counter;
+        OptionalDouble average = users.stream()
+                .flatMapToDouble(user -> user.getUserSkills().stream()
+                        .filter(userSkill -> userSkill.getSkill().equals(skill))
+                        .mapToDouble(userSkill -> userSkillService.getCurrentSkillLevel(userSkill)
+                                .getSkillLevel().getLevel().doubleValue()))
+                .average();
+
+        return average.isPresent() ? average.getAsDouble() : 0;
+
     }
 
     private Integer countUserSkills(@NotNull List<User> users, @NotNull Skill skill) {

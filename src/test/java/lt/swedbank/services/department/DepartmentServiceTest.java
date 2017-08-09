@@ -115,6 +115,8 @@ public class DepartmentServiceTest {
         int skillCounts[] = {2, 5};
         double averageSkillLevels[] = {1D, 3D};
 
+        int expectedUserSkillCountsOrder[] = {5, 2};
+
         //Skill counts are returned exactly in the order specified.
         Mockito.when(teamSkillService.getTeamSkillCount(any(Team.class), any(Skill.class)))
                 .thenReturn(skillCounts[0], skillCounts[1]);
@@ -126,8 +128,8 @@ public class DepartmentServiceTest {
 
         //Checks if order has changed
         Iterator<SkillTemplateResponse> iterator = skillTemplateResponses.iterator();
-        for (int i = skillTemplateResponses.size() - 1; i >= 0; i--) {
-            Assert.assertEquals(skillCounts[i], iterator.next().getUserCounter().intValue());
+        for (int i = 0; i < skillTemplateResponses.size(); i++) {
+            Assert.assertEquals(expectedUserSkillCountsOrder[i], iterator.next().getUserCounter().intValue());
         }
     }
 }

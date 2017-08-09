@@ -225,15 +225,10 @@ public class UserServiceTest {
         List<User> newUsers = new ArrayList<>();
         newUsers.addAll(TestHelper.fetchUsers(3));
         testTeam.setUsers(testUserList);
-        testUserList.removeAll(newUsers);
-        
         userService.updateUsersTeam(testTeam, newUsers);
 
         for (User user : newUsers) {
             Assert.assertEquals(testTeam, user.getTeam().get());
-        }
-        for (User user : testUserList) {
-            Assert.assertEquals(user.getTeam(), Optional.empty());
         }
         Assert.assertEquals(testTeam.getUsers(), newUsers);
     }

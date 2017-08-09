@@ -20,6 +20,7 @@ import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -28,7 +29,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -37,8 +37,6 @@ public class UserServiceTest {
     private AssignTeamRequest testAssignTeamRequest;
     private Team testTeam;
     private UserSkill testUserSkill;
-    private Skill testSkill;
-    private UserSkillLevel testUserSkillLevel;
     private AddSkillRequest testAddSkillRequest;
 
     private List<User> testUserList;
@@ -205,14 +203,18 @@ public class UserServiceTest {
     }
 
     @Test
-    public void updatingUsersTeam() {
-        List<User> newUsers = TestHelper.fetchUsers(4);
-        testTeam.setUsers(newUsers);
-        Mockito.when(userRepository.save(newUsers)).thenReturn(newUsers);
-        Mockito.when(userRepository.save(testTeam.getUsers())).thenReturn(testTeam.getUsers());
+    public void successfullyUpdateUsersTeam() {
+        List<User> newUsers = new ArrayList<>();
+        newUsers.add(TestHelper.fetchUsers(3).get(0));
+        newUsers.add(TestHelper.fetchUsers(3).get(1));
+        newUsers.add(TestHelper.fetchUsers(3).get(2));
+        testTeam.setUsers(testUserList);
+        Mockito.when(userRepository.save(newUsers)).thenReturn(null);
+        Mockito.when(userRepository.save(testTeam.getUsers())).thenReturn(null);
 
         userService.updateUsersTeam(testTeam, newUsers);
 
+        Assert.assertEquals(testTeam, newUsers.get(0).getTeam().get());
         Assert.assertEquals(testTeam.getUsers(), newUsers);
     }
 }

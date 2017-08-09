@@ -121,6 +121,7 @@ public class UserService {
         team.getUsers().removeAll(newUsers);
         removeTeamsFromUnassignedUsers(team);
         addTeamsToNewUsers(team, newUsers);
+        team.setUsers(newUsers);
     }
 
     private void removeTeamsFromUnassignedUsers(Team team) {

@@ -196,10 +196,8 @@ public class UserServiceTest {
 
         assertEquals(testUserList.size(), userResponses.size());
 
-        int i = 0;
-        for (UserResponse userResponse : userResponses) {
-            assertEquals(userResponse.getId(), testUserList.get(i).getId());
-            i++;
+        for (int i = 0; userResponses.size() < i; i++) {
+            assertEquals(userResponses.get(i).getId(), testUserList.get(i).getId());
         }
     }
 

@@ -138,6 +138,10 @@ public class TeamService {
     public TeamWithUsersResponse updateTeam(Long id, UpdateTeamRequest updateTeamRequest) {
         Team team = getTeamById(id);
 
+        if (!team.equals(getTeamByName(updateTeamRequest.getName())) && getTeamByName(updateTeamRequest.getName()) != null) {
+            throw new TeamNameAlreadyExistsException();
+    }
+
         userService.updateUsersTeam(team, userService.getUsersByIds(updateTeamRequest.getUserIds()));
 
         team.setUsers(userService.getUsersByIds(updateTeamRequest.getUserIds()));
@@ -172,5 +176,9 @@ public class TeamService {
             }
         }
         return skillTemplateResponses;
+    }
+
+    public Team getTeamByName(String name) {
+        return teamRepository.findByName(name);
     }
 }

@@ -137,6 +137,10 @@ public class TeamService {
 
         Team team = getTeamById(id);
 
+        if (!team.equals(getTeamByName(updateTeamRequest.getName())) && getTeamByName(updateTeamRequest.getName()) != null) {
+            throw new TeamNameAlreadyExistsException();
+    }
+
         userService.updateUsersTeam(team, userService.getUsersByIds(updateTeamRequest.getUserIds()));
 
         assert updateTeamRequest.getUserIds() != null;
@@ -208,5 +212,9 @@ public class TeamService {
             }
         }
         return counter;
+    }
+
+    public Team getTeamByName(String name) {
+        return teamRepository.findByName(name);
     }
 }

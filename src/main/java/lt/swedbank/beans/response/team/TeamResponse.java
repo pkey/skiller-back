@@ -1,17 +1,18 @@
 package lt.swedbank.beans.response.team;
 
-
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Data;
 import lt.swedbank.beans.entity.Team;
+import lt.swedbank.beans.response.SkillTemplateResponse;
 import lt.swedbank.beans.response.department.DepartmentResponse;
 import lt.swedbank.beans.response.division.DivisionResponse;
-import lt.swedbank.beans.response.user.UserEntityResponse;
-import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.beans.response.valueStream.ValueStreamResponse;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Set;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@Data
 public class TeamResponse {
     protected Long id;
     protected String name;
@@ -22,67 +23,19 @@ public class TeamResponse {
 
     protected ValueStreamResponse valueStream;
 
-    protected List<UserResponse> users;
+    protected Set<SkillTemplateResponse> skillTemplate;
 
-    public TeamResponse() {
-    }
-
-    public TeamResponse(Team team) {
+    public TeamResponse(Team team, Set<SkillTemplateResponse> skillTemplateResponse) {
         this.id = team.getId();
         this.name = team.getName();
         this.department = new DepartmentResponse(team.getDepartment());
         this.division = new DivisionResponse(team.getDepartment().getDivision());
-        this.valueStream = ((valueStream == null) || (team.getValueStream()) == null) ? null
-                : new ValueStreamResponse(team.getValueStream());
-        this.users = ((null == users) || (team.getUsers() == null)) ? new ArrayList<>() :
-                team.getUsers().stream().map(UserEntityResponse::new).collect(Collectors.toList());
+        this.valueStream = team.getValueStream().map(ValueStreamResponse::new).orElse(null);
+        this.skillTemplate = skillTemplateResponse;
     }
 
-    public Long getId() {
-        return id;
+    public TeamResponse(Team team) {
+        this(team, new HashSet<>());
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public DepartmentResponse getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(DepartmentResponse department) {
-        this.department = department;
-    }
-
-    public DivisionResponse getDivision() {
-        return division;
-    }
-
-    public void setDivision(DivisionResponse division) {
-        this.division = division;
-    }
-
-    public ValueStreamResponse getValueStream() {
-        return valueStream;
-    }
-
-    public void setValueStream(ValueStreamResponse valueStream) {
-        this.valueStream = valueStream;
-    }
-
-    public List<UserResponse> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<UserResponse> users) {
-        this.users = users;
-    }
 }

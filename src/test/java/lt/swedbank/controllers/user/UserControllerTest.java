@@ -1,12 +1,7 @@
 package lt.swedbank.controllers.user;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lt.swedbank.beans.entity.Skill;
 import lt.swedbank.beans.entity.User;
-import lt.swedbank.beans.entity.UserSkill;
-import lt.swedbank.beans.request.AddSkillRequest;
-import lt.swedbank.beans.request.RemoveSkillRequest;
-import lt.swedbank.beans.response.user.UserEntityResponse;
+import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
 import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.services.auth.AuthenticationService;
@@ -17,7 +12,6 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -26,15 +20,13 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 public class UserControllerTest {
 
@@ -45,14 +37,9 @@ public class UserControllerTest {
 
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper mapper;
-
-
     private User testUser;
-    private UserSkill newlyAddedUserSkill;
-    private List<UserEntityResponse> testUserEntityResponseList;
-    private UserEntityResponse testUserEntityResponse;
+    private List<UserResponse> testUserEntityResponseList;
+    private UserResponse testUserEntityResponse;
     private List<User> testUsers;
 
     @InjectMocks
@@ -64,7 +51,6 @@ public class UserControllerTest {
     private AuthenticationService authenticationService;
 
 
-
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
@@ -74,19 +60,16 @@ public class UserControllerTest {
                 .setControllerAdvice(new RestResponseEntityExceptionHandler())
                 .build();
 
-        mapper = new ObjectMapper();
-
         testUsers = TestHelper.fetchUsers(5);
-
 
         testUser = testUsers.get(0);
 
-        testUserEntityResponse = new UserEntityResponse(testUser);
+        testUserEntityResponse = new UserResponse(testUser);
 
         testUserEntityResponseList = new ArrayList<>();
         testUserEntityResponseList.add(testUserEntityResponse);
+        testUserEntityResponseList.add(new UserResponse(testUsers.get(1)));
 
-        newlyAddedUserSkill = new UserSkill(testUser, new Skill("SkillToAddLater"));
 
     }
 
@@ -97,20 +80,15 @@ public class UserControllerTest {
 
     @Test
     public void get_user_profile_success() throws Exception {
-        UserEntityResponse userEntityResponseTest = mock(UserEntityResponse.class);
-
         when(userService.getUserProfile(anyLong(), anyString())).thenReturn(testUserEntityResponse);
 
-        whenNew(UserEntityResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
-
-        mockMvc.perform(get("/user/profile/0")
+        mockMvc.perform(get("/user/0")
                 .header("Authorization", "Bearer")
                 .contentType(contentType))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is(testUser.getName())))
-                .andExpect(jsonPath("$.lastName", is(testUser.getLastName())))
-                .andExpect(jsonPath("$.email", is(testUser.getEmail())))
-                .andExpect(jsonPath("$.skills", hasSize(TestHelper.NUMBER_OF_SKILLS_USER_HAS)));
+                .andExpect(jsonPath("$.name", is(testUserEntityResponse.getName())))
+                .andExpect(jsonPath("$.lastName", is(testUserEntityResponse.getLastName())))
+                .andExpect(jsonPath("$.email", is(testUserEntityResponse.getEmail())));
 
         verify(userService, times(1)).getUserProfile(any(), any());
         verifyNoMoreInteractions(userService);
@@ -119,77 +97,36 @@ public class UserControllerTest {
     @Test
     public void get_user_success() throws Exception {
 
+        when(userService.getMyProfile(testUser.getAuthId())).thenReturn(testUserEntityResponse);
 
-        when(userService.getUserByAuthId(any())).thenReturn(testUser);
-
-        UserEntityResponse userEntityResponseTest = mock(UserEntityResponse.class);
-
-        whenNew(UserEntityResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
-
-        mockMvc.perform(get("/user/get")
+        mockMvc.perform(get("/user")
                 .header("Authorization", "Bearer")
                 .contentType(contentType))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is(testUser.getName())))
                 .andExpect(jsonPath("$.lastName", is(testUser.getLastName())))
-                .andExpect(jsonPath("$.email", is(testUser.getEmail())))
-                .andExpect(jsonPath("$.skills", hasSize(TestHelper.NUMBER_OF_SKILLS_USER_HAS)));
-
-        verify(userService, times(1)).getUserByAuthId(any());
-        verifyNoMoreInteractions(userService);
-    }
-
-    @Test
-    public void add_skill_to_user_success() throws Exception {
-
-        String skillJson = mapper.writeValueAsString(new AddSkillRequest(newlyAddedUserSkill));
-
-        when(userService.getUserByAuthId(any())).thenReturn(testUser);
-        when(userService.addUserSkill(any(), any())).thenReturn(testUser);
-        when(userService.getUserById(any())).thenReturn(testUser);
-
-        UserEntityResponse userEntityResponseTest = mock(UserEntityResponse.class);
-
-        whenNew(UserEntityResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
-
-        mockMvc.perform(post("/user/skill/add").header("Authorization", "Bearer")
-                .contentType(contentType)
-                .content(skillJson))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is(testUser.getName())))
-                .andExpect(jsonPath("$.lastName", is(testUser.getLastName())))
-                .andExpect(jsonPath("$.email", is(testUser.getEmail())))
-                .andExpect(jsonPath("$.skills", hasSize(TestHelper.NUMBER_OF_SKILLS_USER_HAS)));
-
-        verify(userService, times(1)).getUserByAuthId(any());
-        verify(userService, times(1)).addUserSkill(any(), any());
-        verify(userService, times(1)).getUserById(any());
+                .andExpect(jsonPath("$.email", is(testUser.getEmail())));
 
     }
 
     @Test
-    public void remove_skill_from_user_success() throws Exception {
+    public void allUsersAndTheirPropertiesAreReturned() throws Exception {
+        when(userService.getAllUserResponses()).thenReturn(testUserEntityResponseList);
 
-        String skillJson = mapper.writeValueAsString(new RemoveSkillRequest(newlyAddedUserSkill));
-
-        UserEntityResponse userEntityResponseTest = mock(UserEntityResponse.class);
-
-        whenNew(UserEntityResponse.class).withAnyArguments().thenReturn(userEntityResponseTest);
-
-        when(userService.getUserByAuthId(any())).thenReturn(testUser);
-        when(userService.removeUserSkill(any(), any())).thenReturn(testUser);
-
-        mockMvc.perform(post("/user/skill/remove").header("Authorization", "Bearer")
-                .contentType(contentType)
-                .content(skillJson))
+        mockMvc.perform(get("/user/all")
+                .header("Authorization", "Bearer")
+                .contentType(contentType))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is(testUser.getName())))
-                .andExpect(jsonPath("$.lastName", is(testUser.getLastName())))
-                .andExpect(jsonPath("$.email", is(testUser.getEmail())))
-                .andExpect(jsonPath("$.skills", hasSize(TestHelper.NUMBER_OF_SKILLS_USER_HAS)));
-
-        verify(userService, times(1)).getUserByAuthId(any());
-        verify(userService, times(1)).removeUserSkill(any(), any());
+                .andExpect(jsonPath("$[0].id", is(testUsers.get(0).getId().intValue())))
+                .andExpect(jsonPath("$[0].name", is(testUsers.get(0).getName())))
+                .andExpect(jsonPath("$[0].lastName", is(testUsers.get(0).getLastName())))
+                .andExpect(jsonPath("$[0].email", is(testUsers.get(0).getEmail())))
+                .andExpect(jsonPath("$[0].team").exists())
+                .andExpect(jsonPath("$[1].id", is(testUsers.get(1).getId().intValue())))
+                .andExpect(jsonPath("$[1].name", is(testUsers.get(1).getName())))
+                .andExpect(jsonPath("$[1].lastName", is(testUsers.get(1).getLastName())))
+                .andExpect(jsonPath("$[1].email", is(testUsers.get(1).getEmail())))
+                .andExpect(jsonPath("$[1].team").exists());
 
     }
 }

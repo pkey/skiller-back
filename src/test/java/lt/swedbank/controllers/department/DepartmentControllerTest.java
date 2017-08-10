@@ -3,9 +3,14 @@ package lt.swedbank.controllers.department;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.swedbank.beans.entity.Department;
-import lt.swedbank.beans.entity.Team;
-import lt.swedbank.beans.response.DepartmentEntityResponse;
+import lt.swedbank.beans.response.SkillEntityResponse;
+import lt.swedbank.beans.response.SkillTemplateResponse;
+import lt.swedbank.beans.response.department.DepartmentEntityResponse;
+import lt.swedbank.beans.response.department.DepartmentOverviewResponse;
+import lt.swedbank.beans.response.department.DepartmentResponse;
+import lt.swedbank.beans.response.user.UserResponse;
 import lt.swedbank.handlers.RestResponseEntityExceptionHandler;
+import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.services.department.DepartmentService;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +24,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
@@ -37,22 +44,20 @@ public class DepartmentControllerTest {
 
     private MockMvc mockMvc;
 
-    private Department department1;
-    private Department department2;
-    private List<DepartmentEntityResponse> departments;
-
-
     @InjectMocks
     private DepartmentController departmentController;
-
     @Mock
     private DepartmentService departmentService;
-
     @Mock
     private org.springframework.validation.Validator mockValidator;
 
     @Autowired
     private ObjectMapper mapper;
+
+    private Department department1;
+    private Department department2;
+    private List<Department> departments;
+    private List<DepartmentEntityResponse> departmentResponses;
 
     @Before
     public void setup() throws Exception {
@@ -66,40 +71,53 @@ public class DepartmentControllerTest {
 
         mapper = new ObjectMapper();
 
-        department1 = new Department();
-        department1.setName("pirmas");
-        department1.setId(Long.parseLong("1"));
+        departments = TestHelper.fetchDepartments();
+        department1 = departments.get(0);
+        department2 = departments.get(1);
 
-        department2 = new Department();
-        department2.setName("antras");
-        department2.setId(Long.parseLong("2"));
-
-        List<Team> teamList1 = new ArrayList<>();
-        List<Team> teamList2 = new ArrayList<>();
-        Team team1 = new Team("vienas");
-        team1.setDepartment(department1);
-        Team team2 = new Team("du");
-        team2.setDepartment(department2);
-
-
-        teamList1.add(team1);
-        teamList2.add(team2);
-
-        department1.setTeams(teamList1);
-        department2.setTeams(teamList2);
-
-        departments = new ArrayList<>();
-        departments.add(new DepartmentEntityResponse(department1));
-        departments.add(new DepartmentEntityResponse(department2));
+        departmentResponses = new ArrayList<>();
+        departmentResponses.add(new DepartmentEntityResponse(department1));
+        departmentResponses.add(new DepartmentEntityResponse(department2));
 
 
     }
 
 
     @Test
-    public void get_department_success() throws Exception {
+    public void canGetDepartmentOverviewById() throws Exception {
+        DepartmentResponse departmentResponse = new DepartmentResponse(department1);
+        Set<UserResponse> userResponses = new HashSet<>();
+        Set<SkillTemplateResponse> skillTemplateResponses = new HashSet<>();
+        department1.getTeams().forEach(t -> t.getUsers().forEach(u -> userResponses.add(new UserResponse(u))));
 
-        when(departmentService.getAllDepartmentEntityResponseList()).thenReturn(departments);
+        SkillEntityResponse skillEntityResponse = new SkillEntityResponse(TestHelper.skills.get(0));
+        SkillTemplateResponse skillTemplateResponse = new SkillTemplateResponse(skillEntityResponse, 1, 1D);
+        skillTemplateResponses.add(skillTemplateResponse);
+
+        DepartmentOverviewResponse departmentOverviewResponse = new DepartmentOverviewResponse(departmentResponse,
+                userResponses,
+                skillTemplateResponses);
+
+        when(departmentService.getDepartmentOverviewByDepartmentId(department1.getId())).thenReturn(departmentOverviewResponse);
+
+        mockMvc.perform(get("/departments/" + department1.getId().toString())
+                .header("Authorization", "Bearer")
+                .contentType(contentType))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(department1.getId().intValue())))
+                .andExpect(jsonPath("$.name", is(department1.getName())))
+
+                .andExpect(jsonPath("$.users").isArray())
+                .andExpect(jsonPath("$.users", hasSize(userResponses.size())))
+
+                .andExpect(jsonPath("$.skillTemplate").isArray())
+                .andExpect(jsonPath("$.skillTemplate", hasSize(skillTemplateResponses.size())));
+    }
+
+    @Test
+    public void canGetAllDepartments() throws Exception {
+
+        when(departmentService.getAllDepartmentEntityResponseList()).thenReturn(departmentResponses);
 
         mockMvc.perform(get("/departments/")
                 .header("Authorization", "Bearer")
@@ -107,15 +125,15 @@ public class DepartmentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
 
-                .andExpect(jsonPath("$[0].id", is(1)))
-                .andExpect(jsonPath("$[0].name", is("pirmas")))
-                .andExpect(jsonPath("$[0].teams", hasSize(1)))
-                .andExpect(jsonPath("$[0].teams[0].name", is("vienas")))
+                .andExpect(jsonPath("$[0].id", is(department1.getId().intValue())))
+                .andExpect(jsonPath("$[0].name", is(department1.getName())))
+                .andExpect(jsonPath("$[0].teams", hasSize(department1.getTeams().size())))
+                .andExpect(jsonPath("$[0].teams[0].name", is(department1.getTeams().get(0).getName())))
 
-                .andExpect(jsonPath("$[1].id", is(2)))
-                .andExpect(jsonPath("$[1].name", is("antras")))
-                .andExpect(jsonPath("$[1].teams", hasSize(1)))
-                .andExpect(jsonPath("$[1].teams[0].name", is("du")));
+                .andExpect(jsonPath("$[1].id", is(department2.getId().intValue())))
+                .andExpect(jsonPath("$[1].name", is(department2.getName())))
+                .andExpect(jsonPath("$[1].teams", hasSize(department2.getTeams().size())))
+                .andExpect(jsonPath("$[1].teams[0].name", is(department2.getTeams().get(0).getName())));
 
         verify(departmentService, times(1)).getAllDepartmentEntityResponseList();
 

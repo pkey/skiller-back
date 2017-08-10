@@ -2,7 +2,6 @@ package lt.swedbank.FakeAuthClasses;
 
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.TokenHolder;
-import com.auth0.jwt.JWT;
 import lt.swedbank.beans.entity.User;
 import lt.swedbank.beans.request.LoginUserRequest;
 import lt.swedbank.beans.request.RegisterUserRequest;
@@ -29,8 +28,14 @@ public class FakeAuthService implements AuthenticationService {
         }
         else throw new UserAlreaduExistException();
         User user = new User(registerUserRequest);
+        capitalizeUserNameAndLastName(user);
         user.setAuthId(authId);
         return userRepository.save(user);
+    }
+
+    private void capitalizeUserNameAndLastName(User user) {
+        user.setName(user.getName().substring(0, 1).toUpperCase() + user.getName().substring(1));
+        user.setLastName(user.getLastName().substring(0, 1).toUpperCase() + user.getLastName().substring(1));
     }
 
     @Override

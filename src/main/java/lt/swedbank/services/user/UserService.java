@@ -2,14 +2,10 @@ package lt.swedbank.services.user;
 
 import lt.swedbank.beans.entity.Team;
 import lt.swedbank.beans.entity.User;
-import lt.swedbank.beans.entity.UserSkill;
-import lt.swedbank.beans.request.AddSkillRequest;
-import lt.swedbank.beans.request.AssignSkillLevelRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
-import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.user.NonColleagueResponse;
-import lt.swedbank.beans.response.user.UserEntityResponse;
 import lt.swedbank.beans.response.user.UserResponse;
+import lt.swedbank.beans.response.user.UserWithSkillsResponse;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.repositories.UserRepository;
 import lt.swedbank.repositories.search.UserSearchRepository;
@@ -21,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -64,55 +61,33 @@ public class UserService {
         return users;
     }
 
-    public Iterable<User> getColleagues(Long userId){
-         return userRepository.findAllByIdIsNotOrderByNameAscLastNameAsc(userId);
-    }
-
     public List<UserResponse> searchColleagues(Long userId, String query) {
         User currentUser = getUserById(userId);
 
-        List<User> quariedUsers = this.searchUsers(query);
-        List<UserResponse> filteredUsers = new ArrayList<>();
-
-        quariedUsers.remove(currentUser);
-
-        for (User queriedUser : quariedUsers
-             ) {
-            filteredUsers.add(getUserResponseBasedOnDepartment(currentUser, queriedUser));
-        }
-
-        return filteredUsers;
+        return this.searchUsers(query).stream().filter(u -> !currentUser.getId().equals(u.getId()))
+                .map(u -> getUserResponseBasedOnDepartment(currentUser, u)).collect(Collectors.toList());
     }
 
     public List<User> searchUsers(String query) {
 
         List<User> userList = new ArrayList<>(userSearchRepository.search(query));
 
+        userList.sort(Comparator.comparing(User::toString));
 
-        userList.sort(new Comparator<User>() {
-            @Override
-            public int compare(User o1, User o2) {
-                if (o1.getName().compareTo(o2.getName()) == 0){
-                    return o1.getLastName().compareTo(o2.getLastName());
-                } else {
-                    return o1.getName().compareTo(o2.getName());
-                }
-            }
-        });
-
-       return userList;
+        return userList;
     }
 
-    public Iterable<User> getAllByTeam(Team team){
-        return userRepository.findAllByTeam(team);
-    }
-
-
-    public UserResponse getUserProfile(Long requeredUserId, String currentUserAuthId) {
+    public UserResponse getUserProfile(Long requiredUserId, String currentUserAuthId) {
         User currentUser = getUserByAuthId(currentUserAuthId);
-        User requeredUser = getUserById(requeredUserId);
+        User requiredUser = getUserById(requiredUserId);
 
-        return getUserResponseBasedOnDepartment(currentUser, requeredUser);
+        return getUserResponseBasedOnDepartment(currentUser, requiredUser);
+    }
+
+    public UserResponse getMyProfile(String currentUserAuthId) {
+        User currentUser = getUserByAuthId(currentUserAuthId);
+
+        return new UserWithSkillsResponse(currentUser, userSkillService.getProfileUserSkills(currentUser.getUserSkills()));
     }
 
     private UserResponse getUserResponseBasedOnDepartment(User currentUser, User requiredUser) {
@@ -120,53 +95,17 @@ public class UserService {
         if(requiredUser.getDepartment() != null && currentUser.getDepartment() != null) {
             if(usersInSameDepartment(currentUser, requiredUser))
             {
-                return new UserEntityResponse(requiredUser);
+                return new UserWithSkillsResponse(requiredUser, userSkillService.getNormalUserSkillResponseList(requiredUser.getUserSkills()));
             }
         }
-        return new NonColleagueResponse(requiredUser);
+        return new NonColleagueResponse(requiredUser, userSkillService.getNonColleagueUserSkillResponseList(requiredUser.getUserSkills()));
     }
 
-    public User addUserSkill(Long userId, AddSkillRequest addSkillRequest) throws UserNotFoundException {
-        User user = getUserById(userId);
-
-        if (user == null) {
-            throw new UserNotFoundException();
-        }
-
-        user.setUserSkill(userSkillService.addUserSkill(user, addSkillRequest));
-
-        return user;
-    }
-
-    public User removeUserSkill(Long userid, RemoveSkillRequest removeSkillRequest) throws UserNotFoundException {
-        User user = getUserById(userid);
-
-        if (user == null) {
-            throw new UserNotFoundException();
-        }
-
-        List<UserSkill> userSkills = user.getUserSkills();
-        userSkills.remove(userSkillService.removeUserSkill(userid, removeSkillRequest));
-
-        user.setUserSkills(userSkills);
-
-        return user;
-    }
-
-    public UserSkill assignUserSkillLevel(Long userid, AssignSkillLevelRequest request) throws UserNotFoundException {
-        User user = getUserById(userid);
-
-        if (user == null) {
-            throw new UserNotFoundException();
-        }
-        return userSkillService.assignSkillLevel(user, request);
-    }
 
     public User assignTeam(final Long userId, final AssignTeamRequest assignTeamRequest) {
         User user = getUserById(userId);
         user.setTeam(teamService.getTeamById(assignTeamRequest.getTeamId()));
-        userRepository.save(user);
-        return user;
+        return userRepository.save(user);
     }
 
     private boolean usersInSameDepartment(User currentUser, User colleague){
@@ -174,11 +113,29 @@ public class UserService {
         return currentUser.getDepartment().getId().equals(colleague.getDepartment().getId());
     }
 
-    public List<User> getAllUsers() {
-        List<User> allUsers = new ArrayList<>();
-        for (User user : userRepository.findAll()) {
-            allUsers.add(user);
-        }
-        return allUsers;
+    public Iterable<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public void updateUsersTeam(Team team, List<User> newUsers) {
+        team.getUsers().removeAll(newUsers);
+        removeTeamsFromUnassignedUsers(team);
+        addTeamsToNewUsers(team, newUsers);
+        team.setUsers(newUsers);
+    }
+
+    private void removeTeamsFromUnassignedUsers(Team team) {
+        team.getUsers().forEach(user -> user.setTeam(null));
+        userRepository.save(team.getUsers());
+    }
+
+    private void addTeamsToNewUsers(Team team, List<User> newUsers) {
+        newUsers.forEach(newUser -> newUser.setTeam(team));
+        userRepository.save(newUsers);
+    }
+
+    public List<UserResponse> getAllUserResponses() {
+        List<User> users = (List<User>) userRepository.findAll();
+        return users.stream().map(UserResponse::new).collect(Collectors.toList());
     }
 }

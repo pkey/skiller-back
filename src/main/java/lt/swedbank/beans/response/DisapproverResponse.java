@@ -1,9 +1,6 @@
 package lt.swedbank.beans.response;
 
-import lt.swedbank.beans.entity.Approver;
 import lt.swedbank.beans.entity.Disapprover;
-
-import java.util.List;
 
 public class DisapproverResponse {
 

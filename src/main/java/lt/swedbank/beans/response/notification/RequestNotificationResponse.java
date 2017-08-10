@@ -1,7 +1,6 @@
 package lt.swedbank.beans.response.notification;
 
-import lt.swedbank.beans.entity.*;
-import lt.swedbank.beans.response.SkillEntityResponse;
+import lt.swedbank.beans.entity.RequestNotification;
 
 public class RequestNotificationResponse extends NotificationResponse {
 

@@ -1,32 +1,27 @@
 package lt.swedbank.beans.response;
 
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lt.swedbank.beans.entity.Skill;
 
+import javax.validation.constraints.NotNull;
+
+@Data
+@RequiredArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 public class SkillEntityResponse extends Response {
 
-    private String title;
+    @NonNull
     private Long id;
+    @NonNull
+    private String title;
 
-
-    public SkillEntityResponse(Skill skill) {
-        this.id = skill.getId();
-        this.title = skill.getTitle();
+    public SkillEntityResponse(@NotNull Skill skill) {
+        id = skill.getId();
+        title = skill.getTitle();
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 }

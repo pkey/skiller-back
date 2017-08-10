@@ -1,6 +1,5 @@
 package lt.swedbank.FakeAuthClasses;
 
-import com.auth0.json.auth.TokenHolder;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class FakeTokenHolder {

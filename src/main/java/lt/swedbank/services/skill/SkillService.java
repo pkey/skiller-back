@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SkillService {
@@ -51,7 +52,6 @@ public class SkillService {
         return skill;
     }
 
-
     public Iterable<Skill> getAllSkills() {
         return skillRepository.findAll();
     }
@@ -64,4 +64,19 @@ public class SkillService {
         return skillList;
     }
 
+    public List<Skill> getSkillsByIds(List<Long> skillsId) {
+        assert skillsId != null;
+
+        return skillsId.stream()
+                .map(this::getSkillById)
+                .collect(Collectors.toList());
+    }
+
+    private Skill getSkillById(Long id) {
+        Skill skill = skillRepository.findOne(id);
+        if (skill == null) {
+            throw new SkillNotFoundException();
+        }
+        return skill;
+    }
 }

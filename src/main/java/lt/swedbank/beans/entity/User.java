@@ -1,18 +1,24 @@
 package lt.swedbank.beans.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 import lt.swedbank.beans.request.RegisterUserRequest;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 
 @Entity
 @Indexed
+@Data
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class User {
 
     @Id
@@ -20,9 +26,11 @@ public class User {
     private Long id;
 
     @Field
+    @NonNull
     private String name;
 
     @Field
+    @NonNull
     private String lastName;
 
     @Transient
@@ -33,104 +41,34 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String connection;
 
+    @NonNull
     private String email;
 
     private String authId;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<UserSkill> userSkills;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Team team;
 
-
-    public User() {
-    }
-
     public User(RegisterUserRequest registerUserRequest) {
-
         setName(registerUserRequest.getName());
         setLastName(registerUserRequest.getLastName());
         setConnection(registerUserRequest.getConnection());
         setEmail(registerUserRequest.getEmail());
         setPassword(registerUserRequest.getPassword());
-        capitalizeUserNameAndLastName();
-
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getConnection() {
-        return connection;
-    }
-
-    public void setConnection(String connection) {
-        this.connection = connection;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getAuthId() {
-        return authId;
-    }
-
-    public void setAuthId(String authId) {
-        this.authId = authId;
-    }
-
-    public List<UserSkill> getUserSkills() {
-        return userSkills;
-    }
-
-    public void setUserSkills(List<UserSkill> userSkills) {
-        this.userSkills = userSkills;
-    }
-
-    public void setUserSkill(UserSkill userSkill) {
-        if(userSkills == null){
+    public void addUserSkill(UserSkill userSkill) {
+        if (userSkills == null) {
             this.userSkills = new ArrayList<>();
         }
         this.userSkills.add(userSkill);
     }
 
-    public Team getTeam() {
-        return team;
+    public Optional<Team> getTeam() {
+        return Optional.ofNullable(team);
     }
 
     public void setTeam(Team team) {
@@ -138,27 +76,31 @@ public class User {
     }
 
     public Department getDepartment() {
-        if (team != null){
+        if (team != null) {
             return team.getDepartment();
         } else {
             return null;
         }
     }
 
-    public void sortSkillsBySkillLevel()
-    {
-        userSkills.sort(new Comparator<UserSkill>() {
-            @Override
-            public int compare(UserSkill o1, UserSkill o2) {
-                return o1.getCurrentSkillLevel().getSkillLevel().compareTo(o2.getCurrentSkillLevel().getSkillLevel());
-            }
-        });
+    @Override
+    public String toString() {
+        return getName() + " " + getLastName();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) {
+            return false;
+        }
+        User user = (User) o;
+        return Objects.equals(id, user.id);
+    }
 
-    private void capitalizeUserNameAndLastName() {
-        this.setName(name.substring(0, 1).toUpperCase() + name.substring(1));
-        this.setLastName(lastName.substring(0, 1).toUpperCase() + lastName.substring(1));
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
 }

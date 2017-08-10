@@ -1,86 +1,52 @@
 package lt.swedbank.beans.entity;
 
-
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lt.swedbank.beans.enums.Status;
-import lt.swedbank.exceptions.request.FalseRequestStatusException;
-
-
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.time.LocalDateTime;
 
 @Entity
+@Data
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class RequestNotification  {
 
-    private Status status = Status.pending;
+    private Status status = Status.NEW;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private boolean isNewNotification = true;
-
     @ManyToOne
+    @NonNull
     private User receiver;
 
     @ManyToOne
+    @NonNull
     private ApprovalRequest approvalRequest;
 
-    public RequestNotification() {}
-
-    public RequestNotification(User receiver, ApprovalRequest approvalRequest)
-    {
-        this.receiver = receiver;
-        this.approvalRequest = approvalRequest;
-    }
-
-    public User getReceiver() {
-        return receiver;
-    }
-
-    public void setReceiver(User receiver) {
-        this.receiver = receiver;
-    }
-
-    public ApprovalRequest getApprovalRequest() {
-        return approvalRequest;
-    }
-
-    public void setApprovalRequest(ApprovalRequest approvalRequest) {
-        this.approvalRequest = approvalRequest;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
+    @CreationTimestamp
+    private LocalDateTime creationTime;
 
     public final void setApproved() {
-        this.status = Status.approved;
+        this.status = Status.APPROVED;
     }
 
     public final void setDisapproved() {
-        this.status = Status.disapproved;
+        this.status = Status.DISAPPROVED;
     }
 
     public final void setPending() {
-        this.status = Status.pending;
+        this.status = Status.PENDING;
     }
 
-    public final void setExpired() { this.status = Status.expired; }
-
-    public boolean isNewNotification() {
-        return isNewNotification;
-    }
-
-    public void setNewNotification (boolean newNotification) {
-        isNewNotification = newNotification;
-    }
+    public final void setExpired() { this.status = Status.EXPIRED; }
 
     public final String getStatusAsString() {
         return status.toString();

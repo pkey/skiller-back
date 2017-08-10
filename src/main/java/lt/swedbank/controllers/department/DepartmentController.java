@@ -1,6 +1,7 @@
 package lt.swedbank.controllers.department;
 
-import lt.swedbank.beans.response.DepartmentEntityResponse;
+import lt.swedbank.beans.response.department.DepartmentEntityResponse;
+import lt.swedbank.beans.response.department.DepartmentOverviewResponse;
 import lt.swedbank.services.department.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,12 @@ public class DepartmentController {
     public @ResponseBody
     Iterable<DepartmentEntityResponse> getAll() {
         return departmentService.getAllDepartmentEntityResponseList();
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public @ResponseBody
+    DepartmentOverviewResponse getDepartmentOverviewById(@PathVariable("id") Long id) {
+        return departmentService.getDepartmentOverviewByDepartmentId(id);
     }
 
 }

@@ -1,33 +1,38 @@
 package lt.swedbank.beans.entity;
 
-import lt.swedbank.exceptions.request.FalseRequestStatusException;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lt.swedbank.beans.enums.Status;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 @Entity
+@Data
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class UserSkillLevel {
 
-    private static final String APPROVED = "approved";
-    private static final String DISAPPROVED = "disapproved";
-    private static final String PENDING = "pending";
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @NonNull
     private UserSkill userSkill;
 
     @ManyToOne
+    @NonNull
     private SkillLevel skillLevel;
 
     private String motivation;
 
-    private Integer isApproved = 0;
+    private Status status = Status.APPROVED;
 
     @CreationTimestamp
     private Date validFrom;
@@ -37,91 +42,20 @@ public class UserSkillLevel {
     @OneToMany(mappedBy = "userSkillLevel")
     private List<Vote> votes = new ArrayList<>();
 
-    public UserSkillLevel() {
+
+    public void setPending() {
+        this.status = Status.PENDING;
     }
 
-    public UserSkillLevel(UserSkill userSkill, SkillLevel skillLevel) {
-        this.userSkill = userSkill;
-        this.skillLevel = skillLevel;
-        this.votes = Collections.EMPTY_LIST;
+    public void setApproved() {
+        this.status = Status.APPROVED;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public UserSkill getUserSkill() {
-        return userSkill;
-    }
-
-    public void setUserSkill(UserSkill userSkill) {
-        this.userSkill = userSkill;
-    }
-
-    public SkillLevel getSkillLevel() {
-        return skillLevel;
-    }
-
-    public void setSkillLevel(SkillLevel skillLevel) {
-        this.skillLevel = skillLevel;
-    }
-
-    public String getMotivation() {
-        return motivation;
-    }
-
-    public void setMotivation(String motivation) {
-        this.motivation = motivation;
-    }
-
-    public Date getValidFrom() {
-        return validFrom;
-    }
-
-    public void setValidFrom(Date validFrom) {
-        this.validFrom = validFrom;
-    }
-
-    public Date getValidUntil() {
-        return validUntil;
-    }
-
-    public void setValidUntil(Date validUntil) {
-        this.validUntil = validUntil;
-    }
-
-    public List<Vote> getVotes() {
-        return votes;
-    }
-
-    public void setVotes(List<Vote> votes) {
-        this.votes = votes;
-    }
-
-    public Integer getIsApproved() {
-        return isApproved;
-    }
-
-    public void setIsApproved(Integer isApproved) {
-        this.isApproved = isApproved;
+    public void setDisapproved() {
+        this.status = Status.DISAPPROVED;
     }
 
     public String getCurrentSkillLevelStatus() {
-
-        switch (isApproved) {
-            case -1:
-                return DISAPPROVED;
-            case 0:
-                return PENDING;
-            case 1:
-                return APPROVED;
-            default:
-                throw new FalseRequestStatusException();
-        }
-
+        return status.toString();
     }
 }

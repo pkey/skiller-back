@@ -2,6 +2,7 @@ package lt.swedbank.controllers.skill;
 
 import lt.swedbank.beans.entity.SkillLevel;
 import lt.swedbank.beans.response.SkillLevelResponse;
+import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.services.skill.SkillLevelService;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,9 +50,9 @@ public class SkillLevelControllerTest {
 
         skillLevelResponseList = new ArrayList<>();
 
-        skillLevelResponseList.add(new SkillLevelResponse(new SkillLevel("Novice", "About Novice")));
-        skillLevelResponseList.add(new SkillLevelResponse(new SkillLevel("Amateur", "About Amateur")));
-        skillLevelResponseList.add(new SkillLevelResponse(new SkillLevel("Pro", "About Pro")));
+        skillLevelResponseList.add(new SkillLevelResponse(TestHelper.skillLevels.get(0)));
+        skillLevelResponseList.add(new SkillLevelResponse(TestHelper.skillLevels.get(1)));
+        skillLevelResponseList.add(new SkillLevelResponse(TestHelper.skillLevels.get(2)));
 
     }
 

@@ -3,10 +3,9 @@ package lt.swedbank.services.user;
 import lt.swedbank.beans.entity.*;
 import lt.swedbank.beans.request.AddSkillRequest;
 import lt.swedbank.beans.request.AssignTeamRequest;
-import lt.swedbank.beans.request.RemoveSkillRequest;
 import lt.swedbank.beans.response.user.NonColleagueResponse;
-import lt.swedbank.beans.response.user.UserEntityResponse;
 import lt.swedbank.beans.response.user.UserResponse;
+import lt.swedbank.beans.response.user.UserWithSkillsResponse;
 import lt.swedbank.exceptions.user.UserNotFoundException;
 import lt.swedbank.helpers.TestHelper;
 import lt.swedbank.repositories.UserRepository;
@@ -21,13 +20,17 @@ import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doReturn;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class UserServiceTest {
@@ -35,16 +38,11 @@ public class UserServiceTest {
     private AssignTeamRequest testAssignTeamRequest;
     private Team testTeam;
     private UserSkill testUserSkill;
-    private Skill testSkill;
-    private UserSkillLevel testUserSkillLevel;
     private AddSkillRequest testAddSkillRequest;
 
     private List<User> testUserList;
-
     private User testUser;
-
     private User loggedUser;
-
     private List<Team> teams;
 
     @Spy
@@ -70,15 +68,12 @@ public class UserServiceTest {
         Long userID = Long.parseLong("0");
         Long teamID = Long.parseLong("1");
 
-
-
         testUserList = TestHelper.fetchUsers(10);
-
-
         testUser = testUserList.get(0);
         loggedUser = testUserList.get(1);
 
-        teams = TestHelper.fetchTeams(3);
+        teams = TestHelper.fetchTeams();
+
 
         testUser.setTeam(teams.get(0));
         loggedUser.setTeam(teams.get(1));
@@ -89,27 +84,16 @@ public class UserServiceTest {
         testUserSkill.setSkill(TestHelper.skills.get(6));
         testUserSkill.addUserSkillLevel(TestHelper.createUserSkillLevel(testUserSkill, TestHelper.skillLevels.get(0)));
 
-
-
         testAddSkillRequest = new AddSkillRequest(testUserSkill);
-
         testAssignTeamRequest = new AssignTeamRequest();
         testAssignTeamRequest.setTeamId(teamID);
         testAssignTeamRequest.setUserId(userID);
-
-
+        testTeam = new Team();
+        testTeam.setId(1L);
     }
 
     @After
     public void tearDown() throws Exception {
-    }
-
-
-
-    @Test(expected = UserNotFoundException.class)
-    public void assignUserSkillLevelExceptionTest() {
-        doReturn(null).when(userService).getUserById(any());
-        userService.assignUserSkillLevel(any(), any());
     }
 
     @Test
@@ -126,68 +110,22 @@ public class UserServiceTest {
     }
 
     @Test
-    public void add_skill_to_user_success() {
-        User testAddSkillUser = testUserList.get(3);
-
-        Mockito.when(userSkillService.addUserSkill(any(), any())).thenReturn(testUserSkill);
-        Mockito.when(userRepository.findOne(testUser.getId())).thenReturn(testAddSkillUser);
-
-
-        User user = userService.addUserSkill(testUser.getId(), testAddSkillRequest);
-        assertEquals(user, testAddSkillUser);
-        assertEquals(user.getUserSkills().get(user.getUserSkills().size() - 1), testUserSkill);
-
-        verify(userService, times(1)).getUserById(testUser.getId());
-        verify(userSkillService, times(1)).addUserSkill(any(), any());
-    }
-
-    @Test(expected = UserNotFoundException.class)
-    public void addUserSkillExceptionTest() {
-        doReturn(null).when(userService).getUserById(any());
-
-        userService.addUserSkill(any(), any());
-    }
-
-    @Test
-    public void remove_skill_from_user() {
-        User testRemoveSkillUser = testUserList.get(3);
-
-        Mockito.when(userSkillService.removeUserSkill(any(), any())).thenReturn(testUserSkill);
-        doReturn(testRemoveSkillUser).when(userService).getUserById(any());
-
-        RemoveSkillRequest removeSkillRequest = new RemoveSkillRequest(testUserSkill);
-
-        User resultUser = userService.removeUserSkill(testRemoveSkillUser.getId(), removeSkillRequest);
-        assertEquals(testRemoveSkillUser, resultUser);
-        Assert.assertThat(resultUser.getUserSkills(), not(hasItem(testUserSkill)));
-
-        verify(userService, times(1)).getUserById(testRemoveSkillUser.getId());
-        verify(userSkillService, times(1)).removeUserSkill(any(), any());
-    }
-
-    @Test(expected = UserNotFoundException.class)
-    public void removeUserSkillExceptionTest() {
-        doReturn(null).when(userService).getUserById(any());
-
-        userService.removeUserSkill(any(), any());
-    }
-
-    @Test
-    public void set_team_to_user_success() {
+    public void set_team_to_user_success() throws Exception {
         Mockito.when(teamService.getTeamById(any())).thenReturn(testTeam);
         doReturn(testUser).when(userService).getUserById(any());
-
+        Mockito.when(userRepository.save(any(User.class))).thenReturn(testUser);
         User newUser = userService.assignTeam(testUser.getId(), testAssignTeamRequest);
-        assertEquals(testTeam, newUser.getTeam());
+        assertEquals(newUser.getTeam().isPresent(), true);
+        assertEquals(testTeam.getId(), newUser.getTeam().get().getId());
     }
 
     @Test
-    public void getUserNonColleagueProfile() {
+    public void getUserNonColleagueProfile() throws Exception {
 
         doReturn(testUser).when(userService).getUserById(any());
         doReturn(loggedUser).when(userService).getUserByAuthId(any());
 
-        UserResponse testEntity = new UserEntityResponse(testUser);
+        UserResponse testEntity = new UserResponse(testUser);
         UserResponse resultEntity = userService.getUserProfile(any(), any());
 
 
@@ -196,32 +134,24 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getUserColleagueProfile() {
+    public void getUserColleagueProfile() throws Exception {
         User colleagueUser = testUser;
-        colleagueUser.setTeam(loggedUser.getTeam());
+        colleagueUser.setTeam(loggedUser.getTeam().orElseThrow(() -> new Exception("Logged user does not have a team")));
 
         doReturn(colleagueUser).when(userService).getUserById(any());
         doReturn(loggedUser).when(userService).getUserByAuthId(any());
 
-        UserResponse testEntity = new UserEntityResponse(colleagueUser);
+        UserResponse testEntity = new UserResponse(colleagueUser);
         UserResponse resultEntity = userService.getUserProfile(any(), any());
 
         assertEquals(resultEntity.getEmail(), testEntity.getEmail());
-        assertThat(resultEntity, instanceOf(UserEntityResponse.class));
-    }
+        assertThat(resultEntity, instanceOf(UserWithSkillsResponse.class));
 
-    @Test
-    public void assignUserSkillLevelTest() {
-
-        doReturn(testUser).when(userService).getUserById(any());
-        Mockito.when(userSkillService.assignSkillLevel(any(), any())).thenReturn(testUserSkill);
-
-        assertEquals(userService.assignUserSkillLevel(any(), any()), testUserSkill);
     }
 
 
     @Test
-    public void getUserById() {
+    public void getUserById() throws Exception {
         Mockito.when(userRepository.findOne(any())).thenReturn(testUser);
 
         assertEquals(testUser, userService.getUserById(any()));
@@ -243,15 +173,6 @@ public class UserServiceTest {
 
         Assert.assertEquals(testUserList.size(), resultList.size());
 
-        for (int i = 0; i < testUserList.size() - 1; i++) {
-            assertNotEquals(1, compareNames(testUserList.get(i), resultList.get(i+1)));
-
-            if(compareNames(testUserList.get(i), resultList.get(i+1)) == 0){
-                assertNotEquals(1, compareLastNames(testUserList.get(i), resultList.get(i+1) ));
-            }
-
-        }
-
     }
 
     @Test
@@ -267,12 +188,29 @@ public class UserServiceTest {
 
     }
 
-    private int compareNames(User actualUser, User resultUser) {
-        return actualUser.getName().compareTo(resultUser.getName());
+    @Test
+    public void canGetAllUsers() throws Exception {
+        Mockito.when(userRepository.findAll()).thenReturn(testUserList);
+
+        List<UserResponse> userResponses = userService.getAllUserResponses();
+
+        assertEquals(testUserList.size(), userResponses.size());
+
+        for (int i = 0; userResponses.size() < i; i++) {
+            assertEquals(userResponses.get(i).getId(), testUserList.get(i).getId());
+        }
     }
 
-    private int compareLastNames(User actualUser, User resultUser) {
-        return actualUser.getLastName().compareTo(resultUser.getLastName());
-    }
+    @Test
+    public void successfullyUpdateUsersTeam() {
+        List<User> newUsers = new ArrayList<>();
+        newUsers.addAll(TestHelper.fetchUsers(3));
+        testTeam.setUsers(testUserList);
+        userService.updateUsersTeam(testTeam, newUsers);
 
+        for (User user : newUsers) {
+            Assert.assertEquals(testTeam, user.getTeam().get());
+        }
+        Assert.assertEquals(testTeam.getUsers(), newUsers);
+    }
 }

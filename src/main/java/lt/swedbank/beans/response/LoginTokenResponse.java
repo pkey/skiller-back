@@ -1,7 +1,6 @@
 package lt.swedbank.beans.response;
 
 
-import com.auth0.json.auth.TokenHolder;
 import lt.swedbank.FakeAuthClasses.FakeTokenHolder;
 
 public class LoginTokenResponse extends Response {

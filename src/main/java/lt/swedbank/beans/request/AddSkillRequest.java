@@ -1,5 +1,6 @@
 package lt.swedbank.beans.request;
 
+import lt.swedbank.annotations.SkillTitleConstraint;
 import lt.swedbank.beans.entity.UserSkill;
 
 import javax.validation.constraints.NotNull;
@@ -7,6 +8,7 @@ import javax.validation.constraints.NotNull;
 public class AddSkillRequest {
 
     @NotNull(message = "Skill title is required!")
+    @SkillTitleConstraint
     private String title;
 
     public AddSkillRequest() {

@@ -21,18 +21,20 @@ public class TestHelper {
     public static final int NUMBER_OF_SKILLS = 10;
     public static final int NUMBER_OF_SKILLS_USER_HAS = 5;
     public static final int NUMBER_OF_SKILL_LEVELS = 3;
+    public static final int NUMBER_OF_VALUE_STREAM = 3;
+    public static final int NUMBER_OF_USERS_IN_A_TEAM = (NUMBER_OF_TEAMS / NUMBER_OF_DEPARTMENTS) * (NUMBER_OF_USERS / NUMBER_OF_TEAMS);
 
 
     public static int currentUserSkillId = 0;
     public static int currentSkillLevelId = 0;
-
+    public static List<Skill> skills;
+    public static List<SkillLevel> skillLevels; //Change to enumeration
     private static List<User> userList;
     private static List<Team> teams;
     private static List<Department> departments;
     private static List<Division> divisions;
-    public static List<Skill> skills;
-    public static List<SkillLevel> skillLevels; //Change to enumeration
-    private static SkillLevel defaultSkillLevel;
+    public static SkillLevel defaultSkillLevel;
+    private static List<ValueStream> valueStreams;
 
 
 
@@ -43,6 +45,11 @@ public class TestHelper {
         createLevels();
         createSkills();
         createUsers();
+        createValueStreams();
+    }
+
+    private TestHelper(){
+        throw new UnsupportedOperationException();
     }
 
     private static void createLevels() {
@@ -53,7 +60,7 @@ public class TestHelper {
         skillLevels = new ArrayList<>();
 
         for (int i = 0; i < NUMBER_OF_SKILL_LEVELS; i++) {
-            SkillLevel skillLevel = new SkillLevel(levelNames[i], levelDescriptions[i]);
+            SkillLevel skillLevel = new SkillLevel((long) (i + 1),levelNames[i], levelDescriptions[i]);
             skillLevel.setId(Integer.toUnsignedLong(i));
             skillLevel.setLevel(Integer.toUnsignedLong(i) + 1);
 
@@ -83,8 +90,9 @@ public class TestHelper {
 
             user.setConnection("connection");
 
-
-            user.setTeam(teams.get(i%NUMBER_OF_TEAMS));
+            Team team = teams.get(i % NUMBER_OF_TEAMS);
+            team.addUser(user);
+            user.setTeam(team);
 
             userList.add(user);
         }
@@ -102,7 +110,7 @@ public class TestHelper {
 
             Skill skill = new Skill();
             skill.setId(Integer.toUnsignedLong(i));
-            skill.setTitle(textProducer.word());
+            skill.setTitle(skillNames[i]);
 
             skills.add(skill);
         }
@@ -145,7 +153,7 @@ public class TestHelper {
         userSkillLevel.setSkillLevel(skillLevel);
         userSkillLevel.setValidFrom(new Date());
         userSkillLevel.setVotes(new ArrayList<>());
-        userSkillLevel.setIsApproved(1);
+        userSkillLevel.setApproved();
 
         return userSkillLevel;
     }
@@ -157,11 +165,13 @@ public class TestHelper {
 
         for (int i = 0; i < NUMBER_OF_TEAMS; i++) {
             TextProducer textProducer = fairy.textProducer();
+            Department department = departments.get(i % NUMBER_OF_DEPARTMENTS);
 
-            Team team = new Team("Team " + textProducer.word());
+            Team team = new Team("Team " + textProducer.word(), department);
             team.setId(Integer.toUnsignedLong(i));
             team.setName("Team" + textProducer.word());
-            team.setDepartment(departments.get(i%NUMBER_OF_DEPARTMENTS));
+
+            department.addTeam(team);
 
             teams.add(team);
         }
@@ -202,22 +212,50 @@ public class TestHelper {
         }
     }
 
+    private static void createValueStreams() {
+        List<ValueStream> valueStreamsToBeGenerated = new ArrayList<>();
+
+        for (int i = 0; i < NUMBER_OF_VALUE_STREAM; i++) {
+            ValueStream valueStream = generateValueStream(i);
+            valueStreamsToBeGenerated.add(valueStream);
+        }
+
+        valueStreams = valueStreamsToBeGenerated;
+    }
+
+    private static ValueStream generateValueStream(int i) {
+        ValueStream valueStream = new ValueStream();
+        valueStream.setId((long) i);
+        valueStream.setName(i + " - Value Stream");
+
+        return valueStream;
+    }
+
     public static List<User> fetchUsers(int amount) {
         return userList.subList(0, amount);
     }
 
 
-
-    public static List<Team> fetchTeams(int amount) {
-        return teams.subList(0, amount);
+    public static List<Team> fetchTeams() {
+        return new ArrayList<>(teams);
     }
 
-    public static List<Department> fetchDepartments(int amount) {
-        return departments.subList(0, amount);
+    public static List<Department> fetchDepartments() {
+        return new ArrayList<>(departments);
     }
 
     public static List<Division> fetchDivisions(int amount) {
         return divisions.subList(0, amount);
+    }
+
+
+
+    public static List<ValueStream> fetchValueStreams() {
+        return valueStreams;
+    }
+
+    public static List<Skill> fetchSkills(int ammount) {
+        return skills.subList(0, ammount);
     }
 
 }
